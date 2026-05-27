@@ -82,3 +82,13 @@ Adaptations made for this app:
   rose, pine, foam, iris, subtle, highlight). Darkened the destructive/red token to a deeper
   ruby (#9c2c4b) to satisfy the local AA contrast gate against the cream background; the rest
   of the chrome retains the upstream palette.
+
+## One Dark
+
+- Theme: `one-dark`
+- Original theme: One Dark by the Atom team
+- Source: <https://github.com/atom/atom>
+- License: MIT
+- Adaptation notes: Used the One Dark UI palette (#282c34 surfaces, #abb2bf foreground) and the
+  Atom-lineage ANSI mapping. Used a near-black foreground on the cool blue primary and warm red
+  destructive tokens for AA contrast against light accent surfaces.

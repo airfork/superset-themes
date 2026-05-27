@@ -6,6 +6,7 @@ import draculaTheme from "./themes/dracula.json" with { type: "json" };
 import graphiteDarkTheme from "./themes/graphite-dark.json" with { type: "json" };
 import gruvboxDarkTheme from "./themes/gruvbox-dark.json" with { type: "json" };
 import nordTheme from "./themes/nord.json" with { type: "json" };
+import oneDarkTheme from "./themes/one-dark.json" with { type: "json" };
 import rosePineDawnTheme from "./themes/rose-pine-dawn.json" with { type: "json" };
 import solarizedDarkTheme from "./themes/solarized-dark.json" with { type: "json" };
 import solarizedLightTheme from "./themes/solarized-light.json" with { type: "json" };
@@ -181,6 +182,21 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Rosé Pine Dawn palette.",
   },
+  {
+    themeId: "one-dark",
+    source: "upstream-port",
+    family: "One Dark",
+    variant: "dark",
+    styleTags: ["classic", "balanced", "atom-lineage"],
+    accentHue: 207,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/atom/atom",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Atom One Dark palette.",
+  },
 ] as const satisfies CatalogThemeMeta[];
 
 const rawCatalogThemes = [
@@ -227,6 +243,10 @@ const rawCatalogThemes = [
   {
     theme: rosePineDawnTheme as SupersetTheme,
     meta: catalogThemeMetadata[10],
+  },
+  {
+    theme: oneDarkTheme as SupersetTheme,
+    meta: catalogThemeMetadata[11],
   },
 ] as const satisfies CatalogThemeEntry[];
 

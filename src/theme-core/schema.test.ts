@@ -44,6 +44,14 @@ describe("theme schema", () => {
     expect(rose?.meta.family).toBe("Rosé Pine");
   });
 
+  it("includes One Dark as a ported dark theme", () => {
+    const oneDark = catalogThemes.find((entry) => entry.theme.id === "one-dark");
+    expect(oneDark).toBeDefined();
+    expect(oneDark?.theme.type).toBe("dark");
+    expect(oneDark?.meta.source).toBe("upstream-port");
+    expect(oneDark?.meta.family).toBe("One Dark");
+  });
+
   it("includes an expanded upstream port batch with paired Solarized variants", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
@@ -52,6 +60,7 @@ describe("theme schema", () => {
       "dracula",
       "gruvbox-dark",
       "nord",
+      "one-dark",
       "rose-pine-dawn",
       "solarized-dark",
       "solarized-light",
@@ -70,6 +79,7 @@ describe("theme schema", () => {
       dracula: "MIT",
       "gruvbox-dark": "MIT/X11",
       nord: "MIT",
+      "one-dark": "MIT",
       "rose-pine-dawn": "MIT",
       "solarized-dark": "MIT",
       "solarized-light": "MIT",
