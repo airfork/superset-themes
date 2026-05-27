@@ -2,11 +2,12 @@
 
 ## Current State
 
-The repo contains a Task 9 Vite/React/TypeScript static app checkpoint on branch
+The repo contains a completed Task 10 Vite/React/TypeScript static app checkpoint on branch
 `feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
 light/dark pair comparison, and the first theme lab import/edit/export workflow
 are implemented. The lab also has deterministic constrained random generation.
 Browser, Storybook, accessibility, and design QA coverage has been expanded.
+README, command reference, and agent handoff docs are synced with the current app.
 
 Latest completed checkpoint:
 
@@ -29,6 +30,7 @@ Latest completed checkpoint:
 - Task 9 Storybook QA enabled failing a11y checks for representative passing light/dark card stories and a passing dark command-palette preview story. Global Storybook a11y remains in `todo` mode because broader preview/app stories still expose known accessibility issues around simulated tree/tabpanel semantics and preview contrast that need component-level design follow-up.
 - Task 9 Web Interface Guidelines review fetched the latest Vercel guideline source and fixed actionable issues: added a skip link, gave form controls names/autocomplete/spellcheck where relevant, replaced placeholder `...` with `…`, and added missing checkbox names.
 - Task 9 Impeccable design scan passed on the app/catalog/compare/lab/preview/style surfaces after the QA fixes.
+- Task 10 docs polish updated README with implemented features, stack, setup, verification, theme utilities, and project-doc links. `COMMANDS.md` now includes every `package.json` script, including `build:storybook`. `AGENTS.md` verification guidance now includes Storybook tests.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -39,9 +41,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Start Task 10: polish README, command reference, agent handoff docs, and final
-status. Keep docs aligned with the actual scripts and the known Storybook a11y
-follow-up.
+The next recommended work is theme expansion plus follow-up accessibility
+remediation for the simulated preview surfaces so more Storybook stories can
+move from `a11y.test: "todo"` to `a11y.test: "error"`.
 
 ## Resumability Protocol
 
@@ -114,6 +116,11 @@ Latest app verification:
 - `npx impeccable detect src/app src/catalog src/compare src/lab src/preview src/styles/global.css` passed with no findings.
 - Web Interface Guidelines source was fetched from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`, reviewed against app/catalog/lab/preview UI files, and actionable fixes were applied.
 - `git diff --check` passed after Task 9.
+- `pnpm format` passed for Task 10 with no fixes required.
+- `pnpm check` passed for Task 10: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `pnpm test:e2e` passed for 9 Playwright app flows after Task 10 docs polish.
+- `pnpm build` passed after Task 10 docs polish.
+- `pnpm test:stories` passed for 3 Storybook test files and 10 stories after Task 10 docs polish.
 
 ## Blockers
 

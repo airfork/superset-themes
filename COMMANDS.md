@@ -30,6 +30,12 @@ pnpm storybook
 
 Open component and preview-surface stories.
 
+```bash
+pnpm build:storybook
+```
+
+Build the static Storybook output.
+
 ## Quality
 
 ```bash

@@ -59,10 +59,9 @@ Expected verification once the app is scaffolded:
 
 ```bash
 rtk pnpm check
-rtk pnpm test
 rtk pnpm test:e2e
+rtk pnpm test:stories
 rtk pnpm build
 ```
 
 If verification is skipped or blocked, say that plainly and record it in `docs/STATUS.md`.
-

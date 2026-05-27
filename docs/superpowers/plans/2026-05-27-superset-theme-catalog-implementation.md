@@ -585,19 +585,19 @@ git commit -m "test: add browser and design quality coverage"
 - Modify: `docs/STATUS.md`
 - Modify: `docs/superpowers/plans/2026-05-27-superset-theme-catalog-implementation.md`
 
-- [ ] **Step 1: Sync README with actual app**
+- [x] **Step 1: Sync README with actual app**
 
 Update stack, current features, setup, and verification commands.
 
-- [ ] **Step 2: Sync COMMANDS with package scripts**
+- [x] **Step 2: Sync COMMANDS with package scripts**
 
 Every `package.json` script should either appear in `COMMANDS.md` or be intentionally internal.
 
-- [ ] **Step 3: Update agent docs**
+- [x] **Step 3: Update agent docs**
 
 Ensure resumability, Browser preference, verification commands, and design QA requirements are current.
 
-- [ ] **Step 4: Final verification**
+- [x] **Step 4: Final verification**
 
 Run:
 
@@ -608,7 +608,7 @@ pnpm test:e2e
 pnpm build
 ```
 
-- [ ] **Step 5: Final status and commit**
+- [x] **Step 5: Final status and commit**
 
 Update `docs/STATUS.md` with final state, verification output, and next theme-expansion work.
 
