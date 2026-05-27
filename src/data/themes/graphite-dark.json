@@ -4,6 +4,7 @@
   "name": "Graphite Dark",
   "type": "dark",
   "author": "Superset Theme Catalog",
+  "description": "A neutral graphite fixture with amber primary actions, red accents, and a warm terminal palette.",
   "ui": {
     "background": "#111111",
     "foreground": "#f4f4f5",

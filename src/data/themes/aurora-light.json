@@ -4,6 +4,7 @@
   "name": "Aurora Light",
   "type": "light",
   "author": "Superset Theme Catalog",
+  "description": "A cool daylight fixture with blue structure, teal accents, and crisp terminal contrast.",
   "ui": {
     "background": "#f7fbff",
     "foreground": "#102033",

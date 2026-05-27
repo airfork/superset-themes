@@ -4,6 +4,7 @@
   "name": "Aurora Dark",
   "type": "dark",
   "author": "Superset Theme Catalog",
+  "description": "A paired dark fixture with deep navy surfaces, clear blue focus states, and aurora cyan accents.",
   "ui": {
     "background": "#0b1220",
     "foreground": "#e5f0ff",

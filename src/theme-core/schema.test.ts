@@ -12,6 +12,7 @@ describe("theme schema", () => {
   it("parses every fixture theme", () => {
     for (const theme of themeFixtures) {
       expect(supersetThemeSchema.parse(theme)).toMatchObject({
+        description: theme.description,
         id: theme.id,
         type: theme.type,
       });

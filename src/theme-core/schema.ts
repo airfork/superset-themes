@@ -60,6 +60,7 @@ export const supersetThemeSchema = z
   .object({
     $schema: z.string().optional(),
     author: z.string().min(1),
+    description: z.string().min(1),
     id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use kebab-case theme IDs."),
     name: z.string().min(1),
     terminal: terminalTokensSchema,
