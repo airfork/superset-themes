@@ -147,7 +147,7 @@ Planned structure after implementation:
 - Modify: `COMMANDS.md`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Scaffold dependencies**
+- [x] **Step 1: Scaffold dependencies**
 
 Run:
 
@@ -159,7 +159,7 @@ pnpm add -D @biomejs/biome @playwright/test @storybook/addon-a11y @storybook/add
 
 Expected: `package.json` and `pnpm-lock.yaml` are created, dependencies install successfully.
 
-- [ ] **Step 2: Define scripts**
+- [x] **Step 2: Define scripts**
 
 Set `package.json` scripts to:
 
@@ -186,11 +186,11 @@ Set `package.json` scripts to:
 }
 ```
 
-- [ ] **Step 3: Add app shell**
+- [x] **Step 3: Add app shell**
 
 Create `src/app/App.tsx` with a small route host and an empty catalog shell. Use accessible landmarks and no marketing hero.
 
-- [ ] **Step 4: Add `scripts/check.mjs`**
+- [x] **Step 4: Add `scripts/check.mjs`**
 
 Make `pnpm check` run:
 
@@ -203,7 +203,7 @@ pnpm build
 
 Use `child_process.spawnSync` so failures stop the sequence and preserve clear output.
 
-- [ ] **Step 5: Verify scaffold**
+- [x] **Step 5: Verify scaffold**
 
 Run:
 
@@ -213,7 +213,7 @@ pnpm check
 
 Expected: format/lint/type/test/build pass with the minimal app.
 
-- [ ] **Step 6: Update resumability docs and commit**
+- [x] **Step 6: Update resumability docs and commit**
 
 Update `docs/STATUS.md` with scaffold status and verification.
 

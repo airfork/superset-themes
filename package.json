@@ -1,0 +1,52 @@
+{
+  "name": "superset-themes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "format": "biome format --write .",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:stories": "vitest --project=storybook --run",
+    "storybook": "storybook dev -p 6006",
+    "build:storybook": "storybook build",
+    "themes:validate": "node scripts/themes-validate.mjs",
+    "themes:check-contrast": "node scripts/themes-check-contrast.mjs",
+    "themes:generate": "node scripts/themes-generate.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.170.8",
+    "@vitejs/plugin-react": "^6.0.2",
+    "culori": "^4.0.2",
+    "lucide-react": "^1.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
+    "@playwright/test": "^1.60.0",
+    "@storybook/addon-a11y": "^10.4.1",
+    "@storybook/addon-vitest": "^10.4.1",
+    "@storybook/react-vite": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^29.1.1",
+    "playwright": "^1.60.0",
+    "storybook": "^10.4.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "vitest": "^4.1.7"
+  }
+}

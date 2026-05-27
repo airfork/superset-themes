@@ -2,10 +2,12 @@
 
 ## Current State
 
-The repo contains planning and handoff docs for a clean-slate Superset-compatible theme catalog. The app has not been scaffolded yet.
+The repo contains a Task 1 Vite/React/TypeScript static app scaffold on branch `feature/theme-catalog-app`.
 
 Latest completed checkpoint:
 
+- Task 1 scaffold added: package scripts, pnpm workspace/lockfile, Vite config, Vitest config, Biome config, app entry point, routed catalog shell, neutral global styles, and `scripts/check.mjs`.
+- Focused app-shell smoke test added in `src/app/App.test.tsx`.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -16,7 +18,7 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Begin Task 1 by scaffolding the Vite React TypeScript app with `pnpm` and `biome`, then update this status file and commit.
+Begin Task 2 by defining the theme schema, export cleanup behavior, fixture catalog, and theme validation script. Do not expand the Task 1 shell beyond scaffold needs.
 
 ## Resumability Protocol
 
@@ -28,11 +30,10 @@ After each meaningful implementation checkpoint:
 
 ## Verification
 
-No app verification exists yet because the app is not scaffolded.
+Latest app verification:
 
-Docs self-review performed:
-
-Incomplete-marker, user-command, and ASCII checks were run against the docs.
+- `rtk pnpm test -- src/app/App.test.tsx` passed.
+- `rtk pnpm check` passed: Biome check, TypeScript check, Vitest run, and Vite production build.
 
 ## Blockers
 
