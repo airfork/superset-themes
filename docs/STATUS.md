@@ -8,6 +8,7 @@ Latest completed checkpoint:
 
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
+- Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
 
 ## Active Plan
 
@@ -15,7 +16,7 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Review the implementation plan. If accepted, begin Task 1 by scaffolding the Vite React TypeScript app with `pnpm` and `biome`, then update this status file and commit.
+Begin Task 1 by scaffolding the Vite React TypeScript app with `pnpm` and `biome`, then update this status file and commit.
 
 ## Resumability Protocol
 

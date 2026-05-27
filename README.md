@@ -12,6 +12,10 @@ Planning is complete enough to begin scaffolding. The main design spec is:
 - [Implementation plan](docs/superpowers/plans/2026-05-27-superset-theme-catalog-implementation.md)
 - [Status and handoff](docs/STATUS.md)
 
+Private GitHub remote:
+
+- `git@github.com:airfork/superset-themes.git`
+
 ## Planned Stack
 
 - `pnpm`
@@ -45,4 +49,3 @@ See [COMMANDS.md](COMMANDS.md) for the fuller command reference.
 ## Working Notes
 
 This repo treats resumability as a first-class concern. Agents should update [docs/STATUS.md](docs/STATUS.md) and the active implementation plan after meaningful checkpoints.
-
