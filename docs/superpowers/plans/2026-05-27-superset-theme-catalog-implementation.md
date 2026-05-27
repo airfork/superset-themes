@@ -373,27 +373,27 @@ git commit -m "feat: build theme preview surfaces"
 - Modify: `src/app/routes/themeRoute.tsx`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write filter/search tests**
+- [x] **Step 1: Write filter/search tests**
 
 Cover text search, light/dark filter, source filter, family filter, paired/unpaired filter, tags, accent hue, warmth, contrast tier, terminal quality, and sorting.
 
-- [ ] **Step 2: Implement pure search/filter helpers**
+- [x] **Step 2: Implement pure search/filter helpers**
 
 Use Set/Map lookups where repeated filtering benefits from indexing. Avoid unnecessary chained loops on the hot path.
 
-- [ ] **Step 3: Build catalog page**
+- [x] **Step 3: Build catalog page**
 
 Create a dense but readable catalog page with search, filter controls, sort, empty state, compact cards, and keyboard-friendly actions.
 
-- [ ] **Step 4: Build theme card and detail view**
+- [x] **Step 4: Build theme card and detail view**
 
 Cards show compact composite previews. Detail view shows full preview tabs and actions: pin light, pin dark, edit in lab, copy JSON, download JSON.
 
-- [ ] **Step 5: Add route/search-param handling**
+- [x] **Step 5: Add route/search-param handling**
 
 Use TanStack Router search params for filter state where practical. Preserve shareable URLs for selected filters and theme detail routes.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run:
 

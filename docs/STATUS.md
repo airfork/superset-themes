@@ -2,9 +2,9 @@
 
 ## Current State
 
-The repo contains a Task 4 Vite/React/TypeScript static app checkpoint on branch
-`feature/theme-catalog-app`. The reusable preview surface system is implemented
-and ready for Task 5 catalog integration.
+The repo contains a Task 5 Vite/React/TypeScript static app checkpoint on branch
+`feature/theme-catalog-app`. Catalog browsing, filtering, URL-backed search
+params, compact theme cards, and theme detail routes are implemented.
 
 Latest completed checkpoint:
 
@@ -15,6 +15,8 @@ Latest completed checkpoint:
 - Task 3 theme utilities added pure WCAG contrast checks, structured contrast warnings, a real catalog contrast CLI, and pure preview CSS variable mapping for UI and terminal tokens.
 - Task 4 preview surface system added: neutral inspector chrome, accessible tabs, controlled/uncontrolled selected-tab support, themed preview frame, Superset-aligned workspace/editor/terminal/diff/command/settings surfaces, Storybook stories, and component tests.
 - Task 4 design critique remediation kept the catalog chrome outside theme variables, added agent preset/context lanes, improved mobile containment, replaced fake search/command/form semantics with real controls where practical, and added cursor/search-highlight samples.
+- Task 5 catalog browsing added pure search/filter/sort helpers, dense catalog controls, compact preview cards, theme detail routes, export-clean copy/download actions, Storybook card states, URL-backed catalog search params, and updated Playwright app coverage.
+- Task 5 browser QA attempted the preferred in-app Browser surface, but `iab` was unavailable in this session. Playwright screenshots were used instead for desktop catalog, mobile catalog, desktop detail, and mobile detail visual checks.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -25,7 +27,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Start Task 5: build catalog search, filters, compact cards, and theme detail view. Reuse `src/preview/PreviewTabs.tsx`, `src/preview/PreviewFrame.tsx`, and `src/preview/surfaces.tsx`; do not fork preview logic into catalog-specific copies.
+Start Task 6: build light/dark pair comparison. Reuse the Task 5 catalog route
+state patterns and the Task 4 preview tabs; do not introduce a second preview
+implementation for side-by-side comparison.
 
 ## Resumability Protocol
 
@@ -55,6 +59,15 @@ Latest app verification:
 - `pnpm check` passed for Task 4: Biome check, TypeScript check, Vitest run, and Vite production build.
 - `npx impeccable detect src/preview src/ui src/styles/global.css` passed with no findings.
 - Storybook visual inspection was performed at desktop and mobile viewport sizes for workspace dark and settings light preview states.
+- `pnpm test:unit -- src/catalog/catalogFilters.test.ts src/catalog/catalogSearch.test.ts` first failed on missing Task 5 modules, then passed after pure helper implementation.
+- `pnpm test:unit -- src/catalog/CatalogPage.test.tsx` first failed on missing catalog page, then passed after catalog UI implementation.
+- `pnpm test:unit -- src/catalog/ThemeDetail.test.tsx` first failed on missing detail view, then passed after detail implementation and export-clean copy coverage.
+- `pnpm test:unit -- src/app/App.test.tsx` first failed against scaffold routing, then passed after URL-backed catalog/detail routes.
+- `pnpm test:unit` passed for 10 test files and 32 tests after Task 5.
+- `pnpm test:stories` passed for 3 Storybook test files and 10 stories after adding `ThemeCard` stories and Vite optimize-deps coverage for `zod`.
+- `pnpm test:e2e` passed for 3 Playwright app flows: catalog load, shareable filter params, and theme detail route.
+- `pnpm check` passed for Task 5: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `npx impeccable detect src/catalog src/app src/styles/global.css` passed with no findings.
 
 ## Blockers
 
