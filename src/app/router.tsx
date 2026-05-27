@@ -5,6 +5,7 @@ import {
   parseCompareRouteSearch,
   stateToCompareRouteSearch,
 } from "./routes/compareRoute";
+import { LabRouteView, parseLabRouteSearch } from "./routes/labRoute";
 import { ThemeRouteView } from "./routes/themeRoute";
 
 function RootLayout() {
@@ -104,7 +105,29 @@ const compareRoute = createRoute({
   validateSearch: parseCompareRouteSearch,
 });
 
-const routeTree = rootRoute.addChildren([catalogRoute, themeRoute, compareRoute]);
+const labRoute = createRoute({
+  component: function LabRouteContainer() {
+    const navigate = labRoute.useNavigate();
+    const search = labRoute.useSearch();
+
+    return (
+      <LabRouteView
+        onStartFromCatalog={(themeId) => {
+          void navigate({
+            search: { from: themeId },
+            to: "/lab",
+          });
+        }}
+        search={search}
+      />
+    );
+  },
+  getParentRoute: () => rootRoute,
+  path: "/lab",
+  validateSearch: parseLabRouteSearch,
+});
+
+const routeTree = rootRoute.addChildren([catalogRoute, themeRoute, compareRoute, labRoute]);
 
 export const router = createRouter({
   defaultNotFoundComponent: () => (

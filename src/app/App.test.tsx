@@ -78,4 +78,25 @@ describe("App", () => {
       /aurora dark/i,
     );
   });
+
+  it("renders lab routes from catalog theme search params", async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, "", "/lab?from=aurora-dark");
+
+    render(<App />);
+
+    expect(await screen.findByRole("region", { name: /theme lab/i })).toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: /lab controls/i })).toHaveTextContent(
+      /aurora dark/i,
+    );
+
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: /start from catalog theme/i }),
+      "graphite-dark",
+    );
+
+    expect(screen.getByRole("complementary", { name: /lab controls/i })).toHaveTextContent(
+      /graphite dark/i,
+    );
+  });
 });

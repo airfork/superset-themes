@@ -459,27 +459,27 @@ git commit -m "feat: add light dark pair comparison"
 - Modify: `e2e/lab.spec.ts`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write import/export tests**
+- [x] **Step 1: Write import/export tests**
 
 Cover valid JSON import, invalid JSON error, schema error, metadata exclusion on export, cloning from catalog theme, reset to source, and copy/download payload.
 
-- [ ] **Step 2: Implement draft model**
+- [x] **Step 2: Implement draft model**
 
 Represent lab drafts separately from catalog themes. Include source type: `catalog`, `import`, or `generated`.
 
-- [ ] **Step 3: Build lab page**
+- [x] **Step 3: Build lab page**
 
 Include entry points for start from existing theme, import JSON, and generated draft. Use the shared preview tabs and show validation warnings inline.
 
-- [ ] **Step 4: Add edit controls**
+- [x] **Step 4: Add edit controls**
 
 Start with grouped token editing for base UI, accent, terminal, charts, and highlights. Use visible labels and clear error messages.
 
-- [ ] **Step 5: Add Playwright lab flow**
+- [x] **Step 5: Add Playwright lab flow**
 
 Test importing invalid JSON, importing valid JSON, editing a token, preview changing, and exporting clean JSON.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run:
 
