@@ -28,6 +28,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: null,
     portStatus: "original",
     notes: "Original fixture with crisp blue surfaces and teal accents.",
+    featuredRank: null,
   },
   {
     themeId: "aurora-dark",
@@ -44,6 +45,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: null,
     portStatus: "original",
     notes: "Original dark pair for Aurora Light with matching blue and teal structure.",
+    featuredRank: null,
   },
   {
     themeId: "graphite-dark",
@@ -59,6 +61,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: null,
     portStatus: "original",
     notes: "Original fixture with neutral graphite surfaces and warm alert accents.",
+    featuredRank: null,
   },
   {
     themeId: "solarized-light",
@@ -75,6 +78,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://ethanschoonover.com/solarized",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Solarized Light port.",
+    featuredRank: 3,
   },
   {
     themeId: "solarized-dark",
@@ -91,6 +95,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://ethanschoonover.com/solarized",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Solarized Dark port.",
+    featuredRank: null,
   },
   {
     themeId: "nord",
@@ -106,6 +111,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://www.nordtheme.com",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Nord port.",
+    featuredRank: null,
   },
   {
     themeId: "catppuccin-mocha",
@@ -121,6 +127,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/catppuccin/catppuccin",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the official Catppuccin Mocha palette.",
+    featuredRank: 2,
   },
   {
     themeId: "dracula",
@@ -136,6 +143,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/dracula/dracula-theme",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the official Dracula OSS palette.",
+    featuredRank: null,
   },
   {
     themeId: "gruvbox-dark",
@@ -151,6 +159,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/morhetz/gruvbox",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of Gruvbox Dark with local contrast-gate foregrounds.",
+    featuredRank: null,
   },
   {
     themeId: "tokyo-night",
@@ -166,6 +175,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/tokyo-night/tokyo-night-vscode-theme",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Tokyo Night VS Code palette.",
+    featuredRank: 1,
   },
   {
     themeId: "rose-pine-dawn",
@@ -181,6 +191,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/rose-pine/rose-pine-theme",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Rosé Pine Dawn palette.",
+    featuredRank: 4,
   },
   {
     themeId: "one-dark",
@@ -196,6 +207,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/atom/atom",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Atom One Dark palette.",
+    featuredRank: 5,
   },
 ] as const satisfies CatalogThemeMeta[];
 

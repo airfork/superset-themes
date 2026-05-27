@@ -75,6 +75,7 @@ export const catalogThemeMetaSchema = z
     accentHue: z.number().min(0).max(360),
     contrastTier: z.enum(["standard", "high"]),
     family: z.string().min(1),
+    featuredRank: z.number().int().min(1).max(5).nullable(),
     license: z.string().min(1),
     notes: z.string().min(1),
     pairGroup: z.string().min(1).optional(),

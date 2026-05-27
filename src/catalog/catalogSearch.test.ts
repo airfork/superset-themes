@@ -44,6 +44,8 @@ describe("searchCatalogThemes", () => {
       "dracula",
       "gruvbox-dark",
       "tokyo-night",
+      "rose-pine-dawn",
+      "one-dark",
     ]);
   });
 });

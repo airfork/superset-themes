@@ -15,7 +15,7 @@ describe("filterCatalogThemes", () => {
         ...DEFAULT_CATALOG_FILTERS,
         type: "light",
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-light", "solarized-light"]);
+    ).toEqual(["aurora-light", "solarized-light", "rose-pine-dawn"]);
 
     expect(
       filterCatalogThemes(catalogThemes, {
@@ -31,6 +31,7 @@ describe("filterCatalogThemes", () => {
       "dracula",
       "gruvbox-dark",
       "tokyo-night",
+      "one-dark",
     ]);
   });
 
@@ -57,14 +58,21 @@ describe("filterCatalogThemes", () => {
         ...DEFAULT_CATALOG_FILTERS,
         accentHueRange: { end: 210, start: 140 },
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-light", "aurora-dark", "solarized-light", "solarized-dark", "nord"]);
+    ).toEqual([
+      "aurora-light",
+      "aurora-dark",
+      "solarized-light",
+      "solarized-dark",
+      "nord",
+      "one-dark",
+    ]);
 
     expect(
       filterCatalogThemes(catalogThemes, {
         ...DEFAULT_CATALOG_FILTERS,
         accentHueRange: { end: 20, start: 340 },
       }).map((entry) => entry.theme.id),
-    ).toEqual(["graphite-dark"]);
+    ).toEqual(["graphite-dark", "rose-pine-dawn"]);
   });
 
   it("returns distinct filter options derived from the catalog", () => {
@@ -77,16 +85,20 @@ describe("filterCatalogThemes", () => {
         "Graphite",
         "Gruvbox",
         "Nord",
+        "One Dark",
+        "Rosé Pine",
         "Solarized",
         "Tokyo Night",
       ],
       sources: ["fixture", "upstream-port"],
       styleTags: [
         "arctic",
+        "atom-lineage",
         "balanced",
         "classic",
         "clear",
         "cool",
+        "designer-darling",
         "editorial",
         "focused",
         "high-contrast",
@@ -95,6 +107,7 @@ describe("filterCatalogThemes", () => {
         "neutral",
         "pastel",
         "retro",
+        "soft",
         "terminal-rich",
         "warm",
         "warm-accent",
@@ -115,6 +128,8 @@ describe("sortCatalogThemes", () => {
       "graphite-dark",
       "gruvbox-dark",
       "nord",
+      "one-dark",
+      "rose-pine-dawn",
       "solarized-dark",
       "solarized-light",
       "tokyo-night",
@@ -128,6 +143,8 @@ describe("sortCatalogThemes", () => {
       "graphite-dark",
       "gruvbox-dark",
       "nord",
+      "one-dark",
+      "rose-pine-dawn",
       "solarized-dark",
       "solarized-light",
       "tokyo-night",
@@ -141,9 +158,11 @@ describe("sortCatalogThemes", () => {
       "nord",
       "solarized-light",
       "solarized-dark",
+      "one-dark",
       "catppuccin-mocha",
       "tokyo-night",
       "dracula",
+      "rose-pine-dawn",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "contrast").map((entry) => entry.theme.id)).toEqual([
@@ -155,8 +174,10 @@ describe("sortCatalogThemes", () => {
       "dracula",
       "gruvbox-dark",
       "tokyo-night",
+      "one-dark",
       "aurora-light",
       "solarized-light",
+      "rose-pine-dawn",
     ]);
   });
 });

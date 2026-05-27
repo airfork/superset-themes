@@ -84,9 +84,11 @@ describe("CatalogPage", () => {
       "Nord",
       "Solarized Light",
       "Solarized Dark",
+      "One Dark",
       "Catppuccin Mocha",
       "Tokyo Night",
       "Dracula",
+      "Rosé Pine Dawn",
     ]);
   });
 });
