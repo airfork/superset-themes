@@ -662,7 +662,7 @@ git commit -m "feat: inline critical CSS for instant first-paint theme"
 **Files:**
 - Modify: `src/styles/global.css`
 
-- [ ] **Step 1: Add the transition rule**
+- [x] **Step 1: Add the transition rule**
 
 At the top of `global.css` (after the `*` reset):
 
@@ -688,7 +688,7 @@ At the top of `global.css` (after the `*` reset):
 
 The `--app-transition` var is set to `0ms` under `prefers-reduced-motion: reduce` by Task 4's `tokens.css`, so reduced-motion users get instant swaps automatically.
 
-- [ ] **Step 2: Playwright spec for reduced-motion**
+- [x] **Step 2: Playwright spec for reduced-motion**
 
 Add to `e2e/first-paint.spec.ts`:
 
@@ -705,7 +705,7 @@ test("reduced motion zeroes the transition timing", async ({ browser }) => {
 });
 ```
 
-- [ ] **Step 3: Verify + commit**
+- [x] **Step 3: Verify + commit**
 
 ```bash
 pnpm test:e2e first-paint

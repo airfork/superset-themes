@@ -68,7 +68,7 @@ Phase 1 verification:
 
 ## Phase 2 — Theme-match foundation
 
-Status: In progress (Tasks 4–6 complete; Task 7 + checkpoint review pending).
+Status: Complete.
 
 - Task 4 committed (`refactor: collapse chrome tokens into preview namespace`).
   `src/styles/tokens.css` reduced to chrome fonts (`--app-font-chrome/editor/terminal`),
@@ -90,22 +90,42 @@ Status: In progress (Tasks 4–6 complete; Task 7 + checkpoint review pending).
   the marker in `dist/index.html`. Switched to a `replace(MARKER_REGEX, tag)` flow so the
   marker is replaced in place. Verified `dist/index.html` now contains exactly one
   `id="critical-theme"` tag.
+- Task 7 committed (`feat: smooth 180ms color transitions with reduced-motion opt-out`).
+  Added `:root` and universal `transition` rules in `global.css` covering background,
+  border, color, fill, stroke, and box-shadow against `var(--app-transition)`. Reduced
+  motion is handled centrally — `--app-transition` already zeroes under
+  `prefers-reduced-motion: reduce` thanks to Task 4. `e2e/first-paint.spec.ts` added the
+  reduced-motion assertion (`getComputedStyle(:root).getPropertyValue('--app-transition')`
+  is `0ms` / `0s` depending on browser normalization).
 
-Phase 2 (Tasks 4–6) verification:
+Phase 2 verification:
 
 - `rtk pnpm check` passed (Biome, TypeScript, Vitest 19 files / 73 tests, Vite build).
-- `rtk pnpm test:e2e first-paint` passed (`first-paint.spec.ts` asserts the computed root
-  background is `rgb(26, 27, 38)` = Tokyo Night).
+- `rtk pnpm test:e2e` passed (11 Playwright flows including first-paint and reduced motion).
 - `rtk grep -c 'id="critical-theme"' dist/index.html` returns `1`.
+
+Phase 2 checkpoint review — `vercel-react-best-practices` on `src/theme/`:
+
+- `FocusedThemeProvider.tsx:21-23` — lazy `useState` initializer is correct (loop + throw
+  path in `getDefaultFocusedTheme`).
+- `FocusedThemeProvider.tsx:25-28` — `useMemo` over `catalogThemes.find` produces a stable
+  reference that downstream effects depend on; not a "simple expression" anti-pattern.
+- `FocusedThemeProvider.tsx:30-32` — `useEffect` is a DOM side effect, not derived state.
+  Dependency `[focused]` is primitive-driven via the upstream memo, so the effect re-runs
+  only when `focusedId` actually changes.
+- `FocusedThemeProvider.tsx:34` — context `value` memoized on `[focused]`; `setFocusedId`
+  is the stable `useState` setter. Consumers won't re-render on unrelated parent renders.
+- `applyTheme.ts:5` — `typeof document` guard is defensive against future SSR; idempotent
+  DOM writes are StrictMode-safe.
+- `useFocusedTheme.ts:7-9` — throws on missing provider (fail-fast).
+- Verdict: pass, no required changes.
 
 ## Next Step
 
-Phase 2 — Task 7: add global 180ms color transitions on `:root` + descendants, with a
-reduced-motion override (the `--app-transition` var already zeroes under
-`prefers-reduced-motion: reduce` thanks to Task 4). Then run the Phase 2 checkpoint:
-`rtk pnpm check`, `rtk pnpm test:e2e`, and invoke the `vercel-react-best-practices` skill
-on `src/theme/` (focus on `FocusedThemeProvider` render stability — context memoization
-and `applyTheme` effect dependency).
+Phase 3 — Shell anatomy. Tasks 8 (TopBar), 9 (BottomBar), 10 (LayoutShell). The Phase 3
+checkpoint runs `pnpm check`, `pnpm test:e2e`, `pnpm test:stories`, and invokes the
+`impeccable` skill against the live dev server to validate Superset-adjacent chrome
+density and overall shell coherence.
 
 ## Resumability Protocol
 
