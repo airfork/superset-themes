@@ -325,27 +325,27 @@ git commit -m "feat: add theme validation utilities"
 - Modify: `src/styles/global.css`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Shape UI with Impeccable**
+- [x] **Step 1: Shape UI with Impeccable**
 
 Run an Impeccable shape pass for the preview system before implementation. Record the result in `docs/STATUS.md`.
 
-- [ ] **Step 2: Write component tests**
+- [x] **Step 2: Write component tests**
 
 Test that preview tabs switch between `Workspace`, `Editor`, `Terminal`, `Diff`, `Command Palette`, and `Settings/Form`, and that tab controls have accessible names and selected state.
 
-- [ ] **Step 3: Implement preview frame and tabs**
+- [x] **Step 3: Implement preview frame and tabs**
 
 Use stable dimensions, semantic tab markup, and shared theme CSS variables.
 
-- [ ] **Step 4: Implement surfaces**
+- [x] **Step 4: Implement surfaces**
 
 Create focused surfaces for workspace, editor, terminal, diff, command palette, and settings/form. Include active, selected, disabled, warning, error, and focusable states where relevant.
 
-- [ ] **Step 5: Add Storybook stories**
+- [x] **Step 5: Add Storybook stories**
 
 Add stories for each surface and for at least one light/dark pair. Stories should be useful for Impeccable critique and visual inspection.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run:
 

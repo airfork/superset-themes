@@ -2,9 +2,9 @@
 
 ## Current State
 
-The repo contains a Task 3 Vite/React/TypeScript static app checkpoint on branch
-`feature/theme-catalog-app`. Task 4 is paused at the Impeccable shape gate for
-user confirmation.
+The repo contains a Task 4 Vite/React/TypeScript static app checkpoint on branch
+`feature/theme-catalog-app`. The reusable preview surface system is implemented
+and ready for Task 5 catalog integration.
 
 Latest completed checkpoint:
 
@@ -13,7 +13,8 @@ Latest completed checkpoint:
 - Task 1 review remediation added runnable Playwright, Storybook, browser-install, and theme utility scaffolds so exposed scripts do not fail before later tasks fill in deeper behavior.
 - Task 2 theme core added Zod runtime schemas, TypeScript theme/catalog types, export-clean theme JSON behavior, original Aurora light/dark and Graphite dark fixtures, catalog metadata, fixture lookup helpers, and real catalog validation.
 - Task 3 theme utilities added pure WCAG contrast checks, structured contrast warnings, a real catalog contrast CLI, and pure preview CSS variable mapping for UI and terminal tokens.
-- Task 4 preview surface shape brief is written at `docs/design/task-4-preview-surface-shape.md` and awaiting confirmation.
+- Task 4 preview surface system added: neutral inspector chrome, accessible tabs, controlled/uncontrolled selected-tab support, themed preview frame, Superset-aligned workspace/editor/terminal/diff/command/settings surfaces, Storybook stories, and component tests.
+- Task 4 design critique remediation kept the catalog chrome outside theme variables, added agent preset/context lanes, improved mobile containment, replaced fake search/command/form semantics with real controls where practical, and added cursor/search-highlight samples.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -24,7 +25,7 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Confirm the Task 4 preview surface shape brief, then implement the preview surface system. Use the existing `src/preview/themeCssVars.ts` variables and do not replace the Task 1-3 architecture.
+Start Task 5: build catalog search, filters, compact cards, and theme detail view. Reuse `src/preview/PreviewTabs.tsx`, `src/preview/PreviewFrame.tsx`, and `src/preview/surfaces.tsx`; do not fork preview logic into catalog-specific copies.
 
 ## Resumability Protocol
 
@@ -49,7 +50,11 @@ Latest app verification:
 - `pnpm check` passed: Biome check, TypeScript check, Vitest run, and Vite production build.
 - `pnpm themes:generate` still runs as a scaffold command until its implementation task replaces it.
 - `pnpm browsers:install` installed Chromium for local Playwright and Storybook browser tests.
-- `pnpm test:e2e` was not rerun for Task 3 because the change is pure theme-core/preview mapping/script logic and does not affect app load or UI routing.
+- `pnpm test:unit -- src/preview/PreviewTabs.test.tsx` passed for Task 4 preview tab behavior and frame CSS variable mapping.
+- `pnpm test:stories` passed for Task 4 preview stories.
+- `pnpm check` passed for Task 4: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `npx impeccable detect src/preview src/ui src/styles/global.css` passed with no findings.
+- Storybook visual inspection was performed at desktop and mobile viewport sizes for workspace dark and settings light preview states.
 
 ## Blockers
 
