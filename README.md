@@ -36,6 +36,7 @@ These commands become active after the app is scaffolded:
 
 ```bash
 pnpm install
+pnpm browsers:install
 pnpm dev
 pnpm check
 pnpm test

@@ -10,6 +10,12 @@ pnpm install
 
 Install dependencies.
 
+```bash
+pnpm browsers:install
+```
+
+Install the Chromium browser used by Playwright and Storybook tests.
+
 ## Development
 
 ```bash
@@ -109,4 +115,3 @@ pnpm themes:generate
 ```
 
 Generate a constrained draft theme for local inspection.
-
