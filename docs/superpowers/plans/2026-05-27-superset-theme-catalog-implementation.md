@@ -282,23 +282,23 @@ git commit -m "feat: add theme schema and fixture catalog"
 - Create: `scripts/themes-check-contrast.mjs`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write contrast tests**
+- [x] **Step 1: Write contrast tests**
 
 Cover foreground/background, card/cardForeground, primary/primaryForeground, destructive/destructiveForeground, terminal foreground/background, and selection contrast where present.
 
-- [ ] **Step 2: Implement contrast checks**
+- [x] **Step 2: Implement contrast checks**
 
 Use Culori or an internal WCAG contrast helper. Return structured warnings with token paths, ratio, threshold, and severity.
 
-- [ ] **Step 3: Implement CSS variable mapping**
+- [x] **Step 3: Implement CSS variable mapping**
 
 Map theme UI and terminal tokens to preview CSS variables. Keep the mapping pure and testable.
 
-- [ ] **Step 4: Add contrast script**
+- [x] **Step 4: Add contrast script**
 
 Make `pnpm themes:check-contrast` print a concise report and exit non-zero for failing required pairs.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 

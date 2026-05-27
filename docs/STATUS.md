@@ -2,7 +2,7 @@
 
 ## Current State
 
-The repo contains a Task 2 Vite/React/TypeScript static app checkpoint on branch
+The repo contains a Task 3 Vite/React/TypeScript static app checkpoint on branch
 `feature/theme-catalog-app`.
 
 Latest completed checkpoint:
@@ -11,6 +11,7 @@ Latest completed checkpoint:
 - Focused app-shell smoke test added in `src/app/App.test.tsx`.
 - Task 1 review remediation added runnable Playwright, Storybook, browser-install, and theme utility scaffolds so exposed scripts do not fail before later tasks fill in deeper behavior.
 - Task 2 theme core added Zod runtime schemas, TypeScript theme/catalog types, export-clean theme JSON behavior, original Aurora light/dark and Graphite dark fixtures, catalog metadata, fixture lookup helpers, and real catalog validation.
+- Task 3 theme utilities added pure WCAG contrast checks, structured contrast warnings, a real catalog contrast CLI, and pure preview CSS variable mapping for UI and terminal tokens.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -21,7 +22,7 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Begin Task 3 by adding focused theme contrast utilities and preview CSS variable mapping. Do not build catalog UI filters or broader preview surfaces yet.
+Begin Task 4 by shaping and implementing the preview surface system. Use the existing `src/preview/themeCssVars.ts` variables and do not replace the Task 1-3 architecture.
 
 ## Resumability Protocol
 
@@ -41,8 +42,12 @@ Latest app verification:
 - `pnpm check` passed: Biome check, TypeScript check, Vitest run, and Vite production build.
 - `pnpm test:e2e` passed after adding Playwright scaffold coverage.
 - `pnpm test:stories` passed after adding Storybook Vitest scaffold coverage.
-- `pnpm themes:check-contrast` and `pnpm themes:generate` still run as scaffold commands until their implementation tasks replace them.
+- `pnpm test:unit` passed for 5 test files and 11 tests after Task 3.
+- `pnpm themes:check-contrast` passed: 3 catalog themes checked across 7 contrast pairs each.
+- `pnpm check` passed: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `pnpm themes:generate` still runs as a scaffold command until its implementation task replaces it.
 - `pnpm browsers:install` installed Chromium for local Playwright and Storybook browser tests.
+- `pnpm test:e2e` was not rerun for Task 3 because the change is pure theme-core/preview mapping/script logic and does not affect app load or UI routing.
 
 ## Blockers
 
