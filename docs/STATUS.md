@@ -44,13 +44,34 @@ Latest completed checkpoint:
 
 ## Active Plan
 
-- [docs/superpowers/plans/2026-05-27-superset-theme-catalog-implementation.md](superpowers/plans/2026-05-27-superset-theme-catalog-implementation.md)
+- [docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md](superpowers/plans/2026-05-27-catalog-redesign-implementation.md)
+  (replaces the prior superset-theme-catalog plan now that Phase 1 of the redesign is in flight).
+
+## Phase 1 — Catalog Redesign (2026-05-27)
+
+Status: Complete.
+
+- Task 1: Rose Pine Dawn port committed (`feat: add Rose Pine Dawn theme port`).
+  Destructive token darkened to `#9c2c4b` to clear AA on cream background.
+- Task 2: One Dark port committed (`feat: add One Dark theme port`).
+  Atom-lineage palette with dark foregrounds on primary/destructive for AA.
+- Task 3: Featured tier metadata committed (`feat: add featured tier metadata and default theme`).
+  `featuredRank` is a `z.number().int().min(1).max(5).nullable()` field on every catalog
+  entry. `src/data/featured.ts` exposes `FEATURED_IDS`, `getFeaturedThemes`, and
+  `getDefaultFocusedTheme` (default = Tokyo Night).
+
+Verification run for Phase 1:
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 17 files / 69 tests, Vite build).
+- `rtk pnpm themes:validate` validated 12 catalog themes from 12 JSON files.
+- `rtk pnpm themes:check-contrast` passed 7 pairs × 12 themes (zero warnings).
 
 ## Next Step
 
-The next recommended work is either another small licensed theme batch or targeted Storybook
-examples for the new ports. Keep attribution outside exported theme JSON, and keep new stories
-under global `a11y.test: "error"` unless a documented exception is unavoidable.
+Phase 2 — Theme-match foundation. Begin Task 4 (collapse `--app-*` chrome tokens into the
+`--preview-*` namespace) followed by Tasks 5–7 (applyTheme provider, critical-CSS Vite plugin,
+180ms transitions). The Phase 2 checkpoint requires invoking the `vercel-react-best-practices`
+skill on `src/theme/`.
 
 ## Resumability Protocol
 
