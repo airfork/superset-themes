@@ -9,7 +9,7 @@ are implemented. The lab also has deterministic constrained random generation.
 Browser, Storybook, accessibility, and design QA coverage has been expanded.
 README, command reference, and agent handoff docs are synced with the current app. The first
 post-Task 10 theme expansion checkpoint adds schema-clean upstream ports for Solarized Light,
-Solarized Dark, and Nord.
+Solarized Dark, and Nord. Storybook a11y is now enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
@@ -34,6 +34,7 @@ Latest completed checkpoint:
 - Task 9 Impeccable design scan passed on the app/catalog/compare/lab/preview/style surfaces after the QA fixes.
 - Task 10 docs polish updated README with implemented features, stack, setup, verification, theme utilities, and project-doc links. `COMMANDS.md` now includes every `package.json` script, including `build:storybook`. `AGENTS.md` verification guidance now includes Storybook tests.
 - Theme expansion checkpoint 1 added three upstream-port catalog entries from the reference repo: Solarized Light, Solarized Dark, and Nord. Theme JSON remains export-clean; source/license/adaptation notes live in catalog metadata and `docs/THEME_ATTRIBUTIONS.md`. Solarized Light required a terminal foreground adjustment to satisfy the local 4.5 contrast gate.
+- Accessibility checkpoint 1 promoted Storybook a11y from global `todo` mode to global `error` mode for the current story suite. Fixes included file-tree ARIA structure, keyboard focus for scrollable preview panes, terminal muted text contrast, search/diff preview contrast, and the catalog filter landmark hierarchy.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -44,10 +45,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-The next recommended work is follow-up accessibility remediation for the simulated preview
-surfaces so more Storybook stories can move from `a11y.test: "todo"` to `a11y.test: "error"`.
-Further theme expansion should continue in small licensed batches, with attribution captured
-outside exported theme JSON.
+The next recommended work is further theme expansion in small licensed batches, with attribution
+captured outside exported theme JSON. New Storybook stories should remain under global
+`a11y.test: "error"` unless a documented exception is unavoidable.
 
 ## Resumability Protocol
 
@@ -132,6 +132,14 @@ Latest app verification:
 - `rtk pnpm test:e2e` passed for 9 Playwright app flows after the expanded catalog.
 - `rtk pnpm test:stories` passed for 3 Storybook test files and 10 stories after the expanded catalog.
 - Browser plugin tooling was unavailable in this session; direct Playwright local QA passed against Vite at `http://localhost:5174/`, confirming the `upstream-port` source filter shows 3 cards, desktop/mobile pages have no document-level horizontal overflow, and screenshots were saved under ignored `test-results/`.
+- `rtk pnpm test:stories` first failed when promoting Workspace, Editor, Diff, and App stories to enforced a11y; it passed after fixing preview ARIA, contrast, scroll focus, and catalog filter landmark structure. Storybook global a11y now runs in `error` mode.
+- `rtk pnpm test:e2e -- catalog.spec.ts` passed for 4 catalog/detail browser flows after changing catalog filters from a complementary landmark to a named group.
+- `rtk npx impeccable detect src/preview src/styles/global.css` passed after the accessibility cleanup.
+- Latest Web Interface Guidelines were fetched from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and reviewed against touched preview/catalog files; no remaining findings in the touched surface.
+- `rtk pnpm check` passed after accessibility cleanup: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `rtk pnpm test:e2e` passed for 9 Playwright app flows after accessibility cleanup.
+- `rtk pnpm test:stories` passed for 3 Storybook test files and 10 stories with global a11y in `error` mode.
+- `rtk pnpm build` passed after accessibility cleanup.
 
 ## Blockers
 

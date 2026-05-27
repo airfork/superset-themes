@@ -101,7 +101,7 @@ test("renders catalog and detail content without horizontal overflow on mobile",
   await page.goto("/");
 
   await expect(page.getByRole("region", { name: /theme catalog/i })).toBeVisible();
-  await expect(page.getByRole("complementary", { name: /catalog filters/i })).toBeVisible();
+  await expect(page.getByRole("group", { name: /catalog filters/i })).toBeVisible();
   await expect(page.getByRole("article", { name: /aurora light/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /view details/i }).first()).toBeVisible();
   await expectNoHorizontalOverflow(page);

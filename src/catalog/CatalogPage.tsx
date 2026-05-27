@@ -174,7 +174,8 @@ export function CatalogPage({
       </div>
 
       <div className="catalog-page__workspace">
-        <aside aria-label="Catalog filters" className="catalog-filters">
+        <fieldset className="catalog-filters">
+          <legend className="sr-only">Catalog filters</legend>
           <label className="catalog-search" htmlFor="catalog-search">
             <span>Search themes</span>
             <input
@@ -311,7 +312,7 @@ export function CatalogPage({
               </label>
             ))}
           </fieldset>
-        </aside>
+        </fieldset>
 
         <div className="catalog-results">
           <div className="catalog-results__toolbar">

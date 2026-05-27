@@ -108,20 +108,23 @@ function PreviewWindow({
           <span />
         </span>
       </div>
-      <div className="preview-window__body">{children}</div>
+      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable preview panes need keyboard focus for axe. */}
+      <section aria-label={`${title} content`} className="preview-window__body" tabIndex={0}>
+        {children}
+      </section>
     </section>
   );
 }
 
 function FileTree() {
   return (
-    <div aria-label="Workspace file tree" className="preview-file-tree" role="tree">
+    <div className="preview-file-tree">
       <label className="preview-search-row">
         <Search aria-hidden="true" />
         <span className="sr-only">Search files</span>
         <input autoComplete="off" name="preview-file-search" readOnly value="Search files" />
       </label>
-      <div className="preview-file-tree__rows">
+      <div aria-label="Workspace file tree" className="preview-file-tree__rows" role="tree">
         {fileRows.map((row) => (
           <div
             aria-level={row.depth + 1}

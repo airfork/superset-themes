@@ -27,12 +27,22 @@ export const WorkspaceDark: Story = {
   args: {
     theme: auroraDark,
   },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
+  },
 };
 
 export const EditorLight: Story = {
   args: {
     initialTab: "editor",
     theme: auroraLight,
+  },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
   },
 };
 
@@ -41,12 +51,22 @@ export const TerminalDark: Story = {
     initialTab: "terminal",
     theme: graphiteDark,
   },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
+  },
 };
 
 export const DiffLight: Story = {
   args: {
     initialTab: "diff",
     theme: auroraLight,
+  },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
   },
 };
 
@@ -66,5 +86,10 @@ export const SettingsFormLight: Story = {
   args: {
     initialTab: "settings",
     theme: auroraLight,
+  },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
   },
 };

@@ -729,8 +729,8 @@ select {
   top: 113px;
   left: 141px;
   border-radius: 3px;
-  background: var(--preview-ui-accent);
-  color: var(--preview-ui-accent-foreground);
+  background: var(--preview-ui-selection);
+  color: var(--preview-ui-selection-foreground);
   padding: 0 4px;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
   font-size: 0.72rem;
@@ -758,7 +758,7 @@ select {
 }
 
 .preview-terminal__muted {
-  color: var(--preview-terminal-bright-black);
+  color: var(--preview-terminal-foreground);
 }
 
 .preview-terminal__warning {
@@ -912,23 +912,25 @@ select {
 }
 
 .preview-diff__line {
+  border: 1px solid var(--preview-ui-border);
   border-radius: 5px;
   padding: 4px 8px;
+  color: var(--preview-ui-foreground);
 }
 
 .preview-diff__line--removed {
+  border-color: color-mix(in srgb, var(--preview-ui-destructive) 44%, var(--preview-ui-border));
   background: color-mix(in srgb, var(--preview-ui-destructive) 18%, var(--preview-ui-background));
-  color: var(--preview-ui-destructive);
 }
 
 .preview-diff__line--added {
+  border-color: color-mix(in srgb, var(--preview-terminal-green) 44%, var(--preview-ui-border));
   background: color-mix(in srgb, var(--preview-terminal-green) 18%, var(--preview-ui-background));
-  color: var(--preview-terminal-green);
 }
 
 .preview-diff__line--modified {
+  border-color: color-mix(in srgb, var(--preview-terminal-blue) 44%, var(--preview-ui-border));
   background: color-mix(in srgb, var(--preview-terminal-blue) 18%, var(--preview-ui-background));
-  color: var(--preview-terminal-blue);
 }
 
 .preview-diff__comment {
@@ -1181,6 +1183,8 @@ kbd {
   top: 14px;
   display: grid;
   gap: 12px;
+  min-width: 0;
+  margin: 0;
   border: 1px solid var(--app-border);
   border-radius: 8px;
   background: var(--app-surface);

@@ -6,6 +6,9 @@ const meta = {
   component: App,
   tags: ["test"],
   parameters: {
+    a11y: {
+      test: "error",
+    },
     layout: "fullscreen",
   },
 } satisfies Meta<typeof App>;
