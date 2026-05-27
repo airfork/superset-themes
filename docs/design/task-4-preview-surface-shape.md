@@ -13,9 +13,25 @@ Switch between preview tabs and immediately understand how the selected theme ha
 ## Design Direction
 
 - Color strategy: restrained app chrome. Theme colors carry the variety.
-- Scene sentence: a developer is comparing editor themes on a large monitor before changing a daily-use workspace, moving quickly between exact surface inspection and light/dark pairing.
-- Anchor references: Linear for dense product confidence, Raycast for command-surface clarity, VS Code for familiar editor structure.
+- Scene sentence: a developer is comparing Superset themes before changing a daily-use multi-agent workspace, moving quickly between exact surface inspection and light/dark pairing.
+- Primary product reference: the current `superset-sh/superset` desktop app, not a generic code editor mock.
+- Secondary composition references: Linear for dense product confidence, Raycast for command-surface clarity, VS Code for familiar editor structure.
 - Visual probe result: use the tabbed inspector lane as the primary implementation direction. Borrow the dense composite lane for future catalog cards. Keep the pair comparison lane for the compare workflow.
+
+## Superset Surface References
+
+The preview should model Superset's actual themed surfaces closely enough to make theme evaluation meaningful:
+
+- App chrome and workspace shell: left workspace/sidebar context, top content header, group strip, preset/action lane, right sidebar.
+- Workspace panes: split pane/mosaic layout with pane headers, active/focused pane state, pane borders, and tab grouping.
+- Terminal: xterm.js-style background, foreground, cursor, selection, and ANSI palette.
+- Files: searchable file tree with folders, files, selected rows, hover/action density, and empty/search states.
+- Editor/file viewer: CodeMirror/Shiki-like code surface with gutter, active line, selection, search highlight, and token colors.
+- Diff/review: changed-file list, staged/unstaged/against-base sections, added/deleted/modified lines, review tab state.
+- Ports/browser: compact port rows plus an in-app browser toolbar/address bar surface.
+- Settings/theme import: appearance controls, marketplace/import/download-base actions, form fields, toggles, disabled states, validation messages.
+
+Generic editor-like surfaces are allowed only where they map to one of these Superset surfaces.
 
 ## Scope
 
@@ -28,7 +44,7 @@ Switch between preview tabs and immediately understand how the selected theme ha
 
 The preview system should feel like a compact developer workspace inside a neutral frame. `PreviewFrame` owns the themed container and stable dimensions. `PreviewTabs` owns the inspection mode and keyboard-accessible tab semantics.
 
-The `Workspace` tab is the broadest surface: file tree, editor, terminal/status strip, command or agent context. Other tabs are focused inspection modes. Each tab should use enough realistic UI detail to reveal theme problems without becoming a full editor clone.
+The `Workspace` tab is the broadest surface: workspace sidebar, group strip, split pane shell, terminal/status strip, file tree, and editor or agent context. Other tabs are focused inspection modes. Each tab should use enough realistic UI detail to reveal theme problems without becoming a full editor clone.
 
 Avoid nested cards. Use panel divisions, toolbars, tab strips, gutters, and subtle borders. The app chrome stays neutral and restrained; the preview interior receives the selected theme variables.
 
@@ -55,12 +71,12 @@ Avoid nested cards. Use panel divisions, toolbars, tab strips, gutters, and subt
 
 Use realistic but short developer-tool content:
 
-- File names: `app.ts`, `theme.json`, `PreviewFrame.tsx`, `tokens.css`.
+- File names: `apps/desktop/src/shared/themes/types.ts`, `theme.json`, `PreviewFrame.tsx`, `tokens.css`.
 - Editor code: theme import, token mapping, small function call, comments, active line, cursor.
-- Terminal lines: success, warning, error, selected output, ANSI swatches.
-- Diff lines: added, removed, modified, inline marker.
-- Command palette: search input, active command, shortcut labels, disabled or unavailable item.
-- Settings/form: labeled inputs, select or segmented control, toggle/checkbox, primary/secondary/destructive buttons, validation message.
+- Terminal lines: agent run output, workspace path, success, warning, error, selected output, ANSI swatches.
+- Diff lines: against-base, staged, unstaged, added, removed, modified, inline marker.
+- Command-like surfaces: quick-open file search, active command/action, shortcut labels, disabled or unavailable item.
+- Settings/form: appearance/theme controls, marketplace/import/download-base actions, labeled inputs, select or segmented control, toggle/checkbox, primary/secondary/destructive buttons, validation message.
 
 Copy should stay operational. Do not explain how the app works inside the UI.
 
