@@ -274,7 +274,13 @@ function EditorSurface() {
         <div className="preview-editor-panel">
           <label>
             Find
-            <input readOnly value="selectionForeground" />
+            <input
+              autoComplete="off"
+              name="preview-search-token"
+              readOnly
+              spellCheck={false}
+              value="selectionForeground"
+            />
           </label>
           <div className="preview-editor-panel__match">2 matches in themeCssVars.ts</div>
           <div className="preview-editor-panel__active">Active line: 4</div>

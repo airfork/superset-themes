@@ -34,16 +34,31 @@ export const LightTheme: Story = {
   args: {
     entry: auroraLight,
   },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
+  },
 };
 
 export const DarkTheme: Story = {
   args: {
     entry: auroraDark,
   },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
+  },
 };
 
 export const HighContrastDarkTheme: Story = {
   args: {
     entry: graphiteDark,
+  },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
   },
 };

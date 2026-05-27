@@ -71,11 +71,14 @@ function ColorField({
   onChange: (value: string) => void;
   value: string;
 }) {
+  const name = label.toLowerCase().replaceAll(" ", "-");
+
   return (
     <label className="lab-color-field">
       <span>{label}</span>
       <input
         aria-label={label}
+        name={name}
         onChange={(event) => onChange(event.currentTarget.value)}
         type="color"
         value={value}
@@ -183,6 +186,7 @@ export function LabPage({
                 <span>Start from catalog theme</span>
                 <select
                   id="lab-start-from"
+                  name="lab-start-from"
                   onChange={(event) => startFromCatalogTheme(event.currentTarget.value)}
                   value={selectedCatalogThemeId ?? ""}
                 >
@@ -205,8 +209,11 @@ export function LabPage({
             <label className="catalog-field" htmlFor="lab-generator-seed">
               <span>Generator seed</span>
               <input
+                autoComplete="off"
                 id="lab-generator-seed"
+                name="lab-generator-seed"
                 onChange={(event) => setGeneratorSeed(event.currentTarget.value)}
+                spellCheck={false}
                 type="text"
                 value={generatorSeed}
               />
@@ -286,9 +293,12 @@ export function LabPage({
             <label className="lab-import-field" htmlFor="lab-import-json">
               <span>Import theme JSON</span>
               <textarea
+                autoComplete="off"
                 id="lab-import-json"
+                name="lab-import-json"
                 onChange={(event) => setImportText(event.currentTarget.value)}
-                placeholder='{"version":1,...}'
+                placeholder='{"version":1,…}'
+                spellCheck={false}
                 value={importText}
               />
             </label>

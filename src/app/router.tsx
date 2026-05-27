@@ -11,13 +11,16 @@ import { ThemeRouteView } from "./routes/themeRoute";
 function RootLayout() {
   return (
     <>
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <header className="app-header">
         <div>
           <p className="eyebrow">Static theme workspace</p>
           <h1>Superset Theme Catalog</h1>
         </div>
       </header>
-      <main className="app-main">
+      <main className="app-main" id="main-content">
         <Outlet />
       </main>
     </>

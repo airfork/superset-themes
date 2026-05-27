@@ -543,27 +543,27 @@ Task 1 review remediation already added baseline `playwright.config.ts`, `.story
 - Modify: `.storybook/vitest.setup.ts`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Configure Playwright**
+- [x] **Step 1: Configure Playwright**
 
 Use the dev server from `pnpm dev` or production preview from `pnpm preview`. Prefer role and label locators over CSS selectors.
 
-- [ ] **Step 2: Add catalog E2E tests**
+- [x] **Step 2: Add catalog E2E tests**
 
 Cover load, search, filter, theme detail, preview tab switch, copy/download button availability, keyboard tab order, and responsive layout.
 
-- [ ] **Step 3: Add Storybook a11y checks**
+- [x] **Step 3: Add Storybook a11y checks**
 
 Configure accessibility checks for stories. Include representative light and dark states.
 
-- [ ] **Step 4: Run Impeccable critique loops**
+- [x] **Step 4: Run Impeccable critique loops**
 
 Critique catalog, detail, compare, and lab screens. Record findings in `docs/STATUS.md` and fix actionable issues.
 
-- [ ] **Step 5: Run Web Interface Guidelines review**
+- [x] **Step 5: Run Web Interface Guidelines review**
 
 Fetch latest guidelines and review actual UI files. Record findings and fixes in `docs/STATUS.md`.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run:
 

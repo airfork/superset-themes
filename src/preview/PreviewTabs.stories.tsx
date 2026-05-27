@@ -55,6 +55,11 @@ export const CommandPaletteDark: Story = {
     initialTab: "command",
     theme: auroraDark,
   },
+  parameters: {
+    a11y: {
+      test: "error",
+    },
+  },
 };
 
 export const SettingsFormLight: Story = {

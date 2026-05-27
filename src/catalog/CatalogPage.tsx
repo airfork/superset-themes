@@ -99,6 +99,7 @@ function CatalogSelect<TValue extends string>({
       <span>{label}</span>
       <select
         id={id}
+        name={id}
         onChange={(event) => onChange(event.currentTarget.value as TValue)}
         value={value}
       >
@@ -177,14 +178,16 @@ export function CatalogPage({
           <label className="catalog-search" htmlFor="catalog-search">
             <span>Search themes</span>
             <input
+              autoComplete="off"
               id="catalog-search"
+              name="catalog-search"
               onChange={(event) =>
                 updateState({
                   ...currentState,
                   query: event.currentTarget.value,
                 })
               }
-              placeholder="Name, tag, terminal..."
+              placeholder="Name, tag, terminal…"
               type="search"
               value={currentState.query}
             />
@@ -300,6 +303,7 @@ export function CatalogPage({
               <label key={tag}>
                 <input
                   checked={currentState.filters.styleTags.has(tag)}
+                  name={`catalog-tag-${tag}`}
                   onChange={() => toggleStyleTag(tag)}
                   type="checkbox"
                 />

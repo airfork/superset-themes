@@ -2,10 +2,11 @@
 
 ## Current State
 
-The repo contains a Task 8 Vite/React/TypeScript static app checkpoint on branch
+The repo contains a Task 9 Vite/React/TypeScript static app checkpoint on branch
 `feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
 light/dark pair comparison, and the first theme lab import/edit/export workflow
 are implemented. The lab also has deterministic constrained random generation.
+Browser, Storybook, accessibility, and design QA coverage has been expanded.
 
 Latest completed checkpoint:
 
@@ -24,6 +25,10 @@ Latest completed checkpoint:
 - Task 7 browser QA attempted the preferred in-app Browser surface earlier in the session, but `iab` was unavailable. Playwright screenshots were used for desktop and mobile lab layouts, and a Playwright overflow check confirmed no document-level horizontal scroll at 1440px or 384px.
 - Task 8 generator added deterministic OKLCH-based theme generation, light/dark mode selection, hue-range support, contrast rejection, token-group locking/reroll helpers, generated draft creation, lab seed controls, per-group reroll buttons, and a real `pnpm themes:generate` CLI. `tsx` and `@types/culori` were added so the Node script can execute the shared TypeScript generator instead of duplicating the algorithm.
 - Task 8 visual QA used Playwright screenshots for desktop and mobile lab layouts after adding generator controls, plus a Playwright overflow check confirming no document-level horizontal scroll at 1440px or 384px.
+- Task 9 browser QA added `e2e/catalog.spec.ts` with catalog filter/search URL sync, empty state coverage, detail navigation/actions, preview tab switching, keyboard order, and mobile overflow checks.
+- Task 9 Storybook QA enabled failing a11y checks for representative passing light/dark card stories and a passing dark command-palette preview story. Global Storybook a11y remains in `todo` mode because broader preview/app stories still expose known accessibility issues around simulated tree/tabpanel semantics and preview contrast that need component-level design follow-up.
+- Task 9 Web Interface Guidelines review fetched the latest Vercel guideline source and fixed actionable issues: added a skip link, gave form controls names/autocomplete/spellcheck where relevant, replaced placeholder `...` with `…`, and added missing checkbox names.
+- Task 9 Impeccable design scan passed on the app/catalog/compare/lab/preview/style surfaces after the QA fixes.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -34,9 +39,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Start Task 9: expand end-to-end, accessibility, and design quality coverage.
-Focus on catalog/detail/compare/lab coverage depth, Storybook a11y checks, and
-documented design QA findings/fixes.
+Start Task 10: polish README, command reference, agent handoff docs, and final
+status. Keep docs aligned with the actual scripts and the known Storybook a11y
+follow-up.
 
 ## Resumability Protocol
 
@@ -101,6 +106,14 @@ Latest app verification:
 - `pnpm test:e2e` passed for 5 Playwright app flows after Task 8.
 - `npx impeccable detect src/lab scripts/themes-generate.mjs src/styles/global.css` passed with no findings.
 - `git diff --check` passed after Task 8 code changes.
+- `pnpm test:e2e -- catalog.spec.ts` passed for 4 catalog/detail QA flows after Task 9.
+- `pnpm test:unit -- src/app/App.test.tsx src/catalog/CatalogPage.test.tsx src/lab/LabPage.test.tsx` passed after guideline fixes.
+- `pnpm test:stories` passed for 3 Storybook test files and 10 stories with targeted a11y `error` coverage.
+- `pnpm test:e2e` passed for 9 Playwright app flows after Task 9.
+- `pnpm check` passed for Task 9: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `npx impeccable detect src/app src/catalog src/compare src/lab src/preview src/styles/global.css` passed with no findings.
+- Web Interface Guidelines source was fetched from `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md`, reviewed against app/catalog/lab/preview UI files, and actionable fixes were applied.
+- `git diff --check` passed after Task 9.
 
 ## Blockers
 
