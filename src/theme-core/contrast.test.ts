@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
-import { checkThemeContrast, getContrastRatio } from "./contrast";
+import { checkThemeContrast, getContrastPairs, getContrastRatio } from "./contrast";
 import type { SupersetTheme } from "./themeTypes";
 
 function requireValue<T>(value: T | undefined): T {
@@ -16,6 +16,15 @@ describe("getContrastRatio", () => {
 });
 
 describe("checkThemeContrast", () => {
+  it("returns cloned contrast pair definitions", () => {
+    const firstCall = getContrastPairs();
+    const firstPair = requireValue(firstCall[0]);
+
+    (firstPair as { threshold: number }).threshold = 0;
+
+    expect(requireValue(getContrastPairs()[0]).threshold).toBe(4.5);
+  });
+
   it("checks required UI, terminal, and selection token pairs", () => {
     const theme = requireValue(catalogThemes[0]).theme;
 
@@ -89,7 +98,7 @@ describe("checkThemeContrast", () => {
         expect.objectContaining({
           backgroundPath: "ui.background",
           foregroundPath: "ui.foreground",
-          ratio: expect.closeTo(1.01, 2),
+          ratio: expect.any(Number),
           required: true,
           severity: "error",
           threshold: 4.5,
@@ -112,5 +121,33 @@ describe("checkThemeContrast", () => {
         }),
       ]),
     );
+    expect(
+      result.warnings.find((warning) => warning.foregroundPath === "ui.foreground")?.ratio,
+    ).toBeCloseTo(1.0085, 4);
+  });
+
+  it("returns structured invalid-color issues without throwing", () => {
+    const baseTheme = requireValue(catalogThemes[0]).theme;
+    const invalidTheme: SupersetTheme = {
+      ...baseTheme,
+      id: "invalid-color-test",
+      ui: {
+        ...baseTheme.ui,
+        foreground: "not-a-color",
+      },
+    };
+
+    const result = checkThemeContrast(invalidTheme);
+
+    expect(result.invalidColors).toEqual([
+      expect.objectContaining({
+        backgroundPath: "ui.background",
+        foregroundPath: "ui.foreground",
+        invalidColor: "not-a-color",
+        severity: "error",
+        tokenPath: "ui.foreground",
+      }),
+    ]);
+    expect(result.issues).toEqual(expect.arrayContaining(result.invalidColors));
   });
 });

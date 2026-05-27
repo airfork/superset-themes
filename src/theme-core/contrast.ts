@@ -18,23 +18,76 @@ type ColorTokenPath =
   | "terminal.selection"
   | "terminal.selectionForeground";
 
-export type ContrastPair = {
+export type ContrastPair = Readonly<{
   backgroundPath: ColorTokenPath;
   foregroundPath: ColorTokenPath;
   label: string;
   required: boolean;
   threshold: number;
-};
+}>;
 
-export type ContrastWarning = ContrastPair & {
-  ratio: number;
-  severity: ContrastSeverity;
-};
+export type ContrastWarning = Readonly<
+  ContrastPair & {
+    ratio: number;
+    severity: ContrastSeverity;
+  }
+>;
+
+export type ContrastInvalidColor = Readonly<
+  ContrastPair & {
+    invalidColor: string;
+    message: string;
+    severity: "error";
+    tokenPath: ColorTokenPath;
+  }
+>;
+
+export type ContrastIssue = ContrastInvalidColor | ContrastWarning;
 
 export type ThemeContrastResult = {
   checkedPairs: ContrastPair[];
+  invalidColors: ContrastInvalidColor[];
+  issues: ContrastIssue[];
   warnings: ContrastWarning[];
 };
+
+type ParsedHexColor = {
+  blue: number;
+  green: number;
+  red: number;
+};
+
+type HexParseResult =
+  | {
+      color: ParsedHexColor;
+      success: true;
+    }
+  | {
+      message: string;
+      success: false;
+    };
+
+type ContrastComputation =
+  | {
+      ratio: number;
+      success: true;
+    }
+  | {
+      invalidColor: string;
+      message: string;
+      success: false;
+      tokenPath: ColorTokenPath;
+    };
+
+class InvalidHexColorError extends Error {
+  readonly color: string;
+
+  constructor(message: string, color: string) {
+    super(message);
+    this.name = "InvalidHexColorError";
+    this.color = color;
+  }
+}
 
 const WCAG_NORMAL_TEXT_THRESHOLD = 4.5;
 
@@ -91,7 +144,7 @@ const CONTRAST_PAIRS = [
 ] as const satisfies readonly ContrastPair[];
 
 export function getContrastPairs(): ContrastPair[] {
-  return [...CONTRAST_PAIRS];
+  return CONTRAST_PAIRS.map((pair) => ({ ...pair }));
 }
 
 export function getContrastRatio(firstHex: string, secondHex: string): number {
@@ -105,28 +158,73 @@ export function getContrastRatio(firstHex: string, secondHex: string): number {
 
 export function checkThemeContrast(theme: SupersetTheme): ThemeContrastResult {
   const checkedPairs = getContrastPairs();
-  const warnings = checkedPairs.flatMap((pair) => {
-    const ratio = getContrastRatio(
-      getThemeTokenValue(theme, pair.foregroundPath),
-      getThemeTokenValue(theme, pair.backgroundPath),
-    );
+  const warnings: ContrastWarning[] = [];
+  const invalidColors: ContrastInvalidColor[] = [];
 
-    if (ratio >= pair.threshold) {
-      return [];
+  for (const pair of checkedPairs) {
+    const contrast = getThemePairContrast(theme, pair);
+
+    if (!contrast.success) {
+      invalidColors.push({
+        ...pair,
+        invalidColor: contrast.invalidColor,
+        message: contrast.message,
+        severity: "error",
+        tokenPath: contrast.tokenPath,
+      });
+      continue;
     }
 
-    return [
-      {
+    if (contrast.ratio < pair.threshold) {
+      warnings.push({
         ...pair,
-        ratio: roundRatio(ratio),
+        ratio: contrast.ratio,
         severity: pair.required ? "error" : "warning",
-      } satisfies ContrastWarning,
-    ];
-  });
+      });
+    }
+  }
 
   return {
     checkedPairs,
+    invalidColors,
+    issues: [...invalidColors, ...warnings],
     warnings,
+  };
+}
+
+function getThemePairContrast(theme: SupersetTheme, pair: ContrastPair): ContrastComputation {
+  const foregroundColor = getThemeTokenValue(theme, pair.foregroundPath);
+  const backgroundColor = getThemeTokenValue(theme, pair.backgroundPath);
+  const foreground = parseHexColor(foregroundColor);
+
+  if (!foreground.success) {
+    return {
+      invalidColor: foregroundColor,
+      message: foreground.message,
+      success: false,
+      tokenPath: pair.foregroundPath,
+    };
+  }
+
+  const background = parseHexColor(backgroundColor);
+
+  if (!background.success) {
+    return {
+      invalidColor: backgroundColor,
+      message: background.message,
+      success: false,
+      tokenPath: pair.backgroundPath,
+    };
+  }
+
+  const foregroundLuminance = getRelativeLuminanceFromParsedColor(foreground.color);
+  const backgroundLuminance = getRelativeLuminanceFromParsedColor(background.color);
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+
+  return {
+    ratio: (lighter + 0.05) / (darker + 0.05),
+    success: true,
   };
 }
 
@@ -164,7 +262,16 @@ function getThemeTokenValue(theme: SupersetTheme, path: ColorTokenPath): string 
 }
 
 function getRelativeLuminance(hex: string): number {
-  const { blue, green, red } = parseHexColor(hex);
+  const parsedColor = parseHexColor(hex);
+
+  if (!parsedColor.success) {
+    throw new InvalidHexColorError(parsedColor.message, hex);
+  }
+
+  return getRelativeLuminanceFromParsedColor(parsedColor.color);
+}
+
+function getRelativeLuminanceFromParsedColor({ blue, green, red }: ParsedHexColor): number {
   const linearRed = toLinearSrgb(red);
   const linearGreen = toLinearSrgb(green);
   const linearBlue = toLinearSrgb(blue);
@@ -172,23 +279,32 @@ function getRelativeLuminance(hex: string): number {
   return 0.2126 * linearRed + 0.7152 * linearGreen + 0.0722 * linearBlue;
 }
 
-function parseHexColor(hex: string): { blue: number; green: number; red: number } {
+function parseHexColor(hex: string): HexParseResult {
   const match = /^#(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})$/i.exec(hex);
 
   if (!match?.groups) {
-    throw new Error(`Expected a six-digit hex color, received ${hex}`);
+    return {
+      message: `Expected a six-digit hex color, received ${hex}`,
+      success: false,
+    };
   }
 
   const { blue, green, red } = match.groups;
 
   if (!blue || !green || !red) {
-    throw new Error(`Expected a six-digit hex color, received ${hex}`);
+    return {
+      message: `Expected a six-digit hex color, received ${hex}`,
+      success: false,
+    };
   }
 
   return {
-    blue: Number.parseInt(blue, 16) / 255,
-    green: Number.parseInt(green, 16) / 255,
-    red: Number.parseInt(red, 16) / 255,
+    color: {
+      blue: Number.parseInt(blue, 16) / 255,
+      green: Number.parseInt(green, 16) / 255,
+      red: Number.parseInt(red, 16) / 255,
+    },
+    success: true,
   };
 }
 
@@ -198,8 +314,4 @@ function toLinearSrgb(channel: number): number {
   }
 
   return ((channel + 0.055) / 1.055) ** 2.4;
-}
-
-function roundRatio(ratio: number): number {
-  return Math.round(ratio * 100) / 100;
 }
