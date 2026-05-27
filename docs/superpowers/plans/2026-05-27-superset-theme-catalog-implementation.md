@@ -530,13 +530,17 @@ git commit -m "feat: add constrained theme generator"
 
 ## Task 9: Add End-to-End, Accessibility, and Design QA
 
+Task 1 review remediation already added baseline `playwright.config.ts`, `.storybook/`, `e2e/app.spec.ts`, and `src/app/App.stories.tsx` so exposed scripts are runnable. This task should expand those files into real catalog, pairing, lab, accessibility, and design quality coverage rather than recreating them.
+
 **Files:**
-- Create: `playwright.config.ts`
+- Modify: `playwright.config.ts`
 - Create: `e2e/catalog.spec.ts`
 - Create: `e2e/pairing.spec.ts`
 - Create: `e2e/lab.spec.ts`
+- Modify: `e2e/app.spec.ts`
 - Modify: `.storybook/main.ts`
 - Modify: `.storybook/preview.ts`
+- Modify: `.storybook/vitest.setup.ts`
 - Modify: `docs/STATUS.md`
 
 - [ ] **Step 1: Configure Playwright**
