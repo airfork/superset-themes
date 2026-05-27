@@ -500,23 +500,23 @@ git commit -m "feat: add theme lab import and export"
 - Modify: `src/lab/LabPage.tsx`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write generator tests**
+- [x] **Step 1: Write generator tests**
 
 Cover deterministic seed output, light/dark mode selection, locked token groups, contrast rejection, hue constraints, and export-clean generated themes.
 
-- [ ] **Step 2: Implement OKLCH-based generator**
+- [x] **Step 2: Implement OKLCH-based generator**
 
 Use Culori for perceptual color work. Generate coordinated surface ramps, accent ramps, terminal palette, chart colors, syntax colors, and highlights.
 
-- [ ] **Step 3: Add lockable generator controls**
+- [x] **Step 3: Add lockable generator controls**
 
 Allow rerolling base surfaces, accents, terminal ANSI, charts, syntax, and highlights independently.
 
-- [ ] **Step 4: Add CLI generator**
+- [x] **Step 4: Add CLI generator**
 
 Make `pnpm themes:generate` print or write one deterministic draft for local inspection.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 

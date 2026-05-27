@@ -1,10 +1,11 @@
-import { Copy, Download, RotateCcw } from "lucide-react";
+import { Copy, Download, RotateCcw, Shuffle, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { PreviewTabs } from "../preview/PreviewTabs";
 import { checkThemeContrast } from "../theme-core/contrast";
 import type { CatalogThemeEntry, TerminalTokens, UiTokens } from "../theme-core/themeTypes";
 import {
   createDraftFromCatalogEntry,
+  createDraftFromGeneratedTheme,
   createDraftFromImportedTheme,
   exportDraftThemeJson,
   resetDraftToSource,
@@ -13,6 +14,11 @@ import {
   updateDraftUiToken,
 } from "./draftTheme";
 import { parseImportedThemeJson } from "./importTheme";
+import {
+  generateRandomTheme,
+  type RandomThemeTokenGroup,
+  rerollRandomThemeGroup,
+} from "./randomTheme";
 
 export interface LabPageProps {
   catalogEntries?: readonly CatalogThemeEntry[];
@@ -49,6 +55,13 @@ const TERMINAL_TOKEN_CONTROLS = [
   { label: "Terminal selection foreground", token: "selectionForeground" },
 ] as const satisfies readonly { label: string; token: keyof TerminalTokens }[];
 
+const RANDOM_GROUPS = [
+  { group: "surfaces", label: "Surfaces" },
+  { group: "accent", label: "Accent" },
+  { group: "terminal", label: "Terminal" },
+  { group: "highlights", label: "Highlights" },
+] as const satisfies readonly { group: RandomThemeTokenGroup; label: string }[];
+
 function ColorField({
   label,
   onChange,
@@ -82,9 +95,18 @@ export function LabPage({
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<"copied" | "idle">("idle");
+  const [generatorSeed, setGeneratorSeed] = useState("preview");
+  const [rerollCount, setRerollCount] = useState(0);
   const draftJson = exportDraftThemeJson(draft);
   const downloadHref = `data:application/json;charset=utf-8,${encodeURIComponent(draftJson)}`;
   const contrastIssues = checkThemeContrast(draft.theme).issues;
+
+  const replaceDraft = (nextDraft: ThemeDraft) => {
+    setDraft(nextDraft);
+    setCopyState("idle");
+    setImportError(null);
+    setImportText("");
+  };
 
   const importJson = () => {
     const result = parseImportedThemeJson(importText);
@@ -94,9 +116,7 @@ export function LabPage({
       return;
     }
 
-    setDraft(createDraftFromImportedTheme(result.theme));
-    setImportError(null);
-    setImportText("");
+    replaceDraft(createDraftFromImportedTheme(result.theme));
   };
 
   const copyJson = async () => {
@@ -116,10 +136,32 @@ export function LabPage({
       return;
     }
 
-    setDraft(createDraftFromCatalogEntry(entry));
-    setCopyState("idle");
-    setImportError(null);
-    setImportText("");
+    replaceDraft(createDraftFromCatalogEntry(entry));
+  };
+
+  const generateDraft = (mode: "dark" | "light") => {
+    replaceDraft(
+      createDraftFromGeneratedTheme(
+        generateRandomTheme({
+          mode,
+          seed: generatorSeed,
+        }),
+      ),
+    );
+  };
+
+  const rerollGroup = (group: RandomThemeTokenGroup) => {
+    const nextRerollCount = rerollCount + 1;
+    setRerollCount(nextRerollCount);
+    replaceDraft(
+      createDraftFromGeneratedTheme(
+        rerollRandomThemeGroup({
+          group,
+          seed: `${generatorSeed}:${group}:${nextRerollCount}`,
+          theme: draft.theme,
+        }),
+      ),
+    );
   };
 
   return (
@@ -158,6 +200,51 @@ export function LabPage({
               </label>
             </div>
           ) : null}
+
+          <div className="lab-panel__section">
+            <label className="catalog-field" htmlFor="lab-generator-seed">
+              <span>Generator seed</span>
+              <input
+                id="lab-generator-seed"
+                onChange={(event) => setGeneratorSeed(event.currentTarget.value)}
+                type="text"
+                value={generatorSeed}
+              />
+            </label>
+            <div className="lab-actions">
+              <button
+                className="catalog-action-button"
+                onClick={() => generateDraft("light")}
+                type="button"
+              >
+                <Sparkles aria-hidden="true" />
+                <span>Generate light</span>
+              </button>
+              <button
+                className="catalog-action-button"
+                onClick={() => generateDraft("dark")}
+                type="button"
+              >
+                <Sparkles aria-hidden="true" />
+                <span>Generate dark</span>
+              </button>
+            </div>
+            <fieldset className="lab-reroll-grid">
+              <legend className="sr-only">Reroll generated token groups</legend>
+              {RANDOM_GROUPS.map(({ group, label }) => (
+                <button
+                  aria-label={`Reroll ${label.toLocaleLowerCase()}`}
+                  className="catalog-action-button"
+                  key={group}
+                  onClick={() => rerollGroup(group)}
+                  type="button"
+                >
+                  <Shuffle aria-hidden="true" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </fieldset>
+          </div>
 
           <div className="lab-panel__section">
             <h3>{draft.theme.name}</h3>

@@ -115,3 +115,9 @@ pnpm themes:generate
 ```
 
 Generate a constrained draft theme for local inspection.
+
+```bash
+pnpm themes:generate -- --seed atlas --mode dark
+```
+
+Generate a deterministic dark draft from a named seed.

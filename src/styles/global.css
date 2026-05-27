@@ -1182,6 +1182,7 @@ kbd {
   font-weight: 750;
 }
 
+.catalog-field input,
 .catalog-field select,
 .catalog-search input {
   width: 100%;
@@ -1847,6 +1848,19 @@ kbd {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.lab-reroll-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.lab-reroll-grid .catalog-action-button {
+  justify-content: center;
 }
 
 .lab-import-field,

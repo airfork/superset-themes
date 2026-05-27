@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getCatalogThemeById, getThemeById } from "../data/fixtures";
 import {
   createDraftFromCatalogEntry,
+  createDraftFromGeneratedTheme,
   createDraftFromImportedTheme,
   exportDraftThemeJson,
   resetDraftToSource,
@@ -69,6 +70,20 @@ describe("theme drafts", () => {
       dirty: false,
       source: {
         type: "import",
+      },
+      theme: {
+        id: "graphite-dark",
+      },
+    });
+  });
+
+  it("creates generated drafts with generated source state", () => {
+    const draft = createDraftFromGeneratedTheme(graphiteDarkTheme);
+
+    expect(draft).toMatchObject({
+      dirty: false,
+      source: {
+        type: "generated",
       },
       theme: {
         id: "graphite-dark",

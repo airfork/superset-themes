@@ -2,10 +2,10 @@
 
 ## Current State
 
-The repo contains a Task 7 Vite/React/TypeScript static app checkpoint on branch
+The repo contains a Task 8 Vite/React/TypeScript static app checkpoint on branch
 `feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
 light/dark pair comparison, and the first theme lab import/edit/export workflow
-are implemented.
+are implemented. The lab also has deterministic constrained random generation.
 
 Latest completed checkpoint:
 
@@ -22,6 +22,8 @@ Latest completed checkpoint:
 - Task 6 visual QA used Playwright screenshots for desktop and mobile compare layouts. The pair slot tabs were adjusted to wrap cleanly instead of clipping labels in narrow side-by-side slots.
 - Task 7 lab workflow added theme import parsing, catalog/import/generated draft state support, export-clean draft JSON, a `/lab?from=<theme-id>` route, catalog seed switching, copy/download actions, grouped color token editors, inline contrast validation, and shared preview tabs for draft inspection.
 - Task 7 browser QA attempted the preferred in-app Browser surface earlier in the session, but `iab` was unavailable. Playwright screenshots were used for desktop and mobile lab layouts, and a Playwright overflow check confirmed no document-level horizontal scroll at 1440px or 384px.
+- Task 8 generator added deterministic OKLCH-based theme generation, light/dark mode selection, hue-range support, contrast rejection, token-group locking/reroll helpers, generated draft creation, lab seed controls, per-group reroll buttons, and a real `pnpm themes:generate` CLI. `tsx` and `@types/culori` were added so the Node script can execute the shared TypeScript generator instead of duplicating the algorithm.
+- Task 8 visual QA used Playwright screenshots for desktop and mobile lab layouts after adding generator controls, plus a Playwright overflow check confirming no document-level horizontal scroll at 1440px or 384px.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -32,9 +34,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Start Task 8: build the constrained random theme generator. Keep generated
-themes export-clean, deterministic under seed, and wired into the existing lab
-draft model.
+Start Task 9: expand end-to-end, accessibility, and design quality coverage.
+Focus on catalog/detail/compare/lab coverage depth, Storybook a11y checks, and
+documented design QA findings/fixes.
 
 ## Resumability Protocol
 
@@ -90,6 +92,15 @@ Latest app verification:
 - `pnpm test:e2e` passed for 5 Playwright app flows, including the lab flow.
 - `npx impeccable detect src/lab src/app src/styles/global.css` passed with no findings.
 - `git diff --check` passed after Task 7.
+- `pnpm test:unit -- src/lab/randomTheme.test.ts src/lab/draftTheme.test.ts` first failed on missing generator/generated-draft APIs, then passed after Task 8 implementation.
+- `pnpm test:unit -- src/lab/LabPage.test.tsx` first failed on missing generator controls, then passed after wiring seed generation and group rerolls.
+- `pnpm themes:generate -- --seed atlas --mode dark` passed and printed `generated-atlas-dark` JSON.
+- `pnpm test:e2e -- lab.spec.ts` passed after adding generator coverage to the lab workflow.
+- `pnpm check` passed for Task 8: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `pnpm test:stories` passed for 3 Storybook test files and 10 stories after Task 8.
+- `pnpm test:e2e` passed for 5 Playwright app flows after Task 8.
+- `npx impeccable detect src/lab scripts/themes-generate.mjs src/styles/global.css` passed with no findings.
+- `git diff --check` passed after Task 8 code changes.
 
 ## Blockers
 

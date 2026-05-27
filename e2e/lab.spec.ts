@@ -27,6 +27,15 @@ test("imports, edits, previews, and exports a lab draft", async ({ page }) => {
     /--preview-ui-accent: #123456/,
   );
 
+  await page.getByLabel("Generator seed").fill("atlas");
+  await page.getByRole("button", { name: "Generate dark" }).click();
+  await expect(page.getByRole("complementary", { name: /lab controls/i })).toContainText(
+    "Generated Atlas Dark",
+  );
+  await expect(page.getByRole("group", { name: /generated atlas dark preview/i })).toBeVisible();
+  await page.getByRole("button", { name: "Reroll accent" }).click();
+  await expect(page.getByText("Contrast checks clear")).toBeVisible();
+
   await page.getByLabel("Import theme JSON").fill("{ nope");
   await page.getByRole("button", { name: "Import JSON" }).click();
   await expect(page.getByText(/invalid json/i)).toBeVisible();

@@ -54,6 +54,17 @@ export function createDraftFromImportedTheme(theme: SupersetTheme): ThemeDraft {
   };
 }
 
+export function createDraftFromGeneratedTheme(theme: SupersetTheme): ThemeDraft {
+  return {
+    dirty: false,
+    source: {
+      originalTheme: cloneTheme(theme),
+      type: "generated",
+    },
+    theme: cloneTheme(theme),
+  };
+}
+
 export function resetDraftToSource(draft: ThemeDraft): ThemeDraft {
   return {
     ...draft,

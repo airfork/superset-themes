@@ -79,6 +79,41 @@ describe("LabPage", () => {
     expect(screen.getByText(/ui foreground on background/i)).toBeInTheDocument();
   });
 
+  it("creates a generated draft from a seed", async () => {
+    const user = userEvent.setup();
+    render(<LabPage initialDraft={createDraftFromCatalogEntry(auroraLightEntry)} />);
+
+    await user.clear(screen.getByRole("textbox", { name: /generator seed/i }));
+    await user.type(screen.getByRole("textbox", { name: /generator seed/i }), "atlas");
+    await user.click(screen.getByRole("button", { name: /generate dark/i }));
+
+    expect(
+      within(screen.getByRole("complementary", { name: /lab controls/i })).getByRole("heading", {
+        name: /generated atlas dark/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("complementary", { name: /lab controls/i })).getByText("generated"),
+    ).toBeInTheDocument();
+  });
+
+  it("rerolls one generated token group while preserving locked groups", async () => {
+    const user = userEvent.setup();
+    render(<LabPage initialDraft={createDraftFromCatalogEntry(auroraLightEntry)} />);
+
+    await user.clear(screen.getByRole("textbox", { name: /generator seed/i }));
+    await user.type(screen.getByRole("textbox", { name: /generator seed/i }), "reroll");
+    await user.click(screen.getByRole("button", { name: /reroll accent/i }));
+
+    expect(screen.getByLabelText("UI accent")).not.toHaveValue(auroraLightEntry.theme.ui.accent);
+    expect(screen.getByLabelText("UI background")).toHaveValue(
+      auroraLightEntry.theme.ui.background,
+    );
+    expect(screen.getByLabelText("Terminal background")).toHaveValue(
+      auroraLightEntry.theme.terminal.background,
+    );
+  });
+
   it("imports valid JSON and reports invalid JSON", async () => {
     const user = userEvent.setup();
     render(<LabPage initialDraft={createDraftFromCatalogEntry(auroraLightEntry)} />);
