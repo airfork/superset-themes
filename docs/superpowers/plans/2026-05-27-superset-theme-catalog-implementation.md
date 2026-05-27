@@ -240,27 +240,27 @@ git commit -m "chore: scaffold static React app"
 - Create: `scripts/themes-validate.mjs`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write schema tests**
+- [x] **Step 1: Write schema tests**
 
 Test that fixture themes parse, exported themes exclude metadata, and invalid theme types fail.
 
-- [ ] **Step 2: Implement schema and types**
+- [x] **Step 2: Implement schema and types**
 
 Define `SupersetTheme`, `ThemeType`, `UiTokens`, `TerminalTokens`, and `CatalogThemeMeta`. Use `zod` for runtime validation.
 
-- [ ] **Step 3: Add fixture themes**
+- [x] **Step 3: Add fixture themes**
 
 Add one light/dark pair and one extra dark fixture. Keep palettes deliberately distinct enough to test filters and preview surfaces.
 
-- [ ] **Step 4: Implement metadata catalog**
+- [x] **Step 4: Implement metadata catalog**
 
 Create `catalogThemes` by pairing JSON themes with metadata. Include `pairGroup`, `source`, `family`, `variant`, `styleTags`, `accentHue`, `warmth`, `contrastTier`, `terminalPaletteQuality`, `license`, `upstreamUrl`, and `portStatus`.
 
-- [ ] **Step 5: Add validation script**
+- [x] **Step 5: Add validation script**
 
 Make `pnpm themes:validate` validate all catalog entries and fail on duplicate IDs, missing pairs, invalid metadata, or invalid theme JSON.
 
-- [ ] **Step 6: Verify and commit**
+- [x] **Step 6: Verify and commit**
 
 Run:
 
