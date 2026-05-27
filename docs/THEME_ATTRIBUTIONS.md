@@ -71,3 +71,14 @@ Adaptations made for this app:
 - License: MIT
 - Adaptation notes: Used the Tokyo Night dark palette and terminal colors; brightened terminal
   foreground/exported preview text where needed for this app's contrast gate.
+
+## Rosé Pine Dawn
+
+- Theme: `rose-pine-dawn`
+- Original theme: Rosé Pine Dawn by the Rosé Pine organization
+- Source: <https://github.com/rose-pine/rose-pine-theme>
+- License: MIT
+- Adaptation notes: Used the published Rosé Pine Dawn palette (base, surface, text, love, gold,
+  rose, pine, foam, iris, subtle, highlight). Darkened the destructive/red token to a deeper
+  ruby (#9c2c4b) to satisfy the local AA contrast gate against the cream background; the rest
+  of the chrome retains the upstream palette.

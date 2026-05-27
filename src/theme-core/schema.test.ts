@@ -36,6 +36,14 @@ describe("theme schema", () => {
     }
   });
 
+  it("includes Rose Pine Dawn as a ported light theme", () => {
+    const rose = catalogThemes.find((entry) => entry.theme.id === "rose-pine-dawn");
+    expect(rose).toBeDefined();
+    expect(rose?.theme.type).toBe("light");
+    expect(rose?.meta.source).toBe("upstream-port");
+    expect(rose?.meta.family).toBe("Rosé Pine");
+  });
+
   it("includes an expanded upstream port batch with paired Solarized variants", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
@@ -44,6 +52,7 @@ describe("theme schema", () => {
       "dracula",
       "gruvbox-dark",
       "nord",
+      "rose-pine-dawn",
       "solarized-dark",
       "solarized-light",
       "tokyo-night",
@@ -61,6 +70,7 @@ describe("theme schema", () => {
       dracula: "MIT",
       "gruvbox-dark": "MIT/X11",
       nord: "MIT",
+      "rose-pine-dawn": "MIT",
       "solarized-dark": "MIT",
       "solarized-light": "MIT",
       "tokyo-night": "MIT",

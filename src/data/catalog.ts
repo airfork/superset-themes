@@ -6,6 +6,7 @@ import draculaTheme from "./themes/dracula.json" with { type: "json" };
 import graphiteDarkTheme from "./themes/graphite-dark.json" with { type: "json" };
 import gruvboxDarkTheme from "./themes/gruvbox-dark.json" with { type: "json" };
 import nordTheme from "./themes/nord.json" with { type: "json" };
+import rosePineDawnTheme from "./themes/rose-pine-dawn.json" with { type: "json" };
 import solarizedDarkTheme from "./themes/solarized-dark.json" with { type: "json" };
 import solarizedLightTheme from "./themes/solarized-light.json" with { type: "json" };
 import tokyoNightTheme from "./themes/tokyo-night.json" with { type: "json" };
@@ -165,6 +166,21 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Tokyo Night VS Code palette.",
   },
+  {
+    themeId: "rose-pine-dawn",
+    source: "upstream-port",
+    family: "Rosé Pine",
+    variant: "light",
+    styleTags: ["soft", "warm", "designer-darling"],
+    accentHue: 343,
+    warmth: "warm",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/rose-pine/rose-pine-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Rosé Pine Dawn palette.",
+  },
 ] as const satisfies CatalogThemeMeta[];
 
 const rawCatalogThemes = [
@@ -207,6 +223,10 @@ const rawCatalogThemes = [
   {
     theme: tokyoNightTheme as SupersetTheme,
     meta: catalogThemeMetadata[9],
+  },
+  {
+    theme: rosePineDawnTheme as SupersetTheme,
+    meta: catalogThemeMetadata[10],
   },
 ] as const satisfies CatalogThemeEntry[];
 
