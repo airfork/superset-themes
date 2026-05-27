@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const FEATURED_DEFAULT_ID = "tokyo-night";
+const MARKER_REGEX = /<style id="critical-theme">[\s\S]*?<\/style>/;
 
 function readDefaultTheme(root) {
   const path = resolve(root, `src/data/themes/${FEATURED_DEFAULT_ID}.json`);
@@ -23,6 +24,17 @@ function buildVarDeclarations(theme) {
   return decls.join("\n  ");
 }
 
+function buildCriticalStyleTag(theme) {
+  const decls = buildVarDeclarations(theme);
+  const css = `:root[data-theme-id="${theme.id}"],
+:root:not([data-theme-id]) {
+  ${decls}
+  color-scheme: ${theme.type};
+}
+html { background: ${theme.ui.background}; color: ${theme.ui.foreground}; }`;
+  return `<style id="critical-theme">${css}</style>`;
+}
+
 export function criticalThemePlugin() {
   let root = process.cwd();
   return {
@@ -30,23 +42,13 @@ export function criticalThemePlugin() {
     configResolved(config) {
       root = config.root;
     },
-    transformIndexHtml() {
+    transformIndexHtml(html) {
       const theme = readDefaultTheme(root);
-      const decls = buildVarDeclarations(theme);
-      const css = `:root[data-theme-id="${theme.id}"],
-:root:not([data-theme-id]) {
-  ${decls}
-  color-scheme: ${theme.type};
-}
-html { background: ${theme.ui.background}; color: ${theme.ui.foreground}; }`;
-      return [
-        {
-          tag: "style",
-          attrs: { id: "critical-theme" },
-          children: css,
-          injectTo: "head",
-        },
-      ];
+      const tag = buildCriticalStyleTag(theme);
+      if (MARKER_REGEX.test(html)) {
+        return html.replace(MARKER_REGEX, tag);
+      }
+      return html.replace(/<\/head>/, `${tag}\n  </head>`);
     },
   };
 }

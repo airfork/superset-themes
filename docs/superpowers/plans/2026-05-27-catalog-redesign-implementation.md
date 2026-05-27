@@ -61,7 +61,7 @@ Specific tasks invoke these skills via the `Skill` tool. Do not skip them — th
 
 Reference palette: https://github.com/rose-pine/rose-pine-theme (`dawn` variant, MIT license).
 
-- [ ] **Step 1: Write a failing schema test for the new theme**
+- [x] **Step 1: Write a failing schema test for the new theme**
 
 Add to `src/theme-core/schema.test.ts` (or a new sibling test) a case asserting the file parses cleanly and the variant is `light`. Run it first to confirm it fails because the file does not exist:
 
@@ -71,13 +71,13 @@ pnpm test src/theme-core/schema.test.ts
 
 Expected: FAIL with a missing-import or schema error.
 
-- [ ] **Step 2: Create the theme JSON**
+- [x] **Step 2: Create the theme JSON**
 
 Map Rose Pine Dawn's documented palette to `src/theme-core/schema.ts`'s `supersetThemeSchema`. Use `version: 1`, `id: "rose-pine-dawn"`, `type: "light"`, `author: "Rosé Pine"`, and a one-line `description` mentioning warm rose foreground and soft cream surfaces.
 
 Critical: the foreground/background pair must clear WCAG AA (≥4.5:1). If Rose Pine Dawn's natural `text` is too light against `base`, swap to `subtle` or darken slightly — the contrast gate is non-negotiable per the design doc.
 
-- [ ] **Step 3: Add metadata entry**
+- [x] **Step 3: Add metadata entry**
 
 Append to `catalogThemeMetadata` in `src/data/catalog.ts`:
 
@@ -101,7 +101,7 @@ Append to `catalogThemeMetadata` in `src/data/catalog.ts`:
 
 Append the entry to `rawCatalogThemes` with the imported JSON.
 
-- [ ] **Step 4: Run validation + contrast scripts**
+- [x] **Step 4: Run validation + contrast scripts**
 
 ```bash
 pnpm themes:validate
@@ -110,11 +110,11 @@ pnpm themes:check-contrast
 
 Expected: both pass. If contrast fails, adjust foreground / muted in Step 2 and re-run.
 
-- [ ] **Step 5: Update attributions**
+- [x] **Step 5: Update attributions**
 
 Add a Rosé Pine block to `docs/THEME_ATTRIBUTIONS.md` mirroring existing entry style (name, upstream URL, license, port notes).
 
-- [ ] **Step 6: Run schema test + commit**
+- [x] **Step 6: Run schema test + commit**
 
 ```bash
 pnpm test src/theme-core/schema.test.ts
@@ -134,12 +134,12 @@ Reference palette: https://github.com/atom/atom/tree/master/packages/one-dark-ui
 Repeat the structure of Task 1 with the following deltas:
 - `id: "one-dark"`, `type: "dark"`, `family: "One Dark"`, `variant: "dark"`, `accentHue: 207`, `warmth: "cool"`, `styleTags: ["classic", "balanced", "atom-lineage"]`, `upstreamUrl: "https://github.com/atom/atom"`.
 
-- [ ] **Step 1: Failing schema test**
-- [ ] **Step 2: Create `src/data/themes/one-dark.json`** with `#282c34` background, `#abb2bf` foreground, accent `#61afef`, primary `#61afef`, selection `#3e4451`. Cross-check contrast pairs before saving.
-- [ ] **Step 3: Add metadata entry + raw entry**
-- [ ] **Step 4: `pnpm themes:validate && pnpm themes:check-contrast`**
-- [ ] **Step 5: Update `docs/THEME_ATTRIBUTIONS.md`**
-- [ ] **Step 6: Commit `feat: add One Dark theme port`**
+- [x] **Step 1: Failing schema test**
+- [x] **Step 2: Create `src/data/themes/one-dark.json`** with `#282c34` background, `#abb2bf` foreground, accent `#61afef`, primary `#61afef`, selection `#3e4451`. Cross-check contrast pairs before saving.
+- [x] **Step 3: Add metadata entry + raw entry**
+- [x] **Step 4: `pnpm themes:validate && pnpm themes:check-contrast`**
+- [x] **Step 5: Update `docs/THEME_ATTRIBUTIONS.md`**
+- [x] **Step 6: Commit `feat: add One Dark theme port`**
 
 ## Task 3: Add `featured` slot metadata
 
@@ -153,7 +153,7 @@ Repeat the structure of Task 1 with the following deltas:
 
 The Featured tier is 5 hand-picked themes shown in a deliberate order. Encode it in metadata, not in component-level constants, so Storybook + tests can read it without importing UI.
 
-- [ ] **Step 1: Failing test asserting featured order**
+- [x] **Step 1: Failing test asserting featured order**
 
 Create `src/data/featured.test.ts`:
 
@@ -190,7 +190,7 @@ pnpm test src/data/featured.test.ts
 
 Expected: FAIL (module does not exist).
 
-- [ ] **Step 2: Extend `catalogThemeMetaSchema`**
+- [x] **Step 2: Extend `catalogThemeMetaSchema`**
 
 Add to `catalogThemeMetaSchema` in `src/theme-core/schema.ts`:
 
@@ -204,13 +204,13 @@ Run `pnpm test src/theme-core` — every existing fixture will fail because `fea
 
 Pick (b) — explicit nullable is clearer than absent-vs-set in a catalog this small.
 
-- [ ] **Step 3: Add `featuredRank` to all 12 metadata entries**
+- [x] **Step 3: Add `featuredRank` to all 12 metadata entries**
 
 In `src/data/catalog.ts`, set:
 - `tokyo-night: 1`, `catppuccin-mocha: 2`, `solarized-light: 3`, `rose-pine-dawn: 4`, `one-dark: 5`.
 - All others: `featuredRank: null`.
 
-- [ ] **Step 4: Create `src/data/featured.ts`**
+- [x] **Step 4: Create `src/data/featured.ts`**
 
 ```ts
 import { catalogThemes } from "./catalog";
@@ -237,7 +237,7 @@ export function getDefaultFocusedTheme(): CatalogThemeEntry {
 }
 ```
 
-- [ ] **Step 5: Run unit + validation suites**
+- [x] **Step 5: Run unit + validation suites**
 
 ```bash
 pnpm test
@@ -246,7 +246,7 @@ pnpm themes:validate
 
 Expected: all pass.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/theme-core/schema.ts src/data/catalog.ts src/data/featured.ts src/data/featured.test.ts
@@ -277,7 +277,7 @@ Update `docs/STATUS.md` with Phase 1 complete, all 12 themes valid, featured sla
 
 The design says: "No separation between site chrome and preview chrome." Chrome reads preview tokens directly. There is one namespace.
 
-- [ ] **Step 1: Survey usages**
+- [x] **Step 1: Survey usages**
 
 ```bash
 rg --vimgrep '--app-' src/styles src/ui src/catalog src/compare src/lab src/preview
@@ -300,7 +300,7 @@ Note every consumer. Map each to its `--preview-*` equivalent:
 | `--app-radius`       | inline `8px` (single-value, no benefit as a token) |
 | `--app-font`         | move to a hardcoded `:root` rule |
 
-- [ ] **Step 2: Empty `tokens.css`**
+- [x] **Step 2: Empty `tokens.css`**
 
 Replace `src/styles/tokens.css` with a stub that only sets the chrome font, color-scheme, and a transition timing variable:
 
@@ -328,11 +328,11 @@ Replace `src/styles/tokens.css` with a stub that only sets the chrome font, colo
 }
 ```
 
-- [ ] **Step 3: Rewrite `global.css` chrome rules**
+- [x] **Step 3: Rewrite `global.css` chrome rules**
 
 Replace all `--app-bg` / `--app-surface` / `--app-text` / etc. usages with the mapped `--preview-*` equivalents. Most of the old chrome CSS will be deleted in Phase 3 when the new shell lands, so for this task only do the minimum needed to keep the app rendering. Leave the existing per-component class names in place; they will be removed in Phase 10 cleanup.
 
-- [ ] **Step 4: Verify the app still renders**
+- [x] **Step 4: Verify the app still renders**
 
 ```bash
 pnpm dev
@@ -346,7 +346,7 @@ Run `pnpm check` to confirm nothing typechecks against `--app-*`:
 pnpm check
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/styles/
@@ -362,7 +362,7 @@ git commit -m "refactor: collapse chrome tokens into preview namespace"
 - Create: `src/theme/useFocusedTheme.ts`
 - Modify: `src/main.tsx`
 
-- [ ] **Step 1: Failing test for `applyTheme`**
+- [x] **Step 1: Failing test for `applyTheme`**
 
 `src/theme/applyTheme.test.ts`:
 
@@ -400,7 +400,7 @@ pnpm test src/theme/applyTheme.test.ts
 
 Expected: FAIL (module missing).
 
-- [ ] **Step 2: Implement `applyTheme.ts`**
+- [x] **Step 2: Implement `applyTheme.ts`**
 
 ```ts
 import { getThemeCssVars } from "../preview/themeCssVars";
@@ -418,7 +418,7 @@ export function applyTheme(theme: SupersetTheme, root: HTMLElement = document.do
 
 Run test — expect PASS.
 
-- [ ] **Step 3: Failing test for the React provider**
+- [x] **Step 3: Failing test for the React provider**
 
 `src/theme/FocusedThemeProvider.test.tsx`:
 
@@ -460,7 +460,7 @@ describe("FocusedThemeProvider", () => {
 });
 ```
 
-- [ ] **Step 4: Implement `FocusedThemeProvider` + hook**
+- [x] **Step 4: Implement `FocusedThemeProvider` + hook**
 
 ```tsx
 // FocusedThemeProvider.tsx
@@ -521,11 +521,11 @@ export function useFocusedTheme() {
 
 Run `pnpm test src/theme/` — expect PASS.
 
-- [ ] **Step 5: Wire provider in `src/main.tsx`**
+- [x] **Step 5: Wire provider in `src/main.tsx`**
 
 Wrap `<App />` in `<FocusedThemeProvider />`. The router will later set the initial theme from URL search params; for now the default is fine.
 
-- [ ] **Step 6: Run check + commit**
+- [x] **Step 6: Run check + commit**
 
 ```bash
 pnpm check
@@ -542,7 +542,7 @@ git commit -m "feat: add applyTheme provider for whole-site theme match"
 
 The plugin reads the default Featured theme JSON at build time, computes the CSS var declarations, and injects an inline `<style>` block before `</head>` so the chrome paints at the right color before any JS runs.
 
-- [ ] **Step 1: Add a marker to `index.html`**
+- [x] **Step 1: Add a marker to `index.html`**
 
 Inside `<head>`:
 
@@ -552,7 +552,7 @@ Inside `<head>`:
 
 For dev (no plugin run), the `<style>` is empty; the `applyTheme` effect in `FocusedThemeProvider` paints on mount.
 
-- [ ] **Step 2: Implement the plugin**
+- [x] **Step 2: Implement the plugin**
 
 `scripts/vite-plugin-critical-theme.mjs`:
 
@@ -606,7 +606,7 @@ export function criticalThemePlugin() {
 }
 ```
 
-- [ ] **Step 3: Register plugin in `vite.config.ts`**
+- [x] **Step 3: Register plugin in `vite.config.ts`**
 
 ```ts
 import { defineConfig } from "vite";
@@ -618,7 +618,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 4: Smoke test the build output**
+- [x] **Step 4: Smoke test the build output**
 
 ```bash
 pnpm build
@@ -627,7 +627,7 @@ grep -c 'preview-ui-background' dist/index.html
 
 Expected: at least 1 occurrence (the inlined critical CSS).
 
-- [ ] **Step 5: Playwright spec for no-flash first paint**
+- [x] **Step 5: Playwright spec for no-flash first paint**
 
 Add `e2e/first-paint.spec.ts`:
 
@@ -650,7 +650,7 @@ pnpm test:e2e first-paint
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add scripts/vite-plugin-critical-theme.mjs vite.config.ts index.html e2e/first-paint.spec.ts

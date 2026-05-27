@@ -60,18 +60,52 @@ Status: Complete.
   entry. `src/data/featured.ts` exposes `FEATURED_IDS`, `getFeaturedThemes`, and
   `getDefaultFocusedTheme` (default = Tokyo Night).
 
-Verification run for Phase 1:
+Phase 1 verification:
 
 - `rtk pnpm check` passed (Biome, TypeScript, Vitest 17 files / 69 tests, Vite build).
 - `rtk pnpm themes:validate` validated 12 catalog themes from 12 JSON files.
 - `rtk pnpm themes:check-contrast` passed 7 pairs × 12 themes (zero warnings).
 
+## Phase 2 — Theme-match foundation
+
+Status: In progress (Tasks 4–6 complete; Task 7 + checkpoint review pending).
+
+- Task 4 committed (`refactor: collapse chrome tokens into preview namespace`).
+  `src/styles/tokens.css` reduced to chrome fonts (`--app-font-chrome/editor/terminal`),
+  `--app-transition` (zeroed under `prefers-reduced-motion`), and `color-scheme` data
+  attribute rules. All `--app-bg / --app-surface / --app-text / --app-accent / --app-focus`
+  call sites in `global.css` rewritten to `--preview-*` equivalents. `--app-shadow` inlined
+  as `color-mix(...)`; `--app-radius` inlined as `8px`.
+- Task 5 committed (`feat: add applyTheme provider for whole-site theme match`).
+  `src/theme/applyTheme.ts` writes `--preview-*` vars and `data-theme-id` / `data-theme-type`
+  to `:root` (or a custom element for scoped compare slots). `FocusedThemeProvider` +
+  `useFocusedTheme` provide React context; falls back to default focused theme on unknown id.
+  Wired into `src/main.tsx`.
+- Task 6 committed (`feat: inline critical CSS for instant first-paint theme`).
+  `scripts/vite-plugin-critical-theme.mjs` reads `tokyo-night.json` at build/dev time and
+  replaces the `<style id="critical-theme">` marker in `index.html` with the inlined Tokyo
+  Night `--preview-*` vars + `html { background, color }` declaration. Companion `.d.mts`
+  exports the `Plugin` type so `vite.config.ts` typechecks cleanly.
+- Post-review fix: plugin originally injected a second `<style id="critical-theme">` beside
+  the marker in `dist/index.html`. Switched to a `replace(MARKER_REGEX, tag)` flow so the
+  marker is replaced in place. Verified `dist/index.html` now contains exactly one
+  `id="critical-theme"` tag.
+
+Phase 2 (Tasks 4–6) verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 19 files / 73 tests, Vite build).
+- `rtk pnpm test:e2e first-paint` passed (`first-paint.spec.ts` asserts the computed root
+  background is `rgb(26, 27, 38)` = Tokyo Night).
+- `rtk grep -c 'id="critical-theme"' dist/index.html` returns `1`.
+
 ## Next Step
 
-Phase 2 — Theme-match foundation. Begin Task 4 (collapse `--app-*` chrome tokens into the
-`--preview-*` namespace) followed by Tasks 5–7 (applyTheme provider, critical-CSS Vite plugin,
-180ms transitions). The Phase 2 checkpoint requires invoking the `vercel-react-best-practices`
-skill on `src/theme/`.
+Phase 2 — Task 7: add global 180ms color transitions on `:root` + descendants, with a
+reduced-motion override (the `--app-transition` var already zeroes under
+`prefers-reduced-motion: reduce` thanks to Task 4). Then run the Phase 2 checkpoint:
+`rtk pnpm check`, `rtk pnpm test:e2e`, and invoke the `vercel-react-best-practices` skill
+on `src/theme/` (focus on `FocusedThemeProvider` render stability — context memoization
+and `applyTheme` effect dependency).
 
 ## Resumability Protocol
 
