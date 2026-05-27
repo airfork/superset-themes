@@ -2,6 +2,24 @@
   box-sizing: border-box;
 }
 
+:root {
+  transition:
+    background-color var(--app-transition),
+    color var(--app-transition);
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--app-transition),
+    border-color var(--app-transition),
+    color var(--app-transition),
+    fill var(--app-transition),
+    stroke var(--app-transition),
+    box-shadow var(--app-transition);
+}
+
 html {
   background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
