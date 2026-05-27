@@ -36,6 +36,32 @@ describe("theme schema", () => {
     }
   });
 
+  it("includes a small upstream port batch with paired Solarized variants", () => {
+    const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
+
+    expect(upstreamPorts.map((entry) => entry.theme.id).sort()).toEqual([
+      "nord",
+      "solarized-dark",
+      "solarized-light",
+    ]);
+    expect(
+      upstreamPorts
+        .filter((entry) => "pairGroup" in entry.meta && entry.meta.pairGroup === "solarized")
+        .map((entry) => entry.theme.type)
+        .sort(),
+    ).toEqual(["dark", "light"]);
+    expect(
+      upstreamPorts.map((entry) => ({
+        license: entry.meta.license,
+        portStatus: entry.meta.portStatus,
+      })),
+    ).toEqual([
+      { license: "MIT", portStatus: "ported" },
+      { license: "MIT", portStatus: "ported" },
+      { license: "MIT", portStatus: "ported" },
+    ]);
+  });
+
   it("fails catalog validation for duplicate theme IDs", () => {
     const firstTheme = requireValue(themeFixtures[0]);
     const secondTheme = requireValue(themeFixtures[1]);

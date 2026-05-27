@@ -80,6 +80,9 @@ describe("CatalogPage", () => {
       "Graphite Dark",
       "Aurora Light",
       "Aurora Dark",
+      "Nord",
+      "Solarized Light",
+      "Solarized Dark",
     ]);
   });
 });

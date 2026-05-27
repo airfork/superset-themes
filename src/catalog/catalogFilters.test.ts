@@ -15,14 +15,14 @@ describe("filterCatalogThemes", () => {
         ...DEFAULT_CATALOG_FILTERS,
         type: "light",
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-light"]);
+    ).toEqual(["aurora-light", "solarized-light"]);
 
     expect(
       filterCatalogThemes(catalogThemes, {
         ...DEFAULT_CATALOG_FILTERS,
         type: "dark",
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-dark", "graphite-dark"]);
+    ).toEqual(["aurora-dark", "graphite-dark", "solarized-dark", "nord"]);
   });
 
   it("filters by source, family, pair state, tags, warmth, contrast, and terminal quality", () => {
@@ -48,7 +48,7 @@ describe("filterCatalogThemes", () => {
         ...DEFAULT_CATALOG_FILTERS,
         accentHueRange: { end: 210, start: 140 },
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-light", "aurora-dark"]);
+    ).toEqual(["aurora-light", "aurora-dark", "solarized-light", "solarized-dark", "nord"]);
 
     expect(
       filterCatalogThemes(catalogThemes, {
@@ -61,20 +61,24 @@ describe("filterCatalogThemes", () => {
   it("returns distinct filter options derived from the catalog", () => {
     expect(getCatalogFilterOptions(catalogThemes)).toMatchObject({
       contrastTiers: ["high", "standard"],
-      families: ["Aurora", "Graphite"],
-      sources: ["fixture"],
+      families: ["Aurora", "Graphite", "Nord", "Solarized"],
+      sources: ["fixture", "upstream-port"],
       styleTags: [
+        "arctic",
+        "balanced",
+        "classic",
         "clear",
         "cool",
         "editorial",
         "focused",
         "high-contrast",
+        "low-glare",
         "neutral",
         "terminal-rich",
         "warm-accent",
       ],
       terminalPaletteQualities: ["balanced", "rich"],
-      warmths: ["cool", "neutral"],
+      warmths: ["cool", "neutral", "warm"],
     });
   });
 });
@@ -85,24 +89,36 @@ describe("sortCatalogThemes", () => {
       "aurora-dark",
       "aurora-light",
       "graphite-dark",
+      "nord",
+      "solarized-dark",
+      "solarized-light",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "family").map((entry) => entry.theme.id)).toEqual([
       "aurora-dark",
       "aurora-light",
       "graphite-dark",
+      "nord",
+      "solarized-dark",
+      "solarized-light",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "accentHue").map((entry) => entry.theme.id)).toEqual([
       "graphite-dark",
       "aurora-light",
       "aurora-dark",
+      "nord",
+      "solarized-light",
+      "solarized-dark",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "contrast").map((entry) => entry.theme.id)).toEqual([
       "graphite-dark",
       "aurora-dark",
+      "solarized-dark",
+      "nord",
       "aurora-light",
+      "solarized-light",
     ]);
   });
 });

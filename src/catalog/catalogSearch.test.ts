@@ -7,11 +7,12 @@ describe("searchCatalogThemes", () => {
     expect(searchCatalogThemes(catalogThemes, "aurora").map((entry) => entry.theme.id)).toEqual([
       "aurora-light",
       "aurora-dark",
+      "nord",
     ]);
 
     expect(
       searchCatalogThemes(catalogThemes, "terminal-rich").map((entry) => entry.theme.id),
-    ).toEqual(["aurora-dark"]);
+    ).toEqual(["aurora-dark", "nord"]);
 
     expect(
       searchCatalogThemes(catalogThemes, "neutral graphite surfaces").map(
@@ -29,6 +30,9 @@ describe("searchCatalogThemes", () => {
       "aurora-light",
       "aurora-dark",
       "graphite-dark",
+      "solarized-light",
+      "solarized-dark",
+      "nord",
     ]);
   });
 });

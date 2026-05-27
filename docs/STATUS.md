@@ -7,7 +7,9 @@ The repo contains a completed Task 10 Vite/React/TypeScript static app checkpoin
 light/dark pair comparison, and the first theme lab import/edit/export workflow
 are implemented. The lab also has deterministic constrained random generation.
 Browser, Storybook, accessibility, and design QA coverage has been expanded.
-README, command reference, and agent handoff docs are synced with the current app.
+README, command reference, and agent handoff docs are synced with the current app. The first
+post-Task 10 theme expansion checkpoint adds schema-clean upstream ports for Solarized Light,
+Solarized Dark, and Nord.
 
 Latest completed checkpoint:
 
@@ -31,6 +33,7 @@ Latest completed checkpoint:
 - Task 9 Web Interface Guidelines review fetched the latest Vercel guideline source and fixed actionable issues: added a skip link, gave form controls names/autocomplete/spellcheck where relevant, replaced placeholder `...` with `…`, and added missing checkbox names.
 - Task 9 Impeccable design scan passed on the app/catalog/compare/lab/preview/style surfaces after the QA fixes.
 - Task 10 docs polish updated README with implemented features, stack, setup, verification, theme utilities, and project-doc links. `COMMANDS.md` now includes every `package.json` script, including `build:storybook`. `AGENTS.md` verification guidance now includes Storybook tests.
+- Theme expansion checkpoint 1 added three upstream-port catalog entries from the reference repo: Solarized Light, Solarized Dark, and Nord. Theme JSON remains export-clean; source/license/adaptation notes live in catalog metadata and `docs/THEME_ATTRIBUTIONS.md`. Solarized Light required a terminal foreground adjustment to satisfy the local 4.5 contrast gate.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -41,9 +44,10 @@ Latest completed checkpoint:
 
 ## Next Step
 
-The next recommended work is theme expansion plus follow-up accessibility
-remediation for the simulated preview surfaces so more Storybook stories can
-move from `a11y.test: "todo"` to `a11y.test: "error"`.
+The next recommended work is follow-up accessibility remediation for the simulated preview
+surfaces so more Storybook stories can move from `a11y.test: "todo"` to `a11y.test: "error"`.
+Further theme expansion should continue in small licensed batches, with attribution captured
+outside exported theme JSON.
 
 ## Resumability Protocol
 
@@ -121,6 +125,13 @@ Latest app verification:
 - `pnpm test:e2e` passed for 9 Playwright app flows after Task 10 docs polish.
 - `pnpm build` passed after Task 10 docs polish.
 - `pnpm test:stories` passed for 3 Storybook test files and 10 stories after Task 10 docs polish.
+- `rtk pnpm test:unit -- src/theme-core/schema.test.ts` first failed on the missing upstream-port batch, then passed after adding Solarized Light, Solarized Dark, and Nord plus updated catalog expectations.
+- `rtk pnpm themes:validate` passed: 6 catalog themes from 6 JSON files validated.
+- `rtk pnpm themes:check-contrast` first failed on Solarized Light terminal foreground contrast, then passed after adjusting that required token.
+- `rtk pnpm check` passed after the theme expansion: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `rtk pnpm test:e2e` passed for 9 Playwright app flows after the expanded catalog.
+- `rtk pnpm test:stories` passed for 3 Storybook test files and 10 stories after the expanded catalog.
+- Browser plugin tooling was unavailable in this session; direct Playwright local QA passed against Vite at `http://localhost:5174/`, confirming the `upstream-port` source filter shows 3 cards, desktop/mobile pages have no document-level horizontal overflow, and screenshots were saved under ignored `test-results/`.
 
 ## Blockers
 
