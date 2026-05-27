@@ -22,7 +22,16 @@ describe("filterCatalogThemes", () => {
         ...DEFAULT_CATALOG_FILTERS,
         type: "dark",
       }).map((entry) => entry.theme.id),
-    ).toEqual(["aurora-dark", "graphite-dark", "solarized-dark", "nord"]);
+    ).toEqual([
+      "aurora-dark",
+      "graphite-dark",
+      "solarized-dark",
+      "nord",
+      "catppuccin-mocha",
+      "dracula",
+      "gruvbox-dark",
+      "tokyo-night",
+    ]);
   });
 
   it("filters by source, family, pair state, tags, warmth, contrast, and terminal quality", () => {
@@ -61,7 +70,16 @@ describe("filterCatalogThemes", () => {
   it("returns distinct filter options derived from the catalog", () => {
     expect(getCatalogFilterOptions(catalogThemes)).toMatchObject({
       contrastTiers: ["high", "standard"],
-      families: ["Aurora", "Graphite", "Nord", "Solarized"],
+      families: [
+        "Aurora",
+        "Catppuccin",
+        "Dracula",
+        "Graphite",
+        "Gruvbox",
+        "Nord",
+        "Solarized",
+        "Tokyo Night",
+      ],
       sources: ["fixture", "upstream-port"],
       styleTags: [
         "arctic",
@@ -73,8 +91,12 @@ describe("filterCatalogThemes", () => {
         "focused",
         "high-contrast",
         "low-glare",
+        "neon",
         "neutral",
+        "pastel",
+        "retro",
         "terminal-rich",
+        "warm",
         "warm-accent",
       ],
       terminalPaletteQualities: ["balanced", "rich"],
@@ -88,28 +110,40 @@ describe("sortCatalogThemes", () => {
     expect(sortCatalogThemes(catalogThemes, "name").map((entry) => entry.theme.id)).toEqual([
       "aurora-dark",
       "aurora-light",
+      "catppuccin-mocha",
+      "dracula",
       "graphite-dark",
+      "gruvbox-dark",
       "nord",
       "solarized-dark",
       "solarized-light",
+      "tokyo-night",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "family").map((entry) => entry.theme.id)).toEqual([
       "aurora-dark",
       "aurora-light",
+      "catppuccin-mocha",
+      "dracula",
       "graphite-dark",
+      "gruvbox-dark",
       "nord",
       "solarized-dark",
       "solarized-light",
+      "tokyo-night",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "accentHue").map((entry) => entry.theme.id)).toEqual([
       "graphite-dark",
+      "gruvbox-dark",
       "aurora-light",
       "aurora-dark",
       "nord",
       "solarized-light",
       "solarized-dark",
+      "catppuccin-mocha",
+      "tokyo-night",
+      "dracula",
     ]);
 
     expect(sortCatalogThemes(catalogThemes, "contrast").map((entry) => entry.theme.id)).toEqual([
@@ -117,6 +151,10 @@ describe("sortCatalogThemes", () => {
       "aurora-dark",
       "solarized-dark",
       "nord",
+      "catppuccin-mocha",
+      "dracula",
+      "gruvbox-dark",
+      "tokyo-night",
       "aurora-light",
       "solarized-light",
     ]);

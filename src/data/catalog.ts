@@ -1,10 +1,14 @@
 import type { CatalogThemeEntry, CatalogThemeMeta, SupersetTheme } from "../theme-core/themeTypes";
 import auroraDarkTheme from "./themes/aurora-dark.json" with { type: "json" };
 import auroraLightTheme from "./themes/aurora-light.json" with { type: "json" };
+import catppuccinMochaTheme from "./themes/catppuccin-mocha.json" with { type: "json" };
+import draculaTheme from "./themes/dracula.json" with { type: "json" };
 import graphiteDarkTheme from "./themes/graphite-dark.json" with { type: "json" };
+import gruvboxDarkTheme from "./themes/gruvbox-dark.json" with { type: "json" };
 import nordTheme from "./themes/nord.json" with { type: "json" };
 import solarizedDarkTheme from "./themes/solarized-dark.json" with { type: "json" };
 import solarizedLightTheme from "./themes/solarized-light.json" with { type: "json" };
+import tokyoNightTheme from "./themes/tokyo-night.json" with { type: "json" };
 
 export const catalogThemeMetadata = [
   {
@@ -101,6 +105,66 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Nord port.",
   },
+  {
+    themeId: "catppuccin-mocha",
+    source: "upstream-port",
+    family: "Catppuccin",
+    variant: "dark",
+    styleTags: ["pastel", "low-glare", "terminal-rich"],
+    accentHue: 217,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/catppuccin/catppuccin",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the official Catppuccin Mocha palette.",
+  },
+  {
+    themeId: "dracula",
+    source: "upstream-port",
+    family: "Dracula",
+    variant: "dark",
+    styleTags: ["neon", "classic", "terminal-rich"],
+    accentHue: 265,
+    warmth: "neutral",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/dracula/dracula-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the official Dracula OSS palette.",
+  },
+  {
+    themeId: "gruvbox-dark",
+    source: "upstream-port",
+    family: "Gruvbox",
+    variant: "dark",
+    styleTags: ["warm", "retro", "terminal-rich"],
+    accentHue: 43,
+    warmth: "warm",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT/X11",
+    upstreamUrl: "https://github.com/morhetz/gruvbox",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of Gruvbox Dark with local contrast-gate foregrounds.",
+  },
+  {
+    themeId: "tokyo-night",
+    source: "upstream-port",
+    family: "Tokyo Night",
+    variant: "dark",
+    styleTags: ["neon", "focused", "terminal-rich"],
+    accentHue: 223,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/tokyo-night/tokyo-night-vscode-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Tokyo Night VS Code palette.",
+  },
 ] as const satisfies CatalogThemeMeta[];
 
 const rawCatalogThemes = [
@@ -127,6 +191,22 @@ const rawCatalogThemes = [
   {
     theme: nordTheme as SupersetTheme,
     meta: catalogThemeMetadata[5],
+  },
+  {
+    theme: catppuccinMochaTheme as SupersetTheme,
+    meta: catalogThemeMetadata[6],
+  },
+  {
+    theme: draculaTheme as SupersetTheme,
+    meta: catalogThemeMetadata[7],
+  },
+  {
+    theme: gruvboxDarkTheme as SupersetTheme,
+    meta: catalogThemeMetadata[8],
+  },
+  {
+    theme: tokyoNightTheme as SupersetTheme,
+    meta: catalogThemeMetadata[9],
   },
 ] as const satisfies CatalogThemeEntry[];
 

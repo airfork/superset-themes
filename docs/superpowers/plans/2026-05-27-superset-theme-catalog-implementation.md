@@ -619,6 +619,19 @@ git add .
 git commit -m "docs: update project handoff"
 ```
 
+## Post-Task 10 Theme Expansion Checkpoints
+
+- [x] **Checkpoint 1: Add first upstream-port batch**
+
+Added Solarized Light, Solarized Dark, and Nord as schema-clean upstream ports. Attribution,
+source, license, and adaptation notes stay outside exported theme JSON.
+
+- [x] **Checkpoint 2: Add second upstream-port batch**
+
+Added Catppuccin Mocha, Dracula, Gruvbox Dark, and Tokyo Night as schema-clean dark upstream
+ports. Catalog metadata and `docs/THEME_ATTRIBUTIONS.md` hold attribution and licensing, including
+the Gruvbox MIT/X11 license. Theme JSON remains app-metadata-free.
+
 ## Self-Review
 
 - Spec coverage: covered tooling, catalog, preview tabs, pairing, lab import/clone/generate/export, metadata separation, validation, testing, design QA, docs, commands, and resumability.

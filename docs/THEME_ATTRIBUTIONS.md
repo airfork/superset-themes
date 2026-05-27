@@ -32,3 +32,42 @@ Adaptations made for this app:
 - Source organization: <https://github.com/nordtheme>
 - License: MIT
 - Reference port: Baris Can Sayin
+
+## Catppuccin Mocha
+
+- Theme: `catppuccin-mocha`
+- Original theme: Catppuccin Mocha by the Catppuccin organization
+- Source: <https://github.com/catppuccin/catppuccin>
+- Palette source: <https://github.com/catppuccin/palette>
+- License: MIT
+- Adaptation notes: Kept Mocha palette names and ANSI colors; mapped app chrome to this repo's
+  Superset theme schema.
+
+## Dracula
+
+- Theme: `dracula`
+- Original theme: Dracula by Zeno Rocha / Dracula Theme
+- Source: <https://github.com/dracula/dracula-theme>
+- Palette source: <https://draculatheme.com>
+- License: MIT
+- Adaptation notes: Kept the OSS palette values; used conservative foreground tokens where this
+  app's preview surfaces need explicit action and destructive contrast.
+
+## Gruvbox Dark
+
+- Theme: `gruvbox-dark`
+- Original theme: Gruvbox by Pavel Pertsev
+- Source: <https://github.com/morhetz/gruvbox>
+- License: MIT/X11
+- Catalog license field: MIT/X11
+- Adaptation notes: Used the dark medium palette and terminal colors from the original Vim theme;
+  adjusted only schema mapping and required foreground relationships.
+
+## Tokyo Night
+
+- Theme: `tokyo-night`
+- Original theme: Tokyo Night by Enkia
+- Source: <https://github.com/tokyo-night/tokyo-night-vscode-theme>
+- License: MIT
+- Adaptation notes: Used the Tokyo Night dark palette and terminal colors; brightened terminal
+  foreground/exported preview text where needed for this app's contrast gate.

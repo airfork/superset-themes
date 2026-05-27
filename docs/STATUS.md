@@ -7,9 +7,10 @@ The repo contains a completed Task 10 Vite/React/TypeScript static app checkpoin
 light/dark pair comparison, and the first theme lab import/edit/export workflow
 are implemented. The lab also has deterministic constrained random generation.
 Browser, Storybook, accessibility, and design QA coverage has been expanded.
-README, command reference, and agent handoff docs are synced with the current app. The first
-post-Task 10 theme expansion checkpoint adds schema-clean upstream ports for Solarized Light,
-Solarized Dark, and Nord. Storybook a11y is now enforced globally for the current story suite.
+README, command reference, and agent handoff docs are synced with the current app. Post-Task 10
+theme expansion now brings the catalog to 10 themes total: Aurora Light/Dark, Graphite Dark,
+Solarized Light/Dark, Nord, Catppuccin Mocha, Dracula, Gruvbox Dark, and Tokyo Night. Storybook
+a11y is enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
@@ -35,6 +36,8 @@ Latest completed checkpoint:
 - Task 10 docs polish updated README with implemented features, stack, setup, verification, theme utilities, and project-doc links. `COMMANDS.md` now includes every `package.json` script, including `build:storybook`. `AGENTS.md` verification guidance now includes Storybook tests.
 - Theme expansion checkpoint 1 added three upstream-port catalog entries from the reference repo: Solarized Light, Solarized Dark, and Nord. Theme JSON remains export-clean; source/license/adaptation notes live in catalog metadata and `docs/THEME_ATTRIBUTIONS.md`. Solarized Light required a terminal foreground adjustment to satisfy the local 4.5 contrast gate.
 - Accessibility checkpoint 1 promoted Storybook a11y from global `todo` mode to global `error` mode for the current story suite. Fixes included file-tree ARIA structure, keyboard focus for scrollable preview panes, terminal muted text contrast, search/diff preview contrast, and the catalog filter landmark hierarchy.
+- Browser QA checkpoint confirmed the 6-theme catalog, upstream-port filter, Solarized/Nord detail pages, compare synchronization, lab edit/export behavior, and 390px mobile overflow behavior. The preferred in-app Browser worked for DOM/interaction checks, but Browser screenshot capture timed out, so screenshots were refreshed with direct Playwright under ignored `test-results/browser-qa/`.
+- Theme expansion checkpoint 2 added Catppuccin Mocha, Dracula, Gruvbox Dark, and Tokyo Night. Theme JSON remains export-clean; source/license/adaptation notes live in catalog metadata and `docs/THEME_ATTRIBUTIONS.md`. The expanded catalog renders 10 total themes and 7 upstream-port themes with balanced card dimensions in desktop Browser QA.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -45,9 +48,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-The next recommended work is further theme expansion in small licensed batches, with attribution
-captured outside exported theme JSON. New Storybook stories should remain under global
-`a11y.test: "error"` unless a documented exception is unavoidable.
+The next recommended work is either another small licensed theme batch or targeted Storybook
+examples for the new ports. Keep attribution outside exported theme JSON, and keep new stories
+under global `a11y.test: "error"` unless a documented exception is unavoidable.
 
 ## Resumability Protocol
 
@@ -140,6 +143,30 @@ Latest app verification:
 - `rtk pnpm test:e2e` passed for 9 Playwright app flows after accessibility cleanup.
 - `rtk pnpm test:stories` passed for 3 Storybook test files and 10 stories with global a11y in `error` mode.
 - `rtk pnpm build` passed after accessibility cleanup.
+- Browser QA on the 6-theme checkpoint used the in-app Browser for DOM and interaction checks at
+  desktop and 390px mobile. Browser screenshot capture timed out, so direct Playwright captured
+  screenshots under `test-results/browser-qa/`. The QA pass confirmed 6 catalog themes,
+  `upstream-port` filtering to Solarized Light, Solarized Dark, and Nord, clean detail exports,
+  synchronized Solarized compare tabs, lab seed/edit/export behavior, and no horizontal overflow.
+- `rtk pnpm test:unit -- src/theme-core/schema.test.ts` first failed on the missing second upstream
+  batch, then the focused catalog/schema unit suite passed after adding Catppuccin Mocha, Dracula,
+  Gruvbox Dark, Tokyo Night, and updated catalog expectations.
+- `rtk pnpm themes:validate` passed after theme expansion checkpoint 2: 10 catalog themes from 10
+  JSON files validated.
+- `rtk pnpm themes:check-contrast` passed after theme expansion checkpoint 2: 10 catalog themes
+  checked across 7 contrast pairs each.
+- Browser QA on the expanded 10-theme catalog used the in-app Browser for desktop and 390px mobile
+  DOM checks. It confirmed 10 total catalog themes, 7 upstream-port themes, zero document-level
+  horizontal overflow, no clipped button/filter text, and balanced upstream card dimensions.
+  Direct Playwright screenshots were saved under `test-results/browser-qa/expanded-*.png`.
+- `rtk pnpm format` passed after checkpoint 2 and fixed 1 file.
+- `rtk pnpm check` passed after checkpoint 2: Biome check, TypeScript check, Vitest run, and Vite
+  production build.
+- `rtk pnpm test:e2e` passed after checkpoint 2: 9 Playwright app flows.
+- `rtk pnpm test:stories` passed after checkpoint 2: 3 Storybook test files and 10 stories with
+  global a11y in `error` mode.
+- `rtk pnpm build` passed after checkpoint 2.
+- `rtk git diff --check` passed after checkpoint 2.
 
 ## Blockers
 

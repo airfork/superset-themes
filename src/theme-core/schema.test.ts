@@ -36,13 +36,17 @@ describe("theme schema", () => {
     }
   });
 
-  it("includes a small upstream port batch with paired Solarized variants", () => {
+  it("includes an expanded upstream port batch with paired Solarized variants", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
     expect(upstreamPorts.map((entry) => entry.theme.id).sort()).toEqual([
+      "catppuccin-mocha",
+      "dracula",
+      "gruvbox-dark",
       "nord",
       "solarized-dark",
       "solarized-light",
+      "tokyo-night",
     ]);
     expect(
       upstreamPorts
@@ -51,15 +55,19 @@ describe("theme schema", () => {
         .sort(),
     ).toEqual(["dark", "light"]);
     expect(
-      upstreamPorts.map((entry) => ({
-        license: entry.meta.license,
-        portStatus: entry.meta.portStatus,
-      })),
-    ).toEqual([
-      { license: "MIT", portStatus: "ported" },
-      { license: "MIT", portStatus: "ported" },
-      { license: "MIT", portStatus: "ported" },
-    ]);
+      Object.fromEntries(upstreamPorts.map((entry) => [entry.theme.id, entry.meta.license]).sort()),
+    ).toMatchObject({
+      "catppuccin-mocha": "MIT",
+      dracula: "MIT",
+      "gruvbox-dark": "MIT/X11",
+      nord: "MIT",
+      "solarized-dark": "MIT",
+      "solarized-light": "MIT",
+      "tokyo-night": "MIT",
+    });
+    expect(new Set(upstreamPorts.map((entry) => entry.meta.portStatus))).toEqual(
+      new Set(["ported"]),
+    );
   });
 
   it("fails catalog validation for duplicate theme IDs", () => {

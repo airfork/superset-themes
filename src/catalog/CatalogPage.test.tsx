@@ -78,11 +78,15 @@ describe("CatalogPage", () => {
     const cards = within(resultList).getAllByRole("article");
     expect(cards.map((card) => card.getAttribute("aria-label"))).toEqual([
       "Graphite Dark",
+      "Gruvbox Dark",
       "Aurora Light",
       "Aurora Dark",
       "Nord",
       "Solarized Light",
       "Solarized Dark",
+      "Catppuccin Mocha",
+      "Tokyo Night",
+      "Dracula",
     ]);
   });
 });

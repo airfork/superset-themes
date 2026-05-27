@@ -12,7 +12,14 @@ describe("searchCatalogThemes", () => {
 
     expect(
       searchCatalogThemes(catalogThemes, "terminal-rich").map((entry) => entry.theme.id),
-    ).toEqual(["aurora-dark", "nord"]);
+    ).toEqual([
+      "aurora-dark",
+      "nord",
+      "catppuccin-mocha",
+      "dracula",
+      "gruvbox-dark",
+      "tokyo-night",
+    ]);
 
     expect(
       searchCatalogThemes(catalogThemes, "neutral graphite surfaces").map(
@@ -33,6 +40,10 @@ describe("searchCatalogThemes", () => {
       "solarized-light",
       "solarized-dark",
       "nord",
+      "catppuccin-mocha",
+      "dracula",
+      "gruvbox-dark",
+      "tokyo-night",
     ]);
   });
 });
