@@ -2193,3 +2193,38 @@ kbd {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* Chrome — bottom bar */
+.chrome-bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--preview-ui-card);
+  border-top: 1px solid var(--preview-ui-border);
+  color: var(--preview-ui-muted-foreground);
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chrome-bottombar__facts,
+.chrome-bottombar__hints {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chrome-bottombar__name {
+  color: var(--preview-ui-foreground);
+  font-weight: 600;
+}
+
+.chrome-bottombar__sep {
+  color: color-mix(in srgb, var(--preview-ui-muted-foreground) 60%, transparent);
+}
+
+.chrome-bottombar__hint {
+  font-family: var(--app-font-chrome);
+}
