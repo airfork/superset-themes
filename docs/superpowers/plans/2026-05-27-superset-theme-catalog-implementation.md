@@ -418,23 +418,23 @@ git commit -m "feat: build catalog browsing experience"
 - Modify: `e2e/pairing.spec.ts`
 - Modify: `docs/STATUS.md`
 
-- [ ] **Step 1: Write pairing tests**
+- [x] **Step 1: Write pairing tests**
 
 Cover pinning light themes into the light slot, dark themes into the dark slot, replacing existing pins, rejecting mismatched slot operations with a clear result, clearing slots, and syncing selected preview tab.
 
-- [ ] **Step 2: Implement pairing state helpers**
+- [x] **Step 2: Implement pairing state helpers**
 
 Keep helpers pure. Persist only minimal state: light theme ID, dark theme ID, selected preview tab.
 
-- [ ] **Step 3: Build pair UI**
+- [x] **Step 3: Build pair UI**
 
 Show light and dark slots side by side on desktop and stacked on mobile. Use the same selected preview tab for both slots.
 
-- [ ] **Step 4: Add Playwright pairing flow**
+- [x] **Step 4: Add Playwright pairing flow**
 
 Test pinning a light theme, pinning a dark theme, switching preview tabs, and preserving state through URL or local storage depending on the implementation decision.
 
-- [ ] **Step 5: Verify and commit**
+- [x] **Step 5: Verify and commit**
 
 Run:
 

@@ -10,17 +10,21 @@ import type {
   CatalogThemeTypeFilter,
 } from "../../catalog/catalogFilters";
 import { catalogThemes } from "../../data/catalog";
-import type { CatalogThemeMeta } from "../../theme-core/themeTypes";
+import { PREVIEW_TABS, type PreviewTabId } from "../../preview/PreviewTabs";
+import type { CatalogThemeEntry, CatalogThemeMeta } from "../../theme-core/themeTypes";
 
 export interface CatalogRouteSearch {
   contrast?: CatalogThemeMeta["contrastTier"];
+  dark?: string;
   family?: string;
   hue?: "cool" | "warm";
+  light?: string;
   paired?: CatalogPairFilter;
   q?: string;
   sort?: CatalogSortKey;
   source?: CatalogThemeMeta["source"];
   tags?: string;
+  tab?: PreviewTabId;
   terminal?: CatalogThemeMeta["terminalPaletteQuality"];
   type?: CatalogThemeTypeFilter;
   warmth?: CatalogThemeMeta["warmth"];
@@ -41,6 +45,7 @@ const TERMINAL_VALUES = new Set<CatalogThemeMeta["terminalPaletteQuality"]>([
   "basic",
   "rich",
 ]);
+const PREVIEW_TAB_VALUES = new Set<PreviewTabId>(PREVIEW_TABS.map((tab) => tab.value));
 
 function isKnownValue<TValue extends string>(
   value: unknown,
@@ -84,13 +89,19 @@ function routeValueFromHueRange(range: AccentHueRange | null): CatalogRouteSearc
 export function parseCatalogRouteSearch(search: Record<string, unknown>): CatalogRouteSearch {
   return {
     contrast: isKnownValue(search.contrast, CONTRAST_VALUES) ? search.contrast : undefined,
+    dark: stringParam(search.dark),
     family: stringParam(search.family),
     hue: search.hue === "cool" || search.hue === "warm" ? search.hue : undefined,
+    light: stringParam(search.light),
     paired: isKnownValue(search.paired, PAIR_VALUES) ? search.paired : undefined,
     q: stringParam(search.q),
     sort: isKnownValue(search.sort, SORT_VALUES) ? search.sort : undefined,
     source: isKnownValue(search.source, SOURCE_VALUES) ? search.source : undefined,
     tags: stringParam(search.tags),
+    tab:
+      typeof search.tab === "string" && PREVIEW_TAB_VALUES.has(search.tab as PreviewTabId)
+        ? (search.tab as PreviewTabId)
+        : undefined,
     terminal: isKnownValue(search.terminal, TERMINAL_VALUES) ? search.terminal : undefined,
     type: isKnownValue(search.type, TYPE_VALUES) ? search.type : undefined,
     warmth: isKnownValue(search.warmth, WARMTH_VALUES) ? search.warmth : undefined,
@@ -169,8 +180,40 @@ export function stateToCatalogRouteSearch(state: CatalogPageState): CatalogRoute
   return search;
 }
 
+function compareHrefForEntry(entry: CatalogThemeEntry, search: CatalogRouteSearch): string {
+  const params = new URLSearchParams();
+
+  params.set("tab", search.tab ?? "workspace");
+
+  if (entry.theme.type === "light") {
+    params.set("light", entry.theme.id);
+  } else if (search.light) {
+    params.set("light", search.light);
+  }
+
+  if (entry.theme.type === "dark") {
+    params.set("dark", entry.theme.id);
+  } else if (search.dark) {
+    params.set("dark", search.dark);
+  }
+
+  return `/compare?${params.toString()}`;
+}
+
+function mergePairSearch(
+  nextSearch: CatalogRouteSearch,
+  currentSearch: CatalogRouteSearch,
+): CatalogRouteSearch {
+  return {
+    ...nextSearch,
+    dark: currentSearch.dark,
+    light: currentSearch.light,
+    tab: currentSearch.tab,
+  };
+}
+
 export interface CatalogRouteViewProps {
-  onStateChange: (state: CatalogPageState) => void;
+  onStateChange: (search: CatalogRouteSearch) => void;
   search: CatalogRouteSearch;
 }
 
@@ -179,7 +222,10 @@ export function CatalogRouteView({ onStateChange, search }: CatalogRouteViewProp
     <CatalogPage
       detailHrefForTheme={(themeId) => `/themes/${themeId}`}
       entries={catalogThemes}
-      onStateChange={onStateChange}
+      onStateChange={(nextState) =>
+        onStateChange(mergePairSearch(stateToCatalogRouteSearch(nextState), search))
+      }
+      pinHrefForTheme={(entry) => compareHrefForEntry(entry, search)}
       state={catalogRouteSearchToState(search)}
     />
   );

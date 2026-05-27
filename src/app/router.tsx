@@ -1,9 +1,10 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
+import { CatalogRouteView, parseCatalogRouteSearch } from "./routes/catalogRoute";
 import {
-  CatalogRouteView,
-  parseCatalogRouteSearch,
-  stateToCatalogRouteSearch,
-} from "./routes/catalogRoute";
+  CompareRouteView,
+  parseCompareRouteSearch,
+  stateToCompareRouteSearch,
+} from "./routes/compareRoute";
 import { ThemeRouteView } from "./routes/themeRoute";
 
 function RootLayout() {
@@ -33,10 +34,10 @@ const catalogRoute = createRoute({
 
     return (
       <CatalogRouteView
-        onStateChange={(nextState) => {
+        onStateChange={(nextSearch) => {
           void navigate({
             replace: true,
-            search: stateToCatalogRouteSearch(nextState),
+            search: nextSearch,
           });
         }}
         search={search}
@@ -50,15 +51,60 @@ const catalogRoute = createRoute({
 
 const themeRoute = createRoute({
   component: function ThemeRouteContainer() {
+    const navigate = themeRoute.useNavigate();
     const { themeId } = themeRoute.useParams();
 
-    return <ThemeRouteView themeId={themeId} />;
+    return (
+      <ThemeRouteView
+        onPinDark={(darkThemeId) => {
+          void navigate({
+            search: {
+              dark: darkThemeId,
+              tab: "workspace",
+            },
+            to: "/compare",
+          });
+        }}
+        onPinLight={(lightThemeId) => {
+          void navigate({
+            search: {
+              light: lightThemeId,
+              tab: "workspace",
+            },
+            to: "/compare",
+          });
+        }}
+        themeId={themeId}
+      />
+    );
   },
   getParentRoute: () => rootRoute,
   path: "/themes/$themeId",
 });
 
-const routeTree = rootRoute.addChildren([catalogRoute, themeRoute]);
+const compareRoute = createRoute({
+  component: function CompareRouteContainer() {
+    const navigate = compareRoute.useNavigate();
+    const search = compareRoute.useSearch();
+
+    return (
+      <CompareRouteView
+        onStateChange={(nextState) => {
+          void navigate({
+            replace: true,
+            search: stateToCompareRouteSearch(nextState),
+          });
+        }}
+        search={search}
+      />
+    );
+  },
+  getParentRoute: () => rootRoute,
+  path: "/compare",
+  validateSearch: parseCompareRouteSearch,
+});
+
+const routeTree = rootRoute.addChildren([catalogRoute, themeRoute, compareRoute]);
 
 export const router = createRouter({
   defaultNotFoundComponent: () => (

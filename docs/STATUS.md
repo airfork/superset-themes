@@ -2,9 +2,9 @@
 
 ## Current State
 
-The repo contains a Task 5 Vite/React/TypeScript static app checkpoint on branch
-`feature/theme-catalog-app`. Catalog browsing, filtering, URL-backed search
-params, compact theme cards, and theme detail routes are implemented.
+The repo contains a Task 6 Vite/React/TypeScript static app checkpoint on branch
+`feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
+and light/dark pair comparison are implemented.
 
 Latest completed checkpoint:
 
@@ -17,6 +17,8 @@ Latest completed checkpoint:
 - Task 4 design critique remediation kept the catalog chrome outside theme variables, added agent preset/context lanes, improved mobile containment, replaced fake search/command/form semantics with real controls where practical, and added cursor/search-highlight samples.
 - Task 5 catalog browsing added pure search/filter/sort helpers, dense catalog controls, compact preview cards, theme detail routes, export-clean copy/download actions, Storybook card states, URL-backed catalog search params, and updated Playwright app coverage.
 - Task 5 browser QA attempted the preferred in-app Browser surface, but `iab` was unavailable in this session. Playwright screenshots were used instead for desktop catalog, mobile catalog, desktop detail, and mobile detail visual checks.
+- Task 6 pairing added pure pair state helpers, a `/compare` route with URL-backed `light`, `dark`, and `tab` state, side-by-side pair slots, synchronized preview tabs, catalog pin links, detail pin navigation, and Playwright coverage for pinning both slots.
+- Task 6 visual QA used Playwright screenshots for desktop and mobile compare layouts. The pair slot tabs were adjusted to wrap cleanly instead of clipping labels in narrow side-by-side slots.
 - Design spec committed in `8b05d03`.
 - Implementation planning and handoff docs drafted after that checkpoint.
 - Private GitHub repo created at `git@github.com:airfork/superset-themes.git`.
@@ -27,9 +29,9 @@ Latest completed checkpoint:
 
 ## Next Step
 
-Start Task 6: build light/dark pair comparison. Reuse the Task 5 catalog route
-state patterns and the Task 4 preview tabs; do not introduce a second preview
-implementation for side-by-side comparison.
+Start Task 7: build the lab import, clone, edit, and export workflow. Reuse the
+Task 5 route/search patterns, Task 6 pairing state conventions where useful, and
+Task 4 preview tabs for draft previews.
 
 ## Resumability Protocol
 
@@ -68,6 +70,14 @@ Latest app verification:
 - `pnpm test:e2e` passed for 3 Playwright app flows: catalog load, shareable filter params, and theme detail route.
 - `pnpm check` passed for Task 5: Biome check, TypeScript check, Vitest run, and Vite production build.
 - `npx impeccable detect src/catalog src/app src/styles/global.css` passed with no findings.
+- `pnpm test:unit -- src/compare/pairing.test.ts` first failed on missing Task 6 pairing module, then passed after pure helper implementation.
+- `pnpm test:unit -- src/compare/PairCompare.test.tsx` first failed on missing compare component, then passed after pair slot UI implementation.
+- `pnpm test:unit -- src/app/App.test.tsx` passed after adding `/compare` route coverage and detail pin navigation coverage.
+- `pnpm test:e2e -- pairing.spec.ts` first caught a URL parameter order mismatch in the test expectation, then passed after correcting the expectation.
+- `pnpm test:e2e` passed for 4 Playwright app flows, including the pairing pin and synchronized tab flow.
+- `pnpm test:stories` passed for 3 Storybook test files and 10 stories after Task 6.
+- `pnpm check` passed for Task 6: Biome check, TypeScript check, Vitest run, and Vite production build.
+- `npx impeccable detect src/compare src/catalog src/app src/styles/global.css` passed with no findings.
 
 ## Blockers
 

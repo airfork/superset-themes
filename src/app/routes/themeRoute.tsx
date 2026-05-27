@@ -2,10 +2,12 @@ import { ThemeDetail } from "../../catalog/ThemeDetail";
 import { getCatalogThemeById } from "../../data/fixtures";
 
 export interface ThemeRouteViewProps {
+  onPinDark?: (themeId: string) => void;
+  onPinLight?: (themeId: string) => void;
   themeId: string;
 }
 
-export function ThemeRouteView({ themeId }: ThemeRouteViewProps) {
+export function ThemeRouteView({ onPinDark, onPinLight, themeId }: ThemeRouteViewProps) {
   const entry = getCatalogThemeById(themeId);
 
   if (!entry) {
@@ -20,5 +22,5 @@ export function ThemeRouteView({ themeId }: ThemeRouteViewProps) {
     );
   }
 
-  return <ThemeDetail backHref="/" entry={entry} />;
+  return <ThemeDetail backHref="/" entry={entry} onPinDark={onPinDark} onPinLight={onPinLight} />;
 }

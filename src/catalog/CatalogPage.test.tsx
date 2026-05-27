@@ -7,13 +7,22 @@ import { CatalogPage } from "./CatalogPage";
 
 describe("CatalogPage", () => {
   it("renders compact cards for the fixture catalog", () => {
-    render(<CatalogPage entries={catalogThemes} />);
+    render(
+      <CatalogPage
+        entries={catalogThemes}
+        pinHrefForTheme={(entry) => `/compare?${entry.theme.type}=${entry.theme.id}`}
+      />,
+    );
 
     expect(screen.getByRole("region", { name: /theme catalog/i })).toBeInTheDocument();
     expect(screen.getByRole("searchbox", { name: /search themes/i })).toBeInTheDocument();
     expect(screen.getByRole("article", { name: /aurora light/i })).toBeInTheDocument();
     expect(screen.getByRole("article", { name: /aurora dark/i })).toBeInTheDocument();
     expect(screen.getByRole("article", { name: /graphite dark/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /pin light aurora light/i })).toHaveAttribute(
+      "href",
+      "/compare?light=aurora-light",
+    );
   });
 
   it("filters by light and dark theme type", async () => {

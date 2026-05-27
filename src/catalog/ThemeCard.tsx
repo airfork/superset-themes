@@ -1,16 +1,19 @@
-import { Eye } from "lucide-react";
+import { Eye, Moon, Sun } from "lucide-react";
 import { PreviewFrame } from "../preview/PreviewFrame";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 export interface ThemeCardProps {
   detailHref?: string;
   entry: CatalogThemeEntry;
+  pinHref?: string;
 }
 
 const TERMINAL_SWATCHES = ["red", "yellow", "green", "cyan", "blue", "magenta"] as const;
 
-export function ThemeCard({ detailHref, entry }: ThemeCardProps) {
+export function ThemeCard({ detailHref, entry, pinHref }: ThemeCardProps) {
   const { meta, theme } = entry;
+  const PinIcon = theme.type === "light" ? Sun : Moon;
+  const pinLabel = theme.type === "light" ? "Pin light" : "Pin dark";
 
   return (
     <article aria-label={theme.name} className="theme-card">
@@ -71,10 +74,22 @@ export function ThemeCard({ detailHref, entry }: ThemeCardProps) {
             <dd>{meta.terminalPaletteQuality}</dd>
           </div>
         </dl>
-        <a className="theme-card__detail-link" href={detailHref ?? `/themes/${theme.id}`}>
-          <Eye aria-hidden="true" />
-          <span>View details</span>
-        </a>
+        <div className="theme-card__actions">
+          {pinHref ? (
+            <a
+              aria-label={`${pinLabel} ${theme.name}`}
+              className="theme-card__detail-link"
+              href={pinHref}
+            >
+              <PinIcon aria-hidden="true" />
+              <span>{pinLabel}</span>
+            </a>
+          ) : null}
+          <a className="theme-card__detail-link" href={detailHref ?? `/themes/${theme.id}`}>
+            <Eye aria-hidden="true" />
+            <span>View details</span>
+          </a>
+        </div>
       </div>
     </article>
   );

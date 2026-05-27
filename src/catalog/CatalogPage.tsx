@@ -25,6 +25,7 @@ export interface CatalogPageProps {
   detailHrefForTheme?: (themeId: string) => string;
   entries: readonly CatalogThemeEntry[];
   onStateChange?: (state: CatalogPageState) => void;
+  pinHrefForTheme?: (entry: CatalogThemeEntry) => string;
   state?: CatalogPageState;
 }
 
@@ -115,6 +116,7 @@ export function CatalogPage({
   detailHrefForTheme,
   entries,
   onStateChange,
+  pinHrefForTheme,
   state,
 }: CatalogPageProps) {
   const [internalState, setInternalState] = useState(() =>
@@ -327,7 +329,11 @@ export function CatalogPage({
             <ul aria-label="Catalog results" className="catalog-grid">
               {results.map((entry) => (
                 <li key={entry.theme.id}>
-                  <ThemeCard detailHref={detailHrefForTheme?.(entry.theme.id)} entry={entry} />
+                  <ThemeCard
+                    detailHref={detailHrefForTheme?.(entry.theme.id)}
+                    entry={entry}
+                    pinHref={pinHrefForTheme?.(entry)}
+                  />
                 </li>
               ))}
             </ul>
