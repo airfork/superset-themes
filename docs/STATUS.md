@@ -467,10 +467,14 @@ Phase 7 checkpoint reviews — complete.
   visible, on-brand highlight in all four themes while staying within the `--preview-*`
   system (same seam-fix pattern as Phase 6). Screenshots saved under
   `docs/review/phase-7-*-after` for all four themes.
-- `web-design-guidelines` on the palette, against the latest Vercel guidelines — passed on
-  the required points, no further code changes:
+- `web-design-guidelines` on the palette, against the latest Vercel guidelines:
   1. Focus management — input is focused on open; Escape restores focus to the trigger
-     (covered by `e2e/palette.spec.ts`); Tab is trapped on the input.
+     (covered by `e2e/palette.spec.ts`); Tab is trapped on the input. A re-review caught a
+     blocker: `.palette__input:focus { outline: none }` stripped the visible focus
+     indicator from the dialog's only tabbable control. Fixed by replacing it with a
+     `:focus-visible` inset ring (`outline: 2px solid var(--preview-ui-ring); outline-offset: -2px`) —
+     a positive offset would clip against the `overflow: hidden` popover's full-bleed top
+     edge. Verified live in light and dark.
   2. Combobox/listbox semantics — `role="combobox"` with `aria-controls`/`aria-expanded`/
      `aria-activedescendant` pointing at a real `role="option"` inside `role="listbox"`;
      Themes/Actions are `<fieldset>`/`<legend>` groups; empty state is `role="status"`.

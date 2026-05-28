@@ -3531,8 +3531,11 @@ kbd {
   font-size: 0.95rem;
 }
 
-.palette__input:focus {
-  outline: none;
+/* Inset ring: the popover clips overflow, so a positive offset would be cut off
+   at the full-bleed top edge. The input is the dialog's only tabbable control. */
+.palette__input:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: -2px;
 }
 
 .palette__input::placeholder {
