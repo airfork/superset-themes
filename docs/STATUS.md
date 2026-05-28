@@ -354,16 +354,78 @@ Phase 5 verification (post-reviews):
 - `rtk pnpm test:e2e` passed (20 passed + 2 skipped legacy).
 - `rtk pnpm test:stories` passed (8 test files / 28 stories).
 
+## Phase 6 — Compare mode
+
+Status: Complete.
+
+- Task 19 committed (`feat: add compare-mode state machine`). `src/compare/compareState.ts`
+  is a pure reducer over `{ a, b, lastPinned, enteredFromThemeId }` with `enter`,
+  `pin`, `unpin`, and `exit` actions. `pin` fills `a` then `b`; once both are full it
+  replaces the least-recently-pinned slot (LRU via `lastPinned`); re-pinning an
+  already-pinned theme just refreshes recency. `unpin` clears a slot and moves
+  `lastPinned` to the surviving slot (or null). 10 unit tests in
+  `compareState.test.ts`. (Deviation: the plan paired this commit with deleting
+  `pairing.ts`, but its only importers are the compare UI that Task 20 rewrites, so
+  the deletion moved into Task 20 to keep every commit building.)
+- Task 20 committed (`feat: compare mode with pane split`). `src/compare/CompareSlot.tsx`
+  attaches `getThemeCssVars(theme)` inline to each `<section>` so descendants read the
+  slot's own theme while the surrounding chrome keeps reading the entry theme from
+  `:root`. `CompareView.tsx` (replacing `PairCompare.tsx`) renders the two slots, a
+  shared `SceneTabs`, and a polite `role="status"` live region whose message moves to
+  "Comparing X with Y." once the second slot fills. The `/compare` route round-trips
+  `?a=&b=&from=&scene=` through `seedCompareState` / `compareStateToSearch`; `from`
+  carries the entry-state theme so the chrome can differ from both pinned slots. The
+  rail shows a "click any theme to fill the second slot" hint until `b` is filled, and
+  pinned rows fold "pinned for compare" into their accessible name. Deleted:
+  `pairing.ts` + test, `PairCompare.tsx` + test, `PairSlot.tsx`, `e2e/pairing.spec.ts`
+  (renamed to `e2e/compare.spec.ts`).
+- Task 21 committed (`feat: keyboard and nameplate entry to compare mode`). `.` in the
+  catalog enters compare with the focused theme as slot `a` and as the entry-state;
+  Esc exits back to the catalog at the entry theme. The Nameplate "Pin to compare"
+  button is a synonym for `.` (catalog `onPin` navigates to `/compare?a=…&from=…`), and
+  a rail-row click in compare mode dispatches `pin` instead of switching the focused
+  theme. `e2e/compare.spec.ts` covers both entry paths.
+
+Phase 6 verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 30 test files / 143 tests, Vite build).
+- `rtk pnpm test:e2e` passed (25 passed + 1 pre-existing skip), including five compare
+  flows in `e2e/compare.spec.ts` (theme-scoped slots with chrome at the entry theme,
+  scene sync, unpin-clears-slot, `.`-enter-then-Esc-exit, Nameplate Pin synonym).
+
+Phase 6 checkpoint reviews — complete.
+
+- `impeccable` on compare mode across three pin combinations via Chrome DevTools MCP:
+  light+dark (`solarized-light` + `tokyo-night`), dark+dark (`tokyo-night` + `one-dark`),
+  and light+light (`solarized-light` + `rose-pine-dawn`), each with a contrasting entry
+  theme on the chrome. One concrete fix shipped in
+  `polish: impeccable Phase 6 — stronger compare-slot seam for like-on-like themes`:
+  the inter-slot divider (`.compare-slot + .compare-slot` / `--empty`, desktop and the
+  mobile stacked `border-top`) switched from `var(--preview-ui-border)` to
+  `color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent)`. Light themes ship
+  a pale border token, so two cream slots side by side (Solarized Light beside Rosé Pine
+  Dawn) read as one panel; deriving the seam from each slot's own foreground guarantees a
+  visible divider in all four combinations while staying within the `--preview-*` token
+  system. Scene sync across both slots and the chrome staying at the entry theme both
+  read naturally. Screenshots saved under `docs/review/phase-6-*` (before/after for the
+  light+light and dark+dark seams).
+- `web-design-guidelines` on the compare flow, against the latest Vercel guidelines —
+  passed on all three required points, no code changes:
+  1. Live region — `CompareView` renders a `.sr-only role="status" aria-live="polite"`
+     region whose message transitions to "Comparing X with Y." when the second slot
+     fills (verified live: single-pinned state announces "Solarized Light pinned. Pin a
+     second theme to compare.").
+  2. Esc — the `/compare` route's keydown handler exits to the catalog at the entry
+     theme; covered by `e2e/compare.spec.ts`.
+  3. Pinned glyph not color-only — `RailRow` renders a 12×12 lucide `Pin` icon (verified
+     painting: `getBoundingClientRect` 12×12, opacity 1) and folds "pinned for compare"
+     into the row's accessible name; the icon itself is `aria-hidden`.
+
 ## Next Step
 
-Phase 6 — Compare mode (Tasks 19–21). Task 19 introduces the compare-mode state
-machine (`src/compare/compareState.ts`) replacing the legacy `pairing.ts`. Task 20
-rewrites the compare UI as a pane-split (`CompareSlot.tsx` + `CompareView.tsx`)
-inside the existing shell. Task 21 wires `.` keyboard entry plus the Nameplate
-`Pin to compare` action into the new flow. The Phase 6 checkpoint runs
-`impeccable` on three pin combinations (light+dark, dark+dark, light+light) and
-`web-design-guidelines` on the compare flow (live region announcements, Esc
-behavior, color-independent pinned glyph).
+Phase 7 — ⌘K command palette. Wire the currently-placeholder `onOpenPalette` callbacks
+(top bar search trigger, `RailSearch`, and the rail `/` shortcut) to a real command
+palette for theme search and actions.
 
 ## Resumability Protocol
 
