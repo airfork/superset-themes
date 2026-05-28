@@ -4,7 +4,6 @@ import { useCallback, useEffect, useReducer } from "react";
 interface UseRailKeyboardOptions {
   ids: readonly string[];
   activeId: string;
-  onActivate: (id: string) => void;
   onOpenPalette: () => void;
 }
 
@@ -52,7 +51,6 @@ function initialIndex(ids: readonly string[], activeId: string): number {
 export function useRailKeyboard({
   ids,
   activeId,
-  onActivate,
   onOpenPalette,
 }: UseRailKeyboardOptions): UseRailKeyboardResult {
   const [state, dispatch] = useReducer(reducer, {
@@ -69,6 +67,8 @@ export function useRailKeyboard({
     dispatch({ type: "set", index });
   }, []);
 
+  // Enter and Space are handled by the native <button>'s click event so callers don't
+  // double-fire onActivate. The hook only manages roving focus and the palette shortcut.
   const onKeyDown = useCallback(
     (event: ReactKeyboardEvent) => {
       switch (event.key) {
@@ -88,15 +88,6 @@ export function useRailKeyboard({
           event.preventDefault();
           dispatch({ type: "end" });
           return;
-        case "Enter":
-        case " ": {
-          const id = ids[state.index];
-          if (id) {
-            event.preventDefault();
-            onActivate(id);
-          }
-          return;
-        }
         case "/":
           event.preventDefault();
           onOpenPalette();
@@ -105,7 +96,7 @@ export function useRailKeyboard({
           return;
       }
     },
-    [ids, state.index, onActivate, onOpenPalette],
+    [onOpenPalette],
   );
 
   return {

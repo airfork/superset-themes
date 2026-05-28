@@ -2310,6 +2310,7 @@ kbd {
   text-align: start;
   cursor: pointer;
   border-radius: 6px;
+  touch-action: manipulation;
 }
 
 .rail-row[data-variant="featured"] {
@@ -2321,7 +2322,7 @@ kbd {
 }
 
 .rail-row[data-selected] {
-  background: color-mix(in srgb, var(--row-accent) 14%, transparent);
+  background: color-mix(in srgb, var(--row-accent) 20%, transparent);
 }
 
 .rail-row:focus-visible {
@@ -2338,9 +2339,9 @@ kbd {
 }
 
 .rail-row__eyebrow {
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--preview-ui-muted-foreground);
 }
@@ -2404,6 +2405,7 @@ kbd {
   top: 0;
   z-index: 1;
   background: var(--preview-ui-card);
+  border-bottom: 1px solid var(--preview-ui-border);
 }
 
 .rail-search {
@@ -2421,6 +2423,7 @@ kbd {
   font-size: 0.82rem;
   text-align: start;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .rail-search:hover {
@@ -2457,7 +2460,7 @@ kbd {
 }
 
 .rail-section__label {
-  margin: 12px 12px 4px;
+  margin: 12px 12px 8px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;

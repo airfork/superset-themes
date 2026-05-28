@@ -46,7 +46,9 @@ export function RailRow({
       onClick={onSelect}
       onKeyDown={onKeyDown}
       aria-current={selected ? "true" : undefined}
-      aria-label={entry.theme.name}
+      // Fold pinned state into the accessible name so screen readers announce it.
+      // The Pin SVG inside is aria-hidden because aria-label here overrides children.
+      aria-label={pinned ? `${entry.theme.name}, pinned for compare` : entry.theme.name}
       tabIndex={tabIndex}
       id={id}
     >
@@ -73,7 +75,7 @@ export function RailRow({
           <Pin
             className="rail-row__pin"
             data-testid="rail-pin"
-            aria-label="Pinned for compare"
+            aria-hidden="true"
             width={12}
             height={12}
           />

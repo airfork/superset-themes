@@ -168,11 +168,72 @@ Phase 3 checkpoint review — `impeccable` on the shell chrome:
   `e2e/shell.spec.ts:29-44`, asserts the skip link reaches a `<main id="main-content">`
   on `/`, `/themes/aurora-dark`, `/compare`, and `/lab`.
 
+## Phase 4 — Rail
+
+Status: Complete.
+
+- Task 11 committed (`feat: add RailRow primitive with self-colored accent`). Button-as-row
+  renders the theme name, a trailing accent dot colored from the row's own theme
+  (`--row-accent` escapes the `--preview-*` system), and featured variant adds a family
+  eyebrow + 5-swatch glimpse drawn from `ui.primary / secondary / accent / destructive /
+  selection`. Light themes render the dot as a 1.5px ring; dark themes fill it. Pin glyph
+  is `aria-hidden` and the button's accessible name folds in "pinned for compare" when
+  set.
+- Task 12 committed (`feat: compose rail with featured/light/dark sections`).
+  `RailSection` uses `<section aria-label>` (region sub-landmark of the rail aside),
+  `RailSearch` is a button styled like an input with a `/` kbd hint, and `Rail` composes
+  Featured (5 rows from `getFeaturedThemes()`) + Light (alphabetized by name) + Dark
+  (alphabetized). Catalog route container syncs the rail's `onSelect(themeId)` into
+  `useFocusedTheme().setFocusedId` plus `navigate({ replace: true, search: { theme: id }})`.
+  `CatalogRouteSearch` gained a `theme?: string` field for URL deep-linking.
+- Task 13 committed (`feat: rail keyboard navigation`). `useRailKeyboard` is a reducer
+  hook with `ArrowDown / ArrowUp` (wrap-around), `Home / End`, and `/` for palette. Roving
+  tabindex lives in `Rail.tsx`: the focused row has `tabIndex={0}`, the rest are `-1`;
+  a focus-restoration effect calls `.focus()` on the new row only when focus is already
+  inside the rail. Featured rows show first; clicking either copy of a theme (Featured
+  slot or Light/Dark home) drives the same focused-theme + URL update.
+
+Phase 4 verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, 24 test files / 89 tests / 1 skipped, build).
+- `rtk pnpm test:e2e` passed (15 passed + 6 skipped legacy), including the three rail
+  flows in `e2e/rail.spec.ts` (click → URL, ArrowDown + Enter → URL + chrome morph via
+  the inline `--preview-ui-background` var, `/` keypress no-op until Phase 7).
+- `rtk pnpm test:stories` passed (6 test files / 20 stories).
+
+Phase 4 checkpoint reviews:
+
+- `web-design-guidelines` on `src/rail/` — three concrete fixes shipped:
+  1. `useRailKeyboard.ts:73-103` removed Enter/Space from the handler so the native
+     `<button>` activation isn't doubled by the hook calling onActivate. Hook interface
+     dropped the now-unused `onActivate` callback. Tests updated accordingly.
+  2. `RailRow.tsx:49` folded pinned state into the button's `aria-label` so screen
+     readers announce "pinned for compare"; the Pin SVG is now `aria-hidden`.
+  3. `global.css` `.rail-row` and `.rail-search` gained `touch-action: manipulation`
+     to remove the mobile 300ms tap delay.
+- `impeccable` on `src/rail/` — four concrete fixes shipped:
+  1. `global.css` `.rail__search` got a hairline `border-bottom` so the sticky header
+     has a definite edge as rows scroll under it.
+  2. `global.css` `.rail-row__eyebrow` dropped from `0.66rem / 0.06em` to
+     `0.62rem / 0.04em` so featured eyebrows stop competing with section labels.
+  3. `global.css` `.rail-row[data-selected]` bumped the row tint from 14% to 20% so
+     selected rows read against themes with desaturated accents (Tokyo Night, One Dark,
+     Catppuccin Mocha).
+  4. `global.css` `.rail-section__label` margin-bottom lifted from 4px to 8px so
+     section headers don't crowd the first row.
+- Open follow-up logged: light themes with pale accents (Rose Pine Dawn `#d7827e` on
+  `#faf4ed`) produce a focus ring at ~2.5:1 contrast, below the WCAG 3:1 non-text bar.
+  Revisit with a live rail; candidates are switching to `var(--preview-ui-ring)` or
+  layering a contrast halo via stacked `box-shadow`s. Tracked in plan as a Phase 5/Phase
+  10 follow-up.
+
 ## Next Step
 
-Phase 4 — Rail. Tasks 11 (RailRow), 12 (RailSection + RailSearch + Rail composition),
-13 (rail keyboard navigation). The Phase 4 checkpoint invokes `web-design-guidelines` and
-`impeccable` on the rail.
+Phase 5 — Pane. Tasks 14 (Nameplate), 15 (Workspace scene — Superset three-column),
+16 (Settings scene), 17 (Scene tab strip + pane expand), 18 (Catalog route wiring +
+delete legacy theme detail route). The Phase 5 checkpoint runs `impeccable` on the live
+catalog with multiple themes and `web-design-guidelines` on `SettingsScene` form
+controls.
 
 ## Resumability Protocol
 

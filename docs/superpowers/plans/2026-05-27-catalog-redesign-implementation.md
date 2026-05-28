@@ -842,7 +842,7 @@ Update `docs/STATUS.md`.
 
 Composition: theme name (regular), trailing accent dot (filled for dark, ring for light, **colored with this row's theme accent, not the focused theme's accent**). Featured rows additionally show a family eyebrow and a 5-swatch palette glimpse. Selected row gets a subtle accent-tinted background.
 
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -869,7 +869,7 @@ describe("RailRow", () => {
 });
 ```
 
-- [ ] **Step 2: Implement `RailRow.tsx`**
+- [x] **Step 2: Implement `RailRow.tsx`**
 
 Props: `entry: CatalogThemeEntry`, `selected: boolean`, `pinned: boolean`, `variant: "basic" | "featured"`, `onSelect?: () => void`. The component does **not** call `useFocusedTheme()` — accent comes purely from `entry.theme.ui.accent`, so the rail row stays informative regardless of what's loaded.
 
@@ -879,9 +879,9 @@ The 5-swatch glimpse pulls `entry.theme.ui.primary`, `secondary`, `accent`, `des
 
 Selected state: background `color-mix(in srgb, var(--row-accent) 12%, transparent)`. Set `--row-accent` as an inline CSS variable on the row element so the CSS rule can use it.
 
-- [ ] **Step 3: Run RailRow tests** — expect PASS.
-- [ ] **Step 4: Storybook stories** — basic dark, basic light, featured dark, featured light, selected, pinned.
-- [ ] **Step 5: Commit `feat: add RailRow primitive with self-colored accent`**
+- [x] **Step 3: Run RailRow tests** — expect PASS.
+- [x] **Step 4: Storybook stories** — basic dark, basic light, featured dark, featured light, selected, pinned.
+- [x] **Step 5: Commit `feat: add RailRow primitive with self-colored accent`**
 
 ## Task 12: RailSection + RailSearch
 
@@ -893,14 +893,14 @@ Selected state: background `color-mix(in srgb, var(--row-accent) 12%, transparen
 
 `RailSection` renders a labelled group (`FEATURED` / `LIGHT` / `DARK`). `RailSearch` is the search input at the top; on focus or `/` keypress it opens the palette (palette wired in Phase 8). `Rail` composes them.
 
-- [ ] **Step 1: Failing test for Rail composition**
+- [x] **Step 1: Failing test for Rail composition**
 
 Asserts the rail renders three sections in order, Featured contains exactly 5 rows in the configured order, Light contains all light themes alphabetically, Dark contains all dark themes alphabetically. Featured entries also appear in their light/dark section (verify by id).
 
-- [ ] **Step 2: Implement `RailSection.tsx`** as a `<section>` with a sticky-on-scroll-within-rail header label.
-- [ ] **Step 3: Implement `RailSearch.tsx`** as a button styled like an input (real input lives inside the palette). Clicking or pressing `/` calls `onOpenPalette`.
-- [ ] **Step 4: Implement `Rail.tsx`** that builds the three sections from `catalogThemes` + `getFeaturedThemes()`. Wire `onSelect` to update the focused theme via `useFocusedTheme()` and update the URL `?theme=` param via a passed-in `onSelectThemeId` callback.
-- [ ] **Step 5: Run tests + commit `feat: compose rail with featured/light/dark sections`**
+- [x] **Step 2: Implement `RailSection.tsx`** as a `<section>` with a sticky-on-scroll-within-rail header label.
+- [x] **Step 3: Implement `RailSearch.tsx`** as a button styled like an input (real input lives inside the palette). Clicking or pressing `/` calls `onOpenPalette`.
+- [x] **Step 4: Implement `Rail.tsx`** that builds the three sections from `catalogThemes` + `getFeaturedThemes()`. Wire `onSelect` to update the focused theme via `useFocusedTheme()` and update the URL `?theme=` param via a passed-in `onSelectThemeId` callback.
+- [x] **Step 5: Run tests + commit `feat: compose rail with featured/light/dark sections`**
 
 ## Task 13: Rail keyboard navigation
 
@@ -910,11 +910,11 @@ Asserts the rail renders three sections in order, Featured contains exactly 5 ro
 
 Roving tabindex: ArrowDown/ArrowUp move focus within the rail list, Home/End jump to first/last, Enter activates the focused row, `/` opens the palette. Wrap-around at top/bottom.
 
-- [ ] **Step 1: Failing test** simulating keydown events on a virtual list of ids; verify the hook updates the focused index correctly.
-- [ ] **Step 2: Implement hook** using a `useReducer` keyed on action `"down" | "up" | "home" | "end" | "set"`.
-- [ ] **Step 3: Wire into `Rail.tsx`** — set `tabIndex={focused === index ? 0 : -1}` on each row, attach a `keydown` handler to the rail container.
-- [ ] **Step 4: Playwright spec** — arrow-key navigation in the rail morphs the chrome to each focused theme.
-- [ ] **Step 5: Commit `feat: rail keyboard navigation`**
+- [x] **Step 1: Failing test** simulating keydown events on a virtual list of ids; verify the hook updates the focused index correctly.
+- [x] **Step 2: Implement hook** using a `useReducer` keyed on action `"down" | "up" | "home" | "end" | "set"`.
+- [x] **Step 3: Wire into `Rail.tsx`** — set `tabIndex={focused === index ? 0 : -1}` on each row, attach a `keydown` handler to the rail container.
+- [x] **Step 4: Playwright spec** — arrow-key navigation in the rail morphs the chrome to each focused theme.
+- [x] **Step 5: Commit `feat: rail keyboard navigation`**
 
 ## Phase 4 checkpoint
 

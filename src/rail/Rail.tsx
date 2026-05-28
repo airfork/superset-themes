@@ -85,12 +85,6 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette }
   const { focusedIndex, onKeyDown, setFocusedIndex } = useRailKeyboard({
     ids: rowKeys,
     activeId: activeRowKey,
-    onActivate: (rowKey) => {
-      const target = orderedRows.find((row) => row.rowKey === rowKey);
-      if (target) {
-        onSelect(target.themeId);
-      }
-    },
     onOpenPalette,
   });
 

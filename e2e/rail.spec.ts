@@ -22,23 +22,20 @@ test("arrow keys morph the chrome to the next theme", async ({ page }) => {
   await tokyoButton.focus();
   await expect(tokyoButton).toBeFocused();
 
-  // Initial focused theme is Tokyo Night (Featured slot 1).
-  const initialBackground = await page.evaluate(
-    () => getComputedStyle(document.documentElement).backgroundColor,
-  );
-
-  // Move down once. The second Featured row is Catppuccin Mocha.
+  // Move down once. The second Featured row is Catppuccin Mocha. Native button activation
+  // on Enter handles the click; the keyboard hook only manages roving focus and "/".
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("Enter");
 
   await expect(page).toHaveURL(/theme=catppuccin-mocha/);
-
-  // Bottom bar reflects Catppuccin Mocha, chrome background shifted.
   await expect(page.getByRole("contentinfo")).toContainText("Catppuccin Mocha");
-  const nextBackground = await page.evaluate(
-    () => getComputedStyle(document.documentElement).backgroundColor,
+
+  // Read the inline CSS variable (deterministic) rather than the animated background
+  // mid-transition. applyTheme writes the new var synchronously on theme change.
+  const previewBackground = await page.evaluate(() =>
+    document.documentElement.style.getPropertyValue("--preview-ui-background").trim(),
   );
-  expect(nextBackground).not.toBe(initialBackground);
+  expect(previewBackground).toBe("#1e1e2e");
 });
 
 test("/ key opens the palette (placeholder no-op for now)", async ({ page }) => {
