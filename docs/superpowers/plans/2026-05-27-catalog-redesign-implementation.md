@@ -1074,11 +1074,11 @@ This is the trick: chrome reads `:root` vars, slot reads its own scope. Same `ge
 - Modify: `src/rail/Rail.tsx`
 - Modify: `src/pane/Nameplate.tsx`
 
-- [ ] **Step 1: `.` (period) keypress** anywhere in the catalog enters compare mode using the currently focused theme as `a` (and as the entry-state). Esc exits.
-- [ ] **Step 2: Nameplate `Pin to compare` button** is a synonym for the `.` shortcut.
-- [ ] **Step 3: Rail row click in compare mode** dispatches `pin` instead of switching the focused theme.
-- [ ] **Step 4: Playwright** for both entry paths.
-- [ ] **Step 5: Commit `feat: keyboard and nameplate entry to compare mode`**
+- [x] **Step 1: `.` (period) keypress** anywhere in the catalog enters compare mode using the currently focused theme as `a` (and as the entry-state). Esc exits.
+- [x] **Step 2: Nameplate `Pin to compare` button** is a synonym for the `.` shortcut. (Implemented in Task 20 — catalog `onPin` navigates to `/compare?a=…&from=…`.)
+- [x] **Step 3: Rail row click in compare mode** dispatches `pin` instead of switching the focused theme. (Implemented in Task 20 — compareRoute Rail `onSelect={pin}`.)
+- [x] **Step 4: Playwright** for both entry paths.
+- [x] **Step 5: Commit `feat: keyboard and nameplate entry to compare mode`**
 
 ## Phase 6 checkpoint
 

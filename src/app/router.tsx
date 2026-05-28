@@ -1,5 +1,5 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
@@ -38,6 +38,38 @@ const catalogRoute = createRoute({
         setFocusedId(search.theme);
       }
     }, [search.theme, focused.theme.id, setFocusedId]);
+
+    // `.` enters compare mode with the focused theme as slot a and entry-state.
+    // A ref keeps the listener mounted once while always reading the latest focus.
+    const enterCompare = () => {
+      const id = focused.theme.id;
+      void navigate({ to: "/compare", search: { a: id, from: id } });
+    };
+    const enterCompareRef = useRef(enterCompare);
+    enterCompareRef.current = enterCompare;
+    useEffect(() => {
+      const handler = (event: KeyboardEvent) => {
+        if (event.key !== "." || event.metaKey || event.ctrlKey || event.altKey) {
+          return;
+        }
+        const target = event.target as HTMLElement | null;
+        if (target) {
+          const tag = target.tagName;
+          if (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            tag === "SELECT" ||
+            target.isContentEditable
+          ) {
+            return;
+          }
+        }
+        event.preventDefault();
+        enterCompareRef.current();
+      };
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    }, []);
 
     return (
       <LayoutShell

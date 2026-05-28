@@ -62,4 +62,42 @@ test.describe("compare mode", () => {
     await expect(page.getByRole("region", { name: /compare slot b, empty/i })).toBeVisible();
     await expect(page.locator(".rail__hint")).toBeVisible();
   });
+
+  test("`.` enters compare mode with the focused theme, and Esc exits", async ({ page }) => {
+    await page.goto("/?theme=rose-pine-dawn");
+    await expect(page.getByRole("heading", { name: /ros[eé] pine dawn/i }).first()).toBeVisible();
+
+    await page.keyboard.press(".");
+
+    await expect(page).toHaveURL(/compare/);
+    const entered = new URL(page.url());
+    expect(entered.searchParams.get("a")).toBe("rose-pine-dawn");
+    expect(entered.searchParams.get("from")).toBe("rose-pine-dawn");
+    await expect(
+      page.getByRole("region", { name: /compare slot a: ros[eé] pine dawn/i }),
+    ).toBeVisible();
+    await expect(page.getByRole("region", { name: /compare slot b, empty/i })).toBeVisible();
+    await expect(page.locator(".rail__hint")).toBeVisible();
+
+    await page.keyboard.press("Escape");
+
+    await expect(page).toHaveURL(/theme=rose-pine-dawn/);
+    await expect(page.getByRole("region", { name: /compare slot/i })).toHaveCount(0);
+  });
+
+  test("the nameplate Pin to compare button is a synonym for entering compare", async ({
+    page,
+  }) => {
+    await page.goto("/?theme=rose-pine-dawn");
+
+    await page.getByRole("button", { name: /pin to compare/i }).click();
+
+    await expect(page).toHaveURL(/compare/);
+    const entered = new URL(page.url());
+    expect(entered.searchParams.get("a")).toBe("rose-pine-dawn");
+    expect(entered.searchParams.get("from")).toBe("rose-pine-dawn");
+    await expect(
+      page.getByRole("region", { name: /compare slot a: ros[eé] pine dawn/i }),
+    ).toBeVisible();
+  });
 });
