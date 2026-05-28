@@ -1045,7 +1045,7 @@ State shape: `{ a: string | null, b: string | null, lastPinned: "a" | "b" | null
 
 - [x] **Step 1: Failing tests** covering: first pin fills `a`, second pin fills `b`, third pin replaces the LRU slot, `unpin` clears one slot, `exit` returns to a clean state.
 - [x] **Step 2: Implement reducer**. LRU = "least recently pinned" — when both slots are full, the next pin replaces the slot whose `lastPinned` was *not* most recent. Track `lastPinned` to make this explicit.
-- [ ] **Step 3: Delete old `pairing.ts` + test**. Update any importers. _(Deferred into Task 20: the only importers are the compare UI that Task 20 rewrites; deleting here would force throwaway placeholders and a non-building commit.)_
+- [x] **Step 3: Delete old `pairing.ts` + test**. Update any importers. _(Done in Task 20: `pairing.ts`/`pairing.test.ts`/`PairCompare`/`PairSlot` removed alongside the new `CompareView`; importers `compareRoute.tsx`, `router.tsx`, `App.test.tsx` rewritten. Folded here to keep every commit building.)_
 - [x] **Step 4: Commit `refactor: replace pairing with compare-mode state machine`** _(committed as `feat: add compare-mode state machine` — accurate since pairing removal lands in Task 20)_
 
 ## Task 20: Compare UI
@@ -1057,15 +1057,15 @@ State shape: `{ a: string | null, b: string | null, lastPinned: "a" | "b" | null
 
 When compare mode is active, the pane area splits vertically into two slots. Each slot renders Nameplate + Workspace/Settings scene for its theme. Chrome (top bar, rail, bottom bar) stays at the **entry-state theme** — does not morph as you pin. Each rail row that's pinned gets a pin glyph.
 
-- [ ] **Step 1: Failing Playwright** — `/compare?a=tokyo-night&b=solarized-light` renders two slots side by side; both rail rows show pin glyph; chrome stays at the entry-state theme (not Tokyo Night or Solarized).
-- [ ] **Step 2: Implement `CompareSlot.tsx`** — internally creates a scoped CSS variable scope so its preview vars don't bleed onto siblings. Use `style={getThemeCssVars(theme) as CSSProperties}` directly on the slot element, then have its descendants use those vars.
+- [x] **Step 1: Failing Playwright** — `/compare?a=tokyo-night&b=solarized-light` renders two slots side by side; both rail rows show pin glyph; chrome stays at the entry-state theme (not Tokyo Night or Solarized). _(Deep-link adds `&from=<id>` so the entry-state theme is distinct from both pinned slots — see deviation note below.)_
+- [x] **Step 2: Implement `CompareSlot.tsx`** — internally creates a scoped CSS variable scope so its preview vars don't bleed onto siblings. Use `style={getThemeCssVars(theme) as CSSProperties}` directly on the slot element, then have its descendants use those vars.
 
 This is the trick: chrome reads `:root` vars, slot reads its own scope. Same `getThemeCssVars` utility, different attachment point.
 
-- [ ] **Step 3: Implement `CompareView.tsx`** — uses `compareState` to render two slots with shared `currentScene` state so Workspace ↔ Settings toggles sync.
-- [ ] **Step 4: Add hint** ("compare mode — click any theme to fill") that shows below the rail header until `b` is filled.
-- [ ] **Step 5: Wire to route** — `/compare?a=…&b=…&scene=workspace|settings`. Update Playwright `e2e/pairing.spec.ts` → rename to `e2e/compare.spec.ts` and rewrite for the new flow.
-- [ ] **Step 6: Commit `feat: compare mode with pane split`**
+- [x] **Step 3: Implement `CompareView.tsx`** — uses `compareState` to render two slots with shared `currentScene` state so Workspace ↔ Settings toggles sync.
+- [x] **Step 4: Add hint** ("compare mode — click any theme to fill") that shows below the rail header until `b` is filled.
+- [x] **Step 5: Wire to route** — `/compare?a=…&b=…&from=…&scene=workspace|settings`. Update Playwright `e2e/pairing.spec.ts` → rename to `e2e/compare.spec.ts` and rewrite for the new flow. _(Added `from` param to round-trip `enteredFromThemeId`; the route renders inside `<LayoutShell>` so chrome morphs to the entry theme.)_
+- [x] **Step 6: Commit `feat: compare mode with pane split`**
 
 ## Task 21: Compare keyboard + entry
 

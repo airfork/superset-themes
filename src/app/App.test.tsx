@@ -31,24 +31,23 @@ describe("App", () => {
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/Solarized Light/);
   });
 
-  it("renders compare routes with paired URL state", async () => {
+  it("renders compare mode with the two pinned slots and entry-state chrome", async () => {
     window.history.replaceState(
       null,
       "",
-      "/compare?light=aurora-light&dark=aurora-dark&tab=terminal",
+      "/compare?a=aurora-light&b=aurora-dark&from=graphite-dark&scene=workspace",
     );
 
     render(<App />);
 
     expect(
-      await screen.findByRole("region", { name: /light and dark pairing/i }),
+      await screen.findByRole("region", { name: /compare slot a: aurora light/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("region", { name: /light theme slot/i })).toHaveTextContent(
-      /aurora light/i,
-    );
-    expect(screen.getByRole("region", { name: /dark theme slot/i })).toHaveTextContent(
-      /aurora dark/i,
-    );
+    expect(
+      screen.getByRole("region", { name: /compare slot b: aurora dark/i }),
+    ).toBeInTheDocument();
+    // Chrome stays at the entry-state theme (graphite dark), not either pinned slot.
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(/graphite dark/i);
   });
 
   it("renders lab routes from catalog theme search params", async () => {

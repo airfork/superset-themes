@@ -5,11 +5,7 @@ import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
 import { parseCatalogRouteSearch } from "./routes/catalogRoute";
-import {
-  CompareRouteView,
-  parseCompareRouteSearch,
-  stateToCompareRouteSearch,
-} from "./routes/compareRoute";
+import { CompareRouteView, parseCompareRouteSearch } from "./routes/compareRoute";
 import { LabRouteView, parseLabRouteSearch } from "./routes/labRoute";
 
 function RootLayout() {
@@ -71,16 +67,9 @@ const catalogRoute = createRoute({
             expanded={expanded}
             onExpandToggle={() => setExpanded((value) => !value)}
             onPin={(themeId) => {
-              // Phase 6 replaces this with the compare-mode state machine. For now
-              // keep the legacy ?light=/?dark= URL contract so /compare still works.
-              const entry = focused.theme.id === themeId ? focused : focused;
-              const params: Record<string, string> = { tab: search.tab ?? "workspace" };
-              if (entry.theme.type === "light") {
-                params.light = themeId;
-              } else {
-                params.dark = themeId;
-              }
-              void navigate({ to: "/compare", search: params });
+              // Pin to compare enters compare mode with the focused theme as slot a
+              // and as the entry-state theme the chrome keeps showing.
+              void navigate({ to: "/compare", search: { a: themeId, from: themeId } });
             }}
           />
         }
@@ -93,8 +82,8 @@ const catalogRoute = createRoute({
 });
 
 // Transitional <main> wrapper for routes that haven't migrated to LayoutShell yet.
-// /compare and /lab need it so the global skip link in RootLayout has a target on
-// every route. Phase 6 (Task 20) and Phase 8 (Task 24) migrate them to the shell.
+// /lab needs it so the global skip link in RootLayout has a target on every route.
+// Phase 8 (Task 24) migrates it to the shell.
 function LegacyRouteMain({ children }: { children: ReactNode }) {
   return (
     <main id="main-content" className="legacy-route-main">
@@ -109,17 +98,18 @@ const compareRoute = createRoute({
     const search = compareRoute.useSearch();
 
     return (
-      <LegacyRouteMain>
-        <CompareRouteView
-          onStateChange={(nextState) => {
-            void navigate({
-              replace: true,
-              search: stateToCompareRouteSearch(nextState),
-            });
-          }}
-          search={search}
-        />
-      </LegacyRouteMain>
+      <CompareRouteView
+        search={search}
+        onOpenPalette={() => {
+          /* palette wired in Phase 7 */
+        }}
+        onChangeSearch={(nextSearch) => {
+          void navigate({ replace: true, search: nextSearch });
+        }}
+        onExit={(themeId) => {
+          void navigate({ to: "/", search: themeId ? { theme: themeId } : {} });
+        }}
+      />
     );
   },
   getParentRoute: () => rootRoute,

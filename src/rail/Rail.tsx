@@ -12,6 +12,7 @@ interface RailProps {
   pinnedThemeIds: ReadonlySet<string>;
   onSelect: (themeId: string) => void;
   onOpenPalette: () => void;
+  hint?: string;
 }
 
 type RowSection = "featured" | "light" | "dark";
@@ -31,7 +32,7 @@ function rowKeyFor(section: RowSection, themeId: string): string {
   return `rail-row-${section}-${themeId}`;
 }
 
-export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette }: RailProps) {
+export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, hint }: RailProps) {
   const featured = useMemo(() => getFeaturedThemes(), []);
   const lights = useMemo(
     () =>
@@ -136,6 +137,11 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette }
       <div className="rail__search">
         <RailSearch onOpenPalette={onOpenPalette} />
       </div>
+      {hint ? (
+        <p className="rail__hint" role="status" aria-live="polite">
+          {hint}
+        </p>
+      ) : null}
       <RailSection label="Featured">
         {orderedRows.slice(0, featured.length).map(renderRow)}
       </RailSection>
