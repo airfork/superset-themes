@@ -1,5 +1,5 @@
 import { Pin } from "lucide-react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 export type RailRowVariant = "basic" | "featured";
@@ -10,6 +10,7 @@ interface RailRowProps {
   pinned: boolean;
   variant: RailRowVariant;
   onSelect?: () => void;
+  onKeyDown?: (event: ReactKeyboardEvent<HTMLButtonElement>) => void;
   tabIndex?: number;
   id?: string;
 }
@@ -22,6 +23,7 @@ export function RailRow({
   pinned,
   variant,
   onSelect,
+  onKeyDown,
   tabIndex,
   id,
 }: RailRowProps) {
@@ -42,6 +44,7 @@ export function RailRow({
       data-selected={selected || undefined}
       style={rowStyle}
       onClick={onSelect}
+      onKeyDown={onKeyDown}
       aria-current={selected ? "true" : undefined}
       aria-label={entry.theme.name}
       tabIndex={tabIndex}
