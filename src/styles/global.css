@@ -2766,27 +2766,26 @@ kbd {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 10px;
   border-left: 1px solid var(--preview-ui-border);
-  background: var(--preview-ui-background);
+  background: var(--preview-ui-card);
 }
 
 .scene-workspace__right-toggle {
   display: inline-grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid transparent;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--preview-ui-border);
   border-radius: 5px;
-  background: transparent;
+  background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
   cursor: pointer;
 }
 
 .scene-workspace__right-toggle:hover {
-  border-color: var(--preview-ui-border);
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
-  color: var(--preview-ui-foreground);
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 35%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--preview-ui-background));
 }
 
 .scene-workspace__right-toggle svg {
@@ -2882,15 +2881,15 @@ kbd {
 
 .scene-settings__input,
 .scene-settings__select {
-  min-height: 32px;
-  width: min(100%, 320px);
+  min-height: 34px;
+  width: min(100%, 480px);
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
   background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
-  padding: 0 10px;
+  padding: 0 12px;
   font: inherit;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
 }
 
 .scene-settings__select {
@@ -3281,8 +3280,16 @@ kbd {
   background: color-mix(in srgb, var(--row-accent) 8%, transparent);
 }
 
+/* Selected tint uses the focused theme's primary (an AA-gated, always-visible
+   token) rather than --row-accent. Per-row accents like Solarized Light's
+   #eee8d5 collapse into the cream rail surface; primary stays distinct on
+   every theme. The row's own accent still drives the dot and hover tint. */
 .rail-row[data-selected] {
-  background: color-mix(in srgb, var(--row-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--preview-ui-primary) 18%, transparent);
+}
+
+.rail-row[data-selected] .rail-row__name {
+  font-weight: 600;
 }
 
 .rail-row:focus-visible {
