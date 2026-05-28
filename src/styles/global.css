@@ -2293,3 +2293,99 @@ kbd {
 .layout-shell__pane-placeholder p {
   margin: 0 0 8px;
 }
+
+/* Rail — row primitive */
+.rail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: start;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.rail-row[data-variant="featured"] {
+  padding: 10px 12px;
+}
+
+.rail-row:hover {
+  background: color-mix(in srgb, var(--row-accent) 8%, transparent);
+}
+
+.rail-row[data-selected] {
+  background: color-mix(in srgb, var(--row-accent) 14%, transparent);
+}
+
+.rail-row:focus-visible {
+  outline: 2px solid var(--row-accent, var(--preview-ui-ring));
+  outline-offset: -2px;
+}
+
+.rail-row__body {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rail-row__eyebrow {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.rail-row__name {
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.rail-row__glimpse {
+  display: inline-flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.rail-row__swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 12%, transparent);
+}
+
+.rail-row__trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rail-row__pin {
+  color: var(--preview-ui-muted-foreground);
+  flex-shrink: 0;
+}
+
+.rail-row__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.rail-row__dot[data-variant="light"] {
+  background: transparent;
+  border: 1.5px solid var(--row-accent);
+}
