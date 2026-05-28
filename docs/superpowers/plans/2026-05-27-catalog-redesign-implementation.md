@@ -1043,10 +1043,10 @@ Update `docs/STATUS.md` with the Phase 5 milestone and a screenshot or short not
 
 State shape: `{ a: string | null, b: string | null, lastPinned: "a" | "b" | null, enteredFromThemeId: string }`. Reducer actions: `pin(themeId)`, `unpin("a" | "b")`, `enter(themeId)`, `exit()`.
 
-- [ ] **Step 1: Failing tests** covering: first pin fills `a`, second pin fills `b`, third pin replaces the LRU slot, `unpin` clears one slot, `exit` returns to a clean state.
-- [ ] **Step 2: Implement reducer**. LRU = "least recently pinned" — when both slots are full, the next pin replaces the slot whose `lastPinned` was *not* most recent. Track `lastPinned` to make this explicit.
-- [ ] **Step 3: Delete old `pairing.ts` + test**. Update any importers.
-- [ ] **Step 4: Commit `refactor: replace pairing with compare-mode state machine`**
+- [x] **Step 1: Failing tests** covering: first pin fills `a`, second pin fills `b`, third pin replaces the LRU slot, `unpin` clears one slot, `exit` returns to a clean state.
+- [x] **Step 2: Implement reducer**. LRU = "least recently pinned" — when both slots are full, the next pin replaces the slot whose `lastPinned` was *not* most recent. Track `lastPinned` to make this explicit.
+- [ ] **Step 3: Delete old `pairing.ts` + test**. Update any importers. _(Deferred into Task 20: the only importers are the compare UI that Task 20 rewrites; deleting here would force throwaway placeholders and a non-building commit.)_
+- [x] **Step 4: Commit `refactor: replace pairing with compare-mode state machine`** _(committed as `feat: add compare-mode state machine` — accurate since pairing removal lands in Task 20)_
 
 ## Task 20: Compare UI
 
