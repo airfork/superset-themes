@@ -1109,10 +1109,10 @@ State: `{ open: boolean, query: string, focusedIndex: number }`. Actions: `open`
 
 Sections rendered: `Themes` (fuzzy match over all catalog ids + names) and `Actions` (context-dependent: always shows `Open in Lab`, `Toggle next theme`; shows `Pin to compare` when not in compare mode; shows `Exit compare` when in compare mode; shows `Back to catalog` when in Lab).
 
-- [ ] **Step 1: Failing tests** for state reducer (open/close, up/down clamping, submit selects focused result).
-- [ ] **Step 2: Failing tests for `fuzzy.ts`** — simple subsequence match with score = sum of run lengths. Sort: exact prefix > prefix > subsequence; ties broken by shorter id.
-- [ ] **Step 3: Implement both**.
-- [ ] **Step 4: Commit `feat: command palette state and fuzzy matcher`**
+- [x] **Step 1: Failing tests** for state reducer (open/close, up/down clamping, submit selects focused result).
+- [x] **Step 2: Failing tests for `fuzzy.ts`** — simple subsequence match with score = sum of run lengths. Sort: exact prefix > prefix > subsequence; ties broken by shorter id. (Submit closes the palette; selection is performed by the caller from `focusedIndex` since the reducer state is `{ open, query, focusedIndex }` only. Subsequence score rewards adjacency — a run of N contributes N(N+1)/2 — so consecutive matches outrank scattered ones within the subsequence tier.)
+- [x] **Step 3: Implement both**.
+- [x] **Step 4: Commit `feat: command palette state and fuzzy matcher`**
 
 ## Task 23: Palette UI
 
