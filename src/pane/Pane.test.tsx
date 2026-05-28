@@ -50,6 +50,20 @@ describe("Pane", () => {
     expect(onExpandToggle).toHaveBeenCalledTimes(1);
   });
 
+  it("flips the nameplate's expand label and aria-expanded when expanded", () => {
+    render(
+      <Pane
+        entry={entryFor("tokyo-night")}
+        onPin={() => {}}
+        expanded={true}
+        onExpandToggle={() => {}}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: /collapse tokyo night pane/i });
+    expect(button).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("dispatches the expand callback when the `f` key is pressed inside the pane", async () => {
     const user = userEvent.setup();
     const onExpandToggle = vi.fn();

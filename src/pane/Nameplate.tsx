@@ -6,10 +6,11 @@ import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 interface NameplateProps {
   entry: CatalogThemeEntry;
   onPin: (themeId: string) => void;
-  onExpand?: () => void;
+  expanded?: boolean;
+  onExpandToggle?: () => void;
 }
 
-export function Nameplate({ entry, onPin, onExpand }: NameplateProps) {
+export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: NameplateProps) {
   const { meta, theme } = entry;
   const [copyState, setCopyState] = useState<"copied" | "idle">("idle");
   const isDark = theme.type === "dark";
@@ -25,6 +26,7 @@ export function Nameplate({ entry, onPin, onExpand }: NameplateProps) {
   };
 
   const modeLabel = `${isDark ? "Dark" : "Light"} theme`;
+  const expandActionLabel = `${expanded ? "Collapse" : "Expand"} ${theme.name} pane`;
 
   return (
     // <div> instead of <header> to avoid double-banner against the TopBar — the
@@ -32,18 +34,21 @@ export function Nameplate({ entry, onPin, onExpand }: NameplateProps) {
     // <header> to role="banner" in that context.
     <div className="pane-nameplate">
       <div className="pane-nameplate__title">
-        {onExpand ? (
-          <button
-            type="button"
-            className="pane-nameplate__name pane-nameplate__name--expandable"
-            onClick={onExpand}
-            aria-label={`Expand ${theme.name} pane`}
-          >
-            <h2 className="pane-nameplate__name-text">{theme.name}</h2>
-          </button>
-        ) : (
-          <h2 className="pane-nameplate__name-text">{theme.name}</h2>
-        )}
+        <h2 className="pane-nameplate__name-text">
+          {onExpandToggle ? (
+            <button
+              type="button"
+              className="pane-nameplate__name pane-nameplate__name--expandable"
+              onClick={onExpandToggle}
+              aria-label={expandActionLabel}
+              aria-expanded={expanded}
+            >
+              {theme.name}
+            </button>
+          ) : (
+            theme.name
+          )}
+        </h2>
         <span className="pane-nameplate__family">{meta.family}</span>
         <span
           className={`pane-nameplate__mode pane-nameplate__mode--${theme.type}`}

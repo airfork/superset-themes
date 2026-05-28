@@ -117,20 +117,16 @@ export function SettingsScene({ entry }: SettingsSceneProps) {
 
       <section className="scene-settings__row">
         <div className="scene-settings__field">
-          <span className="scene-settings__group-label">Theme mode</span>
-          <p className="scene-settings__hint">
+          <p className="scene-settings__hint scene-settings__hint--paired">
             Drives the catalog's preview when no explicit theme is selected.
           </p>
         </div>
-        <div
-          className="scene-settings__radios"
-          // biome-ignore lint/a11y/useSemanticElements: radiogroup is the
-          // appropriate role for a custom-styled radio cluster; <fieldset> has
-          // implicit role="group" rather than "radiogroup", and screen readers
-          // announce the cluster's purpose more accurately with this role.
+        <fieldset
+          className="scene-settings__group scene-settings__radios"
+          // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: <fieldset role="radiogroup"> is the canonical pattern — implicit role on fieldset is "group", and screen readers announce the radiogroup role specifically.
           role="radiogroup"
-          aria-label="Theme mode"
         >
+          <legend className="scene-settings__group-label">Theme mode</legend>
           {(
             [
               ["system", "Follow system"],
@@ -149,18 +145,17 @@ export function SettingsScene({ entry }: SettingsSceneProps) {
               <span>{label}</span>
             </label>
           ))}
-        </div>
+        </fieldset>
       </section>
 
       <section className="scene-settings__row">
         <div className="scene-settings__field">
-          <span className="scene-settings__group-label">Editor features</span>
-          <p className="scene-settings__hint">
+          <p className="scene-settings__hint scene-settings__hint--paired">
             Toggle the editor niceties that follow your theme into Superset.
           </p>
         </div>
-        <fieldset className="scene-settings__checks" aria-label="Editor features">
-          <legend className="sr-only">Editor features</legend>
+        <fieldset className="scene-settings__group scene-settings__checks">
+          <legend className="scene-settings__group-label">Editor features</legend>
           <label className="scene-settings__check">
             <input
               type="checkbox"

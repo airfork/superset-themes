@@ -25,18 +25,25 @@ describe("SettingsScene", () => {
     expect(screen.getByRole("combobox", { name: /default editor/i })).toBeInTheDocument();
   });
 
-  it("renders a fieldset of checkboxes", () => {
+  it("renders a fieldset of checkboxes with a visible legend", () => {
     render(<SettingsScene entry={entryFor("tokyo-night")} />);
     const group = screen.getByRole("group", { name: /editor features/i });
     expect(group.tagName).toBe("FIELDSET");
+    // Visible legend, not sr-only — required by Phase 5 a11y review.
+    const legend = group.querySelector("legend");
+    expect(legend).not.toBeNull();
+    expect(legend?.className).not.toMatch(/sr-only/);
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("renders a fieldset of radio buttons for theme mode", () => {
+  it("renders a fieldset/legend radio group for theme mode", () => {
     render(<SettingsScene entry={entryFor("tokyo-night")} />);
     const group = screen.getByRole("radiogroup", { name: /theme mode/i });
-    expect(group).toBeInTheDocument();
+    expect(group.tagName).toBe("FIELDSET");
+    const legend = group.querySelector("legend");
+    expect(legend).not.toBeNull();
+    expect(legend?.className).not.toMatch(/sr-only/);
     expect(screen.getByRole("radio", { name: /follow system/i })).toBeInTheDocument();
   });
 

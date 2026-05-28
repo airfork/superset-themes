@@ -46,7 +46,7 @@ export function Pane({
 
   return (
     <div className="pane" data-scene={scene} data-expanded={expanded || undefined}>
-      <Nameplate entry={entry} onPin={onPin} onExpand={onExpandToggle} />
+      <Nameplate entry={entry} onPin={onPin} expanded={expanded} onExpandToggle={onExpandToggle} />
       <div className="pane__body">
         {scene === "workspace" ? <WorkspaceScene entry={entry} /> : <SettingsScene entry={entry} />}
       </div>

@@ -67,4 +67,22 @@ describe("Nameplate", () => {
     expect(writeText).toHaveBeenCalledWith(exportThemeJson(entry));
     writeText.mockRestore();
   });
+
+  it("nests the expand toggle inside the heading and reflects aria-expanded", () => {
+    const entry = entryFor("tokyo-night");
+    render(<Nameplate entry={entry} onPin={() => {}} expanded={false} onExpandToggle={() => {}} />);
+
+    const heading = screen.getByRole("heading", { name: entry.theme.name });
+    const button = screen.getByRole("button", { name: /expand tokyo night pane/i });
+    expect(heading).toContainElement(button);
+    expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("flips the expand toggle label and aria-expanded when expanded is true", () => {
+    const entry = entryFor("tokyo-night");
+    render(<Nameplate entry={entry} onPin={() => {}} expanded={true} onExpandToggle={() => {}} />);
+
+    const button = screen.getByRole("button", { name: /collapse tokyo night pane/i });
+    expect(button).toHaveAttribute("aria-expanded", "true");
+  });
 });

@@ -2164,17 +2164,6 @@ kbd {
   outline-offset: 2px;
 }
 
-/* Expand: when the shell carries data-expanded, the rail collapses to 0 so the
-   pane fills the body. Top and bottom bars stay put. */
-.layout-shell[data-expanded] .layout-shell__body {
-  grid-template-columns: 0 minmax(0, 1fr);
-}
-
-.layout-shell[data-expanded] .layout-shell__rail {
-  visibility: hidden;
-  border-right: 0;
-}
-
 /* Pane — nameplate */
 .pane-nameplate {
   display: grid;
@@ -2423,11 +2412,6 @@ kbd {
   margin-top: 4px;
 }
 
-.scene-workspace__project[data-muted] .scene-workspace__project-mark {
-  background: transparent;
-  border: 1px dashed var(--preview-ui-border);
-}
-
 .scene-workspace__project-header {
   display: inline-flex;
   align-items: center;
@@ -2448,6 +2432,11 @@ kbd {
   color: var(--preview-ui-secondary-foreground);
   font-size: 0.6rem;
   font-weight: 700;
+}
+
+.scene-workspace__project[data-muted] .scene-workspace__project-mark {
+  background: transparent;
+  border: 1px dashed var(--preview-ui-border);
 }
 
 .scene-workspace__project-name {
@@ -2879,6 +2868,30 @@ kbd {
   max-width: 36ch;
 }
 
+/* Paired hints sit alone in the left column for grouped (fieldset) rows where
+   the visible label moves into the right-column legend. The vertical-padding
+   nudge keeps the hint baseline-aligned with the legend across themes. */
+.scene-settings__hint--paired {
+  padding-top: 2px;
+}
+
+/* fieldset wrapper for radio + checkbox groups. The legend acts as the visible
+   group label; CSS resets the browser's default fieldset chrome. */
+.scene-settings__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.scene-settings__group > .scene-settings__group-label {
+  display: block;
+  padding: 0 0 6px;
+  font-weight: 600;
+  color: var(--preview-ui-foreground);
+  font-size: 0.86rem;
+}
+
 .scene-settings__input,
 .scene-settings__select {
   min-height: 34px;
@@ -3278,6 +3291,17 @@ kbd {
   background: var(--preview-ui-background);
 }
 
+/* Expand: when the shell carries data-expanded, the rail collapses to 0 so the
+   pane fills the body. Top and bottom bars stay put. */
+.layout-shell[data-expanded] .layout-shell__body {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.layout-shell[data-expanded] .layout-shell__rail {
+  visibility: hidden;
+  border-right: 0;
+}
+
 @media (max-width: 720px) {
   .layout-shell__body {
     grid-template-columns: 1fr;
@@ -3338,10 +3362,6 @@ kbd {
   background: color-mix(in srgb, var(--preview-ui-primary) 18%, transparent);
 }
 
-.rail-row[data-selected] .rail-row__name {
-  font-weight: 600;
-}
-
 .rail-row:focus-visible {
   /* Focus rings use --preview-ui-ring (an AA-verified focus token on every theme)
      rather than --row-accent. The row's own accent still colors the dot, hover, and
@@ -3374,6 +3394,10 @@ kbd {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+}
+
+.rail-row[data-selected] .rail-row__name {
+  font-weight: 600;
 }
 
 .rail-row__glimpse {
