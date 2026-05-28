@@ -296,16 +296,74 @@ Phase 5 verification:
 - `rtk pnpm test:stories` passed (8 test files / 28 stories). Pane scene stories run
   a11y in `todo` mode with an inline rationale (theme-level surface contrast).
 
-Phase 5 checkpoint reviews — pending:
+Phase 5 checkpoint reviews — complete.
 
-- `impeccable` on the live catalog with Tokyo Night, Solarized Light, and Rose Pine
-  Dawn focused in turn.
-- `web-design-guidelines` on `src/pane/SettingsScene.tsx` (form controls).
+- `impeccable` on the live catalog (Tokyo Night, Solarized Light, Rose Pine Dawn),
+  via Chrome DevTools MCP at http://localhost:5174/?theme=<id>. Three concrete
+  fixes shipped in `polish: impeccable Phase 5 …`:
+  1. `.rail-row[data-selected]` background switched from `color-mix(--row-accent
+     20%, transparent)` to `color-mix(--preview-ui-primary 18%, transparent)`.
+     Per-row accents like Solarized Light's `#eee8d5` collapse into the cream
+     rail surface; the focused theme's primary is an AA-gated, always-visible
+     token. Selected row also gets `font-weight: 600` on the name. The row's
+     own accent still drives the dot and hover tint, preserving the "rail stays
+     informative" design principle.
+  2. `.scene-settings__input` and `.scene-settings__select` widened from `min(100%,
+     320px)` to `min(100%, 480px)` and min-height bumped from 32px to 34px.
+     Settings page no longer leaves dead horizontal space at 1440px.
+  3. `.scene-workspace__right` column background switched from
+     `--preview-ui-background` to `--preview-ui-card` so it reads as a
+     distinct surface; `.scene-workspace__right-toggle` now ships with a
+     visible border + background at rest (not just on hover) so the `▢`
+     right-panel toggle reads as interactive.
+  - Screenshots saved under `docs/review/phase-5-*-after.png`.
+- `web-design-guidelines` on `src/pane/SettingsScene.tsx` + the `.scene-settings`
+  CSS block, against the latest Vercel guidelines. Four concrete fixes shipped
+  in `polish: SettingsScene a11y …`:
+  1. `.scene-settings__radio` / `.scene-settings__check` got a `:hover` state
+     (subtle border + background shift), `touch-action: manipulation`, and a
+     32px min-height so each label hits the 32px+ tap target. The native
+     input now drives a visible focus ring via
+     `.scene-settings__radio:has(input:focus-visible)` /
+     `.scene-settings__check:has(input:focus-visible)` outline using
+     `--preview-ui-ring` (already gated 3:1 against bg + card per the Phase 4
+     focus-ring contrast test).
+  2. The destructive "Reset to defaults" button switched from
+     filled-destructive (a hot button at rest) to outline-destructive
+     (transparent background, destructive border + text) per the
+     ghost-destructive pattern. Hover fills lightly with destructive at 12%.
+  3. The destructive button now requires confirmation: first click flips it
+     to `data-state="confirming"` with a filled-destructive look, a soft
+     pulse (animation respects `prefers-reduced-motion`), and the label
+     "Click again to confirm". Auto-reverts after 4 s. Second click commits
+     and flips to `data-state="done"` with green border + "Defaults restored"
+     for 2.4 s. A polite live region (`aria-live="polite"`) attached via
+     `aria-describedby` announces the prompt and completion for screen
+     readers — addresses the guideline "Destructive actions need confirmation
+     modal or undo window — never immediate."
+  4. Added `src/pane/SettingsScene.test.tsx:48-69` covering the
+     confirm-then-commit flow and the live-region announcements.
+  - Screenshots: `docs/review/phase-5-settings-destructive-idle.png`,
+    `docs/review/phase-5-settings-destructive-confirming.png` (browser-mcp
+    screenshot capture didn't reflect the state flip due to a stale-render
+    artifact; the unit test confirms the logic).
+
+Phase 5 verification (post-reviews):
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 29 test files / 128 tests, Vite build).
+- `rtk pnpm test:e2e` passed (20 passed + 2 skipped legacy).
+- `rtk pnpm test:stories` passed (8 test files / 28 stories).
 
 ## Next Step
 
-Run the Phase 5 checkpoint reviews. After they land, move to Phase 6 — Compare mode
-(Tasks 19–21).
+Phase 6 — Compare mode (Tasks 19–21). Task 19 introduces the compare-mode state
+machine (`src/compare/compareState.ts`) replacing the legacy `pairing.ts`. Task 20
+rewrites the compare UI as a pane-split (`CompareSlot.tsx` + `CompareView.tsx`)
+inside the existing shell. Task 21 wires `.` keyboard entry plus the Nameplate
+`Pin to compare` action into the new flow. The Phase 6 checkpoint runs
+`impeccable` on three pin combinations (light+dark, dark+dark, light+light) and
+`web-design-guidelines` on the compare flow (live region announcements, Esc
+behavior, color-independent pinned glyph).
 
 ## Resumability Protocol
 
