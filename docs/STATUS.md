@@ -160,6 +160,13 @@ Phase 3 checkpoint review — `impeccable` on the shell chrome:
   tracks the mobile viewport when the URL bar collapses.
 - Open call: bottom-bar fact #2 is `family` (per plan) vs `variant` (per design doc). Kept
   on `family` for now; revisit once the rail's section headers are in place (Phase 4).
+- Post-review fix: removing the old `<main>` wrapper from `RootLayout` left the global skip
+  link pointing at `#main-content` with no anchor on `/themes/*`, `/compare`, and `/lab`. A
+  `LegacyRouteMain` wrapper now wraps each transitional route container (and the 404
+  fallback) in `<main id="main-content">` so the skip link works everywhere. The catalog
+  route already supplies `#main-content` via LayoutShell. A new e2e suite,
+  `e2e/shell.spec.ts:29-44`, asserts the skip link reaches a `<main id="main-content">`
+  on `/`, `/themes/aurora-dark`, `/compare`, and `/lab`.
 
 ## Next Step
 

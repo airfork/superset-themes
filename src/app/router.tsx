@@ -1,4 +1,5 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { parseCatalogRouteSearch } from "./routes/catalogRoute";
 import {
@@ -51,33 +52,47 @@ const catalogRoute = createRoute({
   validateSearch: parseCatalogRouteSearch,
 });
 
+// Transitional <main> wrapper for routes that haven't migrated to LayoutShell yet.
+// Catalog already supplies #main-content via LayoutShell; themes/compare/lab need it here
+// so the global skip link in RootLayout has a target on every route. Migrating these to
+// LayoutShell happens in Tasks 18, 20, and 24.
+function LegacyRouteMain({ children }: { children: ReactNode }) {
+  return (
+    <main id="main-content" className="legacy-route-main">
+      {children}
+    </main>
+  );
+}
+
 const themeRoute = createRoute({
   component: function ThemeRouteContainer() {
     const navigate = themeRoute.useNavigate();
     const { themeId } = themeRoute.useParams();
 
     return (
-      <ThemeRouteView
-        onPinDark={(darkThemeId) => {
-          void navigate({
-            search: {
-              dark: darkThemeId,
-              tab: "workspace",
-            },
-            to: "/compare",
-          });
-        }}
-        onPinLight={(lightThemeId) => {
-          void navigate({
-            search: {
-              light: lightThemeId,
-              tab: "workspace",
-            },
-            to: "/compare",
-          });
-        }}
-        themeId={themeId}
-      />
+      <LegacyRouteMain>
+        <ThemeRouteView
+          onPinDark={(darkThemeId) => {
+            void navigate({
+              search: {
+                dark: darkThemeId,
+                tab: "workspace",
+              },
+              to: "/compare",
+            });
+          }}
+          onPinLight={(lightThemeId) => {
+            void navigate({
+              search: {
+                light: lightThemeId,
+                tab: "workspace",
+              },
+              to: "/compare",
+            });
+          }}
+          themeId={themeId}
+        />
+      </LegacyRouteMain>
     );
   },
   getParentRoute: () => rootRoute,
@@ -90,15 +105,17 @@ const compareRoute = createRoute({
     const search = compareRoute.useSearch();
 
     return (
-      <CompareRouteView
-        onStateChange={(nextState) => {
-          void navigate({
-            replace: true,
-            search: stateToCompareRouteSearch(nextState),
-          });
-        }}
-        search={search}
-      />
+      <LegacyRouteMain>
+        <CompareRouteView
+          onStateChange={(nextState) => {
+            void navigate({
+              replace: true,
+              search: stateToCompareRouteSearch(nextState),
+            });
+          }}
+          search={search}
+        />
+      </LegacyRouteMain>
     );
   },
   getParentRoute: () => rootRoute,
@@ -112,15 +129,17 @@ const labRoute = createRoute({
     const search = labRoute.useSearch();
 
     return (
-      <LabRouteView
-        onStartFromCatalog={(themeId) => {
-          void navigate({
-            search: { from: themeId },
-            to: "/lab",
-          });
-        }}
-        search={search}
-      />
+      <LegacyRouteMain>
+        <LabRouteView
+          onStartFromCatalog={(themeId) => {
+            void navigate({
+              search: { from: themeId },
+              to: "/lab",
+            });
+          }}
+          search={search}
+        />
+      </LegacyRouteMain>
     );
   },
   getParentRoute: () => rootRoute,
@@ -132,13 +151,15 @@ const routeTree = rootRoute.addChildren([catalogRoute, themeRoute, compareRoute,
 
 export const router = createRouter({
   defaultNotFoundComponent: () => (
-    <section aria-label="Route not found" className="theme-detail theme-detail--missing">
-      <h2>Route not found</h2>
-      <p>The requested catalog route does not exist.</p>
-      <a className="theme-detail__back" href="/">
-        Back to catalog
-      </a>
-    </section>
+    <LegacyRouteMain>
+      <section aria-label="Route not found" className="theme-detail theme-detail--missing">
+        <h2>Route not found</h2>
+        <p>The requested catalog route does not exist.</p>
+        <a className="theme-detail__back" href="/">
+          Back to catalog
+        </a>
+      </section>
+    </LegacyRouteMain>
   ),
   routeTree,
 });
