@@ -3580,9 +3580,10 @@ kbd {
   cursor: pointer;
 }
 
+/* Derive the active band from primary: per-theme selection collapses against the
+   popover surface in light themes (Solarized Light, Rosé Pine Dawn). */
 .palette__option[data-active] {
-  background: var(--preview-ui-selection);
-  color: var(--preview-ui-selection-foreground);
+  background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--preview-ui-popover));
 }
 
 .palette__option-label {
@@ -3595,10 +3596,6 @@ kbd {
   flex: 0 0 auto;
   font-size: 0.78rem;
   color: var(--preview-ui-muted-foreground);
-}
-
-.palette__option[data-active] .palette__option-hint {
-  color: color-mix(in srgb, var(--preview-ui-selection-foreground) 80%, transparent);
 }
 
 .palette__empty {
