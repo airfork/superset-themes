@@ -1,6 +1,8 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
+import { Rail } from "../rail/Rail";
+import { useFocusedTheme } from "../theme/useFocusedTheme";
 import { parseCatalogRouteSearch } from "./routes/catalogRoute";
 import {
   CompareRouteView,
@@ -25,18 +27,41 @@ const rootRoute = createRootRoute({
   component: RootLayout,
 });
 
+const EMPTY_PINNED = new Set<string>();
+
 const catalogRoute = createRoute({
   component: function CatalogRouteContainer() {
+    const navigate = catalogRoute.useNavigate();
+    const search = catalogRoute.useSearch();
+    const { focused, setFocusedId } = useFocusedTheme();
+
+    // Sync URL ?theme= into the focused-theme context. Catalog drives, provider follows.
+    useEffect(() => {
+      if (search.theme && search.theme !== focused.theme.id) {
+        setFocusedId(search.theme);
+      }
+    }, [search.theme, focused.theme.id, setFocusedId]);
+
     return (
       <LayoutShell
         onOpenPalette={() => {
           /* palette wired in Phase 7 */
         }}
         rail={
-          <div className="layout-shell__rail-placeholder">
-            <p>Rail placeholder</p>
-            <p>Featured · Light · Dark coming in Phase 4.</p>
-          </div>
+          <Rail
+            focusedThemeId={focused.theme.id}
+            pinnedThemeIds={EMPTY_PINNED}
+            onOpenPalette={() => {
+              /* palette wired in Phase 7 */
+            }}
+            onSelect={(themeId) => {
+              setFocusedId(themeId);
+              void navigate({
+                replace: true,
+                search: { ...search, theme: themeId },
+              });
+            }}
+          />
         }
         pane={
           <div className="layout-shell__pane-placeholder">

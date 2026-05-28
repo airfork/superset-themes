@@ -12,8 +12,9 @@ test("catalog route renders the master/detail shell landmarks", async ({ page })
 test("shell top bar exposes a search trigger and repo link", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("button", { name: /search themes/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /repo/i })).toBeVisible();
+  const banner = page.getByRole("banner");
+  await expect(banner.getByRole("button", { name: /search themes/i })).toBeVisible();
+  await expect(banner.getByRole("link", { name: /repo/i })).toBeVisible();
 });
 
 test("shell bottom bar shows the focused theme summary", async ({ page }) => {

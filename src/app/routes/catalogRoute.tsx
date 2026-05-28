@@ -26,6 +26,7 @@ export interface CatalogRouteSearch {
   tags?: string;
   tab?: PreviewTabId;
   terminal?: CatalogThemeMeta["terminalPaletteQuality"];
+  theme?: string;
   type?: CatalogThemeTypeFilter;
   warmth?: CatalogThemeMeta["warmth"];
 }
@@ -103,6 +104,7 @@ export function parseCatalogRouteSearch(search: Record<string, unknown>): Catalo
         ? (search.tab as PreviewTabId)
         : undefined,
     terminal: isKnownValue(search.terminal, TERMINAL_VALUES) ? search.terminal : undefined,
+    theme: stringParam(search.theme),
     type: isKnownValue(search.type, TYPE_VALUES) ? search.type : undefined,
     warmth: isKnownValue(search.warmth, WARMTH_VALUES) ? search.warmth : undefined,
   };
