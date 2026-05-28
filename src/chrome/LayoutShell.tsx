@@ -7,13 +7,14 @@ interface LayoutShellProps {
   rail: ReactNode;
   pane: ReactNode;
   onOpenPalette: () => void;
+  expanded?: boolean;
 }
 
-export function LayoutShell({ rail, pane, onOpenPalette }: LayoutShellProps) {
+export function LayoutShell({ rail, pane, onOpenPalette, expanded = false }: LayoutShellProps) {
   const { focused } = useFocusedTheme();
 
   return (
-    <div className="layout-shell">
+    <div className="layout-shell" data-expanded={expanded || undefined}>
       <TopBar onOpenPalette={onOpenPalette} />
       <div className="layout-shell__body">
         <aside className="layout-shell__rail" aria-label="Themes">

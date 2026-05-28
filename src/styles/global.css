@@ -2112,6 +2112,69 @@ kbd {
   }
 }
 
+/* Pane — composition */
+.pane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.pane__body {
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Scene tabs (below body per design) */
+.scene-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--preview-ui-border);
+  background: var(--preview-ui-background);
+}
+
+.scene-tabs__tab {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 550;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scene-tabs__tab:hover {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+}
+
+.scene-tabs__tab[data-active] {
+  border-color: var(--preview-ui-border);
+  background: color-mix(in srgb, var(--preview-ui-accent) 18%, transparent);
+  color: var(--preview-ui-foreground);
+  font-weight: 650;
+}
+
+.scene-tabs__tab:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
+}
+
+/* Expand: when the shell carries data-expanded, the rail collapses to 0 so the
+   pane fills the body. Top and bottom bars stay put. */
+.layout-shell[data-expanded] .layout-shell__body {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.layout-shell[data-expanded] .layout-shell__rail {
+  visibility: hidden;
+  border-right: 0;
+}
+
 /* Pane — nameplate */
 .pane-nameplate {
   display: grid;
