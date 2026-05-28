@@ -17,14 +17,6 @@ test.skip("supports shareable catalog search params", async ({ page }) => {
   await expect(page.getByRole("searchbox", { name: /search themes/i })).toHaveValue("graphite");
 });
 
-test("renders a theme detail route", async ({ page }) => {
-  await page.goto("/themes/aurora-dark");
-
-  await expect(page.getByRole("region", { name: /aurora dark details/i })).toBeVisible();
-  await expect(page.getByRole("tablist", { name: /preview surfaces/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /pin dark/i })).toBeEnabled();
-  await expect(page.getByRole("link", { name: /download json/i })).toHaveAttribute(
-    "download",
-    "aurora-dark.json",
-  );
-});
+// Theme detail is folded into the catalog as ?theme=<id> (Task 18). The legacy
+// /themes/:id route no longer exists; the rail-driven URL hydration is covered
+// by e2e/catalog.spec.ts.

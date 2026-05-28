@@ -943,10 +943,10 @@ Update `docs/STATUS.md`.
 
 Composition: theme name · family chip · tag chips · light/dark indicator on the left; `Pin to compare`, `Open in Lab`, `Copy JSON` actions on the right.
 
-- [ ] **Step 1: Failing test** — renders all three actions; "Pin to compare" calls `onPin` with focused id.
-- [ ] **Step 2: Implement** — actions are ghost-style buttons (subtle, no primary color), separated by thin vertical dividers.
-- [ ] **Step 3: Stories** — Tokyo Night and Rose Pine Dawn variants.
-- [ ] **Step 4: Commit `feat: add pane nameplate`**
+- [x] **Step 1: Failing test** — renders all three actions; "Pin to compare" calls `onPin` with focused id.
+- [x] **Step 2: Implement** — actions are ghost-style buttons (subtle, no primary color), separated by thin vertical dividers.
+- [x] **Step 3: Stories** — Tokyo Night and Rose Pine Dawn variants.
+- [x] **Step 4: Commit `feat: add pane nameplate`**
 
 ## Task 15: Workspace scene — Superset three-column layout
 
@@ -962,11 +962,11 @@ Three-column shape matching the design doc's ASCII diagram. The third column (fi
 
 This is **not** the current `surfaces.tsx` workspace — that one mimicked Bolt/VS Code. The new one mimics Superset's actual workspace layout.
 
-- [ ] **Step 1: Failing component test** — renders the workspaces tree, the thread, and the collapsed third-column toggle. No file tree on the right.
-- [ ] **Step 2: Implement `WorkspaceScene.tsx`** with hardcoded fixture content that reads "this is a Superset workspace" without being literally Superset-branded. Use `--preview-ui-*` for all surfaces, `--preview-terminal-*` only for the input prompt indicator.
-- [ ] **Step 3: CSS** — single grid `grid-template-columns: 220px minmax(0, 1fr) 32px` (third col is toggle-width). Use `--app-font-chrome` for sidebars, `--app-font-editor` for code blocks.
-- [ ] **Step 4: Stories** covering Tokyo Night, Solarized Light, Catppuccin Mocha, Rose Pine Dawn, One Dark.
-- [ ] **Step 5: Commit `feat: add Workspace preview scene`**
+- [x] **Step 1: Failing component test** — renders the workspaces tree, the thread, and the collapsed third-column toggle. No file tree on the right.
+- [x] **Step 2: Implement `WorkspaceScene.tsx`** with hardcoded fixture content that reads "this is a Superset workspace" without being literally Superset-branded. Use `--preview-ui-*` for all surfaces, `--preview-terminal-*` only for the input prompt indicator.
+- [x] **Step 3: CSS** — single grid `grid-template-columns: 220px minmax(0, 1fr) 32px` (third col is toggle-width). Use `--app-font-chrome` for sidebars, `--app-font-editor` for code blocks.
+- [x] **Step 4: Stories** covering Tokyo Night, Solarized Light, Catppuccin Mocha, Rose Pine Dawn, One Dark.
+- [x] **Step 5: Commit `feat: add Workspace preview scene`**
 
 ## Task 16: Settings scene
 
@@ -977,10 +977,10 @@ This is **not** the current `surfaces.tsx` workspace — that one mimicked Bolt/
 
 A full appearance/settings page covering: a labeled `<input>`, a `<select>`, a checkbox group, a radio set, a destructive action button, a code-block sample (uses editor font + terminal colors), and a terminal sample. Mirrors Superset's settings density.
 
-- [ ] **Step 1: Failing test** — renders all 7 input types and the code/terminal samples.
-- [ ] **Step 2: Implement** using only `--preview-*` vars + `--app-font-*` family vars.
-- [ ] **Step 3: Stories**.
-- [ ] **Step 4: Commit `feat: add Settings preview scene`**
+- [x] **Step 1: Failing test** — renders all 7 input types and the code/terminal samples.
+- [x] **Step 2: Implement** using only `--preview-*` vars + `--app-font-*` family vars.
+- [x] **Step 3: Stories**.
+- [x] **Step 4: Commit `feat: add Settings preview scene`**
 
 ## Task 17: Scene tab strip + pane expand
 

@@ -27,7 +27,10 @@ export function Nameplate({ entry, onPin, onExpand }: NameplateProps) {
   const modeLabel = `${isDark ? "Dark" : "Light"} theme`;
 
   return (
-    <header className="pane-nameplate">
+    // <div> instead of <header> to avoid double-banner against the TopBar — the
+    // nameplate is inside <main>, but accessibility tooling sometimes still maps
+    // <header> to role="banner" in that context.
+    <div className="pane-nameplate">
       <div className="pane-nameplate__title">
         {onExpand ? (
           <button
@@ -75,6 +78,6 @@ export function Nameplate({ entry, onPin, onExpand }: NameplateProps) {
           <span>{copyState === "copied" ? "Copied" : "Copy JSON"}</span>
         </button>
       </div>
-    </header>
+    </div>
   );
 }

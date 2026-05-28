@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
+import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
 import { parseCatalogRouteSearch } from "./routes/catalogRoute";
@@ -10,7 +11,6 @@ import {
   stateToCompareRouteSearch,
 } from "./routes/compareRoute";
 import { LabRouteView, parseLabRouteSearch } from "./routes/labRoute";
-import { ThemeRouteView } from "./routes/themeRoute";
 
 function RootLayout() {
   return (
@@ -34,6 +34,7 @@ const catalogRoute = createRoute({
     const navigate = catalogRoute.useNavigate();
     const search = catalogRoute.useSearch();
     const { focused, setFocusedId } = useFocusedTheme();
+    const [expanded, setExpanded] = useState(false);
 
     // Sync URL ?theme= into the focused-theme context. Catalog drives, provider follows.
     useEffect(() => {
@@ -44,6 +45,7 @@ const catalogRoute = createRoute({
 
     return (
       <LayoutShell
+        expanded={expanded}
         onOpenPalette={() => {
           /* palette wired in Phase 7 */
         }}
@@ -64,10 +66,23 @@ const catalogRoute = createRoute({
           />
         }
         pane={
-          <div className="layout-shell__pane-placeholder">
-            <p>Pane placeholder</p>
-            <p>Master/detail catalog content arrives in Phase 5.</p>
-          </div>
+          <Pane
+            entry={focused}
+            expanded={expanded}
+            onExpandToggle={() => setExpanded((value) => !value)}
+            onPin={(themeId) => {
+              // Phase 6 replaces this with the compare-mode state machine. For now
+              // keep the legacy ?light=/?dark= URL contract so /compare still works.
+              const entry = focused.theme.id === themeId ? focused : focused;
+              const params: Record<string, string> = { tab: search.tab ?? "workspace" };
+              if (entry.theme.type === "light") {
+                params.light = themeId;
+              } else {
+                params.dark = themeId;
+              }
+              void navigate({ to: "/compare", search: params });
+            }}
+          />
         }
       />
     );
@@ -78,9 +93,8 @@ const catalogRoute = createRoute({
 });
 
 // Transitional <main> wrapper for routes that haven't migrated to LayoutShell yet.
-// Catalog already supplies #main-content via LayoutShell; themes/compare/lab need it here
-// so the global skip link in RootLayout has a target on every route. Migrating these to
-// LayoutShell happens in Tasks 18, 20, and 24.
+// /compare and /lab need it so the global skip link in RootLayout has a target on
+// every route. Phase 6 (Task 20) and Phase 8 (Task 24) migrate them to the shell.
 function LegacyRouteMain({ children }: { children: ReactNode }) {
   return (
     <main id="main-content" className="legacy-route-main">
@@ -88,41 +102,6 @@ function LegacyRouteMain({ children }: { children: ReactNode }) {
     </main>
   );
 }
-
-const themeRoute = createRoute({
-  component: function ThemeRouteContainer() {
-    const navigate = themeRoute.useNavigate();
-    const { themeId } = themeRoute.useParams();
-
-    return (
-      <LegacyRouteMain>
-        <ThemeRouteView
-          onPinDark={(darkThemeId) => {
-            void navigate({
-              search: {
-                dark: darkThemeId,
-                tab: "workspace",
-              },
-              to: "/compare",
-            });
-          }}
-          onPinLight={(lightThemeId) => {
-            void navigate({
-              search: {
-                light: lightThemeId,
-                tab: "workspace",
-              },
-              to: "/compare",
-            });
-          }}
-          themeId={themeId}
-        />
-      </LegacyRouteMain>
-    );
-  },
-  getParentRoute: () => rootRoute,
-  path: "/themes/$themeId",
-});
 
 const compareRoute = createRoute({
   component: function CompareRouteContainer() {
@@ -172,7 +151,7 @@ const labRoute = createRoute({
   validateSearch: parseLabRouteSearch,
 });
 
-const routeTree = rootRoute.addChildren([catalogRoute, themeRoute, compareRoute, labRoute]);
+const routeTree = rootRoute.addChildren([catalogRoute, compareRoute, labRoute]);
 
 export const router = createRouter({
   defaultNotFoundComponent: () => (

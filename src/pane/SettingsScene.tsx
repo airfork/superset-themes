@@ -24,12 +24,12 @@ export function SettingsScene({ entry }: SettingsSceneProps) {
 
   return (
     <div className="scene-settings">
-      <header className="scene-settings__header">
+      <div className="scene-settings__header">
         <h2 className="scene-settings__heading">Appearance &amp; editor</h2>
         <p className="scene-settings__lede">
           Settings render in the focused theme. Use this scene to gauge form-density at full scale.
         </p>
-      </header>
+      </div>
 
       <section className="scene-settings__row" aria-labelledby={`${displayNameId}-label`}>
         <div className="scene-settings__field">

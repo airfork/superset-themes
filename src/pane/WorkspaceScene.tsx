@@ -112,7 +112,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         aria-label={`${theme.name} thread`}
         aria-describedby={threadId}
       >
-        <header className="scene-workspace__thread-header">
+        <div className="scene-workspace__thread-header">
           <span className="scene-workspace__branch-chip">
             <GitBranch aria-hidden="true" />
             <button type="button" className="scene-workspace__branch-button">
@@ -123,7 +123,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
           <span className="scene-workspace__thread-title" id={threadId}>
             Redesign theme catalog rail
           </span>
-        </header>
+        </div>
 
         <div className="scene-workspace__run-row">
           <span className="scene-workspace__run-agent">Codex</span>
