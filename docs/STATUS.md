@@ -234,13 +234,78 @@ Phase 4 checkpoint reviews:
   the button. Previously slash only worked from rail rows via `useRailKeyboard`.
   `src/rail/RailSearch.test.tsx` and a new `e2e/rail.spec.ts` case cover both paths.
 
+## Phase 5 — Pane
+
+Status: Implementation complete; checkpoint reviews pending.
+
+- Task 14 committed (`feat: add pane nameplate`). `src/pane/Nameplate.tsx` renders
+  theme name (h2), family chip, light/dark indicator (`role="img"`), and tag
+  chips on the left; Pin to compare, Open in Lab, and Copy JSON ghost-style
+  actions on the right separated by thin vertical dividers. `onPin(themeId)`
+  fires with the focused theme; Copy JSON writes `exportThemeJson(entry)` via
+  `vi.spyOn(navigator.clipboard, "writeText")` in tests (jsdom now ships a real
+  navigator.clipboard so `Object.defineProperty` no longer works).
+- Task 15 committed (`feat: add Workspace preview scene`). `src/pane/WorkspaceScene.tsx`
+  is the Superset-shape three-column scene: workspaces tree (T Team · nav ·
+  projects with branches · Ports/Settings footer) on the left, thread on the
+  middle (branch chip, agent run row, agent picker tabs, message stream with
+  code block, input bar), collapsed `▢` right-panel toggle. Grid is
+  `220px minmax(0,1fr) 32px`. Stories cover Tokyo Night, Solarized Light,
+  Catppuccin Mocha, Rose Pine Dawn, One Dark with a11y mode `todo` — themes
+  ship gated `ui.foreground/background` and `ui.card/cardForeground`, but the
+  small-surface combinations axe checks (e.g. muted-foreground on muted
+  background) fall outside that gate. The Phase 5 reviews own the real
+  interaction-level a11y bar.
+- Task 16 committed (`feat: add Settings preview scene`). `src/pane/SettingsScene.tsx`
+  covers all seven control types: labeled `<input>`, labeled `<select>`, radio
+  fieldset (with explicit `role="radiogroup"` since `<fieldset>` has implicit
+  `role="group"`), checkbox fieldset, destructive action button, syntax-colored
+  code sample (editor font + terminal colors via `--app-font-editor`), and
+  terminal sample with prompt/success/warning/error. Stories: Tokyo Night,
+  Solarized Light, Rose Pine Dawn, One Dark.
+- Task 17 committed (`feat: scene tabs and pane expand`). `src/pane/SceneTabs.tsx`
+  is a two-tab tablist (Workspace, Settings) below the pane body. `src/pane/Pane.tsx`
+  composes Nameplate + (WorkspaceScene|SettingsScene) + SceneTabs and listens
+  on `window keydown` for `f` (ignoring INPUT/TEXTAREA/SELECT/contenteditable
+  targets) to call `onExpandToggle`. Nameplate's name-as-button also fires
+  `onExpandToggle`. LayoutShell now accepts `expanded` and renders
+  `data-expanded` so CSS collapses the rail column to `0` and visibility-hides
+  the rail when set.
+- Task 18 committed (`feat: wire catalog as master-detail shell`). Catalog route
+  renders `<LayoutShell pane={<Pane …/>} />`; `onPin` from the pane navigates
+  to `/compare?light=` / `?dark=` (Phase 6 will replace this with the compare
+  state machine). `CatalogRouteSearch` shrunk to `{ theme?, dark?, light?, tab? }`.
+  Deleted: `src/app/routes/themeRoute.tsx`, `src/catalog/ThemeDetail.tsx` +
+  test, `src/catalog/CatalogPage.tsx` + test, `src/catalog/ThemeCard.tsx` +
+  stories. Removed `themeRoute` from the route tree. `e2e/catalog.spec.ts`
+  rewritten with five new flows: rail click → URL + chrome morph, scene tab
+  switch, `f`-keypress expand, `?theme=` hydration, mobile overflow.
+  `App.test.tsx` dropped its themeRoute-specific cases and gained a `?theme=`
+  hydration assertion.
+- Post-implementation fixes: Nameplate, WorkspaceScene, and SettingsScene
+  switched their internal `<header>` wrappers to `<div>` because RTL/axe was
+  computing a second `role="banner"` even when nested inside `<main>`/`<section>`.
+  Top-bar grid switched to `minmax(0, 1fr) auto minmax(0, 1fr)` and the search
+  input gained `min-width: 0` so the chrome no longer overflows at 390px.
+
+Phase 5 verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 29 test files / 127 tests, Vite build).
+- `rtk pnpm test:e2e` passed (20 passed + 2 skipped legacy), including the four new
+  rail-driven flows in `e2e/catalog.spec.ts`.
+- `rtk pnpm test:stories` passed (8 test files / 28 stories). Pane scene stories run
+  a11y in `todo` mode with an inline rationale (theme-level surface contrast).
+
+Phase 5 checkpoint reviews — pending:
+
+- `impeccable` on the live catalog with Tokyo Night, Solarized Light, and Rose Pine
+  Dawn focused in turn.
+- `web-design-guidelines` on `src/pane/SettingsScene.tsx` (form controls).
+
 ## Next Step
 
-Phase 5 — Pane. Tasks 14 (Nameplate), 15 (Workspace scene — Superset three-column),
-16 (Settings scene), 17 (Scene tab strip + pane expand), 18 (Catalog route wiring +
-delete legacy theme detail route). The Phase 5 checkpoint runs `impeccable` on the live
-catalog with multiple themes and `web-design-guidelines` on `SettingsScene` form
-controls.
+Run the Phase 5 checkpoint reviews. After they land, move to Phase 6 — Compare mode
+(Tasks 19–21).
 
 ## Resumability Protocol
 

@@ -991,12 +991,12 @@ A full appearance/settings page covering: a labeled `<input>`, a `<select>`, a c
 
 Two scenes only: `Workspace` (default) and `Settings`. Tab strip sits **below** the body (per design ASCII), not above. Expand affordance: clicking the nameplate name or pressing `f` (think "fullscreen") toggles a class on the layout shell that hides the rail and pushes the pane to viewport-fill.
 
-- [ ] **Step 1: Failing test for `Pane`** — switches between scenes; expand toggle dispatches a callback.
-- [ ] **Step 2: Implement `SceneTabs.tsx`** as `role="tablist"` with two tabs.
-- [ ] **Step 3: Implement `Pane.tsx`** composing Nameplate + (Workspace|Settings) + SceneTabs.
-- [ ] **Step 4: Wire expand into `LayoutShell`** — when `expanded`, add `data-expanded="true"` and CSS hides the rail.
-- [ ] **Step 5: Playwright** — pressing `f` hides the rail, pressing `f` again restores it.
-- [ ] **Step 6: Commit `feat: scene tabs and pane expand`**
+- [x] **Step 1: Failing test for `Pane`** — switches between scenes; expand toggle dispatches a callback.
+- [x] **Step 2: Implement `SceneTabs.tsx`** as `role="tablist"` with two tabs.
+- [x] **Step 3: Implement `Pane.tsx`** composing Nameplate + (Workspace|Settings) + SceneTabs.
+- [x] **Step 4: Wire expand into `LayoutShell`** — when `expanded`, add `data-expanded="true"` and CSS hides the rail.
+- [x] **Step 5: Playwright** — pressing `f` hides the rail, pressing `f` again restores it.
+- [x] **Step 6: Commit `feat: scene tabs and pane expand`**
 
 ## Task 18: Catalog route wiring
 
@@ -1006,14 +1006,14 @@ Two scenes only: `Workspace` (default) and `Settings`. Tab strip sits **below** 
 
 The catalog route is now the master/detail shell, not the old filter/grid. URL is `/?theme=<id>`; clicking a rail row updates the param via `navigate({ replace: true, search })` and the provider syncs.
 
-- [ ] **Step 1: Replace `CatalogRouteView` body** — render `<LayoutShell rail={<Rail …/>} pane={<Pane …/>} />`.
-- [ ] **Step 2: Initial theme from URL** — `FocusedThemeProvider` accepts `initialThemeId={search.theme ?? getDefaultFocusedTheme().theme.id}`. Move provider down from `main.tsx` into the catalog route container so each route can pass its own initial theme.
+- [x] **Step 1: Replace `CatalogRouteView` body** — render `<LayoutShell rail={<Rail …/>} pane={<Pane …/>} />`.
+- [x] **Step 2: Initial theme from URL** — `FocusedThemeProvider` accepts `initialThemeId={search.theme ?? getDefaultFocusedTheme().theme.id}`. Move provider down from `main.tsx` into the catalog route container so each route can pass its own initial theme.
 
 Actually, leave the provider in `main.tsx` and have the catalog route call `setFocusedId(search.theme)` in a `useEffect` driven by URL changes. Same outcome, simpler.
 
-- [ ] **Step 3: Update Playwright `e2e/catalog.spec.ts`** — replace old assertions about filters/grids with: rail visible, clicking a rail row updates `?theme=…`, chrome background changes.
-- [ ] **Step 4: Delete `src/app/routes/themeRoute.tsx` and `src/catalog/ThemeDetail.tsx`** + their tests. Remove the `themeRoute` from the route tree.
-- [ ] **Step 5: Commit `feat: wire catalog as master-detail shell`**
+- [x] **Step 3: Update Playwright `e2e/catalog.spec.ts`** — replace old assertions about filters/grids with: rail visible, clicking a rail row updates `?theme=…`, chrome background changes.
+- [x] **Step 4: Delete `src/app/routes/themeRoute.tsx` and `src/catalog/ThemeDetail.tsx`** + their tests. Remove the `themeRoute` from the route tree.
+- [x] **Step 5: Commit `feat: wire catalog as master-detail shell`**
 
 ## Phase 5 checkpoint
 
