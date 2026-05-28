@@ -120,12 +120,52 @@ Phase 2 checkpoint review — `vercel-react-best-practices` on `src/theme/`:
 - `useFocusedTheme.ts:7-9` — throws on missing provider (fail-fast).
 - Verdict: pass, no required changes.
 
+## Phase 3 — Shell anatomy
+
+Status: Complete.
+
+- Task 8 committed (`feat: add top bar chrome`). 38px-tall header with site name (left),
+  centered search-as-button trigger (`⌘K` hint), and right-aligned repo link. All visual
+  tokens flow through `--preview-ui-*` so the chrome morphs with the focused theme.
+- Task 9 committed (`feat: add bottom status bar`). 32px-tall footer with
+  `<name> · <family> · <contrast ratio>` on the left and `↓ next · ⌘K · . pin` keyboard
+  hints on the right. Contrast computed via `getContrastRatio(ui.background, ui.foreground)`
+  to one decimal place.
+- Task 10 committed (`feat: add master-detail layout shell`). LayoutShell composes TopBar,
+  a sticky `<aside aria-label="Themes">` rail, a `<main>` pane, and the BottomBar bound to
+  `useFocusedTheme()`. Catalog route renders the shell with placeholder rail/pane content;
+  the legacy CatalogRouteView body returns in Phase 5 Task 18. RootLayout dropped its
+  visible header and `<main>` wrapper. FocusedThemeProvider hoisted into App.tsx so
+  component tests rendering `<App />` receive theme context.
+- Legacy catalog and pairing e2e specs are `test.skip` with comments pointing at the
+  Phase 5 / Phase 6 revival tasks. `e2e/shell.spec.ts` (3 tests) covers banner, themes
+  complementary, main, and contentinfo landmarks plus the focused-theme summary.
+
+Phase 3 verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, 22 test files / 79 tests / 1 skipped, build).
+- `rtk pnpm test:e2e` passed (8 active + 6 skipped legacy).
+- `rtk pnpm test:stories` passed (5 test files / 14 stories).
+
+Phase 3 checkpoint review — `impeccable` on the shell chrome:
+
+- Verdict: four concrete fixes shipped, one open-design call deferred.
+- Fix 1: `.chrome-topbar` switched from flex to `grid-template-columns: 1fr auto 1fr` so
+  the search input is viewport-centered regardless of side-cluster widths.
+- Fix 2: `.chrome-topbar__name` dropped from `0.84rem` to `0.78rem`, matching the repo
+  link size so the left-cluster doesn't visually shout.
+- Fix 3: `.chrome-topbar__search` height bumped from 26px to 28px so the input lives at
+  the bar's edges instead of floating inside it.
+- Fix 4: `.layout-shell__rail` max-height switched from `100vh` to `100dvh` so the rail
+  tracks the mobile viewport when the URL bar collapses.
+- Open call: bottom-bar fact #2 is `family` (per plan) vs `variant` (per design doc). Kept
+  on `family` for now; revisit once the rail's section headers are in place (Phase 4).
+
 ## Next Step
 
-Phase 3 — Shell anatomy. Tasks 8 (TopBar), 9 (BottomBar), 10 (LayoutShell). The Phase 3
-checkpoint runs `pnpm check`, `pnpm test:e2e`, `pnpm test:stories`, and invokes the
-`impeccable` skill against the live dev server to validate Superset-adjacent chrome
-density and overall shell coherence.
+Phase 4 — Rail. Tasks 11 (RailRow), 12 (RailSection + RailSearch + Rail composition),
+13 (rail keyboard navigation). The Phase 4 checkpoint invokes `web-design-guidelines` and
+`impeccable` on the rail.
 
 ## Resumability Protocol
 

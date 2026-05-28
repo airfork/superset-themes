@@ -735,11 +735,11 @@ pnpm test:e2e
 
 Composition: site name (small, left), ⌘K trigger (button styled like a search input), repo link. No tagline, no nav tabs.
 
-- [ ] **Step 1: Failing test**
+- [x] **Step 1: Failing test**
 
 `TopBar.test.tsx` asserts: site name renders, "Search themes" placeholder visible, ⌘K hint visible, repo link points to upstream URL, top bar has `role="banner"`.
 
-- [ ] **Step 2: Implement `TopBar.tsx`**
+- [x] **Step 2: Implement `TopBar.tsx`**
 
 ```tsx
 import { Search } from "lucide-react";
@@ -774,13 +774,13 @@ export function TopBar({ onOpenPalette }: TopBarProps) {
 }
 ```
 
-- [ ] **Step 3: Add CSS to `global.css`**
+- [x] **Step 3: Add CSS to `global.css`**
 
 Density target: ~38px tall, 12px horizontal padding, 1px bottom border using `--preview-ui-border`, surface using `--preview-ui-card`.
 
-- [ ] **Step 4: Storybook story** showing default state (no-op `onOpenPalette`).
+- [x] **Step 4: Storybook story** showing default state (no-op `onOpenPalette`).
 
-- [ ] **Step 5: Run check + commit**
+- [x] **Step 5: Run check + commit**
 
 ```bash
 pnpm check
@@ -797,11 +797,11 @@ git commit -m "feat: add top bar chrome"
 
 Composition: `<theme name> · <family> · <contrast ratio>` on left; `↓ next · ⌘K · . pin` keyboard hints on right.
 
-- [ ] **Step 1: Failing test** — given a focused entry, renders the three left-side facts and the three keyboard hints.
-- [ ] **Step 2: Implement `BottomBar.tsx`** taking `entry: CatalogThemeEntry`. Compute contrast ratio via `contrastRatio(theme.ui.background, theme.ui.foreground)` from `src/theme-core/contrast.ts` and render to one decimal place + `":1"`.
-- [ ] **Step 3: CSS** — same density and surface as top bar, 1px top border.
-- [ ] **Step 4: Storybook story** showing Tokyo Night, Solarized Light, and Catppuccin Mocha variants.
-- [ ] **Step 5: Commit `feat: add bottom status bar`**
+- [x] **Step 1: Failing test** — given a focused entry, renders the three left-side facts and the three keyboard hints.
+- [x] **Step 2: Implement `BottomBar.tsx`** taking `entry: CatalogThemeEntry`. Compute contrast ratio via `contrastRatio(theme.ui.background, theme.ui.foreground)` from `src/theme-core/contrast.ts` and render to one decimal place + `":1"`.
+- [x] **Step 3: CSS** — same density and surface as top bar, 1px top border.
+- [x] **Step 4: Storybook story** showing Tokyo Night, Solarized Light, and Catppuccin Mocha variants.
+- [x] **Step 5: Commit `feat: add bottom status bar`**
 
 ## Task 10: Layout shell
 
@@ -811,11 +811,11 @@ Composition: `<theme name> · <family> · <contrast ratio>` on left; `↓ next �
 
 The shell is a CSS grid: `grid-template-rows: auto 1fr auto` (top / pane / bottom) with the rail nested inside the middle row as `grid-template-columns: 300px minmax(0, 1fr)`.
 
-- [ ] **Step 1: Implement `LayoutShell.tsx`** taking `rail: ReactNode`, `pane: ReactNode`, `onOpenPalette: () => void`, and rendering `<TopBar />`, the rail+pane grid, and `<BottomBar entry={useFocusedTheme().focused} />`.
-- [ ] **Step 2: CSS** with sticky rail (`position: sticky; top: 0; align-self: start; max-height: calc(100vh - var(--chrome-top) - var(--chrome-bottom))`).
-- [ ] **Step 3: Failing Playwright** — assert the shell renders `header[role=banner]`, the rail region, the pane region, and a status footer.
-- [ ] **Step 4: Wire shell into the catalog route** (placeholder rail + placeholder pane so the layout is observable). Old `<header className="app-header">` and the `<main>` wrapper in `router.tsx` get removed.
-- [ ] **Step 5: Run check + commit `feat: add master-detail layout shell`**
+- [x] **Step 1: Implement `LayoutShell.tsx`** taking `rail: ReactNode`, `pane: ReactNode`, `onOpenPalette: () => void`, and rendering `<TopBar />`, the rail+pane grid, and `<BottomBar entry={useFocusedTheme().focused} />`.
+- [x] **Step 2: CSS** with sticky rail (`position: sticky; top: 0; align-self: start; max-height: calc(100vh - var(--chrome-top) - var(--chrome-bottom))`).
+- [x] **Step 3: Failing Playwright** — assert the shell renders `header[role=banner]`, the rail region, the pane region, and a status footer.
+- [x] **Step 4: Wire shell into the catalog route** (placeholder rail + placeholder pane so the layout is observable). Old `<header className="app-header">` and the `<main>` wrapper in `router.tsx` get removed.
+- [x] **Step 5: Run check + commit `feat: add master-detail layout shell`**
 
 ## Phase 3 checkpoint
 
