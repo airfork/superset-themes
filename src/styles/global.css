@@ -2922,6 +2922,7 @@ kbd {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 32px;
   padding: 6px 10px;
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
@@ -2929,6 +2930,19 @@ kbd {
   color: var(--preview-ui-foreground);
   font-size: 0.84rem;
   cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scene-settings__radio:hover,
+.scene-settings__check:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 35%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, var(--preview-ui-background));
+}
+
+.scene-settings__radio:has(input:focus-visible),
+.scene-settings__check:has(input:focus-visible) {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
 }
 
 .scene-settings__radio:has(input:checked),
@@ -3011,6 +3025,11 @@ kbd {
   color: var(--preview-terminal-red);
 }
 
+.scene-settings__destructive-cluster {
+  display: grid;
+  gap: 6px;
+}
+
 .scene-settings__destructive {
   display: inline-flex;
   align-items: center;
@@ -3019,13 +3038,14 @@ kbd {
   padding: 0 12px;
   border: 1px solid var(--preview-ui-destructive);
   border-radius: 6px;
-  background: var(--preview-ui-destructive);
-  color: var(--preview-ui-destructive-foreground);
+  background: transparent;
+  color: var(--preview-ui-destructive);
   font: inherit;
   font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
   width: fit-content;
+  touch-action: manipulation;
 }
 
 .scene-settings__destructive svg {
@@ -3034,7 +3054,37 @@ kbd {
 }
 
 .scene-settings__destructive:hover {
-  background: color-mix(in srgb, var(--preview-ui-destructive) 85%, black);
+  background: color-mix(in srgb, var(--preview-ui-destructive) 12%, transparent);
+}
+
+/* Confirming: the button flips to filled-destructive so a second click reads as
+   a committed action, not an exploratory hover. */
+.scene-settings__destructive[data-state="confirming"] {
+  background: var(--preview-ui-destructive);
+  color: var(--preview-ui-destructive-foreground);
+  animation: scene-settings-destructive-pulse 1.6s ease-in-out 0s 2;
+}
+
+.scene-settings__destructive[data-state="done"] {
+  border-color: var(--preview-terminal-green);
+  color: var(--preview-terminal-green);
+  background: transparent;
+}
+
+@keyframes scene-settings-destructive-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-settings__destructive[data-state="confirming"] {
+    animation: none;
+  }
 }
 
 .scene-settings__destructive:focus-visible {

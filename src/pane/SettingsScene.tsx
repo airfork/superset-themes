@@ -1,10 +1,22 @@
 import { Trash2 } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 interface SettingsSceneProps {
   entry: CatalogThemeEntry;
 }
+
+interface EditorFeatures {
+  wordWrap: boolean;
+  minimap: boolean;
+  indentGuides: boolean;
+}
+
+const DEFAULT_FEATURES: EditorFeatures = {
+  wordWrap: true,
+  minimap: false,
+  indentGuides: true,
+};
 
 export function SettingsScene({ entry }: SettingsSceneProps) {
   const { theme } = entry;
@@ -12,15 +24,47 @@ export function SettingsScene({ entry }: SettingsSceneProps) {
   const defaultEditorId = useId();
   const themeModeName = `theme-mode-${useId()}`;
   const featuresName = `features-${useId()}`;
+  const resetAnnouncementId = useId();
 
   const [displayName, setDisplayName] = useState(theme.name);
   const [editor, setEditor] = useState("vscode");
   const [mode, setMode] = useState<"system" | "light" | "dark">("system");
-  const [features, setFeatures] = useState({
-    wordWrap: true,
-    minimap: false,
-    indentGuides: true,
-  });
+  const [features, setFeatures] = useState<EditorFeatures>({ ...DEFAULT_FEATURES });
+  const [resetState, setResetState] = useState<"idle" | "confirming" | "done">("idle");
+  const resetTimerRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (resetTimerRef.current !== null) {
+        window.clearTimeout(resetTimerRef.current);
+      }
+    },
+    [],
+  );
+
+  const onResetClick = () => {
+    if (resetTimerRef.current !== null) {
+      window.clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }
+    if (resetState === "confirming") {
+      setDisplayName(theme.name);
+      setEditor("vscode");
+      setMode("system");
+      setFeatures({ ...DEFAULT_FEATURES });
+      setResetState("done");
+      resetTimerRef.current = window.setTimeout(() => {
+        setResetState("idle");
+        resetTimerRef.current = null;
+      }, 2400);
+      return;
+    }
+    setResetState("confirming");
+    resetTimerRef.current = window.setTimeout(() => {
+      setResetState("idle");
+      resetTimerRef.current = null;
+    }, 4000);
+  };
 
   return (
     <div className="scene-settings">
@@ -207,10 +251,29 @@ export function SettingsScene({ entry }: SettingsSceneProps) {
             Restores defaults across appearance, editor, and theme mode.
           </p>
         </div>
-        <button type="button" className="scene-settings__destructive">
-          <Trash2 aria-hidden="true" />
-          <span>Reset to defaults</span>
-        </button>
+        <div className="scene-settings__destructive-cluster">
+          <button
+            type="button"
+            className="scene-settings__destructive"
+            data-state={resetState}
+            aria-describedby={resetAnnouncementId}
+            onClick={onResetClick}
+          >
+            <Trash2 aria-hidden="true" />
+            <span>
+              {resetState === "idle" && "Reset to defaults"}
+              {resetState === "confirming" && "Click again to confirm"}
+              {resetState === "done" && "Defaults restored"}
+            </span>
+          </button>
+          <p id={resetAnnouncementId} className="sr-only" aria-live="polite">
+            {resetState === "confirming"
+              ? "Reset requires confirmation. Press the button again within four seconds, or wait for the prompt to clear."
+              : resetState === "done"
+                ? "Settings have been reset to defaults."
+                : ""}
+          </p>
+        </div>
       </section>
     </div>
   );
