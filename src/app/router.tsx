@@ -1,5 +1,6 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
-import { CatalogRouteView, parseCatalogRouteSearch } from "./routes/catalogRoute";
+import { LayoutShell } from "../chrome/LayoutShell";
+import { parseCatalogRouteSearch } from "./routes/catalogRoute";
 import {
   CompareRouteView,
   parseCompareRouteSearch,
@@ -14,15 +15,7 @@ function RootLayout() {
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <header className="app-header">
-        <div>
-          <p className="eyebrow">Static theme workspace</p>
-          <h1>Superset Theme Catalog</h1>
-        </div>
-      </header>
-      <main className="app-main" id="main-content">
-        <Outlet />
-      </main>
+      <Outlet />
     </>
   );
 }
@@ -33,18 +26,23 @@ const rootRoute = createRootRoute({
 
 const catalogRoute = createRoute({
   component: function CatalogRouteContainer() {
-    const navigate = catalogRoute.useNavigate();
-    const search = catalogRoute.useSearch();
-
     return (
-      <CatalogRouteView
-        onStateChange={(nextSearch) => {
-          void navigate({
-            replace: true,
-            search: nextSearch,
-          });
+      <LayoutShell
+        onOpenPalette={() => {
+          /* palette wired in Phase 7 */
         }}
-        search={search}
+        rail={
+          <div className="layout-shell__rail-placeholder">
+            <p>Rail placeholder</p>
+            <p>Featured · Light · Dark coming in Phase 4.</p>
+          </div>
+        }
+        pane={
+          <div className="layout-shell__pane-placeholder">
+            <p>Pane placeholder</p>
+            <p>Master/detail catalog content arrives in Phase 5.</p>
+          </div>
+        }
       />
     );
   },

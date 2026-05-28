@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-test("pins light and dark themes into a shared compare route", async ({ page }) => {
+// The legacy catalog → compare pin-link flow disappears with the Phase 3 shell. The compare
+// surface returns as a pane-split mode in Phase 6 Task 20, at which point this spec is
+// rewritten under e2e/compare.spec.ts.
+test.skip("pins light and dark themes into a shared compare route", async ({ page }) => {
   await page.goto("/");
 
   await page.getByRole("link", { name: /pin light aurora light/i }).click();

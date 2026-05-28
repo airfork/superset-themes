@@ -1,23 +1,20 @@
 import { expect, test } from "@playwright/test";
 
-test("renders the catalog browsing workspace", async ({ page }) => {
+test("catalog route renders the master/detail shell", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.getByRole("banner")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: /themes/i })).toBeVisible();
   await expect(page.getByRole("main")).toBeVisible();
-  await expect(page.getByRole("region", { name: /theme catalog/i })).toBeVisible();
-  await expect(page.getByRole("article", { name: /aurora light/i })).toBeVisible();
-  await expect(page.getByRole("article", { name: /graphite dark/i })).toBeVisible();
+  await expect(page.getByRole("contentinfo")).toContainText(/Tokyo Night/);
 });
 
-test("supports shareable catalog search params", async ({ page }) => {
+// Catalog filter/sort URL hydration returns in Phase 5 Task 18 when the new rail + pane
+// expose theme switching directly. The legacy controls are no longer present.
+test.skip("supports shareable catalog search params", async ({ page }) => {
   await page.goto("/?q=graphite&type=dark&sort=accentHue");
 
   await expect(page.getByRole("searchbox", { name: /search themes/i })).toHaveValue("graphite");
-  await expect(page.getByRole("radio", { name: "Dark" })).toBeChecked();
-  await expect(page.getByRole("combobox", { name: "Sort" })).toHaveValue("accentHue");
-  await expect(page.getByRole("article", { name: /graphite dark/i })).toBeVisible();
-  await expect(page.getByRole("article", { name: /aurora dark/i })).toHaveCount(0);
 });
 
 test("renders a theme detail route", async ({ page }) => {

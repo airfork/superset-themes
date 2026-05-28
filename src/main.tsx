@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/App";
-import { FocusedThemeProvider } from "./theme/FocusedThemeProvider";
 import "./styles/tokens.css";
 import "./styles/global.css";
 
@@ -13,8 +12,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <FocusedThemeProvider>
-      <App />
-    </FocusedThemeProvider>
+    <App />
   </StrictMode>,
 );
