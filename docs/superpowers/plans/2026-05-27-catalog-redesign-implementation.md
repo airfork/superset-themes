@@ -1125,12 +1125,12 @@ Sections rendered: `Themes` (fuzzy match over all catalog ids + names) and `Acti
 
 The palette visually mirrors Superset's command palette: light card (`--preview-ui-popover`), section labels (`Themes`, `Actions`), keyboard hints right-aligned, subtle row highlight on focus. Renders inside the focused theme's chrome so it's the actual palette demo.
 
-- [ ] **Step 1: Failing test** — opens on ⌘K, closes on Esc, typing filters Themes section, ArrowDown moves focus, Enter submits.
-- [ ] **Step 2: Implement `Palette.tsx`** as a portal-rendered overlay (use `<dialog>` or a fixed-position div with `role="dialog"` + focus trap).
-- [ ] **Step 3: Wire to LayoutShell** — shell holds palette open state; TopBar's search button toggles it.
-- [ ] **Step 4: Global ⌘K listener** in `LayoutShell`.
-- [ ] **Step 5: Stories** — empty query, Themes filtered, Actions section (catalog context), Actions section (compare context), Actions section (Lab context).
-- [ ] **Step 6: Playwright** — open, type "rose", Enter → URL has `?theme=rose-pine-dawn`.
+- [x] **Step 1: Failing test** — opens on ⌘K, closes on Esc, typing filters Themes section, ArrowDown moves focus, Enter submits. (`src/palette/Palette.test.tsx`)
+- [x] **Step 2: Implement `Palette.tsx`** as a portal-rendered overlay — fixed `role="dialog"` + `aria-modal` div, combobox input with `aria-activedescendant`, `role="listbox"` results, `role="option"` rows; Tab is trapped on the input (the only focusable control under the virtual-focus pattern); focus returns to the opener on close; closes on outside pointer-down.
+- [x] **Step 3: Wire to LayoutShell.** DEVIATION: palette open state lives in a `usePalette(commands)` hook owned by each route (catalog + compare), not the shell — the rail's `/` trigger and TopBar button were already routed through the existing `onOpenPalette` prop, and the rail element is built by the route, so colocating the reducer + commands with the route avoids a context refactor across Rail/RailSearch/useRailKeyboard. LayoutShell takes a `palette` prop and renders `<Palette/>`; TopBar's search button still toggles via `onOpenPalette`.
+- [x] **Step 4: Global ⌘K listener.** DEVIATION: lives in `usePalette` (colocated with the reducer + unit-testable) rather than `LayoutShell`.
+- [x] **Step 5: Stories** — empty query, Themes filtered, Actions (catalog context), Actions (compare context). Lab-context actions story deferred to Phase 8: `/lab` still renders the legacy `<main>` wrapper (no shell/palette) until Task 24 migrates it.
+- [x] **Step 6: Playwright** — `e2e/palette.spec.ts`: ⌘K open, type "rose", Enter → URL has `?theme=rose-pine-dawn`; plus Esc-closes-and-restores-focus. Updated the two rail `/`-trigger specs from placeholder no-ops to assert the palette opens.
 - [ ] **Step 7: Commit `feat: ⌘K command palette`**
 
 ## Phase 7 checkpoint

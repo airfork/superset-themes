@@ -1,6 +1,8 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
+import { buildThemeCommands, nextThemeId, type PaletteCommand } from "../palette/commands";
+import { usePalette } from "../palette/usePalette";
 import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
@@ -71,26 +73,50 @@ const catalogRoute = createRoute({
       return () => window.removeEventListener("keydown", handler);
     }, []);
 
+    const selectTheme = (themeId: string) => {
+      setFocusedId(themeId);
+      void navigate({ replace: true, search: { ...search, theme: themeId } });
+    };
+
+    const focusedId = focused.theme.id;
+    const commands: PaletteCommand[] = [
+      ...buildThemeCommands(selectTheme),
+      {
+        id: "action-open-in-lab",
+        label: "Open in Lab",
+        section: "Actions",
+        keys: ["open in lab", "lab", "editor"],
+        run: () => void navigate({ to: "/lab", search: { from: focusedId } }),
+      },
+      {
+        id: "action-pin-to-compare",
+        label: "Pin to compare",
+        section: "Actions",
+        keys: ["pin to compare", "compare", "split"],
+        run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
+      },
+      {
+        id: "action-toggle-next-theme",
+        label: "Toggle next theme",
+        section: "Actions",
+        keys: ["toggle next theme", "next", "cycle"],
+        run: () => selectTheme(nextThemeId(focusedId)),
+      },
+    ];
+
+    const palette = usePalette(commands);
+
     return (
       <LayoutShell
         expanded={expanded}
-        onOpenPalette={() => {
-          /* palette wired in Phase 7 */
-        }}
+        onOpenPalette={palette.open}
+        palette={palette.paletteProps}
         rail={
           <Rail
             focusedThemeId={focused.theme.id}
             pinnedThemeIds={EMPTY_PINNED}
-            onOpenPalette={() => {
-              /* palette wired in Phase 7 */
-            }}
-            onSelect={(themeId) => {
-              setFocusedId(themeId);
-              void navigate({
-                replace: true,
-                search: { ...search, theme: themeId },
-              });
-            }}
+            onOpenPalette={palette.open}
+            onSelect={selectTheme}
           />
         }
         pane={
@@ -132,14 +158,14 @@ const compareRoute = createRoute({
     return (
       <CompareRouteView
         search={search}
-        onOpenPalette={() => {
-          /* palette wired in Phase 7 */
-        }}
         onChangeSearch={(nextSearch) => {
           void navigate({ replace: true, search: nextSearch });
         }}
         onExit={(themeId) => {
           void navigate({ to: "/", search: themeId ? { theme: themeId } : {} });
+        }}
+        onOpenLab={(themeId) => {
+          void navigate({ to: "/lab", search: { from: themeId } });
         }}
       />
     );

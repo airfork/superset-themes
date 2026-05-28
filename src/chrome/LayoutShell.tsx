@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Palette } from "../palette/Palette";
+import type { PaletteProps } from "../palette/usePalette";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
 import { BottomBar } from "./BottomBar";
 import { TopBar } from "./TopBar";
@@ -7,10 +9,17 @@ interface LayoutShellProps {
   rail: ReactNode;
   pane: ReactNode;
   onOpenPalette: () => void;
+  palette?: PaletteProps;
   expanded?: boolean;
 }
 
-export function LayoutShell({ rail, pane, onOpenPalette, expanded = false }: LayoutShellProps) {
+export function LayoutShell({
+  rail,
+  pane,
+  onOpenPalette,
+  palette,
+  expanded = false,
+}: LayoutShellProps) {
   const { focused } = useFocusedTheme();
 
   return (
@@ -25,6 +34,7 @@ export function LayoutShell({ rail, pane, onOpenPalette, expanded = false }: Lay
         </main>
       </div>
       <BottomBar entry={focused} />
+      {palette ? <Palette {...palette} /> : null}
     </div>
   );
 }

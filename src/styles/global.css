@@ -3493,3 +3493,116 @@ kbd {
   flex-direction: column;
   gap: 1px;
 }
+
+/* Command palette — ⌘K overlay */
+.palette__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 16px 16px;
+  background: color-mix(in srgb, var(--preview-ui-background) 55%, transparent);
+}
+
+.palette {
+  display: flex;
+  flex-direction: column;
+  width: min(560px, 100%);
+  max-height: min(60vh, 460px);
+  overflow: hidden;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 10px;
+  background: var(--preview-ui-popover);
+  color: var(--preview-ui-popover-foreground);
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
+}
+
+.palette__input {
+  flex: 0 0 auto;
+  min-height: 48px;
+  border: 0;
+  border-bottom: 1px solid var(--preview-ui-border);
+  background: transparent;
+  color: var(--preview-ui-popover-foreground);
+  padding: 0 16px;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.palette__input:focus {
+  outline: none;
+}
+
+.palette__input::placeholder {
+  color: var(--preview-ui-muted-foreground);
+}
+
+.palette__results {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+}
+
+.palette__group {
+  min-inline-size: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.palette__group-label {
+  margin: 8px 10px 4px;
+  padding: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.palette__option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 10px;
+  background: transparent;
+  color: var(--preview-ui-popover-foreground);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.palette__option[data-active] {
+  background: var(--preview-ui-selection);
+  color: var(--preview-ui-selection-foreground);
+}
+
+.palette__option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette__option-hint {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.palette__option[data-active] .palette__option-hint {
+  color: color-mix(in srgb, var(--preview-ui-selection-foreground) 80%, transparent);
+}
+
+.palette__empty {
+  padding: 16px 12px;
+  color: var(--preview-ui-muted-foreground);
+  font-size: 0.88rem;
+}

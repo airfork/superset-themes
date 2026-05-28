@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LayoutShell } from "../../chrome/LayoutShell";
 import { CompareView } from "../../compare/CompareView";
 import { type CompareSlotId, type CompareState, compareReducer } from "../../compare/compareState";
+import { buildThemeCommands, nextThemeId, type PaletteCommand } from "../../palette/commands";
+import { usePalette } from "../../palette/usePalette";
 import type { SceneId } from "../../pane/SceneTabs";
 import { Rail } from "../../rail/Rail";
 import { useFocusedTheme } from "../../theme/useFocusedTheme";
@@ -56,14 +58,14 @@ export interface CompareRouteViewProps {
   search: CompareRouteSearch;
   onChangeSearch: (search: CompareRouteSearch) => void;
   onExit: (themeId: string) => void;
-  onOpenPalette: () => void;
+  onOpenLab: (themeId: string) => void;
 }
 
 export function CompareRouteView({
   search,
   onChangeSearch,
   onExit,
-  onOpenPalette,
+  onOpenLab,
 }: CompareRouteViewProps) {
   const { focused, setFocusedId } = useFocusedTheme();
   const [state, setState] = useState<CompareState>(() => seedCompareState(search));
@@ -112,15 +114,44 @@ export function CompareRouteView({
   const hint =
     state.b === null ? "Compare mode — click any theme to fill the second slot." : undefined;
 
+  // Picking a theme fills the next compare slot; the entry-from theme drives the chrome.
+  const setEntryTheme = (themeId: string) => commit({ ...state, enteredFromThemeId: themeId });
+  const commands: PaletteCommand[] = [
+    ...buildThemeCommands(pin),
+    {
+      id: "action-open-in-lab",
+      label: "Open in Lab",
+      section: "Actions",
+      keys: ["open in lab", "lab", "editor"],
+      run: () => onOpenLab(fromId),
+    },
+    {
+      id: "action-exit-compare",
+      label: "Exit compare",
+      section: "Actions",
+      keys: ["exit compare", "close", "back"],
+      run: () => onExit(fromId),
+    },
+    {
+      id: "action-toggle-next-theme",
+      label: "Toggle next theme",
+      section: "Actions",
+      keys: ["toggle next theme", "next", "cycle"],
+      run: () => setEntryTheme(nextThemeId(fromId)),
+    },
+  ];
+  const palette = usePalette(commands);
+
   return (
     <LayoutShell
-      onOpenPalette={onOpenPalette}
+      onOpenPalette={palette.open}
+      palette={palette.paletteProps}
       rail={
         <Rail
           focusedThemeId={fromId}
           pinnedThemeIds={pinnedThemeIds}
           hint={hint}
-          onOpenPalette={onOpenPalette}
+          onOpenPalette={palette.open}
           onSelect={pin}
         />
       }
