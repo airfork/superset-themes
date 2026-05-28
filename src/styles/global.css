@@ -2326,7 +2326,11 @@ kbd {
 }
 
 .rail-row:focus-visible {
-  outline: 2px solid var(--row-accent, var(--preview-ui-ring));
+  /* Focus rings use --preview-ui-ring (an AA-verified focus token on every theme)
+     rather than --row-accent. The row's own accent still colors the dot, hover, and
+     selected tints; focus is a pointer cue and needs guaranteed 3:1 against the
+     background regardless of the row's accent saturation. */
+  outline: 2px solid var(--preview-ui-ring);
   outline-offset: -2px;
 }
 

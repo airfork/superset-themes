@@ -221,11 +221,18 @@ Phase 4 checkpoint reviews:
      Catppuccin Mocha).
   4. `global.css` `.rail-section__label` margin-bottom lifted from 4px to 8px so
      section headers don't crowd the first row.
-- Open follow-up logged: light themes with pale accents (Rose Pine Dawn `#d7827e` on
-  `#faf4ed`) produce a focus ring at ~2.5:1 contrast, below the WCAG 3:1 non-text bar.
-  Revisit with a live rail; candidates are switching to `var(--preview-ui-ring)` or
-  layering a contrast halo via stacked `box-shadow`s. Tracked in plan as a Phase 5/Phase
-  10 follow-up.
+- Post-review fix: rail row focus ring now uses `var(--preview-ui-ring)` instead of the
+  row's own accent. The `--row-accent` still drives the dot, hover tint, and selected
+  tint; focus is a pointer cue and gets the AA-verified focus token. Rose Pine Dawn's
+  `ui.ring` shifted from `#d7827e` (rose) to `#286983` (pine) because the rose itself
+  failed 3:1 against `#faf4ed`. `src/theme-core/focusRingContrast.test.ts` codifies the
+  contract: every catalog theme's `ui.ring` must clear 3:1 against both `ui.background`
+  and `ui.card`. All 12 themes pass. Attribution updated in
+  `docs/THEME_ATTRIBUTIONS.md`.
+- Post-review fix: `RailSearch.tsx` gained a `/` keydown handler so pressing slash while
+  the search trigger is focused fires `onOpenPalette`, matching the kbd hint shown on
+  the button. Previously slash only worked from rail rows via `useRailKeyboard`.
+  `src/rail/RailSearch.test.tsx` and a new `e2e/rail.spec.ts` case cover both paths.
 
 ## Next Step
 

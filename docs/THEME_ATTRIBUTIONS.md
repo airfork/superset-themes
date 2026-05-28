@@ -80,8 +80,9 @@ Adaptations made for this app:
 - License: MIT
 - Adaptation notes: Used the published Rosé Pine Dawn palette (base, surface, text, love, gold,
   rose, pine, foam, iris, subtle, highlight). Darkened the destructive/red token to a deeper
-  ruby (#9c2c4b) to satisfy the local AA contrast gate against the cream background; the rest
-  of the chrome retains the upstream palette.
+  ruby (#9c2c4b) to satisfy the local AA contrast gate against the cream background. The
+  `ui.ring` token shifted from `#d7827e` (rose) to `#286983` (pine) so focus rings clear the
+  WCAG 3:1 non-text contrast bar; the rose stays the row identity accent via `ui.accent`.
 
 ## One Dark
 

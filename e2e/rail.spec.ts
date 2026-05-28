@@ -38,7 +38,7 @@ test("arrow keys morph the chrome to the next theme", async ({ page }) => {
   expect(previewBackground).toBe("#1e1e2e");
 });
 
-test("/ key opens the palette (placeholder no-op for now)", async ({ page }) => {
+test("/ key opens the palette from rail rows (placeholder no-op for now)", async ({ page }) => {
   // The palette is not yet wired in Phase 4. This spec asserts the keyboard handler
   // does not error and does not advance the rail row when "/" is pressed.
   await page.goto("/");
@@ -51,5 +51,18 @@ test("/ key opens the palette (placeholder no-op for now)", async ({ page }) => 
   await page.keyboard.press("/");
 
   // URL stays at the catalog root with no rail-driven param change.
+  await expect(page).not.toHaveURL(/theme=/);
+});
+
+test("/ key opens the palette from RailSearch (placeholder no-op for now)", async ({ page }) => {
+  await page.goto("/");
+
+  const railRegion = page.getByRole("complementary", { name: /themes/i });
+  const search = railRegion.getByRole("button", { name: /search themes/i });
+  await search.focus();
+  await expect(search).toBeFocused();
+  await page.keyboard.press("/");
+
+  // RailSearch handler fires onOpenPalette; URL stays clean.
   await expect(page).not.toHaveURL(/theme=/);
 });
