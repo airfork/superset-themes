@@ -421,11 +421,66 @@ Phase 6 checkpoint reviews — complete.
      painting: `getBoundingClientRect` 12×12, opacity 1) and folds "pinned for compare"
      into the row's accessible name; the icon itself is `aria-hidden`.
 
+## Phase 7 — ⌘K command palette
+
+Status: Complete.
+
+- Task 22 committed (`c63f3a2`, `feat: command palette state and fuzzy matcher`).
+  `src/palette/fuzzy.ts` is a pure subsequence ranker over `RankableItem` (id + `keys`),
+  scoring contiguous/boundary matches higher and stable-sorting ties by input order.
+  `src/palette/paletteState.ts` is a pure reducer over `{ open, query, focusedIndex }`
+  with `open`, `close`, `setQuery` (resets focus to 0), `move` (clamped roving index),
+  and `submit`. `src/palette/commands.ts` builds the Themes section from `catalogThemes`
+  and exposes `nextThemeId` for the "Toggle next theme" action.
+- Task 23 committed (`3950523`, `feat: ⌘K command palette`). `src/palette/usePalette.ts`
+  owns the reducer plus the global ⌘K/Ctrl-K listener and hands a `PaletteProps` bundle
+  to the presentational `Palette.tsx`, which portals an `aria-modal` dialog into a
+  theme-scoped container. The combobox input drives `aria-activedescendant`; results are
+  grouped into Themes (fuzzy-ranked) and Actions (substring) `<fieldset>`/`<legend>`
+  sections of `role="option"` buttons inside a `role="listbox"`. Tab is trapped on the
+  input, Escape restores focus to the trigger, and outside-mousedown closes. Both catalog
+  and compare routes wire real commands (select theme, open in Lab, pin/exit compare,
+  toggle next theme). Deviations from the plan: palette state lives in the per-route
+  `usePalette` hook rather than `LayoutShell`; the global key listener lives in
+  `usePalette` (not the shell); the Lab-context palette story is deferred to Phase 8; and
+  the two rail `/`-shortcut e2e specs were upgraded from no-op placeholders to assert the
+  palette opens.
+
+Phase 7 verification:
+
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 33 test files / 167 tests, Vite build).
+- `rtk pnpm test:e2e` passed (27 passed + 1 pre-existing skip), including
+  `e2e/palette.spec.ts` (⌘K opens then Enter applies the focused theme; Escape closes and
+  returns focus to the trigger) and the two upgraded rail `/`-shortcut specs.
+- `rtk pnpm test:stories` passed (9 files / 32 tests), including four `Palette` stories.
+
+Phase 7 checkpoint reviews — complete.
+
+- `impeccable` on the palette across four themes via Chrome DevTools MCP (Tokyo Night,
+  Solarized Light, Rosé Pine Dawn, Catppuccin Mocha). One concrete fix shipped: the
+  active-row band in `.palette__option[data-active]` switched from `var(--preview-ui-selection)`
+  to `color-mix(in srgb, var(--preview-ui-primary) 22%, var(--preview-ui-popover))`, and
+  the redundant selection-foreground overrides were dropped so the label inherits
+  `--preview-ui-popover-foreground`. Light themes ship a selection token equal to the
+  popover surface (Solarized Light `#eee8d5`, Rosé Pine Dawn `#dfdad9` ≈ `#fffaf3`), so
+  the focused row was invisible; deriving the band from each theme's primary guarantees a
+  visible, on-brand highlight in all four themes while staying within the `--preview-*`
+  system (same seam-fix pattern as Phase 6). Screenshots saved under
+  `docs/review/phase-7-*-after` for all four themes.
+- `web-design-guidelines` on the palette, against the latest Vercel guidelines — passed on
+  the required points, no further code changes:
+  1. Focus management — input is focused on open; Escape restores focus to the trigger
+     (covered by `e2e/palette.spec.ts`); Tab is trapped on the input.
+  2. Combobox/listbox semantics — `role="combobox"` with `aria-controls`/`aria-expanded`/
+     `aria-activedescendant` pointing at a real `role="option"` inside `role="listbox"`;
+     Themes/Actions are `<fieldset>`/`<legend>` groups; empty state is `role="status"`.
+  3. Keyboard-only operation — ArrowUp/Down rove the active option, Enter runs it, all
+     without a pointer.
+
 ## Next Step
 
-Phase 7 — ⌘K command palette. Wire the currently-placeholder `onOpenPalette` callbacks
-(top bar search trigger, `RailSearch`, and the rail `/` shortcut) to a real command
-palette for theme search and actions.
+Phase 8 — Lab. Implement Tasks 24–26 per the active plan (theme lab refinement against
+the redesigned shell), then run the Phase 8 checkpoint reviews.
 
 ## Resumability Protocol
 

@@ -1131,7 +1131,7 @@ The palette visually mirrors Superset's command palette: light card (`--preview-
 - [x] **Step 4: Global ⌘K listener.** DEVIATION: lives in `usePalette` (colocated with the reducer + unit-testable) rather than `LayoutShell`.
 - [x] **Step 5: Stories** — empty query, Themes filtered, Actions (catalog context), Actions (compare context). Lab-context actions story deferred to Phase 8: `/lab` still renders the legacy `<main>` wrapper (no shell/palette) until Task 24 migrates it.
 - [x] **Step 6: Playwright** — `e2e/palette.spec.ts`: ⌘K open, type "rose", Enter → URL has `?theme=rose-pine-dawn`; plus Esc-closes-and-restores-focus. Updated the two rail `/`-trigger specs from placeholder no-ops to assert the palette opens.
-- [ ] **Step 7: Commit `feat: ⌘K command palette`**
+- [x] **Step 7: Commit `feat: ⌘K command palette`** (`3950523`)
 
 ## Phase 7 checkpoint
 
