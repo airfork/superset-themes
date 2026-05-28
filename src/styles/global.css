@@ -1683,7 +1683,10 @@ kbd {
 
 .compare-slot + .compare-slot,
 .compare-slot--empty {
-  border-left: 1px solid var(--preview-ui-border);
+  /* Derive the seam from the slot's own foreground, not its (often pale) border
+     token, so two like-on-like surfaces — e.g. Solarized Light beside Rosé Pine
+     Dawn — still read as two distinct panels. */
+  border-left: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent);
 }
 
 .compare-slot--empty {
@@ -2035,7 +2038,7 @@ kbd {
 
   .compare-slot + .compare-slot {
     border-left: 0;
-    border-top: 1px solid var(--preview-ui-border);
+    border-top: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent);
   }
 
   .theme-detail__facts {
