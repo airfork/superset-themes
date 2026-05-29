@@ -568,7 +568,7 @@ Phase 8 polish — all checkpoint findings resolved (committed before Phase 9):
 
 ## Phase 9 — Research script + legacy cleanup
 
-Status: Tasks 29 and 30 implementation complete; Phase 9 checkpoint verification still pending.
+Status: Complete.
 
 - Active plan updated at `docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md`
   to make Phase 9 executable instead of a high-level stub.
@@ -579,6 +579,9 @@ Status: Tasks 29 and 30 implementation complete; Phase 9 checkpoint verification
   `scripts/themes-research-input.json`. The committed input has 18 API-verified candidate rows.
   `pnpm themes:research -- --out research-output.json --since-days 30` wrote 18 ranked candidates
   using the no-`GITHUB_TOKEN` total-star fallback; `research-output.json` is ignored.
+- Final checkpoint hardening added a GitHub 403/429 fallback: if unauthenticated star data is rate
+  limited, the CLI warns, sets `githubSignal: "rate-limited"`, leaves GitHub metrics nullable, and
+  still ranks the candidate from Marketplace install data.
 - Task 30 now reflects the current repo state: most old catalog/detail/compare components are
   already gone, while remaining cleanup is `catalogRoute` search narrowing, stale `src/catalog`
   filters/search utilities, legacy `src/preview` tab/frame/surface components, unused `src/ui`
@@ -592,7 +595,8 @@ Task 29 verification:
 
 - `rtk node --test scripts/themes-research.test.mjs` first failed with `ERR_MODULE_NOT_FOUND`
   before implementation.
-- `rtk pnpm themes:research:test` passed: 5 tests.
+- `rtk pnpm themes:research:test` initially passed: 5 tests; final checkpoint coverage below
+  passed 6 tests after the GitHub rate-limit fallback was added.
 - `rtk pnpm themes:research -- --out research-output.json --since-days 30` passed and wrote 18
   ranked candidates.
 - `rtk pnpm check` passed: Biome 149 files, TypeScript, Vitest 36 files / 179 tests, research
@@ -614,9 +618,18 @@ Task 30 verification:
   `/lab?from=aurora-light` rendered the shell, scene tabs, compare split, Lab rail, and command
   palette.
 
+Phase 9 checkpoint verification:
+
+- `rtk pnpm check` passed: Biome 137 files, TypeScript, Vitest 34 files / 170 tests, research
+  script tests 6 tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 29 tests.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:research -- --out research-output.json` passed and wrote 18 ranked candidates.
+
 ## Next Step
 
-Run Phase 9 checkpoint verification, update this status entry, then proceed to Phase 10.
+Begin Phase 10 polish and ship tasks.
 
 ## Resumability Protocol
 

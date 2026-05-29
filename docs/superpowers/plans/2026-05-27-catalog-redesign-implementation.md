@@ -1299,6 +1299,8 @@ Behavior contract:
 - If `GITHUB_TOKEN` is missing, warn once, fetch `https://api.github.com/repos/<repo>` for
   `stargazers_count`, set `stars30d: null`, `starsPerDay: null`, and use
   `githubSignal: "total-fallback"`.
+- If GitHub returns a 403 or 429 while fetching repo star data, warn and rank that candidate with
+  Marketplace installs only, using `githubSignal: "rate-limited"` and nullable GitHub metrics.
 - Ranking: `installScore = log10(installs + 1)`;
   `githubScore = starsPerDay === null ? 0.25 * log10(totalStars + 1) : log10(starsPerDay + 1)`;
   `score = 0.6 * installScore + 0.4 * githubScore`, sorted descending. Round score to 4 decimals.
@@ -1377,8 +1379,8 @@ node --test scripts/themes-research.test.mjs
 ```
 
 Expected: FAIL because `scripts/themes-research.mjs` does not exist or does not export the helpers.
-Implemented with the planned helper tests plus a parser regression for the pnpm `--` argument
-separator.
+Implemented with the planned helper tests plus parser coverage for the pnpm `--` argument
+separator and GitHub rate-limit fallback behavior.
 
 - [x] **Step 2: Create the candidate input**
 
@@ -1572,7 +1574,7 @@ pnpm test:stories
 
 Then run the app with `pnpm dev` and use the Browser plugin to smoke `/`, `/compare?a=aurora-light&b=aurora-dark&from=tokyo-night`, and `/lab?from=aurora-light`. Confirm the shell, scene tabs, compare split, Lab rail, and palette still render. The Browser `iab` backend was unavailable during execution; DevTools browser automation was used as the fallback.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/app/routes/catalogRoute.tsx src/app/routes/catalogRoute.test.ts src/styles/global.css src/catalog src/preview src/ui
@@ -1594,6 +1596,9 @@ Use the Browser plugin for one final visual smoke of catalog, compare, and lab. 
 `docs/STATUS.md` with the verification commands, Browser smoke notes, research-output location,
 and any blocked API/rate-limit state. After this point, the repo holds only the new shell plus
 theme utility scripts.
+
+Checkpoint complete on 2026-05-29. The Browser `iab` backend was unavailable, so DevTools browser
+automation was used for the visual smoke fallback.
 
 ---
 

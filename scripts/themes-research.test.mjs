@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   countStarsSince,
   extractMarketplaceInstalls,
+  fetchGitHubSignals,
   parseArgs,
   rankCandidates,
   scoreCandidate,
@@ -72,5 +73,28 @@ test("parseArgs tolerates the pnpm argument separator", () => {
     out: "research-output.json",
     sinceDays: 30,
     throttleMs: 250,
+  });
+});
+
+test("fetchGitHubSignals degrades when unauthenticated fallback is rate limited", async () => {
+  const signals = await fetchGitHubSignals(
+    { name: "Rate Limited", marketplaceId: "acme.rate-limited", repo: "acme/rate-limited" },
+    {
+      fetchImpl: async () => ({
+        ok: false,
+        status: 403,
+        statusText: "rate limit exceeded",
+      }),
+      githubToken: undefined,
+      sinceDate: new Date("2026-04-29T00:00:00.000Z"),
+      sinceDays: 30,
+    },
+  );
+
+  assert.deepEqual(signals, {
+    githubSignal: "rate-limited",
+    stars30d: null,
+    starsPerDay: null,
+    totalStars: null,
   });
 });

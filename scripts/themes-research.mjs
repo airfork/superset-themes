@@ -240,7 +240,10 @@ async function fetchMarketplaceInstalls(candidate, fetchImpl) {
   return extractMarketplaceInstalls(await response.json());
 }
 
-async function fetchGitHubSignals(candidate, { fetchImpl, githubToken, sinceDate, sinceDays }) {
+export async function fetchGitHubSignals(
+  candidate,
+  { fetchImpl, githubToken, sinceDate, sinceDays },
+) {
   const headers = {
     Accept: "application/vnd.github+json",
     "User-Agent": "superset-theme-catalog-research",
@@ -257,6 +260,18 @@ async function fetchGitHubSignals(candidate, { fetchImpl, githubToken, sinceDate
   const repoResponse = await fetchImpl(`${GITHUB_API}/repos/${candidate.repo}`, { headers });
 
   if (!repoResponse.ok) {
+    if (repoResponse.status === 403 || repoResponse.status === 429) {
+      console.warn(
+        `GitHub rate limit blocked ${candidate.repo}; ranking ${candidate.name} with Marketplace installs only.`,
+      );
+      return {
+        githubSignal: "rate-limited",
+        stars30d: null,
+        starsPerDay: null,
+        totalStars: null,
+      };
+    }
+
     throw new Error(
       `GitHub repo request failed for ${candidate.repo}: ${repoResponse.status} ${repoResponse.statusText}`,
     );
