@@ -2,6 +2,7 @@
 .superpowers/
 .worktrees/
 .impeccable/
+research-output.json
 
 # Dependencies
 node_modules/

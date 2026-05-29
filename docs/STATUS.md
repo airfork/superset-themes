@@ -568,23 +568,35 @@ Phase 8 polish — all checkpoint findings resolved (committed before Phase 9):
 
 ## Phase 9 — Research script + legacy cleanup
 
-Status: Plan reviewed and expanded on 2026-05-29; implementation not started.
+Status: Task 29 implementation complete; Task 30 not started.
 
 - Active plan updated at `docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md`
   to make Phase 9 executable instead of a high-level stub.
 - Task 29 is now split into a testable research CLI contract: committed candidate input,
   Node `--test` coverage, package/check wiring, `COMMANDS.md`, `.gitignore`, marketplace install
   parsing, GitHub stargazer velocity, and total-star fallback behavior.
+- Task 29 shipped `scripts/themes-research.mjs`, `scripts/themes-research.test.mjs`, and
+  `scripts/themes-research-input.json`. The committed input has 18 API-verified candidate rows.
+  `pnpm themes:research -- --out research-output.json --since-days 30` wrote 18 ranked candidates
+  using the no-`GITHUB_TOKEN` total-star fallback; `research-output.json` is ignored.
 - Task 30 now reflects the current repo state: most old catalog/detail/compare components are
   already gone, while remaining cleanup is `catalogRoute` search narrowing, stale `src/catalog`
   filters/search utilities, legacy `src/preview` tab/frame/surface components, unused `src/ui`
   primitives, and obsolete CSS blocks.
-- No implementation commands were run; this was a docs-only planning checkpoint.
+
+Task 29 verification:
+
+- `rtk node --test scripts/themes-research.test.mjs` first failed with `ERR_MODULE_NOT_FOUND`
+  before implementation.
+- `rtk pnpm themes:research:test` passed: 5 tests.
+- `rtk pnpm themes:research -- --out research-output.json --since-days 30` passed and wrote 18
+  ranked candidates.
+- `rtk pnpm check` passed: Biome 149 files, TypeScript, Vitest 36 files / 179 tests, research
+  script tests 5 tests, and Vite build.
 
 ## Next Step
 
-Begin Phase 9 Task 29: Theme research CLI, from the expanded active plan. Use verified
-Marketplace ids and GitHub repos for every committed candidate input row.
+Begin Phase 9 Task 30: delete legacy code paths, starting with the red `catalogRoute` search test.
 
 ## Resumability Protocol
 

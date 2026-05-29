@@ -19,6 +19,8 @@
     "build:storybook": "storybook build",
     "themes:validate": "node scripts/themes-validate.mjs",
     "themes:check-contrast": "node scripts/themes-check-contrast.mjs",
+    "themes:research": "node scripts/themes-research.mjs",
+    "themes:research:test": "node --test scripts/themes-research.test.mjs",
     "themes:generate": "tsx scripts/themes-generate.mjs",
     "check": "node scripts/check.mjs"
   },

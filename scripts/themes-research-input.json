@@ -1,0 +1,92 @@
+[
+  {
+    "name": "GitHub Theme",
+    "marketplaceId": "GitHub.github-vscode-theme",
+    "repo": "primer/github-vscode-theme"
+  },
+  {
+    "name": "One Dark Pro",
+    "marketplaceId": "zhuangtongfa.Material-theme",
+    "repo": "Binaryify/OneDark-Pro"
+  },
+  {
+    "name": "Dracula Official",
+    "marketplaceId": "dracula-theme.theme-dracula",
+    "repo": "dracula/visual-studio-code"
+  },
+  {
+    "name": "Atom One Dark",
+    "marketplaceId": "akamud.vscode-theme-onedark",
+    "repo": "akamud/vscode-theme-onedark"
+  },
+  {
+    "name": "Ayu",
+    "marketplaceId": "teabyii.ayu",
+    "repo": "ayu-theme/vscode-ayu"
+  },
+  {
+    "name": "Night Owl",
+    "marketplaceId": "sdras.night-owl",
+    "repo": "sdras/night-owl-vscode-theme"
+  },
+  {
+    "name": "One Monokai",
+    "marketplaceId": "azemoh.one-monokai",
+    "repo": "azemoh/vscode-one-monokai"
+  },
+  {
+    "name": "Tokyo Night",
+    "marketplaceId": "enkia.tokyo-night",
+    "repo": "enkia/tokyo-night-vscode-theme"
+  },
+  {
+    "name": "SynthWave '84",
+    "marketplaceId": "RobbOwen.synthwave-vscode",
+    "repo": "robb0wen/synthwave-vscode"
+  },
+  {
+    "name": "Shades of Purple",
+    "marketplaceId": "ahmadawais.shades-of-purple",
+    "repo": "ahmadawais/shades-of-purple-vscode"
+  },
+  {
+    "name": "Cobalt2",
+    "marketplaceId": "wesbos.theme-cobalt2",
+    "repo": "wesbos/cobalt2-vscode"
+  },
+  {
+    "name": "Noctis",
+    "marketplaceId": "liviuschera.noctis",
+    "repo": "liviuschera/noctis"
+  },
+  {
+    "name": "Panda Theme",
+    "marketplaceId": "tinkertrain.theme-panda",
+    "repo": "tinkertrain/panda-syntax-vscode"
+  },
+  {
+    "name": "Catppuccin",
+    "marketplaceId": "Catppuccin.catppuccin-vsc",
+    "repo": "catppuccin/vscode"
+  },
+  {
+    "name": "Nord",
+    "marketplaceId": "arcticicestudio.nord-visual-studio-code",
+    "repo": "nordtheme/visual-studio-code"
+  },
+  {
+    "name": "Gruvbox",
+    "marketplaceId": "jdinhlife.gruvbox",
+    "repo": "jdinhlife/vscode-theme-gruvbox"
+  },
+  {
+    "name": "Rose Pine",
+    "marketplaceId": "mvllow.rose-pine",
+    "repo": "rose-pine/vscode"
+  },
+  {
+    "name": "Solarized",
+    "marketplaceId": "ryanolsonx.solarized",
+    "repo": "altercation/solarized"
+  }
+]

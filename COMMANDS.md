@@ -117,6 +117,18 @@ pnpm themes:check-contrast
 Check required contrast pairs.
 
 ```bash
+pnpm themes:research
+```
+
+Rank verified candidate themes using Marketplace installs and GitHub star signals.
+
+```bash
+pnpm themes:research:test
+```
+
+Run the research script's Node test suite.
+
+```bash
 pnpm themes:generate
 ```
 

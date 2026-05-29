@@ -1303,7 +1303,7 @@ Behavior contract:
   `githubScore = starsPerDay === null ? 0.25 * log10(totalStars + 1) : log10(starsPerDay + 1)`;
   `score = 0.6 * installScore + 0.4 * githubScore`, sorted descending. Round score to 4 decimals.
 
-- [ ] **Step 1: Write the failing script tests**
+- [x] **Step 1: Write the failing script tests**
 
 Use Node's built-in test runner so this remains outside the Vite/jsdom test config:
 
@@ -1377,14 +1377,16 @@ node --test scripts/themes-research.test.mjs
 ```
 
 Expected: FAIL because `scripts/themes-research.mjs` does not exist or does not export the helpers.
+Implemented with the planned helper tests plus a parser regression for the pnpm `--` argument
+separator.
 
-- [ ] **Step 2: Create the candidate input**
+- [x] **Step 2: Create the candidate input**
 
 Create `scripts/themes-research-input.json` as an array of verified rows. Seed it with the current
 catalog themes that have marketplace equivalents and then expand toward the design doc's top-50
 goal. Each row must have a real Marketplace id and GitHub repo before it is committed.
 
-- [ ] **Step 3: Implement pure helpers**
+- [x] **Step 3: Implement pure helpers**
 
 In `scripts/themes-research.mjs`, export:
 - `extractMarketplaceInstalls(response)`
@@ -1395,7 +1397,7 @@ In `scripts/themes-research.mjs`, export:
 Keep these helpers network-free and deterministic so `scripts/themes-research.test.mjs` never
 needs live API access.
 
-- [ ] **Step 4: Implement CLI fetch flow**
+- [x] **Step 4: Implement CLI fetch flow**
 
 Add CLI-only code guarded so importing the module does not run the command. Implement:
 - argument parsing for `--input`, `--out`, `--since-days`, and `--throttle-ms`
@@ -1405,7 +1407,7 @@ Add CLI-only code guarded so importing the module does not run the command. Impl
 - total-star fallback with a single warning when `GITHUB_TOKEN` is missing
 - output write to `research-output.json` by default
 
-- [ ] **Step 5: Wire package scripts and docs**
+- [x] **Step 5: Wire package scripts and docs**
 
 Add:
 
@@ -1418,7 +1420,7 @@ Add `["pnpm", ["themes:research:test"]]` to `scripts/check.mjs` before `pnpm bui
 Add `research-output.json` to `.gitignore`. Add `pnpm themes:research` and
 `pnpm themes:research:test` to `COMMANDS.md`.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 ```bash
 pnpm themes:research:test
