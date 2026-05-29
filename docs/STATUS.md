@@ -481,10 +481,94 @@ Phase 7 checkpoint reviews — complete.
   3. Keyboard-only operation — ArrowUp/Down rove the active option, Enter runs it, all
      without a pointer.
 
+## Phase 8 — Lab
+
+Status: Implementation complete; checkpoint reviews complete; all findings resolved (see Phase 8 polish below).
+
+- Task 24 committed: `/lab` route adopts the redesigned master/detail shell. `LabView`
+  wraps the live `ThemeDraft` in a synthetic `CatalogThemeEntry` (`draftToEntry`) and pushes
+  it through `useFocusedTheme().setTransientEntry` so the rail, pane, and bottom bar all morph
+  to the draft; the override is cleared on unmount so catalog focus resumes.
+- Task 25 committed: lab rail Source + Generate sections (`Start from catalog theme` select,
+  Import JSON, Paste JSON; Seed/Mode/Hue + Generate).
+- Task 26 committed: lab rail Tokens with native color picker. `ColorField` pairs a swatch
+  `<button>` that opens a click-transparent native `<input type="color">` overlay with a
+  blur-validated hex input (`aria-invalid` on malformed `#rrggbb`).
+- Task 27 committed (`feat: lab contrast summary and export footer`). `ContrastSummary` scores
+  six text-on-surface pairs, lists AA failures as buttons that scroll to and focus the offending
+  token's hex input, and collapses passing pairs into a `<details>`. `LabFooter` is a sticky
+  bottom bar with Back-to-catalog + Copy/Download JSON. `ColorField` gained an optional `id`
+  so tokens are scroll anchors; `onBackToCatalog` is plumbed LabView → labRoute → router.
+- Task 28 committed (`feat: ⌘K in lab seeds from theme`). No `Palette.tsx` change needed: the
+  per-route command architecture (`buildThemeCommands(onStartFromCatalog)`) already routes ⌘K
+  theme selection to `/lab?from=<id>`; added a Playwright regression guard.
+
+Phase 8 verification:
+
+- `rtk pnpm check` passed (Biome 145 files, TypeScript, Vitest 36 files / 175 tests, Vite build).
+- `rtk pnpm test:e2e` passed (29 passed + 1 pre-existing skip), including three `e2e/lab.spec.ts`
+  specs: catalog-seed morph, ⌘K reseed, and the contrast jump-to-token interaction.
+- `rtk pnpm test:stories` passed (10 files / 35 tests).
+
+Phase 8 checkpoint reviews — complete (Chrome DevTools MCP on `/lab?from=aurora-light` live).
+
+- `impeccable critique` on `/lab` live, score 32/40, detector clean (`detect.mjs src/lab` → `[]`).
+  Snapshot at `.impeccable/critique/2026-05-29T07-25-59Z__localhost-lab.md`. The live morph,
+  native color controls, and failing-pair-to-token loop are strengths. Two P1 findings, both in
+  the Contrast section (both RESOLVED — see Phase 8 polish):
+  1. The contrast row used `color: var(--preview-ui-foreground)` and `--fail` overrode only
+     background/border, so the row label's legibility tracked the draft's own foreground/background
+     contrast — the label went invisible (~1.1:1, dark-on-dark-red) exactly when that pair was the
+     broken one being flagged. The diagnostic widget failed its own check.
+  2. `.lab-contrast__pair` was `nowrap`/ellipsis at ~142px while labels need 159–196px, so even one
+     failing row clipped its label ("Muted foreground on …"); the ratio + badge stayed readable but
+     the identifying text was lost, so the section didn't scale to several failures.
+  Initial evidence screenshots: `docs/review/phase-8-lab-initial.png`,
+  `docs/review/phase-8-lab-morph-dark-bg.png`, `docs/review/phase-8-lab-contrast-labels-clipped.png`.
+- `web-design-guidelines` on `ColorField`, against the latest Vercel guidelines. Passes: swatch
+  accessible name (`Pick {label} color`), native-picker and hex accessible names, keyboard parity
+  (swatch is a real `<button>`; native input `tabIndex=-1`; picker opens from keyboard), native OS
+  picker dismissal (Esc/outside-click handled by the platform — no custom popover), `spellCheck`
+  off, paste unblocked, 26px swatch with a `--preview-ui-ring` focus ring. The reported "hex input
+  lacks `:focus-visible`" finding was a false positive — the global `:focus-visible` rule
+  (`global.css:51`) already rings every focusable element. Remaining minor findings (RESOLVED):
+  visible label was a non-associated `<span>` (not a clickable `<label htmlFor>`); hex input lacked
+  `autocomplete="off"`/`name`; invalid hex showed only `aria-invalid` + red border with no inline
+  message.
+- `vercel-react-best-practices` on `LabView.tsx`. The draft-update path is stable and idiomatic:
+  functional `setDraft` updaters over pure module-level reducers, and `entry = useMemo(draftToEntry,
+  [draft])`. Two MEDIUM perf refinements (RESOLVED, not correctness bugs): (1) `Pane` was a plain
+  function component and received a freshly-built `nameplate` element each render, so editing
+  Seed/Hue/Mode — which don't change the previewed theme until Generate — re-rendered the whole Pane
+  subtree; (2) the native color picker's continuous `onChange` while dragging drove a full
+  draft→entry→Pane recompute per frame.
+
+Phase 8 polish — all checkpoint findings resolved (committed before Phase 9):
+
+- Contrast P1a (stable diagnostic palette): `ContrastSummary` now wraps its content in
+  `<div className="lab-contrast" data-mode={theme.type}>`, and `global.css` defines a fixed
+  per-mode (light/dark) diagnostic palette (`--diag-*`) scoped to that element. Row/label/ratio/
+  badge colours read from `--diag-*` instead of the editable `--preview-*` tokens, so the widget
+  stays legible no matter how broken the draft is. Every `--diag-*` text/surface pair was verified
+  to clear WCAG AA (computed via culori before committing). New unit test asserts the `data-mode`
+  marker (`ContrastSummary.test.tsx`). Verified live in both modes with 3–4 failing pairs:
+  `docs/review/phase-8-contrast-stable-light.png`, `docs/review/phase-8-contrast-stable-dark.png`.
+- Contrast P1b (non-truncating labels): `.lab-contrast__pair` switched from `nowrap`/ellipsis to
+  `overflow-wrap: anywhere`, so long pair labels wrap to multiple lines instead of clipping.
+- ColorField minor a11y/form (TDD): visible label is now a `<label htmlFor>` tied to the hex input
+  (`useId`); hex input gained `autocomplete="off"` + `name`; invalid hex renders an inline
+  `role="alert"` message wired via `aria-describedby`. Three new `ColorField.test.tsx` cases cover
+  label association, autofill-off, and the inline error.
+- LabView perf: `Pane` is now `memo`'d; `LabView` derives a `useDeferredValue(draft)` →
+  `deferredEntry` and a memoized `nameplate` element from the deferred draft, both passed to `Pane`,
+  while the live `entry` still drives the CSS-var morph. Seed/Hue/Mode edits no longer re-render the
+  Pane subtree, and color-drag re-renders run at low priority without lagging the live preview.
+- Suites after polish: `rtk pnpm check` (Biome 146 files, TS, Vitest 36 files / 179 tests, build),
+  `rtk pnpm test:e2e` (29 passed + 1 skip), `rtk pnpm test:stories` (10 files / 35 tests) all green.
+
 ## Next Step
 
-Phase 8 — Lab. Implement Tasks 24–26 per the active plan (theme lab refinement against
-the redesigned shell), then run the Phase 8 checkpoint reviews.
+Phase 8 complete. Begin Phase 9 — Research script + legacy cleanup (Tasks 29–30) per the active plan.
 
 ## Resumability Protocol
 

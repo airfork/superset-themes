@@ -39,4 +39,14 @@ describe("ContrastSummary", () => {
 
     expect(onSelectToken).toHaveBeenCalledWith("mutedForeground");
   });
+
+  // The diagnostic must stay legible even when the draft's own tokens are broken,
+  // so its colours are keyed off a fixed per-mode palette, not the editable tokens.
+  it("marks its colour mode from the theme type so styling is draft-independent", () => {
+    const { container, rerender } = render(<ContrastSummary theme={themeWithUnreadableMuted()} />);
+    expect(container.querySelector(".lab-contrast")).toHaveAttribute("data-mode", "light");
+
+    rerender(<ContrastSummary theme={{ ...themeWithUnreadableMuted(), type: "dark" }} />);
+    expect(container.querySelector(".lab-contrast")).toHaveAttribute("data-mode", "dark");
+  });
 });

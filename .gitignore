@@ -1,6 +1,7 @@
 # Agent/local scratch
 .superpowers/
 .worktrees/
+.impeccable/
 
 # Dependencies
 node_modules/

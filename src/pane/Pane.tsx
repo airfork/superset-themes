@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { memo, type ReactNode, useEffect, useState } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import { Nameplate } from "./Nameplate";
 import { type SceneId, SceneTabs } from "./SceneTabs";
@@ -16,7 +16,7 @@ interface PaneProps {
   initialScene?: SceneId;
 }
 
-export function Pane({
+export const Pane = memo(function Pane({
   entry,
   onPin,
   nameplate,
@@ -64,4 +64,4 @@ export function Pane({
       <SceneTabs current={scene} onChange={setScene} />
     </div>
   );
-}
+});

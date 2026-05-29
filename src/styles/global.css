@@ -2011,6 +2011,13 @@ kbd {
   outline: 1px solid var(--preview-ui-destructive);
 }
 
+.lab-color-field__error {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--preview-ui-destructive);
+  font-size: 0.7rem;
+}
+
 .lab-tokens {
   display: flex;
   flex-direction: column;
@@ -2082,6 +2089,36 @@ kbd {
   gap: 7px;
 }
 
+/* Fixed, self-legible diagnostic palette keyed off the theme mode (not the
+   editable tokens) so the widget stays readable even when the draft's own
+   pairs are broken. Every text/surface pair here is verified to clear WCAG AA
+   via scripts/verify-diag-palette.mjs. */
+.lab-contrast {
+  --diag-surface: oklch(0.985 0.004 250);
+  --diag-elevated: oklch(0.965 0.005 250);
+  --diag-text: oklch(0.3 0.02 250);
+  --diag-muted: oklch(0.46 0.02 250);
+  --diag-border: oklch(0.9 0.006 250);
+  --diag-fail: oklch(0.5 0.18 25);
+  --diag-fail-surface: oklch(0.95 0.04 25);
+  --diag-fail-border: oklch(0.8 0.1 25);
+  --diag-pass: oklch(0.46 0.11 150);
+  --diag-pass-surface: oklch(0.94 0.04 150);
+}
+
+.lab-contrast[data-mode="dark"] {
+  --diag-surface: oklch(0.2 0.01 250);
+  --diag-elevated: oklch(0.255 0.012 250);
+  --diag-text: oklch(0.94 0.006 250);
+  --diag-muted: oklch(0.72 0.015 250);
+  --diag-border: oklch(0.32 0.012 250);
+  --diag-fail: oklch(0.78 0.13 25);
+  --diag-fail-surface: oklch(0.3 0.07 25);
+  --diag-fail-border: oklch(0.45 0.12 25);
+  --diag-pass: oklch(0.8 0.09 150);
+  --diag-pass-surface: oklch(0.3 0.05 150);
+}
+
 .lab-contrast__list {
   display: flex;
   flex-direction: column;
@@ -2098,41 +2135,43 @@ kbd {
   gap: 8px;
   width: 100%;
   padding: 5px 8px;
-  border: 1px solid var(--preview-ui-border);
+  border: 1px solid var(--diag-border);
   border-radius: 6px;
-  background: var(--preview-ui-background);
-  color: var(--preview-ui-foreground);
+  background: var(--diag-elevated);
+  color: var(--diag-text);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
 .lab-contrast__row:hover {
-  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+  border-color: color-mix(in oklab, var(--diag-text) 30%, var(--diag-border));
 }
 
 .lab-contrast__row:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--diag-text);
   outline-offset: 2px;
 }
 
 .lab-contrast__row--fail {
-  border-color: color-mix(in srgb, var(--preview-ui-destructive) 55%, var(--preview-ui-border));
-  background: color-mix(in srgb, var(--preview-ui-destructive) 12%, var(--preview-ui-background));
+  border-color: var(--diag-fail-border);
+  background: var(--diag-fail-surface);
 }
 
 .lab-contrast__pair {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-size: 0.78rem;
 }
 
 .lab-contrast__ratio {
   font-variant-numeric: tabular-nums;
   font-size: 0.72rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--diag-muted);
+}
+
+.lab-contrast__row--fail .lab-contrast__ratio {
+  color: var(--diag-fail);
 }
 
 .lab-contrast__badge {
@@ -2142,19 +2181,19 @@ kbd {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: color-mix(in srgb, var(--preview-ui-destructive) 22%, transparent);
-  color: var(--preview-ui-destructive);
+  background: color-mix(in oklab, var(--diag-fail) 12%, var(--diag-fail-surface));
+  color: var(--diag-fail);
 }
 
 .lab-contrast__badge--pass {
-  background: color-mix(in srgb, var(--preview-ui-muted-foreground) 18%, transparent);
-  color: var(--preview-ui-muted-foreground);
+  background: color-mix(in oklab, var(--diag-pass) 12%, var(--diag-pass-surface));
+  color: var(--diag-pass);
 }
 
 .lab-contrast__ok {
   margin: 0;
   font-size: 0.78rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--diag-muted);
 }
 
 .lab-contrast__passing {
@@ -2164,7 +2203,7 @@ kbd {
 .lab-contrast__passing > summary {
   cursor: pointer;
   font-size: 0.72rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--diag-muted);
 }
 
 .lab-contrast__passing[open] > summary {

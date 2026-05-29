@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { getCatalogThemeById } from "../data/fixtures";
 import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
@@ -81,6 +81,13 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   const [rerollNonce, setRerollNonce] = useState(0);
   const entry = useMemo(() => draftToEntry(draft), [draft]);
 
+  // Token edits (and continuous native color-picker drags) call setDraft many
+  // times a second. The Pane subtree reads from a deferred draft so it re-renders
+  // at low priority and the rail inputs stay responsive; the live `entry` below
+  // still drives the CSS-var morph, so the previewed colors track the drag.
+  const deferredDraft = useDeferredValue(draft);
+  const deferredEntry = useMemo(() => draftToEntry(deferredDraft), [deferredDraft]);
+
   const { setTransientEntry } = useFocusedTheme();
 
   // Push the live draft into the focused-theme context so the whole chrome morphs.
@@ -142,6 +149,15 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   const commands: PaletteCommand[] = buildThemeCommands(onStartFromCatalog);
   const palette = usePalette(commands);
 
+  // Seed only labels generated drafts; for catalog/import drafts it stays
+  // undefined, so editing the Seed field never changes this element and the
+  // memoized Pane is left untouched by Seed/Hue/Mode edits.
+  const nameplateSeed = deferredDraft.source.type === "generated" ? seed : undefined;
+  const nameplate = useMemo(
+    () => <LabNameplate draft={deferredDraft} seed={nameplateSeed} />,
+    [deferredDraft, nameplateSeed],
+  );
+
   return (
     <LayoutShell
       onOpenPalette={palette.open}
@@ -166,17 +182,7 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
           seed={seed}
         />
       }
-      pane={
-        <Pane
-          entry={entry}
-          nameplate={
-            <LabNameplate
-              draft={draft}
-              seed={draft.source.type === "generated" ? seed : undefined}
-            />
-          }
-        />
-      }
+      pane={<Pane entry={deferredEntry} nameplate={nameplate} />}
     />
   );
 }

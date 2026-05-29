@@ -81,17 +81,21 @@ export function ContrastSummary({ onSelectToken, theme }: ContrastSummaryProps) 
 
   return (
     <RailSection label="Contrast">
-      {failing.length > 0 ? (
-        <ul className="lab-contrast__list">{failing.map(renderRow)}</ul>
-      ) : (
-        <p className="lab-contrast__ok">All pairs meet AA (4.5:1).</p>
-      )}
-      {passing.length > 0 ? (
-        <details className="lab-contrast__passing">
-          <summary>{passing.length} passing</summary>
-          <ul className="lab-contrast__list">{passing.map(renderRow)}</ul>
-        </details>
-      ) : null}
+      {/* The diagnostic keys its colours off the theme mode, not the editable
+          tokens, so it stays legible even when the draft's own pairs are broken. */}
+      <div className="lab-contrast" data-mode={theme.type}>
+        {failing.length > 0 ? (
+          <ul className="lab-contrast__list">{failing.map(renderRow)}</ul>
+        ) : (
+          <p className="lab-contrast__ok">All pairs meet AA (4.5:1).</p>
+        )}
+        {passing.length > 0 ? (
+          <details className="lab-contrast__passing">
+            <summary>{passing.length} passing</summary>
+            <ul className="lab-contrast__list">{passing.map(renderRow)}</ul>
+          </details>
+        ) : null}
+      </div>
     </RailSection>
   );
 }

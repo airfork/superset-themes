@@ -57,4 +57,35 @@ describe("ColorField", () => {
 
     expect(document.getElementById("lab-token-ui-muted")).toBeInTheDocument();
   });
+
+  it("focuses the hex input when its visible label is clicked", async () => {
+    const user = userEvent.setup();
+    render(<ColorField label="Background" onChange={vi.fn()} value="#101418" />);
+
+    await user.click(screen.getByText("Background"));
+
+    expect(screen.getByRole("textbox", { name: /background hex/i })).toHaveFocus();
+  });
+
+  it("opts the hex input out of browser autofill", () => {
+    render(<ColorField label="Background" onChange={vi.fn()} value="#101418" />);
+
+    const hex = screen.getByRole("textbox", { name: /background hex/i });
+    expect(hex).toHaveAttribute("autocomplete", "off");
+    expect(hex).toHaveAttribute("name");
+  });
+
+  it("describes the hex input with an inline error when the value is invalid", async () => {
+    const user = userEvent.setup();
+    render(<ColorField label="Background" onChange={vi.fn()} value="#101418" />);
+
+    const hex = screen.getByRole("textbox", { name: /background hex/i });
+    expect(hex).not.toHaveAccessibleDescription();
+
+    await user.clear(hex);
+    await user.type(hex, "nope");
+    await user.tab();
+
+    expect(hex).toHaveAccessibleDescription(/hex/i);
+  });
 });
