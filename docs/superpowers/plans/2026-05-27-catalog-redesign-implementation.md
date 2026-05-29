@@ -1431,7 +1431,7 @@ pnpm check
 Expected: script tests pass, `research-output.json` is created but ignored, and `pnpm check` is
 clean.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add .gitignore COMMANDS.md package.json scripts/check.mjs scripts/themes-research-input.json scripts/themes-research.mjs scripts/themes-research.test.mjs
@@ -1459,7 +1459,7 @@ Already deleted in earlier phases, verify only: `src/app/routes/themeRoute.tsx`,
 Do not delete `src/preview/themeCssVars.ts` or `src/preview/themeCssVars.test.ts`; they are still
 used by `applyTheme`, compare slots, and stories.
 
-- [ ] **Step 1: Write the route cleanup test**
+- [x] **Step 1: Write the route cleanup test**
 
 Create `src/app/routes/catalogRoute.test.ts`:
 
@@ -1494,7 +1494,7 @@ pnpm test src/app/routes/catalogRoute.test.ts
 
 Expected: FAIL until `catalogRoute.tsx` drops the legacy fields.
 
-- [ ] **Step 2: Narrow `catalogRoute.tsx`**
+- [x] **Step 2: Narrow `catalogRoute.tsx`**
 
 Remove the `PreviewTabId` import, `dark`, `light`, `tab`, and `PREVIEW_TAB_VALUES`. The route
 search contract should be:
@@ -1505,7 +1505,7 @@ export interface CatalogRouteSearch {
 }
 ```
 
-- [ ] **Step 3: List references**
+- [x] **Step 3: List references**
 
 ```bash
 rg --vimgrep -l "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame|PreviewSurface|SegmentedControl|from \"../ui/Button\"|from \"../ui/IconButton\"|from \"../ui/Tabs\"" src/
@@ -1513,9 +1513,11 @@ rg --vimgrep -l "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|
 
 Expected before deletion: only the legacy catalog, preview, and `src/app/routes/catalogRoute.tsx`
 references listed in this task should remain. If any `Pane`, `Rail`, `Palette`, `Compare`, or
-`Lab` file imports deleted components, stop and update the plan before deleting.
+`Lab` file imports deleted components, stop and update the plan before deleting. Result: only
+legacy catalog/preview files remained; Lab still uses `.catalog-action-button`, so that shared CSS
+class was preserved.
 
-- [ ] **Step 4: Delete files in dependency order**
+- [x] **Step 4: Delete files in dependency order**
 
 Delete:
 1. `src/catalog/catalogFilters.ts`, `src/catalog/catalogFilters.test.ts`,
@@ -1529,7 +1531,7 @@ Delete:
 Remove empty directories only after `rg --files src/catalog src/ui` confirms they have no files
 left that should stay.
 
-- [ ] **Step 5: Remove obsolete CSS**
+- [x] **Step 5: Remove obsolete CSS**
 
 From `src/styles/global.css`, remove blocks that exist only for deleted components:
 - `.preview-frame`
@@ -1544,7 +1546,7 @@ From `src/styles/global.css`, remove blocks that exist only for deleted componen
 Do not remove token variables (`--preview-*`) or current shell styles (`.layout-*`, `.rail-*`,
 `.pane-*`, `.scene-*`, `.palette-*`, `.compare-*`, `.lab-*`).
 
-- [ ] **Step 6: Verify deleted-reference absence**
+- [x] **Step 6: Verify deleted-reference absence**
 
 ```bash
 rg "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame|PreviewSurface|preview-tabs|theme-card-preview|ui-tabs" src/
@@ -1552,7 +1554,7 @@ rg "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|P
 
 Expected: no matches.
 
-- [ ] **Step 7: Run focused tests**
+- [x] **Step 7: Run focused tests**
 
 ```bash
 pnpm test src/app/routes/catalogRoute.test.ts src/app/App.test.tsx src/pane/Pane.test.tsx src/compare/CompareView.test.tsx
@@ -1560,7 +1562,7 @@ pnpm test src/app/routes/catalogRoute.test.ts src/app/App.test.tsx src/pane/Pane
 
 Expected: PASS.
 
-- [ ] **Step 8: Full verification and Browser smoke**
+- [x] **Step 8: Full verification and Browser smoke**
 
 ```bash
 pnpm check
@@ -1568,7 +1570,7 @@ pnpm test:e2e
 pnpm test:stories
 ```
 
-Then run the app with `pnpm dev` and use the Browser plugin to smoke `/`, `/compare?a=aurora-light&b=aurora-dark&from=tokyo-night`, and `/lab?from=aurora-light`. Confirm the shell, scene tabs, compare split, Lab rail, and palette still render.
+Then run the app with `pnpm dev` and use the Browser plugin to smoke `/`, `/compare?a=aurora-light&b=aurora-dark&from=tokyo-night`, and `/lab?from=aurora-light`. Confirm the shell, scene tabs, compare split, Lab rail, and palette still render. The Browser `iab` backend was unavailable during execution; DevTools browser automation was used as the fallback.
 
 - [ ] **Step 9: Commit**
 

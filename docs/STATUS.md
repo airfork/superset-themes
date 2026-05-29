@@ -568,7 +568,7 @@ Phase 8 polish — all checkpoint findings resolved (committed before Phase 9):
 
 ## Phase 9 — Research script + legacy cleanup
 
-Status: Task 29 implementation complete; Task 30 not started.
+Status: Tasks 29 and 30 implementation complete; Phase 9 checkpoint verification still pending.
 
 - Active plan updated at `docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md`
   to make Phase 9 executable instead of a high-level stub.
@@ -583,6 +583,10 @@ Status: Task 29 implementation complete; Task 30 not started.
   already gone, while remaining cleanup is `catalogRoute` search narrowing, stale `src/catalog`
   filters/search utilities, legacy `src/preview` tab/frame/surface components, unused `src/ui`
   primitives, and obsolete CSS blocks.
+- Task 30 deleted the stale catalog filter/search utilities, legacy preview tab/frame/surface
+  components, unused `src/ui` primitives, and matching CSS. `src/preview/themeCssVars.ts` stayed
+  because it still drives theme CSS variables. The shared `.catalog-action-button` class stayed
+  because Lab still uses it.
 
 Task 29 verification:
 
@@ -594,9 +598,25 @@ Task 29 verification:
 - `rtk pnpm check` passed: Biome 149 files, TypeScript, Vitest 36 files / 179 tests, research
   script tests 5 tests, and Vite build.
 
+Task 30 verification:
+
+- `rtk pnpm test src/app/routes/catalogRoute.test.ts` first failed because legacy `dark`, `light`,
+  and `tab` params were still returned.
+- `rtk pnpm test src/app/routes/catalogRoute.test.ts` passed after narrowing `catalogRoute`.
+- Deleted-reference check passed: `rtk rg "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame|PreviewSurface|preview-tabs|theme-card-preview|ui-tabs" src/` returned no matches.
+- `rtk pnpm test src/app/routes/catalogRoute.test.ts src/app/App.test.tsx src/pane/Pane.test.tsx src/compare/CompareView.test.tsx` passed: 4 files / 16 tests.
+- `rtk pnpm check` passed after cleanup: Biome 137 files, TypeScript, Vitest 34 files / 170 tests,
+  research script tests 5 tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 29 tests.
+- Browser plugin `iab` backend was unavailable, so DevTools browser automation was used as the
+  smoke-test fallback. `/`, `/compare?a=aurora-light&b=aurora-dark&from=tokyo-night`, and
+  `/lab?from=aurora-light` rendered the shell, scene tabs, compare split, Lab rail, and command
+  palette.
+
 ## Next Step
 
-Begin Phase 9 Task 30: delete legacy code paths, starting with the red `catalogRoute` search test.
+Run Phase 9 checkpoint verification, update this status entry, then proceed to Phase 10.
 
 ## Resumability Protocol
 
