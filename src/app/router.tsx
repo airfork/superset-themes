@@ -139,9 +139,8 @@ const catalogRoute = createRoute({
   validateSearch: parseCatalogRouteSearch,
 });
 
-// Transitional <main> wrapper for routes that haven't migrated to LayoutShell yet.
-// /lab needs it so the global skip link in RootLayout has a target on every route.
-// Phase 8 (Task 24) migrates it to the shell.
+// <main> wrapper for the not-found route so the global skip link in RootLayout
+// always has a target. Migrated routes render their own <main> via LayoutShell.
 function LegacyRouteMain({ children }: { children: ReactNode }) {
   return (
     <main id="main-content" className="legacy-route-main">
@@ -181,17 +180,15 @@ const labRoute = createRoute({
     const search = labRoute.useSearch();
 
     return (
-      <LegacyRouteMain>
-        <LabRouteView
-          onStartFromCatalog={(themeId) => {
-            void navigate({
-              search: { from: themeId },
-              to: "/lab",
-            });
-          }}
-          search={search}
-        />
-      </LegacyRouteMain>
+      <LabRouteView
+        onStartFromCatalog={(themeId) => {
+          void navigate({
+            search: { from: themeId },
+            to: "/lab",
+          });
+        }}
+        search={search}
+      />
     );
   },
   getParentRoute: () => rootRoute,

@@ -50,24 +50,25 @@ describe("App", () => {
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/graphite dark/i);
   });
 
-  it("renders lab routes from catalog theme search params", async () => {
+  it("renders the lab on the shared shell from catalog theme search params", async () => {
     const user = userEvent.setup();
     window.history.replaceState(null, "", "/lab?from=aurora-dark");
 
     render(<App />);
 
-    expect(await screen.findByRole("region", { name: /theme lab/i })).toBeInTheDocument();
-    expect(screen.getByRole("complementary", { name: /lab controls/i })).toHaveTextContent(
-      /aurora dark/i,
-    );
+    // Wait on the lab-only source select so the assertion can't latch onto a
+    // transient catalog tree the router renders mid-navigation.
+    const select = await screen.findByRole("combobox", { name: /start from catalog theme/i });
+    expect(select).toHaveValue("aurora-dark");
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: /start from catalog theme/i }),
-      "graphite-dark",
-    );
+    // Lab shares the catalog shell: a Themes rail plus the focused-theme bottom bar.
+    expect(screen.getByRole("complementary", { name: /themes/i })).toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(/aurora dark/i);
 
-    expect(screen.getByRole("complementary", { name: /lab controls/i })).toHaveTextContent(
-      /graphite dark/i,
-    );
+    await user.selectOptions(select, "graphite-dark");
+
+    // Reseeding remounts the lab with the new draft, morphing the chrome.
+    expect(await screen.findByRole("heading", { name: /graphite dark/i })).toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(/graphite dark/i);
   });
 });

@@ -1,7 +1,6 @@
-import { catalogThemes } from "../../data/catalog";
 import { getCatalogThemeById } from "../../data/fixtures";
 import { createDraftFromCatalogEntry } from "../../lab/draftTheme";
-import { LabPage } from "../../lab/LabPage";
+import { LabView } from "../../lab/LabView";
 
 export interface LabRouteSearch {
   from?: string;
@@ -21,27 +20,27 @@ export function LabRouteView({
   onStartFromCatalog,
   search,
 }: {
-  onStartFromCatalog?: (themeId: string) => void;
+  onStartFromCatalog: (themeId: string) => void;
   search: LabRouteSearch;
 }) {
   const entry = getCatalogThemeById(search.from ?? "") ?? getCatalogThemeById("aurora-light");
 
   if (!entry) {
     return (
-      <section aria-label="Theme lab unavailable" className="theme-detail theme-detail--missing">
-        <h2>Theme lab unavailable</h2>
-        <p>No catalog themes are available to seed the lab.</p>
-      </section>
+      <main id="main-content" className="legacy-route-main">
+        <section aria-label="Theme lab unavailable" className="theme-detail theme-detail--missing">
+          <h2>Theme lab unavailable</h2>
+          <p>No catalog themes are available to seed the lab.</p>
+        </section>
+      </main>
     );
   }
 
   return (
-    <LabPage
-      catalogEntries={catalogThemes}
+    <LabView
       initialDraft={createDraftFromCatalogEntry(entry)}
       key={entry.theme.id}
       onStartFromCatalog={onStartFromCatalog}
-      selectedCatalogThemeId={entry.theme.id}
     />
   );
 }

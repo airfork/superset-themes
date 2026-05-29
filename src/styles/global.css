@@ -2247,6 +2247,26 @@ kbd {
   letter-spacing: 0.01em;
 }
 
+.pane-nameplate__status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 999px;
+  background: var(--preview-ui-muted);
+  color: var(--preview-ui-muted-foreground);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Dirty drafts tint the status pill from primary against the card so it reads in
+   both light and dark themes (selection/muted collapse against the surface). */
+.pane-nameplate__status[data-dirty] {
+  border-color: color-mix(in srgb, var(--preview-ui-primary) 45%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-primary) 16%, var(--preview-ui-card));
+  color: var(--preview-ui-foreground);
+}
+
 .pane-nameplate__actions {
   display: inline-flex;
   align-items: center;

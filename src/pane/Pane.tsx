@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import { Nameplate } from "./Nameplate";
 import { type SceneId, SceneTabs } from "./SceneTabs";
@@ -7,7 +7,10 @@ import { WorkspaceScene } from "./WorkspaceScene";
 
 interface PaneProps {
   entry: CatalogThemeEntry;
-  onPin: (themeId: string) => void;
+  // Catalog supplies onPin for the default nameplate; Lab supplies its own
+  // `nameplate` node, so both are optional.
+  onPin?: (themeId: string) => void;
+  nameplate?: ReactNode;
   expanded?: boolean;
   onExpandToggle?: () => void;
   initialScene?: SceneId;
@@ -16,6 +19,7 @@ interface PaneProps {
 export function Pane({
   entry,
   onPin,
+  nameplate,
   expanded = false,
   onExpandToggle,
   initialScene = "workspace",
@@ -46,7 +50,14 @@ export function Pane({
 
   return (
     <div className="pane" data-scene={scene} data-expanded={expanded || undefined}>
-      <Nameplate entry={entry} onPin={onPin} expanded={expanded} onExpandToggle={onExpandToggle} />
+      {nameplate ?? (
+        <Nameplate
+          entry={entry}
+          onPin={onPin ?? (() => {})}
+          expanded={expanded}
+          onExpandToggle={onExpandToggle}
+        />
+      )}
       <div className="pane__body">
         {scene === "workspace" ? <WorkspaceScene entry={entry} /> : <SettingsScene entry={entry} />}
       </div>

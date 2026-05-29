@@ -8,6 +8,9 @@ import { applyTheme } from "./applyTheme";
 export interface FocusedThemeContextValue {
   focused: CatalogThemeEntry;
   setFocusedId: (id: string) => void;
+  // Lab pushes its live draft here so the whole chrome morphs as tokens change.
+  // A transient entry overrides the catalog focus until cleared (on route exit).
+  setTransientEntry: (entry: CatalogThemeEntry | null) => void;
 }
 
 export const FocusedThemeContext = createContext<FocusedThemeContextValue | null>(null);
@@ -21,17 +24,24 @@ export function FocusedThemeProvider({ children, initialThemeId }: FocusedThemeP
   const [focusedId, setFocusedId] = useState<string>(
     () => initialThemeId ?? getDefaultFocusedTheme().theme.id,
   );
+  const [transientEntry, setTransientEntry] = useState<CatalogThemeEntry | null>(null);
 
   const focused = useMemo<CatalogThemeEntry>(() => {
+    if (transientEntry) {
+      return transientEntry;
+    }
     const entry = catalogThemes.find((candidate) => candidate.theme.id === focusedId);
     return entry ?? getDefaultFocusedTheme();
-  }, [focusedId]);
+  }, [focusedId, transientEntry]);
 
   useEffect(() => {
     applyTheme(focused.theme);
   }, [focused]);
 
-  const value = useMemo<FocusedThemeContextValue>(() => ({ focused, setFocusedId }), [focused]);
+  const value = useMemo<FocusedThemeContextValue>(
+    () => ({ focused, setFocusedId, setTransientEntry }),
+    [focused],
+  );
 
   return <FocusedThemeContext.Provider value={value}>{children}</FocusedThemeContext.Provider>;
 }
