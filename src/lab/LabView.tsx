@@ -29,6 +29,8 @@ import {
 
 interface LabViewProps {
   initialDraft: ThemeDraft;
+  // Leaves the lab and returns to the catalog route.
+  onBackToCatalog: () => void;
   // Reseeds the draft from a catalog theme by changing ?from=, which remounts
   // this view with a fresh initialDraft.
   onStartFromCatalog: (themeId: string) => void;
@@ -71,7 +73,7 @@ function draftToEntry(draft: ThemeDraft): CatalogThemeEntry {
   };
 }
 
-export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
+export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: LabViewProps) {
   const [draft, setDraft] = useState(initialDraft);
   const [seed, setSeed] = useState(DEFAULT_SEED);
   const [mode, setMode] = useState<ThemeType>(initialDraft.theme.type);
@@ -149,6 +151,7 @@ export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
           draft={draft}
           hue={hue}
           mode={mode}
+          onBackToCatalog={onBackToCatalog}
           onGenerate={handleGenerate}
           onHueChange={setHue}
           onImportTheme={handleImportTheme}

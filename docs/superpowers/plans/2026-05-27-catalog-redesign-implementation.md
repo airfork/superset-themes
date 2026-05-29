@@ -1204,11 +1204,11 @@ ContrastSummary lists every important token pair (`bg/fg`, `bg/muted`, `card/car
 
 LabFooter: sticky bottom of the rail with `← Back to catalog` and `Export JSON` (sub-actions: copy, download).
 
-- [ ] **Step 1: Failing test for ContrastSummary** — given a draft with `bg/muted` < 3.0:1, the failing pair is visible and labelled `AA fail`.
-- [ ] **Step 2: Implement** using `contrastRatio` from `src/theme-core/contrast.ts`.
-- [ ] **Step 3: LabFooter** — `Export JSON` uses `exportTheme.ts` (existing) to strip non-Superset metadata before copy/download.
-- [ ] **Step 4: Playwright** — edit `ui.muted` to a low-contrast value → contrast section shows the failing pair → click it → rail scrolls to muted token.
-- [ ] **Step 5: Commit `feat: lab contrast summary and export footer`**
+- [x] **Step 1: Failing test for ContrastSummary** — given a draft with `bg/muted` < 3.0:1, the failing pair is visible and labelled `AA fail`. _(DEVIATION: the "muted" pair is background vs `mutedForeground` — the readable text-on-surface pair — not background vs the `muted` surface, since contrasting two surfaces is not a readability check. The test forces it to 1.0:1, well under AA.)_
+- [x] **Step 2: Implement** using `contrastRatio` from `src/theme-core/contrast.ts`. _(Uses the exported `getContrastRatio`. Six text-on-surface pairs: foreground, muted-foreground, card, selection, accent, primary. Failing pairs render at top; passing pairs collapse into a `<details>`.)_
+- [x] **Step 3: LabFooter** — `Export JSON` uses `exportTheme.ts` (existing) to strip non-Superset metadata before copy/download. _(`Copy` → clipboard, `Download` → Blob; `← Back to catalog` routes to `/`. Footer is `position: sticky; bottom: 0` inside the scrolling rail.)_
+- [x] **Step 4: Playwright** — edit `ui.muted` to a low-contrast value → contrast section shows the failing pair → click it → rail scrolls to muted token. _(DEVIATION: edits **Muted foreground** (`ui.mutedForeground`) — the token in the readability pair — and the assertion is that clicking the warning focuses that token's hex editor (`toBeFocused`), which also scrolls it into view. Anchors are wired via a new optional `id` on `ColorField` set by `TokensSection` as `lab-token-ui-<token>`.)_
+- [x] **Step 5: Commit `feat: lab contrast summary and export footer`**
 
 ## Task 28: Lab palette behavior
 

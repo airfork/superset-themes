@@ -17,9 +17,11 @@ export function parseLabRouteSearch(search: Record<string, unknown>): LabRouteSe
 }
 
 export function LabRouteView({
+  onBackToCatalog,
   onStartFromCatalog,
   search,
 }: {
+  onBackToCatalog: () => void;
   onStartFromCatalog: (themeId: string) => void;
   search: LabRouteSearch;
 }) {
@@ -40,6 +42,7 @@ export function LabRouteView({
     <LabView
       initialDraft={createDraftFromCatalogEntry(entry)}
       key={entry.theme.id}
+      onBackToCatalog={onBackToCatalog}
       onStartFromCatalog={onStartFromCatalog}
     />
   );

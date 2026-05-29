@@ -19,6 +19,7 @@ const renderLab = (onStartFromCatalog = vi.fn()) =>
     <FocusedThemeProvider>
       <LabView
         initialDraft={createDraftFromCatalogEntry(auroraLight)}
+        onBackToCatalog={vi.fn()}
         onStartFromCatalog={onStartFromCatalog}
       />
     </FocusedThemeProvider>,

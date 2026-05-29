@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from "react";
 const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 
 interface ColorFieldProps {
+  id?: string;
   label: string;
   onChange: (value: string) => void;
   value: string;
 }
 
-export function ColorField({ label, onChange, value }: ColorFieldProps) {
+export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
   const colorInputRef = useRef<HTMLInputElement>(null);
   const [hexDraft, setHexDraft] = useState(value);
   const [invalid, setInvalid] = useState(false);
@@ -31,7 +32,7 @@ export function ColorField({ label, onChange, value }: ColorFieldProps) {
   };
 
   return (
-    <div className="lab-color-field">
+    <div className="lab-color-field" id={id}>
       <span className="lab-color-field__swatch-wrap">
         <button
           aria-label={`Pick ${label} color`}

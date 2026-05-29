@@ -181,6 +181,9 @@ const labRoute = createRoute({
 
     return (
       <LabRouteView
+        onBackToCatalog={() => {
+          void navigate({ search: {}, to: "/" });
+        }}
         onStartFromCatalog={(themeId) => {
           void navigate({
             search: { from: themeId },

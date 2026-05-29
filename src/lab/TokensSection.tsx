@@ -122,6 +122,7 @@ export function TokensSection({
             {rows.map((row) =>
               row.namespace === "ui" ? (
                 <ColorField
+                  id={`lab-token-ui-${row.token}`}
                   key={`ui-${row.token}`}
                   label={row.label}
                   onChange={(value) => onUiTokenChange(row.token, value)}
@@ -129,6 +130,7 @@ export function TokensSection({
                 />
               ) : (
                 <ColorField
+                  id={`lab-token-terminal-${row.token}`}
                   key={`terminal-${row.token}`}
                   label={row.label}
                   onChange={(value) => onTerminalTokenChange(row.token, value)}

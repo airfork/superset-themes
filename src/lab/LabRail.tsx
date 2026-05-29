@@ -1,7 +1,9 @@
 import { RailSearch } from "../rail/RailSearch";
 import type { SupersetTheme, TerminalTokens, ThemeType, UiTokens } from "../theme-core/themeTypes";
+import { ContrastSummary } from "./ContrastSummary";
 import type { ThemeDraft } from "./draftTheme";
 import { GenerateSection } from "./GenerateSection";
+import { LabFooter } from "./LabFooter";
 import type { RandomThemeTokenGroup } from "./randomTheme";
 import { SourceSection } from "./SourceSection";
 import { TokensSection } from "./TokensSection";
@@ -10,6 +12,7 @@ interface LabRailProps {
   draft: ThemeDraft;
   hue: number;
   mode: ThemeType;
+  onBackToCatalog: () => void;
   onGenerate: () => void;
   onHueChange: (hue: number) => void;
   onImportTheme: (theme: SupersetTheme) => void;
@@ -24,10 +27,22 @@ interface LabRailProps {
   seed: string;
 }
 
+// Scroll a UI token's editor into view and focus its hex input so the user can
+// fix the value a contrast warning points at.
+function focusUiToken(token: keyof UiTokens) {
+  const row = document.getElementById(`lab-token-ui-${token}`);
+  if (!row) {
+    return;
+  }
+  row.scrollIntoView({ block: "center" });
+  row.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+}
+
 export function LabRail({
   draft,
   hue,
   mode,
+  onBackToCatalog,
   onGenerate,
   onHueChange,
   onImportTheme,
@@ -65,12 +80,16 @@ export function LabRail({
         seed={seed}
       />
 
+      <ContrastSummary onSelectToken={focusUiToken} theme={draft.theme} />
+
       <TokensSection
         draft={draft}
         onRerollGroup={onRerollGroup}
         onTerminalTokenChange={onTerminalTokenChange}
         onUiTokenChange={onUiTokenChange}
       />
+
+      <LabFooter onBackToCatalog={onBackToCatalog} theme={draft.theme} />
     </div>
   );
 }

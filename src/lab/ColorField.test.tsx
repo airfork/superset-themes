@@ -51,4 +51,10 @@ describe("ColorField", () => {
 
     expect(onChange).toHaveBeenCalledWith("#00ff00");
   });
+
+  it("forwards an id to the field root so it can be a scroll anchor", () => {
+    render(<ColorField id="lab-token-ui-muted" label="Muted" onChange={vi.fn()} value="#112233" />);
+
+    expect(document.getElementById("lab-token-ui-muted")).toBeInTheDocument();
+  });
 });
