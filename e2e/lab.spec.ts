@@ -36,3 +36,23 @@ test("contrast summary flags a low-contrast edit and jumps to the token", async 
 
   await expect(mutedForeground).toBeFocused();
 });
+
+test("⌘K in the lab reseeds the draft from another theme", async ({ page }) => {
+  await page.goto("/lab?from=aurora-light");
+
+  await page.keyboard.press("Meta+k");
+  const palette = page.getByRole("dialog", { name: /command palette/i });
+  await expect(palette).toBeVisible();
+
+  await page.getByRole("combobox", { name: /command palette search/i }).fill("solarized light");
+  await expect(palette.getByRole("option", { name: /solarized light/i })).toBeVisible();
+  await page.keyboard.press("Enter");
+
+  // In the lab the Themes section seeds the draft (?from=) instead of routing
+  // to a catalog detail.
+  await expect(page).toHaveURL(/from=solarized-light/);
+  await expect(page.locator("html")).toHaveAttribute("data-theme-id", "solarized-light");
+  await expect(
+    page.getByRole("complementary", { name: /themes/i }).getByLabel("Start from catalog theme"),
+  ).toHaveValue("solarized-light");
+});

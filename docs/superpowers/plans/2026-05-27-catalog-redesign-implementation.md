@@ -1217,9 +1217,11 @@ LabFooter: sticky bottom of the rail with `← Back to catalog` and `Export JSON
 
 In Lab, ⌘K Themes section seeds the draft from another theme rather than navigating. Add a route-context prop to Palette that switches the submit handler.
 
-- [ ] **Step 1: Failing Playwright** — in `/lab`, ⌘K + select Solarized Light → URL becomes `/lab?from=solarized-light`; draft tokens match Solarized Light.
-- [ ] **Step 2: Implement context switch**.
-- [ ] **Step 3: Commit `feat: ⌘K in lab seeds from theme`**
+DEVIATION: no change to `Palette.tsx` was needed. The "route-context" already exists by construction — each route owns its `usePalette(commands)` (the Phase 7 Task 23 deviation), and `LabView` builds its Themes commands with `buildThemeCommands(onStartFromCatalog)`, so selecting a theme in the lab reseeds the draft (`/lab?from=<id>`) instead of routing to a catalog detail. Task 28 therefore reduces to the guarding Playwright spec.
+
+- [x] **Step 1: Failing Playwright** — in `/lab`, ⌘K + select Solarized Light → URL becomes `/lab?from=solarized-light`; draft tokens match Solarized Light. _(In `e2e/lab.spec.ts`; asserts the URL, `data-theme-id=solarized-light`, and the rail's catalog select value. Behaviour shipped in Task 24, so the spec passed on first run — a regression guard rather than a red-first test.)_
+- [x] **Step 2: Implement context switch**. _(Already in place — see deviation above.)_
+- [x] **Step 3: Commit `feat: ⌘K in lab seeds from theme`**
 
 ## Phase 8 checkpoint
 
