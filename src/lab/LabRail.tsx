@@ -1,45 +1,61 @@
-import { catalogThemes } from "../data/catalog";
 import { RailSearch } from "../rail/RailSearch";
-import { RailSection } from "../rail/RailSection";
+import type { SupersetTheme, ThemeType } from "../theme-core/themeTypes";
 import type { ThemeDraft } from "./draftTheme";
+import { GenerateSection } from "./GenerateSection";
+import { SourceSection } from "./SourceSection";
 
 interface LabRailProps {
   draft: ThemeDraft;
-  onStartFromCatalog: (themeId: string) => void;
+  hue: number;
+  mode: ThemeType;
+  onGenerate: () => void;
+  onHueChange: (hue: number) => void;
+  onImportTheme: (theme: SupersetTheme) => void;
+  onModeChange: (mode: ThemeType) => void;
   onOpenPalette: () => void;
+  onRerollAll: () => void;
+  onSeedChange: (seed: string) => void;
+  onStartFromCatalog: (themeId: string) => void;
+  seed: string;
 }
 
-export function LabRail({ draft, onStartFromCatalog, onOpenPalette }: LabRailProps) {
-  const selectedCatalogThemeId = draft.source.type === "catalog" ? draft.source.themeId : "";
-
+export function LabRail({
+  draft,
+  hue,
+  mode,
+  onGenerate,
+  onHueChange,
+  onImportTheme,
+  onModeChange,
+  onOpenPalette,
+  onRerollAll,
+  onSeedChange,
+  onStartFromCatalog,
+  seed,
+}: LabRailProps) {
   return (
     <div className="rail lab-rail">
       <div className="rail__search">
         <RailSearch onOpenPalette={onOpenPalette} />
       </div>
 
-      <RailSection label="Source">
-        <label className="catalog-field" htmlFor="lab-start-from">
-          <span>Start from catalog theme</span>
-          <select
-            id="lab-start-from"
-            name="lab-start-from"
-            onChange={(event) => onStartFromCatalog(event.currentTarget.value)}
-            value={selectedCatalogThemeId}
-          >
-            {selectedCatalogThemeId ? null : (
-              <option value="" disabled>
-                Imported or generated draft
-              </option>
-            )}
-            {catalogThemes.map((entry) => (
-              <option key={entry.theme.id} value={entry.theme.id}>
-                {entry.theme.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </RailSection>
+      <SourceSection
+        draft={draft}
+        onImportTheme={onImportTheme}
+        onStartFromCatalog={onStartFromCatalog}
+      />
+
+      <GenerateSection
+        draft={draft}
+        hue={hue}
+        mode={mode}
+        onGenerate={onGenerate}
+        onHueChange={onHueChange}
+        onModeChange={onModeChange}
+        onRerollAll={onRerollAll}
+        onSeedChange={onSeedChange}
+        seed={seed}
+      />
     </div>
   );
 }

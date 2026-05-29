@@ -3514,6 +3514,61 @@ kbd {
   gap: 1px;
 }
 
+/* Lab rail sections hold form controls, which need more breathing room than the
+   1px-gapped catalog rail rows. */
+.lab-rail .rail-section__rows {
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.lab-rail input[type="file"] {
+  padding: 6px 10px;
+  font-size: 0.76rem;
+}
+
+.lab-hue-field input[type="range"] {
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  accent-color: var(--preview-ui-primary);
+}
+
+.lab-paste {
+  display: grid;
+  gap: 8px;
+}
+
+.lab-paste > summary {
+  cursor: pointer;
+  color: var(--preview-ui-foreground);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.lab-paste__textarea {
+  min-height: 110px;
+  resize: vertical;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  padding: 8px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.76rem;
+}
+
+.lab-source__error {
+  margin: 0;
+  border: 1px solid var(--preview-ui-destructive);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--preview-ui-destructive) 14%, var(--preview-ui-card));
+  color: var(--preview-ui-foreground);
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
 /* Command palette — ⌘K overlay */
 .palette__backdrop {
   position: fixed;

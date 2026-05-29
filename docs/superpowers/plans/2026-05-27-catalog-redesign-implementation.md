@@ -1160,10 +1160,10 @@ Update `docs/STATUS.md`.
 
 Lab is a sibling route sharing the same `LayoutShell`. Rail contents change; the pane stays identical (Workspace + Settings scenes from `src/pane/`).
 
-- [ ] **Step 1: Replace `LabRouteView` body** with `<LayoutShell rail={<LabRail …/>} pane={<Pane theme={draft.theme} …/>} />`.
-- [ ] **Step 2: Draft theme drives the focused theme** — same `applyTheme` flow, so editing in the rail morphs the whole chrome.
-- [ ] **Step 3: Nameplate variant for Lab** — reads `Draft — based on tokyo-night` or `Draft — generated, seed: atlas`. Tag chips hidden (drafts have no tags yet).
-- [ ] **Step 4: Commit `feat: lab uses shared layout shell`**
+- [x] **Step 1: Replace `LabRouteView` body** with `<LayoutShell rail={<LabRail …/>} pane={<Pane theme={draft.theme} …/>} />`.
+- [x] **Step 2: Draft theme drives the focused theme** — same `applyTheme` flow, so editing in the rail morphs the whole chrome.
+- [x] **Step 3: Nameplate variant for Lab** — reads `Draft — based on tokyo-night` or `Draft — generated, seed: atlas`. Tag chips hidden (drafts have no tags yet).
+- [x] **Step 4: Commit `feat: lab uses shared layout shell`**
 
 ## Task 25: Lab rail — Source + Generate
 
@@ -1171,10 +1171,10 @@ Lab is a sibling route sharing the same `LayoutShell`. Rail contents change; the
 - Create: `src/lab/SourceSection.tsx`
 - Create: `src/lab/GenerateSection.tsx`
 
-- [ ] **Step 1: SourceSection** — `Start from: [select]` (lists all catalog themes), `Import JSON: [↑]` file input, `Paste JSON: [textarea]` collapsed by default. Validation errors surface inline.
-- [ ] **Step 2: GenerateSection** — `Seed: [input]`, `Mode: [light|dark]` select, `Hue: [range slider]`, `[Reroll all]` button. Only renders when a seed is in use.
-- [ ] **Step 3: Wire to existing `draftTheme.ts`, `importTheme.ts`, `randomTheme.ts`** (these survive from the previous implementation).
-- [ ] **Step 4: Commit `feat: lab source and generate sections`**
+- [x] **Step 1: SourceSection** — `Start from: [select]` (lists all catalog themes), `Import JSON: [↑]` file input, `Paste JSON: [textarea]` collapsed by default. Validation errors surface inline.
+- [x] **Step 2: GenerateSection** — `Seed: [input]`, `Mode: [light|dark]` select, `Hue: [range slider]`, `[Reroll all]` button. DEVIATION: the section renders always (it is the only entry point into generation); the `Reroll all` button is what gates on "a seed is in use" (`draft.source.type === "generated"`).
+- [x] **Step 3: Wire to existing `draftTheme.ts`, `importTheme.ts`, `randomTheme.ts`** (these survive from the previous implementation).
+- [x] **Step 4: Commit `feat: lab source and generate sections`**
 
 ## Task 26: Lab rail — Tokens with color picker
 

@@ -5,10 +5,15 @@ import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
 import { usePalette } from "../palette/usePalette";
 import { Pane } from "../pane/Pane";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
-import type { CatalogThemeEntry } from "../theme-core/themeTypes";
-import type { ThemeDraft } from "./draftTheme";
+import type { CatalogThemeEntry, SupersetTheme, ThemeType } from "../theme-core/themeTypes";
+import {
+  createDraftFromGeneratedTheme,
+  createDraftFromImportedTheme,
+  type ThemeDraft,
+} from "./draftTheme";
 import { LabNameplate } from "./LabNameplate";
 import { LabRail } from "./LabRail";
+import { generateRandomTheme } from "./randomTheme";
 
 interface LabViewProps {
   initialDraft: ThemeDraft;
@@ -16,6 +21,13 @@ interface LabViewProps {
   // this view with a fresh initialDraft.
   onStartFromCatalog: (themeId: string) => void;
 }
+
+const DEFAULT_SEED = "preview";
+// Slider band width keeps the generated hue near the chosen value while leaving
+// the generator a little room to vary; capping the slider at 300 means
+// `value + HUE_BAND` never wraps past 360 (which would collapse to full-random).
+const DEFAULT_HUE = 220;
+const HUE_BAND = 60;
 
 // The chrome is entry-shaped (Pane scenes + BottomBar read a CatalogThemeEntry).
 // Drafts have no catalog metadata, so we wrap the live theme in a synthetic entry;
@@ -48,7 +60,11 @@ function draftToEntry(draft: ThemeDraft): CatalogThemeEntry {
 }
 
 export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
-  const [draft] = useState(initialDraft);
+  const [draft, setDraft] = useState(initialDraft);
+  const [seed, setSeed] = useState(DEFAULT_SEED);
+  const [mode, setMode] = useState<ThemeType>(initialDraft.theme.type);
+  const [hue, setHue] = useState(DEFAULT_HUE);
+  const [rerollNonce, setRerollNonce] = useState(0);
   const entry = useMemo(() => draftToEntry(draft), [draft]);
 
   const { setTransientEntry } = useFocusedTheme();
@@ -60,6 +76,30 @@ export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
 
   // Clear the override when leaving the lab so the catalog focus resumes.
   useEffect(() => () => setTransientEntry(null), [setTransientEntry]);
+
+  const generate = (generationSeed: string) => {
+    setDraft(
+      createDraftFromGeneratedTheme(
+        generateRandomTheme({
+          hueRange: { max: hue + HUE_BAND, min: hue },
+          mode,
+          seed: generationSeed,
+        }),
+      ),
+    );
+  };
+
+  const handleGenerate = () => generate(seed);
+
+  const handleRerollAll = () => {
+    const nextNonce = rerollNonce + 1;
+    setRerollNonce(nextNonce);
+    generate(`${seed}:all:${nextNonce}`);
+  };
+
+  const handleImportTheme = (theme: SupersetTheme) => {
+    setDraft(createDraftFromImportedTheme(theme));
+  };
 
   // In the lab, ⌘K Themes reseed the draft from a catalog theme rather than
   // navigating to a detail route.
@@ -73,11 +113,30 @@ export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
       rail={
         <LabRail
           draft={draft}
-          onStartFromCatalog={onStartFromCatalog}
+          hue={hue}
+          mode={mode}
+          onGenerate={handleGenerate}
+          onHueChange={setHue}
+          onImportTheme={handleImportTheme}
+          onModeChange={setMode}
           onOpenPalette={palette.open}
+          onRerollAll={handleRerollAll}
+          onSeedChange={setSeed}
+          onStartFromCatalog={onStartFromCatalog}
+          seed={seed}
         />
       }
-      pane={<Pane entry={entry} nameplate={<LabNameplate draft={draft} />} />}
+      pane={
+        <Pane
+          entry={entry}
+          nameplate={
+            <LabNameplate
+              draft={draft}
+              seed={draft.source.type === "generated" ? seed : undefined}
+            />
+          }
+        />
+      }
     />
   );
 }
