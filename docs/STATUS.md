@@ -566,9 +566,25 @@ Phase 8 polish — all checkpoint findings resolved (committed before Phase 9):
 - Suites after polish: `rtk pnpm check` (Biome 146 files, TS, Vitest 36 files / 179 tests, build),
   `rtk pnpm test:e2e` (29 passed + 1 skip), `rtk pnpm test:stories` (10 files / 35 tests) all green.
 
+## Phase 9 — Research script + legacy cleanup
+
+Status: Plan reviewed and expanded on 2026-05-29; implementation not started.
+
+- Active plan updated at `docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md`
+  to make Phase 9 executable instead of a high-level stub.
+- Task 29 is now split into a testable research CLI contract: committed candidate input,
+  Node `--test` coverage, package/check wiring, `COMMANDS.md`, `.gitignore`, marketplace install
+  parsing, GitHub stargazer velocity, and total-star fallback behavior.
+- Task 30 now reflects the current repo state: most old catalog/detail/compare components are
+  already gone, while remaining cleanup is `catalogRoute` search narrowing, stale `src/catalog`
+  filters/search utilities, legacy `src/preview` tab/frame/surface components, unused `src/ui`
+  primitives, and obsolete CSS blocks.
+- No implementation commands were run; this was a docs-only planning checkpoint.
+
 ## Next Step
 
-Phase 8 complete. Begin Phase 9 — Research script + legacy cleanup (Tasks 29–30) per the active plan.
+Begin Phase 9 Task 29: Theme research CLI, from the expanded active plan. Use verified
+Marketplace ids and GitHub repos for every committed candidate input row.
 
 ## Resumability Protocol
 

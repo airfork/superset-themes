@@ -1243,60 +1243,353 @@ Update `docs/STATUS.md`.
 
 # Phase 9 — Research script + cleanup
 
-## Task 29: `scripts/themes-research.mjs`
+Plan review note, 2026-05-29: this phase was previously only a task outline. Treat this
+section as the executable implementation plan. Keep Task 29 and Task 30 as separate commits so
+the network-facing research utility is not coupled to UI deletion.
+
+## Task 29: Theme research CLI
 
 **Files:**
+- Create: `scripts/themes-research-input.json`
 - Create: `scripts/themes-research.mjs`
 - Create: `scripts/themes-research.test.mjs`
 - Modify: `package.json` (add `themes:research` script)
+- Modify: `scripts/check.mjs` (include the script test so `pnpm check` covers it)
+- Modify: `COMMANDS.md` (document the new human-facing command without `rtk`)
 - Modify: `.gitignore` (ignore `research-output.json`)
 
-Ranks candidate themes by combining VS Code Marketplace install counts and GitHub star velocity. Output: ranked JSON list saved to `research-output.json` (not committed).
+Ranks candidate themes by combining VS Code Marketplace install counts and GitHub star momentum.
+Output is research data only: write `research-output.json` by default and do not feed it into
+`src/data/catalog.ts` or exported theme JSON.
 
-- [ ] **Step 1: Define candidate input** — `scripts/themes-research-input.json` with `[{ name, marketplaceId, repo }]` rows for the top ~50 candidates to evaluate.
-- [ ] **Step 2: Implement marketplace fetch** — `https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery` POST with the marketplace id, parse install count. Add a 250ms throttle between requests.
-- [ ] **Step 3: Implement GitHub star velocity** — fetch the last 30 days of stargazers from `https://api.github.com/repos/<repo>/stargazers` with a `GITHUB_TOKEN` env var (warn if missing; fall back to total star count). Compute stars/day.
-- [ ] **Step 4: Implement ranking** — normalized score: `0.6 * log10(installs+1) + 0.4 * log10(starsPerDay+1)`. Output sorted descending.
-- [ ] **Step 5: Write output** to `research-output.json` with `{ generatedAt, candidates: [...] }`.
-- [ ] **Step 6: Commit `feat: theme research script`**
+Behavior contract:
+- Input is committed at `scripts/themes-research-input.json`.
+- Input rows are `{ "name": string, "marketplaceId": "publisher.extension", "repo": "owner/name" }`.
+- Rows with unknown marketplace extension or repository are omitted until verified; do not add
+  partial candidates.
+- CLI defaults: `--input scripts/themes-research-input.json`, `--out research-output.json`,
+  `--since-days 30`, `--throttle-ms 250`.
+- Output shape:
+
+```json
+{
+  "generatedAt": "2026-05-29T00:00:00.000Z",
+  "sinceDays": 30,
+  "candidates": [
+    {
+      "name": "Tokyo Night",
+      "marketplaceId": "enkia.tokyo-night",
+      "repo": "enkia/tokyo-night-vscode-theme",
+      "installs": 123456,
+      "stars30d": 12,
+      "starsPerDay": 0.4,
+      "totalStars": 1234,
+      "githubSignal": "velocity",
+      "score": 3.4567
+    }
+  ]
+}
+```
+
+- Marketplace fetch: POST to `https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery`
+  with the candidate `marketplaceId`; parse the `statistics` entry named `install`.
+- GitHub velocity fetch: call `https://api.github.com/repos/<repo>/stargazers` with
+  `Accept: application/vnd.github.star+json`, paginate until `starred_at` is older than the
+  `--since-days` window, and compute `starsPerDay = stars30d / sinceDays`.
+- If `GITHUB_TOKEN` is missing, warn once, fetch `https://api.github.com/repos/<repo>` for
+  `stargazers_count`, set `stars30d: null`, `starsPerDay: null`, and use
+  `githubSignal: "total-fallback"`.
+- Ranking: `installScore = log10(installs + 1)`;
+  `githubScore = starsPerDay === null ? 0.25 * log10(totalStars + 1) : log10(starsPerDay + 1)`;
+  `score = 0.6 * installScore + 0.4 * githubScore`, sorted descending. Round score to 4 decimals.
+
+- [ ] **Step 1: Write the failing script tests**
+
+Use Node's built-in test runner so this remains outside the Vite/jsdom test config:
+
+```js
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+  countStarsSince,
+  extractMarketplaceInstalls,
+  rankCandidates,
+  scoreCandidate,
+} from "./themes-research.mjs";
+
+test("extractMarketplaceInstalls reads the install statistic", () => {
+  const response = {
+    results: [
+      {
+        extensions: [
+          {
+            statistics: [
+              { statisticName: "averagerating", value: 4.8 },
+              { statisticName: "install", value: 123456 },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+
+  assert.equal(extractMarketplaceInstalls(response), 123456);
+});
+
+test("countStarsSince keeps only recent starred_at values", () => {
+  const since = new Date("2026-04-29T00:00:00.000Z");
+  const stars = [
+    { starred_at: "2026-05-28T00:00:00.000Z" },
+    { starred_at: "2026-05-01T00:00:00.000Z" },
+    { starred_at: "2026-04-01T00:00:00.000Z" },
+  ];
+
+  assert.equal(countStarsSince(stars, since), 2);
+});
+
+test("scoreCandidate prefers strong install and momentum signals", () => {
+  const high = scoreCandidate({ installs: 1000000, starsPerDay: 2, totalStars: 5000 });
+  const low = scoreCandidate({ installs: 1000, starsPerDay: 0, totalStars: 50 });
+
+  assert.ok(high > low);
+});
+
+test("rankCandidates sorts descending by score without mutating input", () => {
+  const candidates = [
+    { name: "Quiet", marketplaceId: "acme.quiet", repo: "acme/quiet" },
+    { name: "Loud", marketplaceId: "acme.loud", repo: "acme/loud" },
+  ];
+
+  const ranked = rankCandidates(candidates, {
+    "acme.quiet": { installs: 100, starsPerDay: 0, totalStars: 10 },
+    "acme.loud": { installs: 100000, starsPerDay: 1, totalStars: 1000 },
+  });
+
+  assert.deepEqual(candidates.map((candidate) => candidate.name), ["Quiet", "Loud"]);
+  assert.deepEqual(ranked.map((candidate) => candidate.name), ["Loud", "Quiet"]);
+});
+```
+
+Run:
+
+```bash
+node --test scripts/themes-research.test.mjs
+```
+
+Expected: FAIL because `scripts/themes-research.mjs` does not exist or does not export the helpers.
+
+- [ ] **Step 2: Create the candidate input**
+
+Create `scripts/themes-research-input.json` as an array of verified rows. Seed it with the current
+catalog themes that have marketplace equivalents and then expand toward the design doc's top-50
+goal. Each row must have a real Marketplace id and GitHub repo before it is committed.
+
+- [ ] **Step 3: Implement pure helpers**
+
+In `scripts/themes-research.mjs`, export:
+- `extractMarketplaceInstalls(response)`
+- `countStarsSince(stargazers, sinceDate)`
+- `scoreCandidate({ installs, starsPerDay, totalStars })`
+- `rankCandidates(candidates, signalsByMarketplaceId)`
+
+Keep these helpers network-free and deterministic so `scripts/themes-research.test.mjs` never
+needs live API access.
+
+- [ ] **Step 4: Implement CLI fetch flow**
+
+Add CLI-only code guarded so importing the module does not run the command. Implement:
+- argument parsing for `--input`, `--out`, `--since-days`, and `--throttle-ms`
+- candidate JSON loading and validation
+- marketplace fetch per candidate with the configured throttle
+- GitHub velocity fetch with `GITHUB_TOKEN` when present
+- total-star fallback with a single warning when `GITHUB_TOKEN` is missing
+- output write to `research-output.json` by default
+
+- [ ] **Step 5: Wire package scripts and docs**
+
+Add:
+
+```json
+"themes:research": "node scripts/themes-research.mjs",
+"themes:research:test": "node --test scripts/themes-research.test.mjs"
+```
+
+Add `["pnpm", ["themes:research:test"]]` to `scripts/check.mjs` before `pnpm build`.
+Add `research-output.json` to `.gitignore`. Add `pnpm themes:research` and
+`pnpm themes:research:test` to `COMMANDS.md`.
+
+- [ ] **Step 6: Verify**
+
+```bash
+pnpm themes:research:test
+pnpm themes:research -- --out research-output.json --since-days 30
+pnpm check
+```
+
+Expected: script tests pass, `research-output.json` is created but ignored, and `pnpm check` is
+clean.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add .gitignore COMMANDS.md package.json scripts/check.mjs scripts/themes-research-input.json scripts/themes-research.mjs scripts/themes-research.test.mjs
+git commit -m "feat: theme research script"
+```
 
 ## Task 30: Delete legacy code paths
 
-**Files (delete):**
-- `src/app/routes/themeRoute.tsx` (already deleted in Task 18 — verify)
-- `src/catalog/CatalogPage.tsx`, `CatalogPage.test.tsx`
-- `src/catalog/ThemeCard.tsx`, `ThemeCard.stories.tsx`
-- `src/catalog/catalogFilters.ts`, `catalogFilters.test.ts`
-- `src/catalog/catalogSearch.ts`, `catalogSearch.test.ts`
-- `src/catalog/ThemeDetail.tsx`, `ThemeDetail.test.tsx`
-- `src/compare/PairCompare.tsx`, `PairCompare.test.tsx`, `PairSlot.tsx`
-- `src/preview/PreviewTabs.tsx`, `PreviewTabs.test.tsx`, `PreviewTabs.stories.tsx`
-- `src/preview/PreviewFrame.tsx` (if no longer referenced)
-- Diff/Command/Editor scene blocks in `src/preview/surfaces.tsx`
-- `src/ui/Tabs.tsx` (if replaced by SceneTabs)
-- `src/ui/SegmentedControl.tsx` (if unused)
+**Files:**
+- Modify: `src/app/routes/catalogRoute.tsx`
+- Create: `src/app/routes/catalogRoute.test.ts`
+- Delete: `src/catalog/catalogFilters.ts`, `src/catalog/catalogFilters.test.ts`
+- Delete: `src/catalog/catalogSearch.ts`, `src/catalog/catalogSearch.test.ts`
+- Delete: `src/preview/PreviewTabs.tsx`, `src/preview/PreviewTabs.test.tsx`,
+  `src/preview/PreviewTabs.stories.tsx`
+- Delete: `src/preview/PreviewFrame.tsx`, `src/preview/surfaces.tsx`
+- Delete if no importers remain: `src/ui/Button.tsx`, `src/ui/IconButton.tsx`,
+  `src/ui/SegmentedControl.tsx`, `src/ui/Tabs.tsx`
+- Modify: `src/styles/global.css` (remove CSS used only by deleted components)
 
-- [ ] **Step 1: List references**
+Already deleted in earlier phases, verify only: `src/app/routes/themeRoute.tsx`,
+`src/catalog/CatalogPage.tsx`, `src/catalog/ThemeCard.tsx`, `src/catalog/ThemeDetail.tsx`,
+`src/compare/PairCompare.tsx`, and old `src/compare/PairSlot.tsx`.
 
-```bash
-rg --vimgrep -l "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame" src/
+Do not delete `src/preview/themeCssVars.ts` or `src/preview/themeCssVars.test.ts`; they are still
+used by `applyTheme`, compare slots, and stories.
+
+- [ ] **Step 1: Write the route cleanup test**
+
+Create `src/app/routes/catalogRoute.test.ts`:
+
+```ts
+import { describe, expect, it } from "vitest";
+import { parseCatalogRouteSearch } from "./catalogRoute";
+
+describe("parseCatalogRouteSearch", () => {
+  it("keeps only the catalog theme search param", () => {
+    expect(
+      parseCatalogRouteSearch({
+        theme: "tokyo-night",
+        tab: "diff",
+        dark: "dracula",
+        light: "solarized-light",
+      }),
+    ).toEqual({ theme: "tokyo-night" });
+  });
+
+  it("drops blank and non-string theme params", () => {
+    expect(parseCatalogRouteSearch({ theme: " " })).toEqual({});
+    expect(parseCatalogRouteSearch({ theme: 12 })).toEqual({});
+  });
+});
 ```
 
-- [ ] **Step 2: Delete files in batches** matching the list above; resolve each remaining importer.
-- [ ] **Step 3: Strip Diff/Command/Editor scenes from `surfaces.tsx`** or, if `surfaces.tsx` is no longer referenced after the rewrite, delete it whole.
-- [ ] **Step 4: Run `pnpm check`** — expect clean. Fix any dangling imports.
-- [ ] **Step 5: Commit `chore: delete legacy catalog UI`**
+Run:
 
-## Phase 9 checkpoint
+```bash
+pnpm test src/app/routes/catalogRoute.test.ts
+```
+
+Expected: FAIL until `catalogRoute.tsx` drops the legacy fields.
+
+- [ ] **Step 2: Narrow `catalogRoute.tsx`**
+
+Remove the `PreviewTabId` import, `dark`, `light`, `tab`, and `PREVIEW_TAB_VALUES`. The route
+search contract should be:
+
+```ts
+export interface CatalogRouteSearch {
+  theme?: string;
+}
+```
+
+- [ ] **Step 3: List references**
+
+```bash
+rg --vimgrep -l "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame|PreviewSurface|SegmentedControl|from \"../ui/Button\"|from \"../ui/IconButton\"|from \"../ui/Tabs\"" src/
+```
+
+Expected before deletion: only the legacy catalog, preview, and `src/app/routes/catalogRoute.tsx`
+references listed in this task should remain. If any `Pane`, `Rail`, `Palette`, `Compare`, or
+`Lab` file imports deleted components, stop and update the plan before deleting.
+
+- [ ] **Step 4: Delete files in dependency order**
+
+Delete:
+1. `src/catalog/catalogFilters.ts`, `src/catalog/catalogFilters.test.ts`,
+   `src/catalog/catalogSearch.ts`, `src/catalog/catalogSearch.test.ts`
+2. `src/preview/PreviewTabs.tsx`, `src/preview/PreviewTabs.test.tsx`,
+   `src/preview/PreviewTabs.stories.tsx`, `src/preview/PreviewFrame.tsx`,
+   `src/preview/surfaces.tsx`
+3. `src/ui/Tabs.tsx` and `src/ui/SegmentedControl.tsx`
+4. `src/ui/Button.tsx` and `src/ui/IconButton.tsx` if `rg "ui-button|ui-icon-button|<Button|<IconButton|from \"../ui/Button\"|from \"../ui/IconButton\"" src/` shows no active import/use outside the deleted files
+
+Remove empty directories only after `rg --files src/catalog src/ui` confirms they have no files
+left that should stay.
+
+- [ ] **Step 5: Remove obsolete CSS**
+
+From `src/styles/global.css`, remove blocks that exist only for deleted components:
+- `.preview-frame`
+- `.preview-tabs-shell`, `.preview-tabs`, `.preview-tab-panel`
+- `.preview-window*`, `.preview-workspace*`, `.preview-code*`, `.preview-terminal*`
+- `.preview-split-surface`, `.preview-diff-surface`, `.preview-command-surface`,
+  `.preview-settings-surface`, `.preview-editor-panel`, `.preview-form`, `.preview-ports`
+- `.theme-card-preview*`
+- `.ui-tabs*`
+- `.ui-button*` and `.ui-icon-button*` only if Task 30 deletes those primitives
+
+Do not remove token variables (`--preview-*`) or current shell styles (`.layout-*`, `.rail-*`,
+`.pane-*`, `.scene-*`, `.palette-*`, `.compare-*`, `.lab-*`).
+
+- [ ] **Step 6: Verify deleted-reference absence**
+
+```bash
+rg "CatalogPage|ThemeCard|catalogFilters|catalogSearch|ThemeDetail|PairCompare|PairSlot|PreviewTabs|PreviewFrame|PreviewSurface|preview-tabs|theme-card-preview|ui-tabs" src/
+```
+
+Expected: no matches.
+
+- [ ] **Step 7: Run focused tests**
+
+```bash
+pnpm test src/app/routes/catalogRoute.test.ts src/app/App.test.tsx src/pane/Pane.test.tsx src/compare/CompareView.test.tsx
+```
+
+Expected: PASS.
+
+- [ ] **Step 8: Full verification and Browser smoke**
 
 ```bash
 pnpm check
 pnpm test:e2e
 pnpm test:stories
-pnpm themes:research   # smoke-test
 ```
 
-Update `docs/STATUS.md`. After this point, the repo holds only the new shell + scripts.
+Then run the app with `pnpm dev` and use the Browser plugin to smoke `/`, `/compare?a=aurora-light&b=aurora-dark&from=tokyo-night`, and `/lab?from=aurora-light`. Confirm the shell, scene tabs, compare split, Lab rail, and palette still render.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add src/app/routes/catalogRoute.tsx src/app/routes/catalogRoute.test.ts src/styles/global.css src/catalog src/preview src/ui
+git commit -m "chore: delete legacy catalog UI"
+```
+
+## Phase 9 checkpoint
+
+```bash
+pnpm themes:research:test
+pnpm check
+pnpm test:e2e
+pnpm test:stories
+pnpm build
+pnpm themes:research -- --out research-output.json
+```
+
+Use the Browser plugin for one final visual smoke of catalog, compare, and lab. Update
+`docs/STATUS.md` with the verification commands, Browser smoke notes, research-output location,
+and any blocked API/rate-limit state. After this point, the repo holds only the new shell plus
+theme utility scripts.
 
 ---
 
