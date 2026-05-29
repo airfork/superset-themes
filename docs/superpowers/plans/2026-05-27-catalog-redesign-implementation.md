@@ -1188,11 +1188,11 @@ Tokens grouped by `UI` / `Terminal` / `Diagnostic`. Each row: swatch + token nam
 
 `ColorField` is the workhorse. No third-party color picker — use the browser's native `<input type="color">` plus a synced hex `<input>` for keyboard editing. This is per the design's "minimal" stance and keeps the bundle slim.
 
-- [ ] **Step 1: Failing test** — entering `#ff0000` updates draft.theme.ui.background; clicking the swatch focuses the color input.
-- [ ] **Step 2: Implement `ColorField`** with controlled state synced to the draft theme. Hex input validates against `/^#[0-9a-fA-F]{6}$/` on blur.
-- [ ] **Step 3: Implement `TokensSection`** that renders all 20 UI tokens + 21 terminal tokens + any diagnostic tokens, grouped, with a sticky group header per group and a `↻ reroll group` button.
-- [ ] **Step 4: Stories** for ColorField (idle, focused, invalid hex).
-- [ ] **Step 5: Commit `feat: lab tokens editor with native color picker`**
+- [x] **Step 1: Failing test** — entering `#ff0000` updates draft.theme.ui.background; clicking the swatch focuses the color input. _(`ColorField.test.tsx`: commits valid hex on blur via `onChange`, rejects invalid hex with `aria-invalid`, swatch click focuses the native color input, native color change commits.)_
+- [x] **Step 2: Implement `ColorField`** with controlled state synced to the draft theme. Hex input validates against `/^#[0-9a-fA-F]{6}$/` on blur.
+- [x] **Step 3: Implement `TokensSection`** that renders all 20 UI tokens + 21 terminal tokens + any diagnostic tokens, grouped, with a sticky group header per group and a `↻ reroll group` button. _(DEVIATION: groups are the four generator/reroll semantic groups — Surfaces, Accent, Highlights, Terminal — rather than literal `UI`/`Terminal`/`Diagnostic`, so each sticky header's reroll button maps to a real `RandomThemeTokenGroup`. Every UI + terminal token appears in exactly one group; there are no diagnostic tokens.)_
+- [x] **Step 4: Stories** for ColorField (idle, focused, invalid hex).
+- [x] **Step 5: Commit `feat: lab tokens editor with native color picker`**
 
 ## Task 27: Lab rail — Contrast summary + sticky footer
 

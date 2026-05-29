@@ -5,15 +5,27 @@ import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
 import { usePalette } from "../palette/usePalette";
 import { Pane } from "../pane/Pane";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
-import type { CatalogThemeEntry, SupersetTheme, ThemeType } from "../theme-core/themeTypes";
+import type {
+  CatalogThemeEntry,
+  SupersetTheme,
+  TerminalTokens,
+  ThemeType,
+  UiTokens,
+} from "../theme-core/themeTypes";
 import {
   createDraftFromGeneratedTheme,
   createDraftFromImportedTheme,
   type ThemeDraft,
+  updateDraftTerminalToken,
+  updateDraftUiToken,
 } from "./draftTheme";
 import { LabNameplate } from "./LabNameplate";
 import { LabRail } from "./LabRail";
-import { generateRandomTheme } from "./randomTheme";
+import {
+  generateRandomTheme,
+  type RandomThemeTokenGroup,
+  rerollRandomThemeGroup,
+} from "./randomTheme";
 
 interface LabViewProps {
   initialDraft: ThemeDraft;
@@ -101,6 +113,28 @@ export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
     setDraft(createDraftFromImportedTheme(theme));
   };
 
+  const handleUiTokenChange = (token: keyof UiTokens, value: string) => {
+    setDraft((current) => updateDraftUiToken(current, token, value));
+  };
+
+  const handleTerminalTokenChange = (token: keyof TerminalTokens, value: string) => {
+    setDraft((current) => updateDraftTerminalToken(current, token, value));
+  };
+
+  const handleRerollGroup = (group: RandomThemeTokenGroup) => {
+    const nextNonce = rerollNonce + 1;
+    setRerollNonce(nextNonce);
+    setDraft((current) =>
+      createDraftFromGeneratedTheme(
+        rerollRandomThemeGroup({
+          group,
+          seed: `${seed}:${group}:${nextNonce}`,
+          theme: current.theme,
+        }),
+      ),
+    );
+  };
+
   // In the lab, ⌘K Themes reseed the draft from a catalog theme rather than
   // navigating to a detail route.
   const commands: PaletteCommand[] = buildThemeCommands(onStartFromCatalog);
@@ -121,8 +155,11 @@ export function LabView({ initialDraft, onStartFromCatalog }: LabViewProps) {
           onModeChange={setMode}
           onOpenPalette={palette.open}
           onRerollAll={handleRerollAll}
+          onRerollGroup={handleRerollGroup}
           onSeedChange={setSeed}
           onStartFromCatalog={onStartFromCatalog}
+          onTerminalTokenChange={handleTerminalTokenChange}
+          onUiTokenChange={handleUiTokenChange}
           seed={seed}
         />
       }

@@ -1,8 +1,10 @@
 import { RailSearch } from "../rail/RailSearch";
-import type { SupersetTheme, ThemeType } from "../theme-core/themeTypes";
+import type { SupersetTheme, TerminalTokens, ThemeType, UiTokens } from "../theme-core/themeTypes";
 import type { ThemeDraft } from "./draftTheme";
 import { GenerateSection } from "./GenerateSection";
+import type { RandomThemeTokenGroup } from "./randomTheme";
 import { SourceSection } from "./SourceSection";
+import { TokensSection } from "./TokensSection";
 
 interface LabRailProps {
   draft: ThemeDraft;
@@ -14,8 +16,11 @@ interface LabRailProps {
   onModeChange: (mode: ThemeType) => void;
   onOpenPalette: () => void;
   onRerollAll: () => void;
+  onRerollGroup: (group: RandomThemeTokenGroup) => void;
   onSeedChange: (seed: string) => void;
   onStartFromCatalog: (themeId: string) => void;
+  onTerminalTokenChange: (token: keyof TerminalTokens, value: string) => void;
+  onUiTokenChange: (token: keyof UiTokens, value: string) => void;
   seed: string;
 }
 
@@ -29,8 +34,11 @@ export function LabRail({
   onModeChange,
   onOpenPalette,
   onRerollAll,
+  onRerollGroup,
   onSeedChange,
   onStartFromCatalog,
+  onTerminalTokenChange,
+  onUiTokenChange,
   seed,
 }: LabRailProps) {
   return (
@@ -55,6 +63,13 @@ export function LabRail({
         onRerollAll={onRerollAll}
         onSeedChange={onSeedChange}
         seed={seed}
+      />
+
+      <TokensSection
+        draft={draft}
+        onRerollGroup={onRerollGroup}
+        onTerminalTokenChange={onTerminalTokenChange}
+        onUiTokenChange={onUiTokenChange}
       />
     </div>
   );

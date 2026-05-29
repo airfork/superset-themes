@@ -1848,8 +1848,7 @@ kbd {
 
 .lab-draft-facts dt,
 .lab-token-group legend,
-.lab-import-field span,
-.lab-color-field span {
+.lab-import-field span {
   color: var(--preview-ui-muted-foreground);
   font-size: 0.72rem;
   font-weight: 800;
@@ -1882,8 +1881,7 @@ kbd {
   justify-content: center;
 }
 
-.lab-import-field,
-.lab-color-field {
+.lab-import-field {
   display: grid;
   gap: 5px;
 }
@@ -1950,27 +1948,138 @@ kbd {
 }
 
 .lab-color-field {
-  grid-template-columns: minmax(0, 1fr) 38px auto;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 88px;
   align-items: center;
+  gap: 8px;
 }
 
-.lab-color-field span {
+.lab-color-field__swatch-wrap {
+  position: relative;
+  width: 26px;
+  height: 26px;
+}
+
+.lab-color-field__swatch {
+  width: 100%;
+  height: 100%;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 26%, var(--preview-ui-border));
+  border-radius: 6px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lab-color-field__swatch:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
+}
+
+/* The native picker overlays the swatch so the OS color panel anchors to it,
+   but stays click-transparent — the swatch button drives focus/open. */
+.lab-color-field__picker {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lab-color-field__label {
+  min-width: 0;
+  overflow: hidden;
   color: var(--preview-ui-foreground);
-  text-transform: none;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.lab-color-field input {
-  width: 38px;
-  height: 30px;
+.lab-color-field__hex {
+  width: 100%;
+  min-height: 28px;
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
-  background: var(--preview-ui-card);
-  padding: 2px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  padding: 0 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.74rem;
 }
 
-.lab-color-field code {
+.lab-color-field__hex[aria-invalid="true"] {
+  border-color: var(--preview-ui-destructive);
+  outline: 1px solid var(--preview-ui-destructive);
+}
+
+.lab-tokens {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+}
+
+.lab-tokens__group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Group headers pin below the sticky search bar (~44px tall) as the rail scrolls,
+   so the active group's reroll control stays reachable. */
+.lab-tokens__header {
+  position: sticky;
+  top: 44px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px -12px 2px;
+  padding: 6px 12px;
+  background: var(--preview-ui-card);
+  border-bottom: 1px solid var(--preview-ui-border);
+}
+
+.lab-tokens__title {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--preview-ui-muted-foreground);
-  font-size: 0.74rem;
+}
+
+.lab-tokens__reroll {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-muted-foreground);
+  cursor: pointer;
+}
+
+.lab-tokens__reroll:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+  color: var(--preview-ui-foreground);
+}
+
+.lab-tokens__reroll:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
+}
+
+.lab-tokens__reroll svg {
+  width: 14px;
+  height: 14px;
+}
+
+.lab-tokens__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
 .lab-preview {
