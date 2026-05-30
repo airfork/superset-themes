@@ -1,4 +1,4 @@
-import { Copy, FlaskConical, Moon, Pin, Sun } from "lucide-react";
+import { Copy, FlaskConical, Maximize2, Minimize2, Moon, Pin, Sun } from "lucide-react";
 import { useState } from "react";
 import { exportThemeJson } from "../theme-core/exportTheme";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
@@ -12,18 +12,21 @@ interface NameplateProps {
 
 export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: NameplateProps) {
   const { meta, theme } = entry;
-  const [copyState, setCopyState] = useState<"copied" | "idle">("idle");
+  const [copyState, setCopyState] = useState<"copied" | "failed" | "idle">("idle");
   const isDark = theme.type === "dark";
 
   const copyJson = async () => {
     try {
       await navigator.clipboard.writeText(exportThemeJson(entry));
       setCopyState("copied");
-      window.setTimeout(() => setCopyState("idle"), 1600);
     } catch {
-      // clipboard unavailable; silently leave state idle
+      setCopyState("failed");
     }
+    window.setTimeout(() => setCopyState("idle"), 1600);
   };
+
+  const copyLabel =
+    copyState === "copied" ? "Copied" : copyState === "failed" ? "Copy failed" : "Copy JSON";
 
   const modeLabel = `${isDark ? "Dark" : "Light"} theme`;
   const expandActionLabel = `${expanded ? "Collapse" : "Expand"} ${theme.name} pane`;
@@ -43,20 +46,16 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
               aria-label={expandActionLabel}
               aria-expanded={expanded}
             >
-              {theme.name}
+              <span className="pane-nameplate__name-label">{theme.name}</span>
+              {expanded ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
             </button>
           ) : (
             theme.name
           )}
         </h2>
         <span className="pane-nameplate__family">{meta.family}</span>
-        <span
-          className={`pane-nameplate__mode pane-nameplate__mode--${theme.type}`}
-          role="img"
-          aria-label={modeLabel}
-        >
+        <span className="pane-nameplate__mode" role="img" aria-label={modeLabel}>
           {isDark ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
-          <span aria-hidden="true">{isDark ? "Dark" : "Light"}</span>
         </span>
         <ul className="pane-nameplate__tags" aria-label="Theme style tags">
           {meta.styleTags.map((tag) => (
@@ -78,9 +77,15 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
           <span>Open in Lab</span>
         </a>
         <span className="pane-nameplate__divider" aria-hidden="true" />
-        <button type="button" className="pane-nameplate__action" onClick={copyJson}>
+        <button
+          type="button"
+          className={`pane-nameplate__action${
+            copyState === "failed" ? " pane-nameplate__action--error" : ""
+          }`}
+          onClick={copyJson}
+        >
           <Copy aria-hidden="true" />
-          <span>{copyState === "copied" ? "Copied" : "Copy JSON"}</span>
+          <span aria-live="polite">{copyLabel}</span>
         </button>
       </div>
     </div>

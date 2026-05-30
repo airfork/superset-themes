@@ -34,6 +34,12 @@ describe("Nameplate", () => {
     expect(screen.getByLabelText(/dark theme/i)).toBeInTheDocument();
   });
 
+  it("conveys the mode with an icon only, not redundant visible text", () => {
+    render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
+    // The accessible label carries the mode; the glyph must not duplicate it as visible text.
+    expect(screen.getByLabelText(/dark theme/i)).not.toHaveTextContent(/dark/i);
+  });
+
   it("renders Pin to compare, Open in Lab, and Copy JSON actions", () => {
     render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
 
@@ -65,6 +71,18 @@ describe("Nameplate", () => {
 
     await user.click(screen.getByRole("button", { name: /copy json/i }));
     expect(writeText).toHaveBeenCalledWith(exportThemeJson(entry));
+    writeText.mockRestore();
+  });
+
+  it("surfaces a visible failure status when the clipboard write rejects", async () => {
+    const writeText = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockRejectedValue(new Error("clipboard blocked"));
+    const user = userEvent.setup();
+    render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
+
+    await user.click(screen.getByRole("button", { name: /copy json/i }));
+    expect(await screen.findByRole("button", { name: /copy failed/i })).toBeInTheDocument();
     writeText.mockRestore();
   });
 

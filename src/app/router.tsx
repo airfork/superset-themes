@@ -115,7 +115,6 @@ const catalogRoute = createRoute({
           <Rail
             focusedThemeId={focused.theme.id}
             pinnedThemeIds={EMPTY_PINNED}
-            onOpenPalette={palette.open}
             onSelect={selectTheme}
           />
         }

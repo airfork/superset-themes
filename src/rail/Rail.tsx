@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { catalogThemes } from "../data/catalog";
 import { getFeaturedThemes } from "../data/featured";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
@@ -11,7 +11,6 @@ interface RailProps {
   focusedThemeId: string;
   pinnedThemeIds: ReadonlySet<string>;
   onSelect: (themeId: string) => void;
-  onOpenPalette: () => void;
   hint?: string;
 }
 
@@ -32,7 +31,8 @@ function rowKeyFor(section: RowSection, themeId: string): string {
   return `rail-row-${section}-${themeId}`;
 }
 
-export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, hint }: RailProps) {
+export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailProps) {
+  const [query, setQuery] = useState("");
   const featured = useMemo(() => getFeaturedThemes(), []);
   const lights = useMemo(
     () =>
@@ -75,18 +75,33 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, 
     [featured, lights, darks],
   );
 
-  const rowKeys = useMemo(() => orderedRows.map((row) => row.rowKey), [orderedRows]);
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleRows = useMemo(
+    () =>
+      orderedRows.filter(
+        (row) =>
+          normalizedQuery === "" || row.entry.theme.name.toLowerCase().includes(normalizedQuery),
+      ),
+    [orderedRows, normalizedQuery],
+  );
+  const visibleRowKeys = useMemo(() => visibleRows.map((row) => row.rowKey), [visibleRows]);
 
-  // First occurrence of the focused theme wins (Featured before its light/dark home).
+  // First visible occurrence of the focused theme wins (Featured before its light/dark home).
+  // When the filter hides the focused theme, fall back to the first visible row.
   const activeRowKey = useMemo(() => {
-    const match = orderedRows.find((row) => row.themeId === focusedThemeId);
-    return match?.rowKey ?? orderedRows[0]?.rowKey ?? "";
-  }, [orderedRows, focusedThemeId]);
+    const match = visibleRows.find((row) => row.themeId === focusedThemeId);
+    return match?.rowKey ?? visibleRows[0]?.rowKey ?? "";
+  }, [visibleRows, focusedThemeId]);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const onFocusSearch = useCallback(() => {
+    searchInputRef.current?.focus();
+  }, []);
 
   const { focusedIndex, onKeyDown, setFocusedIndex } = useRailKeyboard({
-    ids: rowKeys,
+    ids: visibleRowKeys,
     activeId: activeRowKey,
-    onOpenPalette,
+    onFocusSearch,
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -98,7 +113,7 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, 
       return;
     }
     lastFocusedIndex.current = focusedIndex;
-    const targetKey = rowKeys[focusedIndex];
+    const targetKey = visibleRowKeys[focusedIndex];
     if (!targetKey || !containerRef.current) {
       return;
     }
@@ -110,7 +125,10 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, 
       `#${CSS.escape(targetKey)}`,
     );
     target?.focus();
-  }, [focusedIndex, rowKeys]);
+  }, [focusedIndex, visibleRowKeys]);
+
+  const sectionRows = (section: RowSection): RowDescriptor[] =>
+    visibleRows.filter((row) => row.section === section);
 
   const renderRow = (row: RowDescriptor) => (
     <RailRow
@@ -121,36 +139,38 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, onOpenPalette, 
       pinned={pinnedThemeIds.has(row.themeId)}
       variant={row.section === "featured" ? "featured" : "basic"}
       onSelect={() => {
-        const nextIndex = orderedRows.findIndex((candidate) => candidate.rowKey === row.rowKey);
+        const nextIndex = visibleRows.findIndex((candidate) => candidate.rowKey === row.rowKey);
         if (nextIndex >= 0) {
           setFocusedIndex(nextIndex);
         }
         onSelect(row.themeId);
       }}
       onKeyDown={onKeyDown}
-      tabIndex={row.rowKey === rowKeys[focusedIndex] ? 0 : -1}
+      tabIndex={row.rowKey === visibleRowKeys[focusedIndex] ? 0 : -1}
     />
   );
 
   return (
     <div className="rail" ref={containerRef}>
       <div className="rail__search">
-        <RailSearch onOpenPalette={onOpenPalette} />
+        <RailSearch value={query} onChange={setQuery} inputRef={searchInputRef} />
       </div>
       {hint ? (
         <p className="rail__hint" role="status" aria-live="polite">
           {hint}
         </p>
       ) : null}
-      <RailSection label="Featured">
-        {orderedRows.slice(0, featured.length).map(renderRow)}
-      </RailSection>
-      <RailSection label="Light">
-        {orderedRows.slice(featured.length, featured.length + lights.length).map(renderRow)}
-      </RailSection>
-      <RailSection label="Dark">
-        {orderedRows.slice(featured.length + lights.length).map(renderRow)}
-      </RailSection>
+      {visibleRows.length === 0 ? (
+        <p className="rail__empty" role="status">
+          {`No themes match "${query.trim()}"`}
+        </p>
+      ) : (
+        <>
+          <RailSection label="Featured">{sectionRows("featured").map(renderRow)}</RailSection>
+          <RailSection label="Light">{sectionRows("light").map(renderRow)}</RailSection>
+          <RailSection label="Dark">{sectionRows("dark").map(renderRow)}</RailSection>
+        </>
+      )}
     </div>
   );
 }

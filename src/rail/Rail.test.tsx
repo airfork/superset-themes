@@ -9,13 +9,7 @@ import { Rail } from "./Rail";
 
 function renderRail(props?: Partial<Parameters<typeof Rail>[0]>) {
   return render(
-    <Rail
-      onOpenPalette={() => {}}
-      onSelect={() => {}}
-      focusedThemeId="tokyo-night"
-      pinnedThemeIds={new Set()}
-      {...props}
-    />,
+    <Rail onSelect={() => {}} focusedThemeId="tokyo-night" pinnedThemeIds={new Set()} {...props} />,
   );
 }
 
@@ -85,11 +79,38 @@ describe("Rail", () => {
     expect(onSelect).toHaveBeenCalledWith("aurora-light");
   });
 
-  it("opens the palette when the search trigger is activated", async () => {
+  it("filters the visible rows to themes whose name matches the query", async () => {
     const user = userEvent.setup();
-    const onOpenPalette = vi.fn();
-    renderRail({ onOpenPalette });
-    await user.click(screen.getByRole("button", { name: /search themes/i }));
-    expect(onOpenPalette).toHaveBeenCalledTimes(1);
+    renderRail();
+    const filter = screen.getByRole("textbox", { name: /filter themes/i });
+    await user.type(filter, "dracula");
+
+    expect(screen.getByRole("button", { name: "Dracula" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Tokyo Night" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Aurora Light" })).not.toBeInTheDocument();
+  });
+
+  it("focuses the filter input when '/' is pressed on a rail row", async () => {
+    const user = userEvent.setup();
+    renderRail();
+    const dark = screen.getByRole("region", { name: "Dark" });
+    within(dark).getAllByRole("button")[0]?.focus();
+    await user.keyboard("/");
+    expect(screen.getByRole("textbox", { name: /filter themes/i })).toHaveFocus();
+  });
+
+  it("moves the roving tabstop onto a visible row after the filter hides the focused theme", async () => {
+    const user = userEvent.setup();
+    renderRail(); // focusedThemeId "tokyo-night" is hidden by the "dracula" query
+    await user.type(screen.getByRole("textbox", { name: /filter themes/i }), "dracula");
+    expect(screen.getByRole("button", { name: "Dracula" })).toHaveAttribute("tabindex", "0");
+  });
+
+  it("shows an empty state when no theme matches the query", async () => {
+    const user = userEvent.setup();
+    renderRail();
+    await user.type(screen.getByRole("textbox", { name: /filter themes/i }), "zzzzz");
+    expect(screen.getByText(/no themes match/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Dracula" })).not.toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
-import { RailSearch } from "../rail/RailSearch";
+import { Search } from "lucide-react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { SupersetTheme, TerminalTokens, ThemeType, UiTokens } from "../theme-core/themeTypes";
 import { ContrastSummary } from "./ContrastSummary";
 import type { ThemeDraft } from "./draftTheme";
@@ -56,10 +57,29 @@ export function LabRail({
   onUiTokenChange,
   seed,
 }: LabRailProps) {
+  // The lab rail keeps a visible palette trigger (the catalog rail repurposed its
+  // search box into a theme filter). "/" while focused mirrors the kbd hint.
+  const onSearchKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "/") {
+      event.preventDefault();
+      onOpenPalette();
+    }
+  };
+
   return (
     <div className="rail lab-rail">
       <div className="rail__search">
-        <RailSearch onOpenPalette={onOpenPalette} />
+        <button
+          type="button"
+          className="rail-search"
+          onClick={onOpenPalette}
+          onKeyDown={onSearchKeyDown}
+          aria-label="Search themes"
+        >
+          <Search aria-hidden="true" width={14} height={14} />
+          <span className="rail-search__label">Search themes</span>
+          <kbd className="rail-search__kbd">/</kbd>
+        </button>
       </div>
 
       <SourceSection

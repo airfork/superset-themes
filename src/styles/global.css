@@ -321,6 +321,13 @@ kbd {
   line-height: 1.35;
 }
 
+.rail__empty {
+  margin: 16px 12px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--preview-ui-muted-foreground);
+}
+
 .lab-page {
   display: grid;
   gap: 20px;
@@ -954,6 +961,7 @@ kbd {
 .pane-nameplate__name {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   border: 0;
   background: transparent;
   padding: 0;
@@ -961,6 +969,16 @@ kbd {
   color: inherit;
   font: inherit;
   cursor: pointer;
+}
+
+.pane-nameplate__name--expandable svg {
+  width: 13px;
+  height: 13px;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.pane-nameplate__name--expandable:hover svg {
+  color: var(--preview-ui-foreground);
 }
 
 .pane-nameplate__name-text {
@@ -981,7 +999,7 @@ kbd {
   outline-offset: 3px;
 }
 
-.pane-nameplate__name--expandable:hover .pane-nameplate__name-text {
+.pane-nameplate__name--expandable:hover .pane-nameplate__name-label {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
@@ -999,23 +1017,17 @@ kbd {
   font-weight: 600;
 }
 
+/* Bare glyph, not a pill: the family chip already owns the bordered-pill slot, so the
+   mode reads as a single quiet signal beside it rather than an identical twin. */
 .pane-nameplate__mode {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  border: 1px solid var(--preview-ui-border);
-  border-radius: 999px;
-  background: var(--preview-ui-muted);
   color: var(--preview-ui-muted-foreground);
-  padding: 2px 8px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: capitalize;
 }
 
 .pane-nameplate__mode svg {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 
 .pane-nameplate__tags {
@@ -1095,6 +1107,11 @@ kbd {
 .pane-nameplate__action:focus-visible {
   outline: 2px solid var(--preview-ui-ring);
   outline-offset: 1px;
+}
+
+.pane-nameplate__action--error,
+.pane-nameplate__action--error:hover {
+  color: var(--preview-ui-destructive);
 }
 
 .pane-nameplate__divider {
@@ -2315,17 +2332,14 @@ a.scene-workspace__footer-row:hover {
 }
 
 .chrome-topbar__name {
+  justify-self: start;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  min-width: 0;
-}
-
-.chrome-topbar__name {
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.01em;
-  justify-self: start;
 }
 
 .chrome-topbar__search {
@@ -2384,10 +2398,18 @@ a.scene-workspace__footer-row:hover {
 }
 
 .chrome-topbar__repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   justify-self: end;
   color: var(--preview-ui-muted-foreground);
   text-decoration: none;
   font-size: 0.78rem;
+}
+
+.chrome-topbar__repo > svg {
+  width: 15px;
+  height: 15px;
 }
 
 .chrome-topbar__repo:hover {
@@ -2525,6 +2547,9 @@ a.scene-workspace__footer-row:hover {
   cursor: pointer;
   border-radius: 6px;
   touch-action: manipulation;
+  transition:
+    background-color 140ms ease-out,
+    color 140ms ease-out;
 }
 
 .rail-row[data-variant="featured"] {
@@ -2648,15 +2673,20 @@ a.scene-workspace__footer-row:hover {
   font: inherit;
   font-size: 0.82rem;
   text-align: start;
-  cursor: pointer;
   touch-action: manipulation;
+}
+
+/* The lab rail keeps a button trigger; the catalog rail is a text-input container. */
+button.rail-search {
+  cursor: pointer;
 }
 
 .rail-search:hover {
   border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
 }
 
-.rail-search:focus-visible {
+.rail-search:focus-visible,
+.rail-search:focus-within {
   outline: 2px solid var(--preview-ui-ring);
   outline-offset: 2px;
 }
@@ -2668,6 +2698,21 @@ a.scene-workspace__footer-row:hover {
 
 .rail-search__label {
   flex: 1;
+}
+
+.rail-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  outline: none;
+}
+
+.rail-search__input::placeholder {
+  color: var(--preview-ui-muted-foreground);
 }
 
 .rail-search__kbd {
@@ -2764,7 +2809,9 @@ a.scene-workspace__footer-row:hover {
   justify-content: center;
   align-items: flex-start;
   padding: 12vh 16px 16px;
-  background: color-mix(in srgb, var(--preview-ui-background) 55%, transparent);
+  /* Theme-independent dark scrim: tying it to --preview-ui-background washed
+     light themes with a near-white veil that never dimmed the page beneath. */
+  background: color-mix(in srgb, oklch(0.17 0.015 265) 64%, transparent);
 }
 
 .palette {

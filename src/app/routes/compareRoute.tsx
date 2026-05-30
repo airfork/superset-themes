@@ -147,13 +147,7 @@ export function CompareRouteView({
       onOpenPalette={palette.open}
       palette={palette.paletteProps}
       rail={
-        <Rail
-          focusedThemeId={fromId}
-          pinnedThemeIds={pinnedThemeIds}
-          hint={hint}
-          onOpenPalette={palette.open}
-          onSelect={pin}
-        />
+        <Rail focusedThemeId={fromId} pinnedThemeIds={pinnedThemeIds} hint={hint} onSelect={pin} />
       }
       pane={
         <CompareView

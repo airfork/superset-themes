@@ -6,14 +6,14 @@ import { describe, expect, it, vi } from "vitest";
 import { TopBar } from "./TopBar";
 
 describe("TopBar", () => {
-  it("renders site name, search trigger, and repo link", () => {
+  it("renders site name, search trigger, and GitHub repo link", () => {
     render(<TopBar onOpenPalette={() => {}} />);
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
     expect(screen.getByText("Superset Themes")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /search themes/i })).toBeInTheDocument();
     expect(screen.getByText(/⌘K/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /repo/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /github/i })).toHaveAttribute(
       "href",
       "https://github.com/superset-sh/superset-themes",
     );

@@ -6,34 +6,17 @@ import { describe, expect, it, vi } from "vitest";
 import { RailSearch } from "./RailSearch";
 
 describe("RailSearch", () => {
-  it("calls onOpenPalette on click", async () => {
-    const user = userEvent.setup();
-    const onOpenPalette = vi.fn();
-    render(<RailSearch onOpenPalette={onOpenPalette} />);
-
-    await user.click(screen.getByRole("button", { name: /search themes/i }));
-    expect(onOpenPalette).toHaveBeenCalledTimes(1);
+  it("renders the current value", () => {
+    render(<RailSearch value="dracula" onChange={() => {}} />);
+    expect(screen.getByRole("textbox", { name: /filter themes/i })).toHaveValue("dracula");
   });
 
-  it("calls onOpenPalette when '/' is pressed while focused", async () => {
+  it("calls onChange as the user types", async () => {
     const user = userEvent.setup();
-    const onOpenPalette = vi.fn();
-    render(<RailSearch onOpenPalette={onOpenPalette} />);
+    const onChange = vi.fn();
+    render(<RailSearch value="" onChange={onChange} />);
 
-    const trigger = screen.getByRole("button", { name: /search themes/i });
-    trigger.focus();
-    await user.keyboard("/");
-    expect(onOpenPalette).toHaveBeenCalledTimes(1);
-  });
-
-  it("ignores other keypresses", async () => {
-    const user = userEvent.setup();
-    const onOpenPalette = vi.fn();
-    render(<RailSearch onOpenPalette={onOpenPalette} />);
-
-    const trigger = screen.getByRole("button", { name: /search themes/i });
-    trigger.focus();
-    await user.keyboard("a");
-    expect(onOpenPalette).not.toHaveBeenCalled();
+    await user.type(screen.getByRole("textbox", { name: /filter themes/i }), "x");
+    expect(onChange).toHaveBeenCalledWith("x");
   });
 });
