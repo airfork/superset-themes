@@ -5,7 +5,9 @@ import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 interface NameplateProps {
   entry: CatalogThemeEntry;
-  onPin: (themeId: string) => void;
+  // Omitted in compare slots, where the theme is already pinned and the slot owns
+  // Unpin, so offering "Pin to compare" again would be a contradictory second verb.
+  onPin?: (themeId: string) => void;
   expanded?: boolean;
   onExpandToggle?: () => void;
 }
@@ -67,11 +69,19 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
       </div>
 
       <div className="pane-nameplate__actions" role="toolbar" aria-label={`${theme.name} actions`}>
-        <button type="button" className="pane-nameplate__action" onClick={() => onPin(theme.id)}>
-          <Pin aria-hidden="true" />
-          <span>Pin to compare</span>
-        </button>
-        <span className="pane-nameplate__divider" aria-hidden="true" />
+        {onPin ? (
+          <>
+            <button
+              type="button"
+              className="pane-nameplate__action"
+              onClick={() => onPin(theme.id)}
+            >
+              <Pin aria-hidden="true" />
+              <span>Pin to compare</span>
+            </button>
+            <span className="pane-nameplate__divider" aria-hidden="true" />
+          </>
+        ) : null}
         <a className="pane-nameplate__action" href={`/lab?from=${theme.id}`}>
           <FlaskConical aria-hidden="true" />
           <span>Open in Lab</span>

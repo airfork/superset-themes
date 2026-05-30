@@ -43,4 +43,20 @@ describe("LayoutShell", () => {
     renderShell();
     expect(screen.getByRole("contentinfo")).toHaveTextContent("Tokyo Night");
   });
+
+  it("renders a provided bottomBar in place of the focused-entry bar", () => {
+    render(
+      <FocusedThemeProvider initialThemeId="tokyo-night">
+        <LayoutShell
+          onOpenPalette={() => {}}
+          rail={<div data-testid="shell-rail">rail placeholder</div>}
+          pane={<div data-testid="shell-pane">pane placeholder</div>}
+          bottomBar={<footer>custom compare bar</footer>}
+        />
+      </FocusedThemeProvider>,
+    );
+
+    expect(screen.getByText("custom compare bar")).toBeInTheDocument();
+    expect(screen.queryByText("Tokyo Night")).not.toBeInTheDocument();
+  });
 });

@@ -11,6 +11,7 @@ interface LayoutShellProps {
   onOpenPalette: () => void;
   palette?: PaletteProps;
   expanded?: boolean;
+  bottomBar?: ReactNode;
 }
 
 export function LayoutShell({
@@ -19,6 +20,7 @@ export function LayoutShell({
   onOpenPalette,
   palette,
   expanded = false,
+  bottomBar,
 }: LayoutShellProps) {
   const { focused } = useFocusedTheme();
 
@@ -33,7 +35,7 @@ export function LayoutShell({
           {pane}
         </main>
       </div>
-      <BottomBar entry={focused} />
+      {bottomBar ?? <BottomBar entry={focused} />}
       {palette ? <Palette {...palette} /> : null}
     </div>
   );

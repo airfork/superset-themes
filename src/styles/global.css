@@ -1011,7 +1011,7 @@ kbd {
   gap: 16px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--preview-ui-border);
-  background: var(--preview-ui-card);
+  background: var(--chrome-surface);
   color: var(--preview-ui-foreground);
   min-height: 44px;
 }
@@ -1076,8 +1076,8 @@ kbd {
   align-items: center;
   border: 1px solid var(--preview-ui-border);
   border-radius: 999px;
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-muted-foreground);
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
   padding: 2px 8px;
   font-size: 0.72rem;
   font-weight: 600;
@@ -1088,7 +1088,7 @@ kbd {
 .pane-nameplate__mode {
   display: inline-flex;
   align-items: center;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .pane-nameplate__mode svg {
@@ -1149,7 +1149,7 @@ kbd {
   gap: 6px;
   border: 0;
   background: transparent;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   padding: 4px 8px;
   font: inherit;
   font-size: 0.78rem;
@@ -1203,6 +1203,7 @@ kbd {
 .scene-workspace {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-height: 480px;
   height: 100%;
   background: var(--preview-ui-background);
@@ -2383,6 +2384,29 @@ a.scene-workspace__footer-row:hover {
   }
 }
 
+/* Chrome neutral tokens. Persistent chrome (bars, rail, palette, nameplate) must
+   guarantee its own legibility no matter which theme it is wearing. Solarized Light,
+   for one, maps card/input/muted/popover all onto a single cream (#eee8d5) where even
+   full foreground only reaches 4.39:1 — below AA. So chrome text sits on
+   --chrome-surface (the theme's highest-contrast base) and secondary text uses a muted
+   pulled toward foreground. Re-declared on .compare-slot so each slot derives its own. */
+:root,
+.compare-slot {
+  --chrome-surface: var(--preview-ui-card);
+  --chrome-muted-foreground: color-mix(
+    in srgb,
+    var(--preview-ui-muted-foreground),
+    var(--preview-ui-foreground) 60%
+  );
+}
+
+/* Light themes can map card to a tint darker than background (Solarized base2), so
+   their reliable AA surface is background; dark themes keep the raised card look. */
+:root[data-theme-type="light"],
+.compare-slot[data-theme-type="light"] {
+  --chrome-surface: var(--preview-ui-background);
+}
+
 /* Chrome — top bar */
 .chrome-topbar {
   display: grid;
@@ -2391,7 +2415,7 @@ a.scene-workspace__footer-row:hover {
   gap: 12px;
   height: 38px;
   padding: 0 12px;
-  background: var(--preview-ui-card);
+  background: var(--chrome-surface);
   border-bottom: 1px solid var(--preview-ui-border);
   color: var(--preview-ui-foreground);
   font-size: 0.84rem;
@@ -2417,10 +2441,10 @@ a.scene-workspace__footer-row:hover {
   justify-self: center;
   height: 28px;
   padding: 0 10px;
-  background: var(--preview-ui-input);
+  background: var(--chrome-surface);
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   font: inherit;
   text-align: start;
   cursor: pointer;
@@ -2459,8 +2483,8 @@ a.scene-workspace__footer-row:hover {
   padding: 1px 6px;
   border: 1px solid var(--preview-ui-border);
   border-radius: 4px;
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-muted-foreground);
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
 }
 
 .chrome-topbar__repo {
@@ -2468,7 +2492,7 @@ a.scene-workspace__footer-row:hover {
   align-items: center;
   gap: 6px;
   justify-self: end;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   text-decoration: none;
   font-size: 0.78rem;
 }
@@ -2496,9 +2520,9 @@ a.scene-workspace__footer-row:hover {
   gap: 12px;
   height: 32px;
   padding: 0 12px;
-  background: var(--preview-ui-card);
+  background: var(--chrome-surface);
   border-top: 1px solid var(--preview-ui-border);
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   font-size: 0.74rem;
   font-variant-numeric: tabular-nums;
 }
@@ -2523,6 +2547,22 @@ a.scene-workspace__footer-row:hover {
   font-family: var(--app-font-chrome);
 }
 
+.chrome-bottombar__slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chrome-bottombar__slot-label {
+  font-weight: 600;
+  font-variant-numeric: normal;
+  color: var(--chrome-muted-foreground);
+}
+
+.chrome-bottombar__empty {
+  font-style: italic;
+}
+
 /* Layout shell — master/detail grid */
 :root {
   --chrome-top: 38px;
@@ -2532,8 +2572,8 @@ a.scene-workspace__footer-row:hover {
 
 .layout-shell {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  min-height: 100dvh;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
   background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
 }
@@ -2551,7 +2591,7 @@ a.scene-workspace__footer-row:hover {
   max-height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom));
   overflow-y: auto;
   border-right: 1px solid var(--preview-ui-border);
-  background: var(--preview-ui-card);
+  background: var(--chrome-surface);
 }
 
 .layout-shell__pane {
@@ -2656,7 +2696,7 @@ a.scene-workspace__footer-row:hover {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .rail-row__name {
@@ -2721,7 +2761,7 @@ a.scene-workspace__footer-row:hover {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--preview-ui-card);
+  background: var(--chrome-surface);
   border-bottom: 1px solid var(--preview-ui-border);
 }
 
@@ -2732,10 +2772,10 @@ a.scene-workspace__footer-row:hover {
   width: 100%;
   height: 30px;
   padding: 0 10px;
-  background: var(--preview-ui-input);
+  background: var(--chrome-surface);
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   font: inherit;
   font-size: 0.82rem;
   text-align: start;
@@ -2778,7 +2818,7 @@ button.rail-search {
 }
 
 .rail-search__input::placeholder {
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .rail-search__kbd {
@@ -2786,8 +2826,8 @@ button.rail-search {
   padding: 1px 6px;
   border: 1px solid var(--preview-ui-border);
   border-radius: 4px;
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-muted-foreground);
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
 }
 
 .rail-section {
@@ -2802,7 +2842,7 @@ button.rail-search {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .rail-section__rows {
@@ -2888,7 +2928,7 @@ button.rail-search {
   overflow: hidden;
   border: 1px solid var(--preview-ui-border);
   border-radius: 10px;
-  background: var(--preview-ui-popover);
+  background: var(--chrome-surface);
   color: var(--preview-ui-popover-foreground);
   box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
 }
@@ -2913,21 +2953,43 @@ button.rail-search {
 }
 
 .palette__input::placeholder {
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .palette__results {
   flex: 1 1 auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   padding: 6px;
 }
 
 .palette__group {
+  /* Column flex stacks the label above its options and lets the themes group
+     own the scroll while the actions shelf keeps its height. */
+  display: flex;
+  flex-direction: column;
   min-inline-size: 0;
-  margin: 0;
-  border: 0;
-  padding: 0;
+}
+
+/* The theme list owns the scroll; the Actions shelf below stays put. */
+.palette__group--themes {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Actions are a small fixed set; dock them as a footer so they stay
+   discoverable on an empty query instead of sitting below the fold under a
+   tall theme list. Reserves its own space so it never overlays the themes. */
+.palette__group--actions {
+  flex: 0 0 auto;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px solid var(--preview-ui-border);
+  background: var(--chrome-surface);
 }
 
 .palette__group-label {
@@ -2937,7 +2999,7 @@ button.rail-search {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .palette__option {
@@ -2960,7 +3022,7 @@ button.rail-search {
 /* Derive the active band from primary: per-theme selection collapses against the
    popover surface in light themes (Solarized Light, Rosé Pine Dawn). */
 .palette__option[data-active] {
-  background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--preview-ui-popover));
+  background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--chrome-surface));
 }
 
 .palette__option-label {
@@ -2972,11 +3034,11 @@ button.rail-search {
 .palette__option-hint {
   flex: 0 0 auto;
   font-size: 0.78rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .palette__empty {
   padding: 16px 12px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   font-size: 0.88rem;
 }

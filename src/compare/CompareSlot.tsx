@@ -13,14 +13,13 @@ interface CompareSlotProps {
   entry?: CatalogThemeEntry;
   scene: SceneId;
   onUnpin: (slot: CompareSlotId) => void;
-  onRepin: (themeId: string) => void;
 }
 
 function slotLabel(slot: CompareSlotId): string {
   return slot === "a" ? "A" : "B";
 }
 
-export function CompareSlot({ slot, entry, scene, onUnpin, onRepin }: CompareSlotProps) {
+export function CompareSlot({ slot, entry, scene, onUnpin }: CompareSlotProps) {
   const label = slotLabel(slot);
 
   if (!entry) {
@@ -57,7 +56,7 @@ export function CompareSlot({ slot, entry, scene, onUnpin, onRepin }: CompareSlo
           <span>Unpin</span>
         </button>
       </div>
-      <Nameplate entry={entry} onPin={onRepin} />
+      <Nameplate entry={entry} />
       <div className="compare-slot__body">
         {scene === "workspace" ? <WorkspaceScene entry={entry} /> : <SettingsScene entry={entry} />}
       </div>

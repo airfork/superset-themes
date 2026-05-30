@@ -1,7 +1,12 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
-import { buildThemeCommands, nextThemeId, type PaletteCommand } from "../palette/commands";
+import {
+  buildThemeCommands,
+  copyThemeJsonCommand,
+  nextThemeId,
+  type PaletteCommand,
+} from "../palette/commands";
 import { usePalette } from "../palette/usePalette";
 import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
@@ -95,6 +100,7 @@ const catalogRoute = createRoute({
         keys: ["pin to compare", "compare", "split"],
         run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
       },
+      copyThemeJsonCommand(focused),
       {
         id: "action-toggle-next-theme",
         label: "Toggle next theme",

@@ -21,12 +21,10 @@ function stateWith(partial: Partial<CompareState>): CompareState {
 function Harness({
   initial,
   onUnpin,
-  onRepin,
   onExit,
 }: {
   initial: CompareState;
   onUnpin?: (slot: CompareSlotId) => void;
-  onRepin?: (themeId: string) => void;
   onExit?: () => void;
 }) {
   const [state, setState] = useState(initial);
@@ -40,7 +38,6 @@ function Harness({
         onUnpin?.(slot);
         setState((current) => ({ ...current, [slot]: null }));
       }}
-      onRepin={onRepin ?? (() => {})}
       onExit={onExit ?? (() => {})}
     />
   );
@@ -109,6 +106,18 @@ describe("CompareView", () => {
     // The single-pin acknowledgement must be visible to sighted users, not hidden
     // off-screen the way the prior screen-reader-only live region was.
     expect(status).not.toHaveClass("sr-only");
+  });
+
+  it("does not offer Pin to compare on an already-pinned slot", () => {
+    render(<Harness initial={stateWith({ a: "tokyo-night", lastPinned: "a" })} />);
+
+    const slotA = screen.getByRole("region", { name: /compare slot a: tokyo night/i });
+    expect(
+      within(slotA).queryByRole("button", { name: /pin to compare/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(slotA).getByRole("button", { name: /remove tokyo night from comparison/i }),
+    ).toBeInTheDocument();
   });
 
   it("unpins a slot through its remove control", async () => {

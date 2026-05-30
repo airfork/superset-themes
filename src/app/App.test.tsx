@@ -31,7 +31,7 @@ describe("App", () => {
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/Solarized Light/);
   });
 
-  it("renders compare mode with the two pinned slots and entry-state chrome", async () => {
+  it("renders compare mode with the two pinned slots in the bottom bar", async () => {
     window.history.replaceState(
       null,
       "",
@@ -46,8 +46,11 @@ describe("App", () => {
     expect(
       screen.getByRole("region", { name: /compare slot b: aurora dark/i }),
     ).toBeInTheDocument();
-    // Chrome stays at the entry-state theme (graphite dark), not either pinned slot.
-    expect(screen.getByRole("contentinfo")).toHaveTextContent(/graphite dark/i);
+    // The bottom bar reflects the two compared slots, not the entry-state theme.
+    const footer = screen.getByRole("contentinfo");
+    expect(footer).toHaveTextContent(/aurora light/i);
+    expect(footer).toHaveTextContent(/aurora dark/i);
+    expect(footer).not.toHaveTextContent(/graphite dark/i);
   });
 
   it("renders the lab on the shared shell from catalog theme search params", async () => {

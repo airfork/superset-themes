@@ -10,7 +10,6 @@ interface CompareViewProps {
   scene: SceneId;
   onSceneChange: (scene: SceneId) => void;
   onUnpin: (slot: CompareSlotId) => void;
-  onRepin: (themeId: string) => void;
   onExit: () => void;
 }
 
@@ -29,14 +28,7 @@ function liveMessage(a?: CatalogThemeEntry, b?: CatalogThemeEntry): string {
   return "Pin a theme from the rail to start comparing.";
 }
 
-export function CompareView({
-  state,
-  scene,
-  onSceneChange,
-  onUnpin,
-  onRepin,
-  onExit,
-}: CompareViewProps) {
+export function CompareView({ state, scene, onSceneChange, onUnpin, onExit }: CompareViewProps) {
   const a = entryFor(state.a);
   const b = entryFor(state.b);
 
@@ -53,8 +45,8 @@ export function CompareView({
         </p>
       </header>
       <div className="compare-view__slots">
-        <CompareSlot slot="a" entry={a} scene={scene} onUnpin={onUnpin} onRepin={onRepin} />
-        <CompareSlot slot="b" entry={b} scene={scene} onUnpin={onUnpin} onRepin={onRepin} />
+        <CompareSlot slot="a" entry={a} scene={scene} onUnpin={onUnpin} />
+        <CompareSlot slot="b" entry={b} scene={scene} onUnpin={onUnpin} />
       </div>
       <SceneTabs current={scene} onChange={onSceneChange} />
     </div>

@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BottomBar } from "../../chrome/BottomBar";
 import { LayoutShell } from "../../chrome/LayoutShell";
 import { CompareView } from "../../compare/CompareView";
 import { type CompareSlotId, type CompareState, compareReducer } from "../../compare/compareState";
+import { catalogThemes } from "../../data/catalog";
 import { buildThemeCommands, nextThemeId, type PaletteCommand } from "../../palette/commands";
 import { usePalette } from "../../palette/usePalette";
 import type { SceneId } from "../../pane/SceneTabs";
 import { Rail } from "../../rail/Rail";
 import { useFocusedTheme } from "../../theme/useFocusedTheme";
+
+function entryFor(themeId: string | null) {
+  return themeId ? catalogThemes.find((candidate) => candidate.theme.id === themeId) : undefined;
+}
 
 export interface CompareRouteSearch {
   a?: string;
@@ -112,7 +118,7 @@ export function CompareRouteView({
   );
 
   const hint =
-    state.b === null ? "Compare mode — click any theme to fill the second slot." : undefined;
+    state.b === null ? "Compare mode: click any theme to fill the second slot." : undefined;
 
   // Picking a theme fills the next compare slot; the entry-from theme drives the chrome.
   const setEntryTheme = (themeId: string) => commit({ ...state, enteredFromThemeId: themeId });
@@ -146,6 +152,7 @@ export function CompareRouteView({
     <LayoutShell
       onOpenPalette={palette.open}
       palette={palette.paletteProps}
+      bottomBar={<BottomBar variant="compare" a={entryFor(state.a)} b={entryFor(state.b)} />}
       rail={
         <Rail focusedThemeId={fromId} pinnedThemeIds={pinnedThemeIds} hint={hint} onSelect={pin} />
       }
@@ -155,7 +162,6 @@ export function CompareRouteView({
           scene={scene}
           onSceneChange={changeScene}
           onUnpin={unpin}
-          onRepin={pin}
           onExit={() => onExit(fromId)}
         />
       }

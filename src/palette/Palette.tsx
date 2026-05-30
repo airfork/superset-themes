@@ -156,16 +156,26 @@ export function Palette({
         />
         <div id="palette-listbox" role="listbox" aria-label="Commands" className="palette__results">
           {themes.length > 0 ? (
-            <fieldset className="palette__group">
-              <legend className="palette__group-label">Themes</legend>
+            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
+            <div role="group" aria-label="Themes" className="palette__group palette__group--themes">
+              <span className="palette__group-label" aria-hidden="true">
+                Themes
+              </span>
               {themes.map((command, index) => renderOption(command, index))}
-            </fieldset>
+            </div>
           ) : null}
           {actions.length > 0 ? (
-            <fieldset className="palette__group">
-              <legend className="palette__group-label">Actions</legend>
+            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
+            <div
+              role="group"
+              aria-label="Actions"
+              className="palette__group palette__group--actions"
+            >
+              <span className="palette__group-label" aria-hidden="true">
+                Actions
+              </span>
               {actions.map((command, index) => renderOption(command, themes.length + index))}
-            </fieldset>
+            </div>
           ) : null}
           {results.length === 0 ? (
             <div className="palette__empty" role="status">

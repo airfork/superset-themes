@@ -86,6 +86,20 @@ describe("Palette", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("keeps actions visible on an empty query by pinning the Actions group", () => {
+    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
+    openPalette();
+
+    // Empty query: the action is still rendered, not hidden until searched.
+    expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
+
+    // The Actions group is a labelled listbox group carrying the pinned-shelf
+    // class the layout docks to the bottom (not a fieldset, whose legend renders
+    // on the border).
+    const group = screen.getByRole("group", { name: /actions/i });
+    expect(group).toHaveClass("palette__group--actions");
+  });
+
   it("runs an action command when clicked", async () => {
     const user = userEvent.setup();
     const actionRun = vi.fn();
