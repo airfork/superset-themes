@@ -2427,9 +2427,9 @@ a.scene-workspace__footer-row:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 
 .chrome-topbar__search {
@@ -2545,6 +2545,19 @@ a.scene-workspace__footer-row:hover {
 
 .chrome-bottombar__hint {
   font-family: var(--app-font-chrome);
+}
+
+/* Chip the pressable key so it reads as an affordance, not muted filler. The
+   glyph takes full foreground while the trailing verb stays muted. */
+.chrome-bottombar__key {
+  font-family: var(--app-font-chrome);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 1px 5px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--chrome-surface));
+  color: var(--preview-ui-foreground);
 }
 
 .chrome-bottombar__slot {

@@ -21,6 +21,7 @@ export function TopBar({ onOpenPalette }: TopBarProps) {
       <a
         href="https://github.com/superset-sh/superset-themes"
         className="chrome-topbar__repo"
+        target="_blank"
         rel="noreferrer"
       >
         <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">

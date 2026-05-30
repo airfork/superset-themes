@@ -13,10 +13,11 @@ describe("TopBar", () => {
     expect(screen.getByText("Superset Themes")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /search themes/i })).toBeInTheDocument();
     expect(screen.getByText(/⌘K/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /github/i })).toHaveAttribute(
-      "href",
-      "https://github.com/superset-sh/superset-themes",
-    );
+    const repoLink = screen.getByRole("link", { name: /github/i });
+    expect(repoLink).toHaveAttribute("href", "https://github.com/superset-sh/superset-themes");
+    // External destination: open in a new tab without leaking the referrer.
+    expect(repoLink).toHaveAttribute("target", "_blank");
+    expect(repoLink).toHaveAttribute("rel", expect.stringContaining("noreferrer"));
   });
 
   it("calls onOpenPalette when the search trigger is activated", async () => {

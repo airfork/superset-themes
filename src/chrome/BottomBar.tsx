@@ -27,6 +27,17 @@ function Sep() {
   );
 }
 
+// Chips the pressable key and trails the verb as muted text. The leading space
+// before the verb is a real text node so the hint reads "↓ next", not "↓next".
+function KeyHint({ keyLabel, action }: { keyLabel: string; action?: string }) {
+  return (
+    <span className="chrome-bottombar__hint">
+      <kbd className="chrome-bottombar__key">{keyLabel}</kbd>
+      {action ? ` ${action}` : null}
+    </span>
+  );
+}
+
 export function BottomBar(props: BottomBarProps) {
   if (props.variant === "compare") {
     return <CompareBottomBar a={props.a} b={props.b} />;
@@ -45,11 +56,11 @@ function CatalogBottomBar({ entry }: { entry: CatalogThemeEntry }) {
         <span className="chrome-bottombar__contrast">{formatContrast(entry.theme)}</span>
       </div>
       <div className="chrome-bottombar__hints">
-        <span className="chrome-bottombar__hint">↓ next</span>
+        <KeyHint keyLabel="↓" action="next" />
         <Sep />
-        <span className="chrome-bottombar__hint">⌘K</span>
+        <KeyHint keyLabel="⌘K" />
         <Sep />
-        <span className="chrome-bottombar__hint">. pin</span>
+        <KeyHint keyLabel="." action="pin" />
       </div>
     </footer>
   );
@@ -84,9 +95,9 @@ function CompareBottomBar({ a, b }: { a?: CatalogThemeEntry; b?: CatalogThemeEnt
       <div className="chrome-bottombar__hints">
         <span className="chrome-bottombar__hint">click to pin</span>
         <Sep />
-        <span className="chrome-bottombar__hint">⌘K</span>
+        <KeyHint keyLabel="⌘K" />
         <Sep />
-        <span className="chrome-bottombar__hint">Esc to exit</span>
+        <KeyHint keyLabel="Esc" action="to exit" />
       </div>
     </footer>
   );

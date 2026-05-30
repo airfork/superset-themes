@@ -32,6 +32,14 @@ describe("BottomBar", () => {
     expect(footer).toHaveTextContent(". pin");
   });
 
+  it("marks the keyboard keys as kbd chips so they read as pressable", () => {
+    render(<BottomBar entry={entry("solarized-light")} />);
+
+    const footer = screen.getByRole("contentinfo");
+    const keys = [...footer.querySelectorAll("kbd")].map((key) => key.textContent);
+    expect(keys).toEqual(["↓", "⌘K", "."]);
+  });
+
   it("formats the contrast ratio to one decimal", () => {
     render(<BottomBar entry={entry("catppuccin-mocha")} />);
 
@@ -58,6 +66,15 @@ describe("BottomBar", () => {
       expect(footer).toHaveTextContent(/esc/i);
       expect(footer).not.toHaveTextContent(". pin");
       expect(footer).not.toHaveTextContent("↓ next");
+    });
+
+    it("chips only the keyboard keys, leaving the pointer hint as plain text", () => {
+      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+
+      const footer = screen.getByRole("contentinfo");
+      const keys = [...footer.querySelectorAll("kbd")].map((key) => key.textContent);
+      // "click to pin" is a pointer action, so it must not be dressed as a key.
+      expect(keys).toEqual(["⌘K", "Esc"]);
     });
 
     it("labels an empty slot instead of borrowing another theme's facts", () => {
