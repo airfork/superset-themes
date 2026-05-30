@@ -1,8 +1,6 @@
-import { memo, type ReactNode, useEffect, useState } from "react";
+import { memo, type ReactNode, useEffect } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import { Nameplate } from "./Nameplate";
-import { type SceneId, SceneTabs } from "./SceneTabs";
-import { SettingsScene } from "./SettingsScene";
 import { WorkspaceScene } from "./WorkspaceScene";
 
 interface PaneProps {
@@ -13,7 +11,6 @@ interface PaneProps {
   nameplate?: ReactNode;
   expanded?: boolean;
   onExpandToggle?: () => void;
-  initialScene?: SceneId;
 }
 
 export const Pane = memo(function Pane({
@@ -22,10 +19,7 @@ export const Pane = memo(function Pane({
   nameplate,
   expanded = false,
   onExpandToggle,
-  initialScene = "workspace",
 }: PaneProps) {
-  const [scene, setScene] = useState<SceneId>(initialScene);
-
   useEffect(() => {
     if (!onExpandToggle) {
       return;
@@ -49,7 +43,7 @@ export const Pane = memo(function Pane({
   }, [onExpandToggle]);
 
   return (
-    <div className="pane" data-scene={scene} data-expanded={expanded || undefined}>
+    <div className="pane" data-expanded={expanded || undefined}>
       {nameplate ?? (
         <Nameplate
           entry={entry}
@@ -59,9 +53,8 @@ export const Pane = memo(function Pane({
         />
       )}
       <div className="pane__body">
-        {scene === "workspace" ? <WorkspaceScene entry={entry} /> : <SettingsScene entry={entry} />}
+        <WorkspaceScene entry={entry} />
       </div>
-      <SceneTabs current={scene} onChange={setScene} />
     </div>
   );
 });

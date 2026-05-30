@@ -17,21 +17,7 @@ function entryFor(id: string) {
 describe("Pane", () => {
   it("renders the Workspace scene by default", () => {
     render(<Pane entry={entryFor("tokyo-night")} onPin={() => {}} />);
-    expect(screen.getByRole("tab", { name: /workspace/i })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
-    expect(screen.getByRole("region", { name: /tokyo night thread/i })).toBeInTheDocument();
-  });
-
-  it("switches to the Settings scene when the Settings tab is activated", async () => {
-    const user = userEvent.setup();
-    render(<Pane entry={entryFor("tokyo-night")} onPin={() => {}} />);
-
-    await user.click(screen.getByRole("tab", { name: /settings/i }));
-
-    expect(screen.getByRole("tab", { name: /settings/i })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByRole("textbox", { name: /display name/i })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /tokyo night workspace/i })).toBeInTheDocument();
   });
 
   it("dispatches the expand callback when the nameplate name is clicked", async () => {
@@ -76,7 +62,7 @@ describe("Pane", () => {
       />,
     );
 
-    const region = screen.getByRole("region", { name: /tokyo night thread/i });
+    const region = screen.getByRole("region", { name: /tokyo night workspace/i });
     region.focus();
     await user.keyboard("f");
 

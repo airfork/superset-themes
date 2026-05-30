@@ -3,6 +3,8 @@
 .worktrees/
 .impeccable/
 research-output.json
+scripts/superset-inspect*.mjs
+docs/review/workspace-*.png
 
 # Dependencies
 node_modules/

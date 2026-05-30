@@ -23,21 +23,18 @@ describe("WorkspaceScene", () => {
     expect(within(tree).getByText(/tasks & prs/i)).toBeInTheDocument();
   });
 
-  it("renders the thread on the middle column with a branch header, agent tabs, and an input", () => {
+  it("renders the main column with session tabs, agent tabs, and a Run control", () => {
     render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
 
-    const thread = screen.getByRole("region", { name: /thread/i });
-    expect(within(thread).getByText(/feat\/x/i)).toBeInTheDocument();
-    expect(within(thread).getByRole("tablist", { name: /agent/i })).toBeInTheDocument();
-    expect(within(thread).getByRole("textbox", { name: /message/i })).toBeInTheDocument();
+    const main = screen.getByRole("region", { name: /workspace/i });
+    expect(within(main).getByRole("tablist", { name: /open sessions/i })).toBeInTheDocument();
+    expect(within(main).getByRole("tablist", { name: /agent picker/i })).toBeInTheDocument();
+    expect(within(main).getAllByRole("button", { name: /run/i }).length).toBeGreaterThan(0);
   });
 
-  it("collapses the right column to a single toggle without rendering a file tree", () => {
+  it("does not render a file tree", () => {
     render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
 
-    expect(
-      screen.getByRole("button", { name: /open right panel|expand right/i }),
-    ).toBeInTheDocument();
     expect(screen.queryByRole("tree")).not.toBeInTheDocument();
   });
 });
