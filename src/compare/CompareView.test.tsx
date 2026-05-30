@@ -22,10 +22,12 @@ function Harness({
   initial,
   onUnpin,
   onRepin,
+  onExit,
 }: {
   initial: CompareState;
   onUnpin?: (slot: CompareSlotId) => void;
   onRepin?: (themeId: string) => void;
+  onExit?: () => void;
 }) {
   const [state, setState] = useState(initial);
   const [scene, setScene] = useState<SceneId>("workspace");
@@ -39,6 +41,7 @@ function Harness({
         setState((current) => ({ ...current, [slot]: null }));
       }}
       onRepin={onRepin ?? (() => {})}
+      onExit={onExit ?? (() => {})}
     />
   );
 }
@@ -87,6 +90,25 @@ describe("CompareView", () => {
     const status = screen.getByRole("status");
     expect(status).toHaveTextContent(/tokyo night/i);
     expect(status).toHaveTextContent(/solarized light/i);
+  });
+
+  it("renders a visible Back to catalog control that exits compare mode", async () => {
+    const user = userEvent.setup();
+    const onExit = vi.fn();
+    render(<Harness initial={stateWith({ a: "tokyo-night", lastPinned: "a" })} onExit={onExit} />);
+
+    await user.click(screen.getByRole("button", { name: /back to catalog/i }));
+    expect(onExit).toHaveBeenCalledTimes(1);
+  });
+
+  it("surfaces the pin acknowledgement visibly, not only to screen readers", () => {
+    render(<Harness initial={stateWith({ a: "tokyo-night", lastPinned: "a" })} />);
+
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent(/tokyo night pinned/i);
+    // The single-pin acknowledgement must be visible to sighted users, not hidden
+    // off-screen the way the prior screen-reader-only live region was.
+    expect(status).not.toHaveClass("sr-only");
   });
 
   it("unpins a slot through its remove control", async () => {

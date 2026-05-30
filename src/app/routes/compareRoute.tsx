@@ -156,6 +156,7 @@ export function CompareRouteView({
           onSceneChange={changeScene}
           onUnpin={unpin}
           onRepin={pin}
+          onExit={() => onExit(fromId)}
         />
       }
     />

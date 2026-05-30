@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import { catalogThemes } from "../data/catalog";
 import { type SceneId, SceneTabs } from "../pane/SceneTabs";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
@@ -10,6 +11,7 @@ interface CompareViewProps {
   onSceneChange: (scene: SceneId) => void;
   onUnpin: (slot: CompareSlotId) => void;
   onRepin: (themeId: string) => void;
+  onExit: () => void;
 }
 
 function entryFor(themeId: string | null): CatalogThemeEntry | undefined {
@@ -27,20 +29,34 @@ function liveMessage(a?: CatalogThemeEntry, b?: CatalogThemeEntry): string {
   return "Pin a theme from the rail to start comparing.";
 }
 
-export function CompareView({ state, scene, onSceneChange, onUnpin, onRepin }: CompareViewProps) {
+export function CompareView({
+  state,
+  scene,
+  onSceneChange,
+  onUnpin,
+  onRepin,
+  onExit,
+}: CompareViewProps) {
   const a = entryFor(state.a);
   const b = entryFor(state.b);
 
   return (
     <div className="compare-view" data-scene={scene}>
+      <header className="compare-view__bar">
+        <button type="button" className="compare-view__back" onClick={onExit}>
+          <ArrowLeft aria-hidden="true" />
+          <span>Back to catalog</span>
+          <kbd>Esc</kbd>
+        </button>
+        <p className="compare-view__status" role="status" aria-live="polite">
+          {liveMessage(a, b)}
+        </p>
+      </header>
       <div className="compare-view__slots">
         <CompareSlot slot="a" entry={a} scene={scene} onUnpin={onUnpin} onRepin={onRepin} />
         <CompareSlot slot="b" entry={b} scene={scene} onUnpin={onUnpin} onRepin={onRepin} />
       </div>
       <SceneTabs current={scene} onChange={onSceneChange} />
-      <p className="sr-only" role="status" aria-live="polite">
-        {liveMessage(a, b)}
-      </p>
     </div>
   );
 }
