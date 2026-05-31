@@ -6,7 +6,7 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { SceneId } from "../pane/SceneTabs";
 import { CompareView } from "./CompareView";
-import type { CompareSlotId, CompareState } from "./compareState";
+import { type CompareSlotId, type CompareState, compareReducer } from "./compareState";
 
 function stateWith(partial: Partial<CompareState>): CompareState {
   return {
@@ -36,8 +36,9 @@ function Harness({
       onSceneChange={setScene}
       onUnpin={(slot) => {
         onUnpin?.(slot);
-        setState((current) => ({ ...current, [slot]: null }));
+        setState((current) => compareReducer(current, { type: "unpin", slot }));
       }}
+      onPin={(themeId) => setState((current) => compareReducer(current, { type: "pin", themeId }))}
       onExit={onExit ?? (() => {})}
     />
   );
@@ -136,5 +137,38 @@ describe("CompareView", () => {
 
     expect(onUnpin).toHaveBeenCalledWith("b");
     expect(screen.getByRole("region", { name: /compare slot b, empty/i })).toBeInTheDocument();
+  });
+
+  it("offers an Undo affordance in the status line after a slot is unpinned", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /remove solarized light from comparison/i }),
+    );
+
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent(/slot b cleared/i);
+    expect(within(status).getByRole("button", { name: /undo/i })).toBeInTheDocument();
+  });
+
+  it("restores the unpinned theme to its slot when Undo is clicked", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /remove solarized light from comparison/i }),
+    );
+    await user.click(within(screen.getByRole("status")).getByRole("button", { name: /undo/i }));
+
+    expect(
+      screen.getByRole("region", { name: /compare slot b: solarized light/i }),
+    ).toBeInTheDocument();
+    // The notice dismisses once the slot is refilled.
+    expect(screen.getByRole("status")).not.toHaveTextContent(/cleared/i);
   });
 });
