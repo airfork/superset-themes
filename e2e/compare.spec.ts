@@ -38,8 +38,12 @@ test.describe("compare mode", () => {
       rail.getByRole("button", { name: /solarized light, pinned for compare/i }).first(),
     ).toBeVisible();
 
-    // Bottom bar reports the entry-state theme.
-    await expect(page.getByRole("contentinfo")).toContainText(/ros[eé] pine dawn/i);
+    // Bottom bar reports the compared slots while the root chrome stays at the
+    // entry-state theme checked above.
+    const footer = page.getByRole("contentinfo");
+    await expect(footer).toContainText(/tokyo night/i);
+    await expect(footer).toContainText(/solarized light/i);
+    await expect(footer).not.toContainText(/ros[eé] pine dawn/i);
   });
 
   test("syncs the scene across both slots", async ({ page }) => {

@@ -1598,7 +1598,7 @@ kbd {
   min-height: 38px;
   padding: 0 12px;
   border-top: 1px solid var(--preview-ui-border);
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
@@ -1710,7 +1710,7 @@ a.scene-workspace__footer-row:hover {
   width: 160px;
   flex-shrink: 0;
   border-right: 1px solid var(--preview-ui-border);
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
 }
 
 .scene-workspace__session[data-active] {
@@ -1849,7 +1849,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 65%, transparent);
+  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
   font: inherit;
   font-size: 12px;
   font-weight: 400;
@@ -1919,28 +1919,15 @@ a.scene-workspace__footer-row:hover {
   height: 12px;
 }
 
+/* Plain muted glyphs, not chips: the real Superset run button shows a bare "⌘G"
+   hint beside the label, so mirror that instead of boxing each key. */
 .scene-workspace__kbd {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font: inherit;
-  font-size: 10px;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
-  font-family: inherit;
-  letter-spacing: 0;
-}
-
-.scene-workspace__kbd span {
-  display: inline-grid;
-  place-items: center;
-  min-width: 14px;
-  height: 14px;
-  padding: 0 3px;
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--preview-ui-foreground) 10%, transparent);
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono", "Roboto Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
 }
 
 .scene-workspace__run-chevron {
@@ -2086,7 +2073,7 @@ a.scene-workspace__footer-row:hover {
   gap: 6px;
   margin-left: 16px;
   margin-top: 2px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 65%, transparent);
+  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
 }
 
 .scene-workspace__activity-tip-glyph {
@@ -2094,9 +2081,15 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__terminal-output {
+  width: 100%;
+  min-width: 0;
   margin: 0;
   padding: 14px 18px 0;
+  border: 0;
+  background: transparent;
   color: var(--preview-ui-foreground);
+  font: inherit;
+  resize: none;
   white-space: pre;
   overflow: auto;
 }
@@ -2143,7 +2136,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__statusbar-dim {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 60%, transparent);
+  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
   font-weight: 400;
 }
 
@@ -3100,21 +3093,43 @@ button.rail-search {
   box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
 }
 
-.palette__input {
+/* Search row: a leading magnifier sits beside the borderless input, matching the
+   reference palette. The divider lives on the row, not the input. */
+.palette__search {
   flex: 0 0 auto;
-  min-height: 48px;
-  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
   border-bottom: 1px solid var(--preview-ui-border);
+}
+
+.palette__search-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: var(--chrome-muted-foreground);
+}
+
+.palette__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 52px;
+  border: 0;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
-  padding: 0 16px;
+  padding: 0;
   font: inherit;
   font-size: 0.95rem;
 }
 
-/* Inset ring: the popover clips overflow, so a positive offset would be cut off
-   at the full-bleed top edge. The input is the dialog's only tabbable control. */
-.palette__input:focus-visible {
+/* The input itself stays visually borderless; the compound search row owns the
+   focus ring so keyboard focus is visible without boxing the text field alone. */
+.palette__input:focus {
+  outline: none;
+}
+
+.palette__search:has(.palette__input:focus-visible) {
   outline: 2px solid var(--preview-ui-ring);
   outline-offset: -2px;
 }
@@ -3176,13 +3191,12 @@ button.rail-search {
 
 .palette__option {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 38px;
+  min-height: 40px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 7px;
   padding: 0 10px;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
@@ -3191,13 +3205,44 @@ button.rail-search {
   cursor: pointer;
 }
 
+/* Pointer feedback the list was missing: a quiet neutral wash on hover that sits
+   under the keyboard-selected band without competing with it. */
+.palette__option:hover {
+  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 7%, transparent);
+}
+
 /* Derive the active band from primary: per-theme selection collapses against the
-   popover surface in light themes (Solarized Light, Rosé Pine Dawn). */
-.palette__option[data-active] {
+   popover surface in light themes (Solarized Light, Rosé Pine Dawn). Active wins
+   over hover so keyboard and pointer focus never read as two selected rows. */
+.palette__option[data-active],
+.palette__option[data-active]:hover {
   background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--chrome-surface));
 }
 
+/* Leading column — fixed width so every label shares one left edge whether the row
+   leads with a theme swatch, an action icon, or the blank placeholder. */
+.palette__option-icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--chrome-muted-foreground);
+}
+
+.palette__option-swatch {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin: 0 1px;
+  border-radius: 4px;
+  /* Inset ring keeps light-theme swatches legible on the popover surface without
+     the rail's separate ring-vs-fill split. */
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--preview-ui-popover-foreground) 22%, transparent);
+}
+
 .palette__option-label {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3214,18 +3259,17 @@ button.rail-search {
   color: var(--chrome-muted-foreground);
 }
 
-/* Mirror the bottom-bar key chip so a command's shortcut reads as the same
-   pressable affordance, tinted for the popover surface the palette sits on. */
+/* Plain muted glyph, not a boxed chip: the reference palette trails each row with a
+   bare shortcut so the right rail stays quiet. Reset the base kbd chrome. */
 .palette__option-key {
   flex: 0 0 auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
   font-family: var(--app-font-chrome);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   line-height: 1;
-  padding: 2px 6px;
-  border: 1px solid var(--preview-ui-border);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 8%, transparent);
-  color: var(--preview-ui-popover-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .palette__empty {

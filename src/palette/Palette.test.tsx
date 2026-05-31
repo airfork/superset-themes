@@ -3,6 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { catalogThemes } from "../data/catalog";
 import { buildThemeCommands, type PaletteCommand } from "./commands";
 import { Palette } from "./Palette";
 import { usePalette } from "./usePalette";
@@ -67,6 +68,17 @@ describe("Palette", () => {
     expect(screen.getByRole("combobox")).toHaveValue("rose");
     expect(screen.getByRole("option", { name: /rosé pine dawn/i })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /^nord$/i })).not.toBeInTheDocument();
+  });
+
+  it("opts the combobox out of browser autofill and spellcheck", () => {
+    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
+    openPalette();
+
+    const input = screen.getByRole("combobox", { name: /command palette search/i });
+
+    expect(input).toHaveAttribute("autocomplete", "off");
+    expect(input).toHaveAttribute("name", "command-palette-search");
+    expect(input).toHaveAttribute("spellcheck", "false");
   });
 
   it("folds diacritics so a plain-ASCII query surfaces an accented theme", async () => {
@@ -150,8 +162,8 @@ describe("Palette", () => {
     render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
     openPalette();
 
-    // 12 themes precede the shelf; arrow past them to the More actions row.
-    for (let i = 0; i < 12; i += 1) {
+    // All themes precede the shelf; arrow past them to the More actions row.
+    for (let i = 0; i < catalogThemes.length; i += 1) {
       await user.keyboard("{ArrowDown}");
     }
     await user.keyboard("{Enter}");

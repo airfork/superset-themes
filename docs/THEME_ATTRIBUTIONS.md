@@ -93,3 +93,15 @@ Adaptations made for this app:
 - Adaptation notes: Used the One Dark UI palette (#282c34 surfaces, #abb2bf foreground) and the
   Atom-lineage ANSI mapping. Used a near-black foreground on the cool blue primary and warm red
   destructive tokens for AA contrast against light accent surfaces.
+
+## Superset Defaults
+
+- Themes: `superset-light`, `superset-dark`
+- Original themes: Superset built-in Light and Dark themes by Superset
+- Source: <https://github.com/superset-sh/superset>
+- License: Elastic License 2.0
+- Adaptation notes: Export IDs use `superset-light` and `superset-dark` because Superset reserves
+  built-in IDs such as `light` and `dark`. Light-mode OKLCH UI values were converted to six-digit
+  hex tokens for this catalog schema. Dark-mode translucent terminal selection was flattened over
+  the built-in background. `ui.ring` and `ui.destructiveForeground` were adjusted only where needed
+  to satisfy this app's contrast gates.

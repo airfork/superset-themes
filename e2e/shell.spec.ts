@@ -14,7 +14,7 @@ test("shell top bar exposes a search trigger and repo link", async ({ page }) =>
 
   const banner = page.getByRole("banner");
   await expect(banner.getByRole("button", { name: /search themes/i })).toBeVisible();
-  await expect(banner.getByRole("link", { name: /repo/i })).toBeVisible();
+  await expect(banner.getByRole("link", { name: /github/i })).toBeVisible();
 });
 
 test("shell bottom bar shows the focused theme summary", async ({ page }) => {

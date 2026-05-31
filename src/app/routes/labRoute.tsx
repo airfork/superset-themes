@@ -1,3 +1,4 @@
+import { getDefaultLabTheme } from "../../data/baseline";
 import { getCatalogThemeById } from "../../data/fixtures";
 import { createDraftFromCatalogEntry } from "../../lab/draftTheme";
 import { LabView } from "../../lab/LabView";
@@ -25,7 +26,7 @@ export function LabRouteView({
   onStartFromCatalog: (themeId: string) => void;
   search: LabRouteSearch;
 }) {
-  const entry = getCatalogThemeById(search.from ?? "") ?? getCatalogThemeById("aurora-light");
+  const entry = getCatalogThemeById(search.from ?? "") ?? getDefaultLabTheme();
 
   if (!entry) {
     return (

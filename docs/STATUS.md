@@ -627,9 +627,47 @@ Phase 9 checkpoint verification:
 - `rtk pnpm build` passed.
 - `rtk pnpm themes:research -- --out research-output.json` passed and wrote 18 ranked candidates.
 
+## Phase 10 — Superset baselines + Lab default
+
+Status: Complete; final verification passed.
+
+- Added install-safe Superset default theme entries: `superset-light` and `superset-dark`.
+  Theme IDs avoid the reserved built-in `light` and `dark` names while preserving source and
+  license attribution in metadata and `docs/THEME_ATTRIBUTIONS.md`.
+- Added baseline ordering helpers so the rail, Lab source selector, and command palette lead with
+  Superset defaults before Featured themes.
+- Changed `/lab` with no `from` param to start from Superset Light, so a user can tweak the default
+  theme directly instead of first choosing an unrelated catalog theme.
+- Converted the catalog rail search into a real filter field; `/` from rail rows focuses that field,
+  and filtering for `superset` narrows to the pinned baseline rows.
+- Tightened command palette affordances with leading theme swatches/action icons, form hardening
+  attributes, and a visible compound focus ring on the search row.
+- Storybook a11y caught workspace-scene regressions after the palette/lab polish. Fixed fake
+  tablist semantics, keyboard access for the scrollable terminal output, and Tokyo Night muted text
+  contrast for the App scaffold story.
+
+Phase 10 checkpoint verification:
+
+- `rtk pnpm check` passed: Biome 159 files, TypeScript, Vitest 42 files / 276 tests,
+  research script tests 6 tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 tests.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` passed: 14 catalog themes checked across 7 contrast pairs each.
+- `rtk npx impeccable detect src/lab src/rail src/palette src/styles/global.css` passed.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against touched Lab, rail, palette, and workspace UI files. Actionable findings were
+  fixed.
+- Browser plugin DOM checks confirmed `/` exposes the Superset baseline section, `/lab` defaults to
+  Superset Light, and filtering the catalog rail by `superset` narrows to the baseline rows. Browser
+  screenshot capture timed out, matching prior local-browser behavior in this worktree.
+- `rtk git diff --check` passed.
+
 ## Next Step
 
-Begin Phase 10 polish and ship tasks.
+Review and commit the Superset baseline/Lab-default checkpoint.
 
 ## Resumability Protocol
 

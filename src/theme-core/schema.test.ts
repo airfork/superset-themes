@@ -52,6 +52,17 @@ describe("theme schema", () => {
     expect(oneDark?.meta.family).toBe("One Dark");
   });
 
+  it("includes Superset's install-safe light and dark baseline themes", () => {
+    const baseline = catalogThemes.filter((entry) => entry.meta.family === "Superset");
+
+    expect(baseline.map((entry) => entry.theme.id)).toEqual(["superset-light", "superset-dark"]);
+    expect(baseline.map((entry) => entry.theme.type)).toEqual(["light", "dark"]);
+    expect(baseline.map((entry) => entry.meta.baselineRank)).toEqual([1, 2]);
+    expect(baseline.map((entry) => entry.meta.source)).toEqual(["upstream-port", "upstream-port"]);
+    expect(baseline.map((entry) => entry.theme.id)).not.toContain("light");
+    expect(baseline.map((entry) => entry.theme.id)).not.toContain("dark");
+  });
+
   it("includes an expanded upstream port batch with paired Solarized variants", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
@@ -64,6 +75,8 @@ describe("theme schema", () => {
       "rose-pine-dawn",
       "solarized-dark",
       "solarized-light",
+      "superset-dark",
+      "superset-light",
       "tokyo-night",
     ]);
     expect(
@@ -83,10 +96,12 @@ describe("theme schema", () => {
       "rose-pine-dawn": "MIT",
       "solarized-dark": "MIT",
       "solarized-light": "MIT",
+      "superset-dark": "Elastic License 2.0",
+      "superset-light": "Elastic License 2.0",
       "tokyo-night": "MIT",
     });
     expect(new Set(upstreamPorts.map((entry) => entry.meta.portStatus))).toEqual(
-      new Set(["ported"]),
+      new Set(["ported", "adapted"]),
     );
   });
 

@@ -25,4 +25,13 @@ describe("RailSearch", () => {
     const input = screen.getByRole("textbox", { name: /filter by name/i });
     expect(input).toHaveAttribute("placeholder", "Filter by name");
   });
+
+  it("opts the filter input out of browser autofill and spellcheck", () => {
+    render(<RailSearch value="" onChange={() => {}} />);
+    const input = screen.getByRole("textbox", { name: /filter by name/i });
+
+    expect(input).toHaveAttribute("autocomplete", "off");
+    expect(input).toHaveAttribute("name", "theme-rail-filter");
+    expect(input).toHaveAttribute("spellcheck", "false");
+  });
 });

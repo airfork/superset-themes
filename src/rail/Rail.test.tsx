@@ -3,6 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import { BASELINE_IDS } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
 import { FEATURED_IDS } from "../data/featured";
 import { Rail } from "./Rail";
@@ -14,15 +15,26 @@ function renderRail(props?: Partial<Parameters<typeof Rail>[0]>) {
 }
 
 describe("Rail", () => {
-  it("renders three sections in order: Featured, Light, Dark", () => {
+  it("renders four sections in order: Superset, Featured, Light, Dark", () => {
     renderRail();
     const sections = screen
       .getAllByRole("region")
       .filter((node) =>
-        ["Featured", "Light", "Dark"].includes(node.getAttribute("aria-label") ?? ""),
+        ["Superset", "Featured", "Light", "Dark"].includes(node.getAttribute("aria-label") ?? ""),
       );
     const labels = sections.map((s) => s.getAttribute("aria-label"));
-    expect(labels).toEqual(["Featured", "Light", "Dark"]);
+    expect(labels).toEqual(["Superset", "Featured", "Light", "Dark"]);
+  });
+
+  it("places the Superset baseline rows before Featured", () => {
+    renderRail();
+    const baseline = screen.getByRole("region", { name: "Superset" });
+    const buttons = within(baseline).getAllByRole("button");
+    const expected = BASELINE_IDS.map(
+      (id) => catalogThemes.find((candidate) => candidate.theme.id === id)?.theme.name ?? "",
+    );
+
+    expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual(expected);
   });
 
   it("places exactly five rows in Featured in the configured order", () => {
@@ -68,6 +80,17 @@ describe("Rail", () => {
     // occurrence carries the back-reference; the Featured one stays plain.
     const labels = selected.map((node) => node.getAttribute("aria-label")).sort();
     expect(labels).toEqual(["Solarized Light", "Solarized Light, also in Featured"]);
+  });
+
+  it("annotates a Superset baseline theme's section row while leaving its pinned row plain", () => {
+    renderRail({ focusedThemeId: "superset-light" });
+    const baseline = screen.getByRole("region", { name: "Superset" });
+    const light = screen.getByRole("region", { name: "Light" });
+
+    expect(within(baseline).getByRole("button", { name: "Superset Light" })).toBeInTheDocument();
+    expect(
+      within(light).getByRole("button", { name: "Superset Light, also in Superset" }),
+    ).toBeInTheDocument();
   });
 
   it("annotates a featured theme's section row while leaving its Featured row plain", () => {

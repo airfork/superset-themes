@@ -1,3 +1,4 @@
+import { Search } from "lucide-react";
 import { type KeyboardEvent as ReactKeyboardEvent, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { PaletteCommand } from "./commands";
@@ -13,6 +14,26 @@ const MORE_ACTIONS_ID = "palette-option-more-actions";
 
 function optionId(command: PaletteCommand): string {
   return `palette-option-${command.id}`;
+}
+
+// Leading glyph: theme rows show their own accent swatch, action rows their icon.
+// A blank placeholder keeps every label on the same left edge.
+function renderLeading(command: PaletteCommand) {
+  if (command.accent) {
+    return (
+      <span
+        className="palette__option-swatch"
+        data-variant={command.themeType}
+        style={{ backgroundColor: command.accent }}
+        aria-hidden="true"
+      />
+    );
+  }
+  if (command.icon) {
+    const Icon = command.icon;
+    return <Icon className="palette__option-icon" aria-hidden="true" />;
+  }
+  return <span className="palette__option-icon" aria-hidden="true" />;
 }
 
 export function Palette({
@@ -122,6 +143,7 @@ export function Palette({
         onClick={() => onSubmit(command)}
         onMouseDown={(event) => event.preventDefault()}
       >
+        {renderLeading(command)}
         <span className="palette__option-label">{command.label}</span>
         {command.shortcut ? (
           <kbd className="palette__option-key">{command.shortcut}</kbd>
@@ -148,6 +170,7 @@ export function Palette({
         onClick={() => onExpandActions(themes.length)}
         onMouseDown={(event) => event.preventDefault()}
       >
+        <span className="palette__option-icon" aria-hidden="true" />
         <span className="palette__option-label">More actions</span>
         <span className="palette__option-hint">{actions.length}</span>
       </button>
@@ -163,21 +186,27 @@ export function Palette({
         aria-modal="true"
         aria-label="Command palette"
       >
-        <input
-          ref={inputRef}
-          type="text"
-          className="palette__input"
-          role="combobox"
-          aria-label="Command palette search"
-          aria-expanded="true"
-          aria-controls="palette-listbox"
-          aria-autocomplete="list"
-          aria-activedescendant={activeDescendant}
-          placeholder="Search themes and actions…"
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
-          onKeyDown={onInputKeyDown}
-        />
+        <div className="palette__search">
+          <Search className="palette__search-icon" aria-hidden="true" />
+          <input
+            ref={inputRef}
+            type="text"
+            className="palette__input"
+            role="combobox"
+            aria-label="Command palette search"
+            aria-expanded="true"
+            aria-controls="palette-listbox"
+            aria-autocomplete="list"
+            aria-activedescendant={activeDescendant}
+            autoComplete="off"
+            name="command-palette-search"
+            placeholder="Search themes and actions…"
+            spellCheck={false}
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            onKeyDown={onInputKeyDown}
+          />
+        </div>
         <div id="palette-listbox" role="listbox" aria-label="Commands" className="palette__results">
           {themes.length > 0 ? (
             // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).

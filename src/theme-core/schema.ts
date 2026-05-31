@@ -73,6 +73,7 @@ export const supersetThemeSchema = z
 export const catalogThemeMetaSchema = z
   .object({
     accentHue: z.number().min(0).max(360),
+    baselineRank: z.number().int().min(1).max(2).nullable(),
     contrastTier: z.enum(["standard", "high"]),
     family: z.string().min(1),
     featuredRank: z.number().int().min(1).max(5).nullable(),

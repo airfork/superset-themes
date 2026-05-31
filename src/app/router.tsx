@@ -1,4 +1,5 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
+import { Columns2, FlaskConical, Shuffle } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { ShortcutsOverlay } from "../chrome/ShortcutsOverlay";
@@ -120,6 +121,7 @@ const catalogRoute = createRoute({
         id: "action-open-in-lab",
         label: "Open in Lab",
         section: "Actions",
+        icon: FlaskConical,
         keys: ["open in lab", "lab", "editor"],
         run: () => void navigate({ to: "/lab", search: { from: focusedId } }),
       },
@@ -127,6 +129,7 @@ const catalogRoute = createRoute({
         id: "action-pin-to-compare",
         label: "Pin to compare",
         section: "Actions",
+        icon: Columns2,
         keys: ["pin to compare", "compare", "split"],
         shortcut: ".",
         run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
@@ -136,6 +139,7 @@ const catalogRoute = createRoute({
         id: "action-toggle-next-theme",
         label: "Toggle next theme",
         section: "Actions",
+        icon: Shuffle,
         keys: ["toggle next theme", "next", "cycle"],
         run: () => selectTheme(nextThemeId(focusedId)),
       },

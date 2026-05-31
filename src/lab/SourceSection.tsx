@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { catalogThemes } from "../data/catalog";
+import { getBaselineFirstThemes } from "../data/baseline";
 import { RailSection } from "../rail/RailSection";
 import type { SupersetTheme } from "../theme-core/themeTypes";
 import type { ThemeDraft } from "./draftTheme";
@@ -15,6 +15,7 @@ export function SourceSection({ draft, onImportTheme, onStartFromCatalog }: Sour
   const [pasteText, setPasteText] = useState("");
   const [importError, setImportError] = useState<string | null>(null);
   const selectedCatalogThemeId = draft.source.type === "catalog" ? draft.source.themeId : "";
+  const catalogOptions = getBaselineFirstThemes();
 
   const importJson = (json: string) => {
     const result = parseImportedThemeJson(json);
@@ -52,7 +53,7 @@ export function SourceSection({ draft, onImportTheme, onStartFromCatalog }: Sour
               Imported or generated draft
             </option>
           )}
-          {catalogThemes.map((entry) => (
+          {catalogOptions.map((entry) => (
             <option key={entry.theme.id} value={entry.theme.id}>
               {entry.theme.name}
             </option>

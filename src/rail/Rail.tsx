@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getBaselineThemes } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
 import { getFeaturedThemes } from "../data/featured";
 import { foldForMatch } from "../text/foldForMatch";
@@ -17,7 +18,7 @@ interface RailProps {
   onFilterChange?: (query: string) => void;
 }
 
-type RowSection = "featured" | "light" | "dark";
+type RowSection = "baseline" | "featured" | "light" | "dark";
 
 interface RowDescriptor {
   rowKey: string;
@@ -50,8 +51,10 @@ export function Rail({
     [onFilterChange],
   );
   const featured = useMemo(() => getFeaturedThemes(), []);
-  // Themes that have a Featured row, so a later Light/Dark occurrence can name it.
+  const baseline = useMemo(() => getBaselineThemes(), []);
+  // Themes that have a pinned row, so a later Light/Dark occurrence can name it.
   const featuredIds = useMemo(() => new Set(featured.map((entry) => entry.theme.id)), [featured]);
+  const baselineIds = useMemo(() => new Set(baseline.map((entry) => entry.theme.id)), [baseline]);
   const lights = useMemo(
     () =>
       catalogThemes
@@ -71,6 +74,12 @@ export function Rail({
 
   const orderedRows: RowDescriptor[] = useMemo(
     () => [
+      ...baseline.map((entry) => ({
+        rowKey: rowKeyFor("baseline", entry.theme.id),
+        themeId: entry.theme.id,
+        section: "baseline" as const,
+        entry,
+      })),
       ...featured.map((entry) => ({
         rowKey: rowKeyFor("featured", entry.theme.id),
         themeId: entry.theme.id,
@@ -90,7 +99,7 @@ export function Rail({
         entry,
       })),
     ],
-    [featured, lights, darks],
+    [baseline, featured, lights, darks],
   );
 
   const normalizedQuery = foldForMatch(query.trim());
@@ -135,8 +144,14 @@ export function Rail({
     if (!targetKey || !containerRef.current) {
       return;
     }
-    // Only move focus if focus is already inside the rail — avoids stealing focus on mount.
-    if (!containerRef.current.contains(document.activeElement)) {
+    // Only move focus if focus is already on a row. The search input also lives
+    // inside the rail, and filtering can change the roving index while a user is
+    // typing; stealing focus after the first character would make filtering unusable.
+    const activeElement = document.activeElement;
+    if (
+      !containerRef.current.contains(activeElement) ||
+      !(activeElement instanceof HTMLButtonElement)
+    ) {
       return;
     }
     const target = containerRef.current.querySelector<HTMLButtonElement>(
@@ -155,8 +170,16 @@ export function Rail({
       entry={row.entry}
       selected={row.themeId === focusedThemeId}
       pinned={pinnedThemeIds.has(row.themeId)}
-      variant={row.section === "featured" ? "featured" : "basic"}
-      alsoFeatured={row.section !== "featured" && featuredIds.has(row.themeId)}
+      variant={row.section === "baseline" || row.section === "featured" ? "featured" : "basic"}
+      alsoInSection={
+        row.section === "baseline" || row.section === "featured"
+          ? undefined
+          : baselineIds.has(row.themeId)
+            ? "Superset"
+            : featuredIds.has(row.themeId)
+              ? "Featured"
+              : undefined
+      }
       onSelect={() => {
         const nextIndex = visibleRows.findIndex((candidate) => candidate.rowKey === row.rowKey);
         if (nextIndex >= 0) {
@@ -187,6 +210,7 @@ export function Rail({
       ) : (
         (
           [
+            ["Superset", "baseline"],
             ["Featured", "featured"],
             ["Light", "light"],
             ["Dark", "dark"],

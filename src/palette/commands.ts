@@ -1,5 +1,7 @@
+import type { LucideIcon } from "lucide-react";
+import { Copy } from "lucide-react";
+import { getBaselineFirstThemes } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
-import { getFeaturedFirstThemes } from "../data/featured";
 import { exportThemeJson } from "../theme-core/exportTheme";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import type { RankableItem } from "./fuzzy";
@@ -10,14 +12,20 @@ export interface PaletteCommand extends RankableItem {
   label: string;
   section: PaletteSection;
   hint?: string;
-  // The global keypress that triggers this command, shown as a key chip so the
+  // The global keypress that triggers this command, shown as a muted glyph so the
   // palette teaches the shortcut where power users look for it (e.g. "." pins).
   shortcut?: string;
+  // Leading glyph for action rows; theme rows use an accent swatch instead.
+  icon?: LucideIcon;
+  // Theme rows carry their own accent so the leading swatch shows the theme's
+  // color, never the focused theme's.
+  accent?: string;
+  themeType?: "light" | "dark";
   run: () => void;
 }
 
 export function buildThemeCommands(onSelectTheme: (themeId: string) => void): PaletteCommand[] {
-  return getFeaturedFirstThemes().map(({ theme, meta }) => ({
+  return getBaselineFirstThemes().map(({ theme, meta }) => ({
     id: theme.id,
     label: theme.name,
     section: "Themes",
@@ -25,6 +33,8 @@ export function buildThemeCommands(onSelectTheme: (themeId: string) => void): Pa
     // the Tokyo Night family), matching the rail eyebrow and bottom-bar fact.
     hint: meta.family === theme.name ? undefined : meta.family,
     keys: [theme.id, theme.name, meta.family],
+    accent: theme.ui.accent,
+    themeType: theme.type,
     run: () => onSelectTheme(theme.id),
   }));
 }
@@ -36,6 +46,7 @@ export function copyThemeJsonCommand(entry: CatalogThemeEntry): PaletteCommand {
     id: "action-copy-theme-json",
     label: "Copy theme JSON",
     section: "Actions",
+    icon: Copy,
     keys: ["copy theme json", "copy", "export", "json"],
     run: () => void navigator.clipboard.writeText(exportThemeJson(entry)),
   };

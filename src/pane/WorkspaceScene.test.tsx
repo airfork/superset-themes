@@ -23,13 +23,16 @@ describe("WorkspaceScene", () => {
     expect(within(tree).getByText(/tasks & prs/i)).toBeInTheDocument();
   });
 
-  it("renders the main column with session tabs, agent tabs, and a Run control", () => {
+  it("renders the main column with session controls, agent controls, and a Run control", () => {
     render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
 
     const main = screen.getByRole("region", { name: /workspace/i });
-    expect(within(main).getByRole("tablist", { name: /open sessions/i })).toBeInTheDocument();
-    expect(within(main).getByRole("tablist", { name: /agent picker/i })).toBeInTheDocument();
+    expect(within(main).getByRole("button", { name: /^workspace setup$/i })).toBeInTheDocument();
+    expect(within(main).getByRole("button", { name: /^claude$/i })).toBeInTheDocument();
     expect(within(main).getAllByRole("button", { name: /run/i }).length).toBeGreaterThan(0);
+    expect(within(main).getByRole("textbox", { name: /terminal output/i })).toHaveAttribute(
+      "readonly",
+    );
   });
 
   it("does not render a file tree", () => {

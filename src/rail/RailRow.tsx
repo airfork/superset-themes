@@ -9,10 +9,10 @@ interface RailRowProps {
   selected: boolean;
   pinned: boolean;
   variant: RailRowVariant;
-  // Set on a section row (Dark/Light) whose theme is also pinned to Featured, so
+  // Set on a section row (Dark/Light) whose theme is also pinned above it, so
   // the accessible name back-references that earlier appearance instead of looking
   // like a duplicate to a screen-reader user roving the list.
-  alsoFeatured?: boolean;
+  alsoInSection?: string;
   onSelect?: () => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLButtonElement>) => void;
   tabIndex?: number;
@@ -26,7 +26,7 @@ export function RailRow({
   selected,
   pinned,
   variant,
-  alsoFeatured = false,
+  alsoInSection,
   onSelect,
   onKeyDown,
   tabIndex,
@@ -36,13 +36,13 @@ export function RailRow({
   const themeVariant = entry.theme.type;
 
   // Build the accessible name from the bare theme name plus any qualifiers, in
-  // reading order: pinned status first, then the Featured back-reference.
+  // reading order: pinned status first, then the pinned-section back-reference.
   const labelParts = [entry.theme.name];
   if (pinned) {
     labelParts.push("pinned for compare");
   }
-  if (alsoFeatured) {
-    labelParts.push("also in Featured");
+  if (alsoInSection) {
+    labelParts.push(`also in ${alsoInSection}`);
   }
   const accessibleName = labelParts.join(", ");
   // Drop the family eyebrow when it only echoes the row's own name (e.g. the

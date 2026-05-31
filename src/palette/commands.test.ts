@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
+import { BASELINE_IDS } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
 import { FEATURED_IDS } from "../data/featured";
 import { exportThemeJson } from "../theme-core/exportTheme";
@@ -14,14 +15,14 @@ function entryFor(id: string) {
 }
 
 describe("buildThemeCommands", () => {
-  it("orders theme commands Featured-first so ⌘K echoes the rail at rest", () => {
-    // The rail leads with the featured block; the palette's resting order (which
+  it("orders theme commands Superset-first, then Featured, so ⌘K echoes the rail at rest", () => {
+    // The rail leads with the baseline and featured blocks; the palette's resting order (which
     // the empty-query fuzzy pass preserves) must match so a user can transfer
     // their mental model between the two search surfaces.
     const commands = buildThemeCommands(() => {});
-    expect(commands.slice(0, FEATURED_IDS.length).map((command) => command.id)).toEqual([
-      ...FEATURED_IDS,
-    ]);
+    expect(
+      commands.slice(0, BASELINE_IDS.length + FEATURED_IDS.length).map((command) => command.id),
+    ).toEqual([...BASELINE_IDS, ...FEATURED_IDS]);
   });
 
   it("includes every catalog theme exactly once", () => {

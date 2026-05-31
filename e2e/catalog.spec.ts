@@ -37,16 +37,11 @@ test.describe("catalog master/detail shell", () => {
     expect(background).toBe("#fdf6e3");
   });
 
-  test("scene tabs switch between Workspace and Settings", async ({ page }) => {
+  test("catalog renders the focused workspace scene", async ({ page }) => {
     await page.goto("/");
 
-    const workspaceTab = page.getByRole("tab", { name: /^workspace$/i });
-    const settingsTab = page.getByRole("tab", { name: /^settings$/i });
-
-    await expect(workspaceTab).toHaveAttribute("aria-selected", "true");
-    await settingsTab.click();
-    await expect(settingsTab).toHaveAttribute("aria-selected", "true");
-    await expect(page.getByRole("textbox", { name: /display name/i })).toBeVisible();
+    await expect(page.getByRole("region", { name: /tokyo night workspace/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^run ⌘g$/i })).toBeVisible();
   });
 
   test("pressing `f` expands the pane and hides the rail", async ({ page }) => {
@@ -73,8 +68,12 @@ test.describe("catalog master/detail shell", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
-    await expect(page.getByRole("complementary", { name: /themes/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /browse themes/i })).toBeVisible();
     await expect(page.getByRole("main")).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
+    await page.getByRole("button", { name: /browse themes/i }).click();
+    await expect(page.getByRole("complementary", { name: /themes/i })).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });
 });

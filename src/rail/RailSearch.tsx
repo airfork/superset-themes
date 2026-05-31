@@ -18,7 +18,10 @@ export function RailSearch({ value, onChange, inputRef }: RailSearchProps) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-label="Filter by name"
+        autoComplete="off"
+        name="theme-rail-filter"
         placeholder="Filter by name"
+        spellCheck={false}
       />
       <kbd className="rail-search__kbd">/</kbd>
     </div>

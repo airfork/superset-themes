@@ -10,6 +10,8 @@ import oneDarkTheme from "./themes/one-dark.json" with { type: "json" };
 import rosePineDawnTheme from "./themes/rose-pine-dawn.json" with { type: "json" };
 import solarizedDarkTheme from "./themes/solarized-dark.json" with { type: "json" };
 import solarizedLightTheme from "./themes/solarized-light.json" with { type: "json" };
+import supersetDarkTheme from "./themes/superset-dark.json" with { type: "json" };
+import supersetLightTheme from "./themes/superset-light.json" with { type: "json" };
 import tokyoNightTheme from "./themes/tokyo-night.json" with { type: "json" };
 
 export const catalogThemeMetadata = [
@@ -29,6 +31,7 @@ export const catalogThemeMetadata = [
     portStatus: "original",
     notes: "Original fixture with crisp blue surfaces and teal accents.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "aurora-dark",
@@ -46,6 +49,7 @@ export const catalogThemeMetadata = [
     portStatus: "original",
     notes: "Original dark pair for Aurora Light with matching blue and teal structure.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "graphite-dark",
@@ -62,6 +66,7 @@ export const catalogThemeMetadata = [
     portStatus: "original",
     notes: "Original fixture with neutral graphite surfaces and warm alert accents.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "solarized-light",
@@ -79,6 +84,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Solarized Light port.",
     featuredRank: 3,
+    baselineRank: null,
   },
   {
     themeId: "solarized-dark",
@@ -96,6 +102,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Solarized Dark port.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "nord",
@@ -112,6 +119,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the reference Nord port.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "catppuccin-mocha",
@@ -128,6 +136,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the official Catppuccin Mocha palette.",
     featuredRank: 2,
+    baselineRank: null,
   },
   {
     themeId: "dracula",
@@ -144,6 +153,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the official Dracula OSS palette.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "gruvbox-dark",
@@ -160,6 +170,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of Gruvbox Dark with local contrast-gate foregrounds.",
     featuredRank: null,
+    baselineRank: null,
   },
   {
     themeId: "tokyo-night",
@@ -176,6 +187,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Tokyo Night VS Code palette.",
     featuredRank: 1,
+    baselineRank: null,
   },
   {
     themeId: "rose-pine-dawn",
@@ -192,6 +204,7 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Rosé Pine Dawn palette.",
     featuredRank: 4,
+    baselineRank: null,
   },
   {
     themeId: "one-dark",
@@ -208,6 +221,45 @@ export const catalogThemeMetadata = [
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Atom One Dark palette.",
     featuredRank: 5,
+    baselineRank: null,
+  },
+  {
+    themeId: "superset-light",
+    source: "upstream-port",
+    family: "Superset",
+    variant: "light",
+    pairGroup: "superset-default",
+    styleTags: ["baseline", "default", "neutral"],
+    accentHue: 0,
+    warmth: "neutral",
+    contrastTier: "standard",
+    terminalPaletteQuality: "basic",
+    license: "Elastic License 2.0",
+    upstreamUrl: "https://github.com/superset-sh/superset",
+    portStatus: "adapted",
+    notes:
+      "Install-safe adaptation of Superset's built-in Light theme; reserved id 'light' is exported as 'superset-light'.",
+    featuredRank: null,
+    baselineRank: 1,
+  },
+  {
+    themeId: "superset-dark",
+    source: "upstream-port",
+    family: "Superset",
+    variant: "dark",
+    pairGroup: "superset-default",
+    styleTags: ["baseline", "default", "warm"],
+    accentHue: 18,
+    warmth: "warm",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "Elastic License 2.0",
+    upstreamUrl: "https://github.com/superset-sh/superset",
+    portStatus: "adapted",
+    notes:
+      "Install-safe adaptation of Superset's built-in Dark theme; reserved id 'dark' is exported as 'superset-dark'.",
+    featuredRank: null,
+    baselineRank: 2,
   },
 ] as const satisfies CatalogThemeMeta[];
 
@@ -259,6 +311,14 @@ const rawCatalogThemes = [
   {
     theme: oneDarkTheme as SupersetTheme,
     meta: catalogThemeMetadata[11],
+  },
+  {
+    theme: supersetLightTheme as SupersetTheme,
+    meta: catalogThemeMetadata[12],
+  },
+  {
+    theme: supersetDarkTheme as SupersetTheme,
+    meta: catalogThemeMetadata[13],
   },
 ] as const satisfies CatalogThemeEntry[];
 

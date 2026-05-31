@@ -85,14 +85,30 @@ describe("RailRow", () => {
     // The section row (Dark/Light) of a featured theme is the row's second pass in
     // the roving sequence; a screen-reader user hears the name twice with no clue
     // why. The suffix back-references the earlier Featured listing.
-    render(<RailRow entry={tokyo} selected={false} pinned={false} variant="basic" alsoFeatured />);
+    render(
+      <RailRow
+        entry={tokyo}
+        selected={false}
+        pinned={false}
+        variant="basic"
+        alsoInSection="Featured"
+      />,
+    );
     expect(
       screen.getByRole("button", { name: "Tokyo Night, also in Featured" }),
     ).toBeInTheDocument();
   });
 
   it("composes the also-in-Featured annotation after the pinned state", () => {
-    render(<RailRow entry={tokyo} selected={false} pinned={true} variant="basic" alsoFeatured />);
+    render(
+      <RailRow
+        entry={tokyo}
+        selected={false}
+        pinned={true}
+        variant="basic"
+        alsoInSection="Featured"
+      />,
+    );
     expect(
       screen.getByRole("button", { name: "Tokyo Night, pinned for compare, also in Featured" }),
     ).toBeInTheDocument();

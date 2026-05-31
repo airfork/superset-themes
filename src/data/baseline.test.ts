@@ -1,0 +1,33 @@
+import { describe, expect, it } from "vitest";
+import { BASELINE_IDS, getBaselineFirstThemes, getBaselineThemes } from "./baseline";
+import { catalogThemes } from "./catalog";
+import { FEATURED_IDS } from "./featured";
+
+describe("baseline themes", () => {
+  it("pins Superset's light and dark defaults in a stable order", () => {
+    expect(BASELINE_IDS).toEqual(["superset-light", "superset-dark"]);
+  });
+
+  it("returns catalog entries with baseline ranks", () => {
+    const baseline = getBaselineThemes();
+
+    expect(baseline.map((entry) => entry.theme.id)).toEqual(["superset-light", "superset-dark"]);
+    expect(baseline.map((entry) => entry.meta.baselineRank)).toEqual([1, 2]);
+    expect(baseline.map((entry) => entry.meta.family)).toEqual(["Superset", "Superset"]);
+  });
+
+  it("leads with baselines, then Featured, then the remaining catalog order", () => {
+    const ordered = getBaselineFirstThemes();
+    const pinnedIds = [...BASELINE_IDS, ...FEATURED_IDS];
+    const pinnedSet = new Set<string>(pinnedIds);
+    const restInCatalogOrder = catalogThemes
+      .map((entry) => entry.theme.id)
+      .filter((id) => !pinnedSet.has(id));
+
+    expect(ordered.slice(0, pinnedIds.length).map((entry) => entry.theme.id)).toEqual(pinnedIds);
+    expect(ordered.slice(pinnedIds.length).map((entry) => entry.theme.id)).toEqual(
+      restInCatalogOrder,
+    );
+    expect(new Set(ordered.map((entry) => entry.theme.id)).size).toBe(catalogThemes.length);
+  });
+});

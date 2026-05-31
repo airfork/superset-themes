@@ -122,6 +122,41 @@ const sessionTabs: SessionTab[] = [
 ];
 
 const activeSessionTitle = "Scheduler queue refactor";
+const terminalOutput = `> refactor the task scheduler queue so retries flow through dispatcher.backoff()
+
+● Mapping the current shape first — three files own scheduling and the worker
+  reaches into the queue directly. Cleanest path: route every retry through
+  dispatcher.backoff() so the worker only owns the happy path.
+
+● Bash(rg -n "scheduler" src --type ts | head -30)
+   ⎿ src/scheduler/queue.ts:14      export class TaskQueue { … }
+     src/scheduler/queue.ts:62      private flush() { … }
+     src/scheduler/dispatcher.ts:31 retry(job, delay) { … }
+     src/scheduler/worker.ts:18     tightLoop() { … }
+     … +14 lines (ctrl+o to expand)
+
+● Update(src/scheduler/queue.ts)
+   ⎿ One queue per priority tier; jobs carry a typed discriminated payload.
+
+● Update(src/scheduler/dispatcher.ts)
+   ⎿ backoff() now owns retry scheduling and returns a next-tick promise.
+
+● Update(src/scheduler/worker.ts)
+   ⎿ tightLoop removed; worker awaits dispatcher.next().
+
+● Bash(pnpm test scheduler)
+   ⎿ ✓ queue       · 8 passed in 0.4s
+     ✓ dispatcher  · 5 passed in 0.3s
+     ✓ worker      · 1 passed in 0.5s
+     14 passed total in 1.2s
+
+● Bash(pnpm typecheck && pnpm lint)
+   ⎿ ✓ tsc --noEmit — clean
+     ✓ biome check . — no findings
+
+▌ Done. One queue per priority tier; retries flow through dispatcher.backoff().
+  All 14 tests green; the old tight-loop in worker.ts is gone.
+`;
 
 function Avatar({ spec }: { spec: AvatarSpec }) {
   return (
@@ -233,19 +268,14 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         aria-describedby={threadId}
       >
         {/* Session tab strip */}
-        <div className="scene-workspace__sessions" role="tablist" aria-label="Open sessions">
+        <div className="scene-workspace__sessions">
           {sessionTabs.map((tab) => (
             <div
               key={tab.title}
               className="scene-workspace__session"
               data-active={tab.active || undefined}
             >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={tab.active ? "true" : "false"}
-                className="scene-workspace__session-title"
-              >
+              <button type="button" className="scene-workspace__session-title">
                 <span>{tab.title}</span>
               </button>
               <button
@@ -264,7 +294,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
 
         {/* Agent / Run bar */}
         <div className="scene-workspace__tabbar" id={agentTabId}>
-          <div className="scene-workspace__tabs" role="tablist" aria-label="Agent picker">
+          <div className="scene-workspace__tabs">
             <button
               type="button"
               aria-label="Workspace settings"
@@ -273,19 +303,13 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
               <Settings aria-hidden="true" />
             </button>
             <span className="scene-workspace__tabs-separator" aria-hidden="true" />
-            <button
-              type="button"
-              role="tab"
-              aria-selected="true"
-              className="scene-workspace__tab"
-              data-active
-            >
+            <button type="button" className="scene-workspace__tab" data-active>
               <span className="scene-workspace__tab-icon">
                 <ClaudeIcon />
               </span>
               <span>Claude</span>
             </button>
-            <button type="button" role="tab" aria-selected="false" className="scene-workspace__tab">
+            <button type="button" className="scene-workspace__tab">
               <span className="scene-workspace__tab-icon">
                 <CodexIcon />
               </span>
@@ -297,11 +321,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
               <button type="button" className="scene-workspace__run">
                 <Play aria-hidden="true" className="scene-workspace__run-icon" />
                 <span>Run</span>
-                <kbd className="scene-workspace__kbd">
-                  <span>⌘</span>
-                  <span>⇧</span>
-                  <span>K</span>
-                </kbd>
+                <kbd className="scene-workspace__kbd">⌘G</kbd>
               </button>
               <button
                 type="button"
@@ -339,43 +359,15 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
 
         {/* Terminal content area — fake Claude Code session output */}
         <div className="scene-workspace__terminal" role="log" aria-live="polite" id={threadId}>
-          <pre className="scene-workspace__terminal-output">
-            {`> refactor the task scheduler queue so retries flow through dispatcher.backoff()
-
-● Mapping the current shape first — three files own scheduling and the worker
-  reaches into the queue directly. Cleanest path: route every retry through
-  dispatcher.backoff() so the worker only owns the happy path.
-
-● Bash(rg -n "scheduler" src --type ts | head -30)
-   ⎿ src/scheduler/queue.ts:14      export class TaskQueue { … }
-     src/scheduler/queue.ts:62      private flush() { … }
-     src/scheduler/dispatcher.ts:31 retry(job, delay) { … }
-     src/scheduler/worker.ts:18     tightLoop() { … }
-     … +14 lines (ctrl+o to expand)
-
-● Update(src/scheduler/queue.ts)
-   ⎿ One queue per priority tier; jobs carry a typed discriminated payload.
-
-● Update(src/scheduler/dispatcher.ts)
-   ⎿ backoff() now owns retry scheduling and returns a next-tick promise.
-
-● Update(src/scheduler/worker.ts)
-   ⎿ tightLoop removed; worker awaits dispatcher.next().
-
-● Bash(pnpm test scheduler)
-   ⎿ ✓ queue       · 8 passed in 0.4s
-     ✓ dispatcher  · 5 passed in 0.3s
-     ✓ worker      · 1 passed in 0.5s
-     14 passed total in 1.2s
-
-● Bash(pnpm typecheck && pnpm lint)
-   ⎿ ✓ tsc --noEmit — clean
-     ✓ biome check . — no findings
-
-▌ Done. One queue per priority tier; retries flow through dispatcher.backoff().
-  All 14 tests green; the old tight-loop in worker.ts is gone.
-`}
-          </pre>
+          <textarea
+            aria-label="Terminal output"
+            autoComplete="off"
+            className="scene-workspace__terminal-output"
+            name="workspace-terminal-output"
+            readOnly
+            spellCheck={false}
+            value={terminalOutput}
+          />
           <div className="scene-workspace__activity">
             <div className="scene-workspace__activity-status">
               <span aria-hidden="true" className="scene-workspace__activity-icon">

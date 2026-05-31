@@ -56,6 +56,7 @@ function draftToEntry(draft: ThemeDraft): CatalogThemeEntry {
     theme: draft.theme,
     meta: {
       accentHue: 0,
+      baselineRank: null,
       contrastTier: "standard",
       family,
       featuredRank: null,

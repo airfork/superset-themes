@@ -38,7 +38,7 @@ test("arrow keys morph the chrome to the next theme", async ({ page }) => {
   expect(previewBackground).toBe("#1e1e2e");
 });
 
-test("/ key opens the palette from rail rows", async ({ page }) => {
+test("/ key focuses the catalog rail filter from rail rows", async ({ page }) => {
   await page.goto("/");
 
   const railRegion = page.getByRole("complementary", { name: /themes/i });
@@ -48,20 +48,19 @@ test("/ key opens the palette from rail rows", async ({ page }) => {
     .focus();
   await page.keyboard.press("/");
 
-  // Opens the command palette without advancing the rail row or changing the URL.
-  await expect(page.getByRole("dialog", { name: /command palette/i })).toBeVisible();
+  await expect(railRegion.getByRole("textbox", { name: /filter by name/i })).toBeFocused();
   await expect(page).not.toHaveURL(/theme=/);
 });
 
-test("/ key opens the palette from RailSearch", async ({ page }) => {
+test("typing in the rail filter narrows to the pinned Superset baselines", async ({ page }) => {
   await page.goto("/");
 
   const railRegion = page.getByRole("complementary", { name: /themes/i });
-  const search = railRegion.getByRole("button", { name: /search themes/i });
-  await search.focus();
-  await expect(search).toBeFocused();
-  await page.keyboard.press("/");
+  const search = railRegion.getByRole("textbox", { name: /filter by name/i });
+  await search.fill("superset");
 
-  await expect(page.getByRole("dialog", { name: /command palette/i })).toBeVisible();
-  await expect(page).not.toHaveURL(/theme=/);
+  await expect(railRegion.getByRole("region", { name: /^superset$/i })).toBeVisible();
+  await expect(railRegion.getByRole("button", { name: /^superset light$/i })).toBeVisible();
+  await expect(railRegion.getByRole("button", { name: /^superset dark$/i })).toBeVisible();
+  await expect(railRegion.getByRole("region", { name: /^featured$/i })).toHaveCount(0);
 });
