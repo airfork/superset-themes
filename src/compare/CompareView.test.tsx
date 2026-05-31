@@ -30,17 +30,32 @@ function Harness({
   const [state, setState] = useState(initial);
   const [scene, setScene] = useState<SceneId>("workspace");
   return (
-    <CompareView
-      state={state}
-      scene={scene}
-      onSceneChange={setScene}
-      onUnpin={(slot) => {
-        onUnpin?.(slot);
-        setState((current) => compareReducer(current, { type: "unpin", slot }));
-      }}
-      onPin={(themeId) => setState((current) => compareReducer(current, { type: "pin", themeId }))}
-      onExit={onExit ?? (() => {})}
-    />
+    <>
+      {/* Stands in for an out-of-view pin source (rail row / ⌘K command) firing while compare is shown. */}
+      <button
+        type="button"
+        onClick={() =>
+          setState((current) =>
+            compareReducer(current, { type: "pin", themeId: "catppuccin-mocha" }),
+          )
+        }
+      >
+        Pin third theme
+      </button>
+      <CompareView
+        state={state}
+        scene={scene}
+        onSceneChange={setScene}
+        onUnpin={(slot) => {
+          onUnpin?.(slot);
+          setState((current) => compareReducer(current, { type: "unpin", slot }));
+        }}
+        onRestore={(slot, themeId) =>
+          setState((current) => compareReducer(current, { type: "restore", slot, themeId }))
+        }
+        onExit={onExit ?? (() => {})}
+      />
+    </>
   );
 }
 
@@ -199,6 +214,59 @@ describe("CompareView", () => {
     expect(
       screen.getByRole("button", { name: /restore solarized light to slot b/i }),
     ).toBeInTheDocument();
+  });
+
+  it("offers an Undo to recover the displaced theme when a third pin replaces a full slot", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    // Both slots full, lastPinned "b" → slot a is least-recent and gets replaced.
+    await user.click(screen.getByRole("button", { name: /pin third theme/i }));
+
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent(/slot a replaced/i);
+    expect(within(status).getByRole("button", { name: /undo/i })).toBeInTheDocument();
+  });
+
+  it("restores the displaced theme to its original slot when Undo follows a replacement", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /pin third theme/i }));
+    // The displacer takes the least-recent slot a.
+    expect(
+      screen.getByRole("region", { name: /compare slot a: catppuccin mocha/i }),
+    ).toBeInTheDocument();
+
+    await user.click(within(screen.getByRole("status")).getByRole("button", { name: /undo/i }));
+
+    // Undo puts the displaced theme back into slot a, evicting the displacer.
+    expect(
+      screen.getByRole("region", { name: /compare slot a: tokyo night/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("status")).not.toHaveTextContent(/replaced/i);
+  });
+
+  it("keeps focus on the pin source after a replacement so rapid pinning stays fluid", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    const trigger = screen.getByRole("button", { name: /pin third theme/i });
+    await user.click(trigger);
+
+    // Unlike an unpin (which destroys its trigger), a replacement leaves the rail row /
+    // ⌘K command in place. The Undo is announced through the polite status region, but
+    // yanking focus to it would interrupt rapid pinning, so focus must stay put.
+    expect(
+      within(screen.getByRole("status")).getByRole("button", { name: /undo/i }),
+    ).toBeInTheDocument();
+    expect(trigger).toHaveFocus();
   });
 
   it("holds the auto-dismiss while Undo has focus, then dismisses once it blurs", () => {

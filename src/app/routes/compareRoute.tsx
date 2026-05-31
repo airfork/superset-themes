@@ -106,6 +106,8 @@ export function CompareRouteView({
 
   const pin = (themeId: string) => commit(compareReducer(state, { type: "pin", themeId }));
   const unpin = (slot: CompareSlotId) => commit(compareReducer(state, { type: "unpin", slot }));
+  const restore = (slot: CompareSlotId, themeId: string) =>
+    commit(compareReducer(state, { type: "restore", slot, themeId }));
 
   const changeScene = (next: SceneId) => {
     setScene(next);
@@ -162,7 +164,7 @@ export function CompareRouteView({
           scene={scene}
           onSceneChange={changeScene}
           onUnpin={unpin}
-          onPin={pin}
+          onRestore={restore}
           onExit={() => onExit(fromId)}
         />
       }

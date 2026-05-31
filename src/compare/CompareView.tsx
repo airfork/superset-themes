@@ -15,9 +15,17 @@ interface CompareViewProps {
   scene: SceneId;
   onSceneChange: (scene: SceneId) => void;
   onUnpin: (slot: CompareSlotId) => void;
-  onPin: (themeId: string) => void;
+  onRestore: (slot: CompareSlotId, themeId: string) => void;
   onExit: () => void;
 }
+
+// A slot lost the theme it was showing and the user might want it back. "cleared"
+// comes from an explicit unpin (slot now empty); "replaced" comes from a third pin
+// bumping the least-recent slot (slot now holds the newcomer). Either way `themeId`
+// is the outgoing theme, and Undo restores it to `slot`.
+type CompareNotice = { kind: "cleared" | "replaced"; slot: CompareSlotId; themeId: string };
+
+const SLOTS = ["a", "b"] as const;
 
 function entryFor(themeId: string | null): CatalogThemeEntry | undefined {
   return themeId ? catalogThemes.find((candidate) => candidate.theme.id === themeId) : undefined;
@@ -39,16 +47,15 @@ export function CompareView({
   scene,
   onSceneChange,
   onUnpin,
-  onPin,
+  onRestore,
   onExit,
 }: CompareViewProps) {
   const a = entryFor(state.a);
   const b = entryFor(state.b);
 
-  // Remember the just-cleared slot so the status line can offer an Undo. The
-  // notice clears itself once the slot is refilled (by Undo or a fresh pin) or
-  // after a short timeout.
-  const [cleared, setCleared] = useState<{ slot: CompareSlotId; themeId: string } | null>(null);
+  // Remember the slot that just lost its theme so the status line can offer an
+  // Undo. The notice clears itself once recovered or after a short timeout.
+  const [notice, setNotice] = useState<CompareNotice | null>(null);
   // The auto-dismiss is held while the user is on the Undo control, so the one
   // recovery affordance can't vanish out from under them. Hover and focus are
   // tracked apart so leaving one doesn't release the hold the other still has.
@@ -60,40 +67,70 @@ export function CompareView({
   const handleUnpin = (slot: CompareSlotId) => {
     const themeId = state[slot];
     if (themeId) {
-      setCleared({ slot, themeId });
+      setNotice({ kind: "cleared", slot, themeId });
     }
     onUnpin(slot);
   };
 
-  // Land focus on Undo when a slot clears so keyboard/SR users reach the
-  // recovery instead of dropping to <body>. Reset the hold when it dismisses.
+  // A pin from outside this view (rail row, ⌘K command) can bump the least-recent
+  // slot. We never see that pin, only the resulting state, so detect the swap by
+  // diffing: a slot trading one pinned theme for a different one means the outgoing
+  // theme vanished silently and deserves an Undo.
+  const prevStateRef = useRef(state);
   useEffect(() => {
-    if (cleared) {
-      undoRef.current?.focus();
-    } else {
-      setUndoFocused(false);
-      setUndoHovered(false);
-    }
-  }, [cleared]);
-
-  useEffect(() => {
-    if (!cleared) {
+    const prev = prevStateRef.current;
+    if (prev === state) {
       return;
     }
-    // The slot was refilled, so the recovery notice is stale.
-    if (state[cleared.slot] !== null) {
-      setCleared(null);
+    prevStateRef.current = state;
+    for (const slot of SLOTS) {
+      const before = prev[slot];
+      const after = state[slot];
+      if (before && after && before !== after) {
+        // When Undo lands the displaced theme back in its slot, that same diff fires;
+        // treat the recovery completing as a dismissal rather than a fresh notice.
+        setNotice((current) =>
+          current && current.slot === slot && after === current.themeId
+            ? null
+            : { kind: "replaced", slot, themeId: before },
+        );
+      }
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (!notice) {
+      setUndoFocused(false);
+      setUndoHovered(false);
+      return;
+    }
+    // An unpin destroys its trigger, so land focus on Undo or it falls to <body>.
+    // A replacement leaves its trigger (rail row / ⌘K) in place; the notice is still
+    // announced politely, but stealing focus there would interrupt rapid pinning.
+    if (notice.kind === "cleared") {
+      undoRef.current?.focus();
+    }
+  }, [notice]);
+
+  useEffect(() => {
+    if (!notice) {
+      return;
+    }
+    // An unpinned slot that has been refilled (by Undo or a fresh pin) is stale.
+    // A "replaced" slot is never empty, so it dismisses only on timeout/recovery.
+    if (notice.kind === "cleared" && state[notice.slot] !== null) {
+      setNotice(null);
       return;
     }
     // Don't run down the clock while the user is reaching for Undo.
     if (holdingUndo) {
       return;
     }
-    const id = window.setTimeout(() => setCleared(null), UNDO_TIMEOUT_MS);
+    const id = window.setTimeout(() => setNotice(null), UNDO_TIMEOUT_MS);
     return () => window.clearTimeout(id);
-  }, [cleared, state, holdingUndo]);
+  }, [notice, state, holdingUndo]);
 
-  const clearedName = cleared ? (entryFor(cleared.themeId)?.theme.name ?? cleared.themeId) : null;
+  const noticeName = notice ? (entryFor(notice.themeId)?.theme.name ?? notice.themeId) : null;
 
   return (
     <div className="compare-view" data-scene={scene}>
@@ -104,9 +141,10 @@ export function CompareView({
           <kbd>Esc</kbd>
         </button>
         <p className="compare-view__status" role="status" aria-live="polite">
-          {cleared ? (
+          {notice ? (
             <>
-              Slot {cleared.slot === "a" ? "A" : "B"} cleared
+              Slot {notice.slot === "a" ? "A" : "B"}{" "}
+              {notice.kind === "replaced" ? "replaced" : "cleared"}
               <span className="compare-view__status-sep" aria-hidden="true">
                 ·
               </span>
@@ -114,8 +152,8 @@ export function CompareView({
                 ref={undoRef}
                 type="button"
                 className="compare-view__undo"
-                aria-label={`Undo, restore ${clearedName} to slot ${cleared.slot === "a" ? "A" : "B"}`}
-                onClick={() => onPin(cleared.themeId)}
+                aria-label={`Undo, restore ${noticeName} to slot ${notice.slot === "a" ? "A" : "B"}`}
+                onClick={() => onRestore(notice.slot, notice.themeId)}
                 onFocus={() => setUndoFocused(true)}
                 onBlur={() => setUndoFocused(false)}
                 onMouseEnter={() => setUndoHovered(true)}

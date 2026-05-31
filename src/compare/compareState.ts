@@ -11,6 +11,7 @@ export type CompareAction =
   | { type: "enter"; themeId: string }
   | { type: "pin"; themeId: string }
   | { type: "unpin"; slot: CompareSlotId }
+  | { type: "restore"; slot: CompareSlotId; themeId: string }
   | { type: "exit" };
 
 export const INITIAL_COMPARE_STATE: CompareState = {
@@ -44,6 +45,13 @@ function pin(state: CompareState, themeId: string): CompareState {
   return { ...state, [replace]: themeId, lastPinned: replace };
 }
 
+// Slot-targeted restore: drop a theme straight back into a named slot, even when
+// both slots are full. Unlike `pin` (which picks the least-recent slot when full),
+// this is how an Undo returns a displaced theme to the exact slot it was bumped from.
+function restore(state: CompareState, slot: CompareSlotId, themeId: string): CompareState {
+  return { ...state, [slot]: themeId, lastPinned: slot };
+}
+
 function unpin(state: CompareState, slot: CompareSlotId): CompareState {
   const other: CompareSlotId = slot === "a" ? "b" : "a";
   const lastPinned =
@@ -64,6 +72,8 @@ export function compareReducer(state: CompareState, action: CompareAction): Comp
       return pin(state, action.themeId);
     case "unpin":
       return unpin(state, action.slot);
+    case "restore":
+      return restore(state, action.slot, action.themeId);
     case "exit":
       return INITIAL_COMPARE_STATE;
   }

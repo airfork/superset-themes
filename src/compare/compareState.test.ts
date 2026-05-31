@@ -70,6 +70,16 @@ describe("compareReducer", () => {
     });
   });
 
+  it("restore puts a theme back into a specific slot, overwriting the displacer", () => {
+    let state = entered("tokyo-night");
+    state = compareReducer(state, { type: "pin", themeId: "solarized-light" }); // a, lastPinned a
+    state = compareReducer(state, { type: "pin", themeId: "rose-pine-dawn" }); // b, lastPinned b
+    // Both full, lastPinned b → slot a (least recent) is replaced; solarized-light is displaced.
+    state = compareReducer(state, { type: "pin", themeId: "catppuccin-mocha" }); // a, lastPinned a
+    state = compareReducer(state, { type: "restore", slot: "a", themeId: "solarized-light" });
+    expect(state).toMatchObject({ a: "solarized-light", b: "rose-pine-dawn", lastPinned: "a" });
+  });
+
   it("unpin clears a single slot and updates recency", () => {
     let state = entered("tokyo-night");
     state = compareReducer(state, { type: "pin", themeId: "solarized-light" }); // a
