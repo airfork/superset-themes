@@ -82,12 +82,21 @@ describe("Rail", () => {
   it("filters the visible rows to themes whose name matches the query", async () => {
     const user = userEvent.setup();
     renderRail();
-    const filter = screen.getByRole("textbox", { name: /filter themes/i });
+    const filter = screen.getByRole("textbox", { name: /filter by name/i });
     await user.type(filter, "dracula");
 
     expect(screen.getByRole("button", { name: "Dracula" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tokyo Night" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Aurora Light" })).not.toBeInTheDocument();
+  });
+
+  it("folds diacritics so a plain-ASCII query matches an accented theme name", async () => {
+    const user = userEvent.setup();
+    renderRail();
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "rose pine");
+
+    expect(screen.getAllByRole("button", { name: "Rosé Pine Dawn" }).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "Dracula" })).not.toBeInTheDocument();
   });
 
   it("focuses the filter input when '/' is pressed on a rail row", async () => {
@@ -96,21 +105,28 @@ describe("Rail", () => {
     const dark = screen.getByRole("region", { name: "Dark" });
     within(dark).getAllByRole("button")[0]?.focus();
     await user.keyboard("/");
-    expect(screen.getByRole("textbox", { name: /filter themes/i })).toHaveFocus();
+    expect(screen.getByRole("textbox", { name: /filter by name/i })).toHaveFocus();
   });
 
   it("moves the roving tabstop onto a visible row after the filter hides the focused theme", async () => {
     const user = userEvent.setup();
     renderRail(); // focusedThemeId "tokyo-night" is hidden by the "dracula" query
-    await user.type(screen.getByRole("textbox", { name: /filter themes/i }), "dracula");
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "dracula");
     expect(screen.getByRole("button", { name: "Dracula" })).toHaveAttribute("tabindex", "0");
   });
 
   it("shows an empty state when no theme matches the query", async () => {
     const user = userEvent.setup();
     renderRail();
-    await user.type(screen.getByRole("textbox", { name: /filter themes/i }), "zzzzz");
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "zzzzz");
     expect(screen.getByText(/no themes match/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Dracula" })).not.toBeInTheDocument();
+  });
+
+  it("points to ⌘K for family and id search in the empty state", async () => {
+    const user = userEvent.setup();
+    renderRail();
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "zzzzz");
+    expect(screen.getByText(/press ⌘K to search families/i)).toBeInTheDocument();
   });
 });

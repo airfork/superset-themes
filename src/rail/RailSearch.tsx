@@ -17,8 +17,8 @@ export function RailSearch({ value, onChange, inputRef }: RailSearchProps) {
         className="rail-search__input"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        aria-label="Filter themes"
-        placeholder="Filter themes"
+        aria-label="Filter by name"
+        placeholder="Filter by name"
       />
       <kbd className="rail-search__kbd">/</kbd>
     </div>

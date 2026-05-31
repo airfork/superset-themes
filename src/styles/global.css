@@ -437,10 +437,21 @@ kbd {
 }
 
 .rail__empty {
+  display: grid;
+  gap: 6px;
   margin: 16px 12px;
   font-size: 0.8rem;
   line-height: 1.4;
   color: var(--preview-ui-muted-foreground);
+}
+
+/* Routes name-only dead-ends to the broader ⌘K surface, where family and id
+   search live. Tinted toward the accent so it reads as a suggested next step,
+   not a second error line. */
+.rail__empty-hint {
+  color: color-mix(in srgb, var(--preview-ui-primary) 80%, var(--preview-ui-foreground));
+  font-size: 0.74rem;
+  font-weight: 600;
 }
 
 .lab-page {

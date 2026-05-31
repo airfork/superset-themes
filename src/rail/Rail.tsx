@@ -27,6 +27,15 @@ function byName(a: CatalogThemeEntry, b: CatalogThemeEntry): number {
   return a.theme.name.localeCompare(b.theme.name);
 }
 
+// Strip diacritics so a plain-ASCII query ("rose pine") still matches an accented
+// name ("Rosé Pine Dawn"); without this the filter dead-ends on the one accented theme.
+function foldForFilter(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+}
+
 function rowKeyFor(section: RowSection, themeId: string): string {
   return `rail-row-${section}-${themeId}`;
 }
@@ -75,12 +84,12 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
     [featured, lights, darks],
   );
 
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = foldForFilter(query.trim());
   const visibleRows = useMemo(
     () =>
       orderedRows.filter(
         (row) =>
-          normalizedQuery === "" || row.entry.theme.name.toLowerCase().includes(normalizedQuery),
+          normalizedQuery === "" || foldForFilter(row.entry.theme.name).includes(normalizedQuery),
       ),
     [orderedRows, normalizedQuery],
   );
@@ -163,6 +172,7 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
       {visibleRows.length === 0 ? (
         <p className="rail__empty" role="status">
           {`No themes match "${query.trim()}"`}
+          <span className="rail__empty-hint">Press ⌘K to search families &amp; ids</span>
         </p>
       ) : (
         <>
