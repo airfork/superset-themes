@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import { catalogThemes } from "../data/catalog";
+import { FEATURED_IDS } from "../data/featured";
 import { exportThemeJson } from "../theme-core/exportTheme";
-import { copyThemeJsonCommand } from "./commands";
+import { buildThemeCommands, copyThemeJsonCommand } from "./commands";
 
 function entryFor(id: string) {
   const found = catalogThemes.find((candidate) => candidate.theme.id === id);
@@ -11,6 +12,24 @@ function entryFor(id: string) {
   }
   return found;
 }
+
+describe("buildThemeCommands", () => {
+  it("orders theme commands Featured-first so ⌘K echoes the rail at rest", () => {
+    // The rail leads with the featured block; the palette's resting order (which
+    // the empty-query fuzzy pass preserves) must match so a user can transfer
+    // their mental model between the two search surfaces.
+    const commands = buildThemeCommands(() => {});
+    expect(commands.slice(0, FEATURED_IDS.length).map((command) => command.id)).toEqual([
+      ...FEATURED_IDS,
+    ]);
+  });
+
+  it("includes every catalog theme exactly once", () => {
+    const commands = buildThemeCommands(() => {});
+    expect(commands).toHaveLength(catalogThemes.length);
+    expect(new Set(commands.map((command) => command.id)).size).toBe(catalogThemes.length);
+  });
+});
 
 describe("copyThemeJsonCommand", () => {
   it("is an Actions command discoverable by copy, export, and json", () => {

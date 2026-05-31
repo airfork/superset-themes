@@ -28,3 +28,12 @@ export function getDefaultFocusedTheme(): CatalogThemeEntry {
   }
   return first;
 }
+
+// The catalog reordered to lead with the featured block, then the remaining
+// themes in catalog order. The rail groups Featured-first; the ⌘K palette reuses
+// this so its resting order matches and a user's mental model carries between them.
+export function getFeaturedFirstThemes(): CatalogThemeEntry[] {
+  const featuredSet = new Set<string>(FEATURED_IDS);
+  const rest = catalogThemes.filter((entry) => !featuredSet.has(entry.theme.id));
+  return [...getFeaturedThemes(), ...rest];
+}

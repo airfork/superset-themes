@@ -1,4 +1,5 @@
 import { catalogThemes } from "../data/catalog";
+import { getFeaturedFirstThemes } from "../data/featured";
 import { exportThemeJson } from "../theme-core/exportTheme";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import type { RankableItem } from "./fuzzy";
@@ -16,7 +17,7 @@ export interface PaletteCommand extends RankableItem {
 }
 
 export function buildThemeCommands(onSelectTheme: (themeId: string) => void): PaletteCommand[] {
-  return catalogThemes.map(({ theme, meta }) => ({
+  return getFeaturedFirstThemes().map(({ theme, meta }) => ({
     id: theme.id,
     label: theme.name,
     section: "Themes",
