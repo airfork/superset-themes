@@ -37,11 +37,12 @@ interface ThemedPaletteProps {
   themeId: string;
   query: string;
   commands: PaletteCommand[];
+  actionsExpanded?: boolean;
 }
 
 // Palette portals into its `container`, so stories scope the focused theme's tokens
 // onto a wrapper div and hand that element to the component.
-function ThemedPalette({ themeId, query, commands }: ThemedPaletteProps) {
+function ThemedPalette({ themeId, query, commands, actionsExpanded = false }: ThemedPaletteProps) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const style = getThemeCssVars(entryFor(themeId).theme) as CSSProperties;
   return (
@@ -54,10 +55,12 @@ function ThemedPalette({ themeId, query, commands }: ThemedPaletteProps) {
           open
           query={query}
           focusedIndex={0}
+          actionsExpanded={actionsExpanded}
           commands={commands}
           container={container}
           onQueryChange={noop}
           onMove={noop}
+          onExpandActions={noop}
           onClose={noop}
           onSubmit={noop}
         />
@@ -85,6 +88,15 @@ type Story = StoryObj<typeof meta>;
 
 export const EmptyQuery: Story = {
   args: { themeId: "tokyo-night", query: "", commands: [...themeCommands, ...catalogActions] },
+};
+
+export const ActionsExpanded: Story = {
+  args: {
+    themeId: "tokyo-night",
+    query: "",
+    commands: [...themeCommands, ...catalogActions],
+    actionsExpanded: true,
+  },
 };
 
 export const ThemesFiltered: Story = {

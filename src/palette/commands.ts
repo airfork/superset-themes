@@ -9,6 +9,9 @@ export interface PaletteCommand extends RankableItem {
   label: string;
   section: PaletteSection;
   hint?: string;
+  // The global keypress that triggers this command, shown as a key chip so the
+  // palette teaches the shortcut where power users look for it (e.g. "." pins).
+  shortcut?: string;
   run: () => void;
 }
 

@@ -6,9 +6,11 @@ export interface PaletteProps {
   open: boolean;
   query: string;
   focusedIndex: number;
+  actionsExpanded: boolean;
   commands: readonly PaletteCommand[];
   onQueryChange: (query: string) => void;
   onMove: (direction: "up" | "down", count: number) => void;
+  onExpandActions: (focusedIndex: number) => void;
   onClose: () => void;
   onSubmit: (command: PaletteCommand | undefined) => void;
 }
@@ -38,16 +40,18 @@ export function usePalette(commands: readonly PaletteCommand[]): UsePaletteResul
       open: state.open,
       query: state.query,
       focusedIndex: state.focusedIndex,
+      actionsExpanded: state.actionsExpanded,
       commands,
       onQueryChange: (query) => dispatch({ type: "setQuery", query }),
       onMove: (direction, count) => dispatch({ type: "move", direction, count }),
+      onExpandActions: (focusedIndex) => dispatch({ type: "expandActions", focusedIndex }),
       onClose: () => dispatch({ type: "close" }),
       onSubmit: (command) => {
         command?.run();
         dispatch({ type: "submit" });
       },
     }),
-    [state.open, state.query, state.focusedIndex, commands],
+    [state.open, state.query, state.focusedIndex, state.actionsExpanded, commands],
   );
 
   return useMemo(() => ({ open: () => dispatch({ type: "open" }), paletteProps }), [paletteProps]);

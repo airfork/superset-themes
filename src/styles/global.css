@@ -3002,6 +3002,11 @@ button.rail-search {
   background: var(--chrome-surface);
 }
 
+/* Collapsed shelf: just the "More actions" teaser, no section label. */
+.palette__group--collapsed {
+  padding-top: 0;
+}
+
 .palette__group-label {
   margin: 8px 10px 4px;
   padding: 0;
@@ -3041,10 +3046,29 @@ button.rail-search {
   white-space: nowrap;
 }
 
+/* The teaser reads as a secondary meta-row, not a primary command. */
+.palette__more-actions .palette__option-label {
+  color: var(--chrome-muted-foreground);
+}
+
 .palette__option-hint {
   flex: 0 0 auto;
   font-size: 0.78rem;
   color: var(--chrome-muted-foreground);
+}
+
+/* Mirror the bottom-bar key chip so a command's shortcut reads as the same
+   pressable affordance, tinted for the popover surface the palette sits on. */
+.palette__option-key {
+  flex: 0 0 auto;
+  font-family: var(--app-font-chrome);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 2px 6px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 8%, transparent);
+  color: var(--preview-ui-popover-foreground);
 }
 
 .palette__empty {

@@ -9,6 +9,10 @@ interface PaletteComponentProps extends PaletteProps {
   container?: HTMLElement | null;
 }
 
+const MORE_ACTIONS_ID = "palette-option-more-actions";
+
+type PaletteEntry = { kind: "command"; command: PaletteCommand } | { kind: "more-actions" };
+
 function optionId(command: PaletteCommand): string {
   return `palette-option-${command.id}`;
 }
@@ -27,9 +31,11 @@ export function Palette({
   open,
   query,
   focusedIndex,
+  actionsExpanded,
   commands,
   onQueryChange,
   onMove,
+  onExpandActions,
   onClose,
   onSubmit,
   container,
@@ -38,20 +44,37 @@ export function Palette({
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
 
-  const { themes, actions, results } = useMemo(() => {
+  const { themes, actions, collapsed, entries } = useMemo(() => {
     const themeCommands = commands.filter((command) => command.section === "Themes");
     const actionCommands = commands.filter((command) => command.section === "Actions");
     const rankedThemes = rankFuzzy(query, themeCommands);
     const trimmed = query.trim().toLowerCase();
     const filteredActions = actionCommands.filter((command) => matchesAction(command, trimmed));
+    // At rest the shelf is a single "More actions" teaser so the theme list
+    // owns the panel; a query reveals matching actions directly.
+    const isCollapsed = trimmed === "" && !actionsExpanded && filteredActions.length > 0;
+    const themeEntries: PaletteEntry[] = rankedThemes.map((command) => ({
+      kind: "command",
+      command,
+    }));
+    const actionEntries: PaletteEntry[] = isCollapsed
+      ? [{ kind: "more-actions" }]
+      : filteredActions.map((command) => ({ kind: "command", command }));
     return {
       themes: rankedThemes,
       actions: filteredActions,
-      results: [...rankedThemes, ...filteredActions],
+      collapsed: isCollapsed,
+      entries: [...themeEntries, ...actionEntries],
     };
-  }, [commands, query]);
+  }, [commands, query, actionsExpanded]);
 
-  const activeCommand = results[focusedIndex];
+  const activeEntry = entries[focusedIndex];
+  const activeDescendant =
+    activeEntry?.kind === "command"
+      ? optionId(activeEntry.command)
+      : activeEntry?.kind === "more-actions"
+        ? MORE_ACTIONS_ID
+        : undefined;
 
   // Focus the input on open; return focus to the opener on close.
   useEffect(() => {
@@ -86,16 +109,22 @@ export function Palette({
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
-        onMove("down", results.length);
+        onMove("down", entries.length);
         break;
       case "ArrowUp":
         event.preventDefault();
-        onMove("up", results.length);
+        onMove("up", entries.length);
         break;
-      case "Enter":
+      case "Enter": {
         event.preventDefault();
-        onSubmit(results[focusedIndex]);
+        const entry = entries[focusedIndex];
+        if (entry?.kind === "more-actions") {
+          onExpandActions(themes.length);
+        } else if (entry) {
+          onSubmit(entry.command);
+        }
         break;
+      }
       case "Escape":
         event.preventDefault();
         onClose();
@@ -125,7 +154,33 @@ export function Palette({
         onMouseDown={(event) => event.preventDefault()}
       >
         <span className="palette__option-label">{command.label}</span>
-        {command.hint ? <span className="palette__option-hint">{command.hint}</span> : null}
+        {command.shortcut ? (
+          <kbd className="palette__option-key">{command.shortcut}</kbd>
+        ) : command.hint ? (
+          <span className="palette__option-hint">{command.hint}</span>
+        ) : null}
+      </button>
+    );
+  };
+
+  // The collapsed shelf's single option: activating it expands the full Actions
+  // list in place rather than running a command, so the palette stays open.
+  const renderMoreActions = (index: number) => {
+    const active = index === focusedIndex;
+    return (
+      <button
+        type="button"
+        id={MORE_ACTIONS_ID}
+        role="option"
+        aria-selected={active}
+        tabIndex={-1}
+        className="palette__option palette__more-actions"
+        data-active={active || undefined}
+        onClick={() => onExpandActions(themes.length)}
+        onMouseDown={(event) => event.preventDefault()}
+      >
+        <span className="palette__option-label">More actions</span>
+        <span className="palette__option-hint">{actions.length}</span>
       </button>
     );
   };
@@ -148,7 +203,7 @@ export function Palette({
           aria-expanded="true"
           aria-controls="palette-listbox"
           aria-autocomplete="list"
-          aria-activedescendant={activeCommand ? optionId(activeCommand) : undefined}
+          aria-activedescendant={activeDescendant}
           placeholder="Search themes and actions…"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
@@ -164,7 +219,16 @@ export function Palette({
               {themes.map((command, index) => renderOption(command, index))}
             </div>
           ) : null}
-          {actions.length > 0 ? (
+          {collapsed ? (
+            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
+            <div
+              role="group"
+              aria-label="Actions"
+              className="palette__group palette__group--actions palette__group--collapsed"
+            >
+              {renderMoreActions(themes.length)}
+            </div>
+          ) : actions.length > 0 ? (
             // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
             <div
               role="group"
@@ -177,7 +241,7 @@ export function Palette({
               {actions.map((command, index) => renderOption(command, themes.length + index))}
             </div>
           ) : null}
-          {results.length === 0 ? (
+          {entries.length === 0 ? (
             <div className="palette__empty" role="status">
               No matches for “{query.trim()}”
             </div>
