@@ -93,11 +93,9 @@ function CompareBottomBar({ a, b }: { a?: CatalogThemeEntry; b?: CatalogThemeEnt
         <CompareSlotFact slot="B" entry={b} />
       </div>
       <div className="chrome-bottombar__hints">
-        <span className="chrome-bottombar__hint">click to pin</span>
-        <Sep />
         <KeyHint keyLabel="⌘K" />
         <Sep />
-        <KeyHint keyLabel="Esc" action="to exit" />
+        <KeyHint keyLabel="Esc" action="exit" />
       </div>
     </footer>
   );

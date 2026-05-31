@@ -68,13 +68,25 @@ describe("BottomBar", () => {
       expect(footer).not.toHaveTextContent("↓ next");
     });
 
-    it("chips only the keyboard keys, leaving the pointer hint as plain text", () => {
+    it("drops the redundant pointer hint so the footer cluster is pure key chips", () => {
       render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
 
       const footer = screen.getByRole("contentinfo");
+      // Clicking to pin is already taught by the rail hint and the live status
+      // line, so the footer stays a pure keyboard-shortcut legend like the catalog.
+      expect(footer).not.toHaveTextContent(/click to pin/i);
       const keys = [...footer.querySelectorAll("kbd")].map((key) => key.textContent);
-      // "click to pin" is a pointer action, so it must not be dressed as a key.
       expect(keys).toEqual(["⌘K", "Esc"]);
+    });
+
+    it("trails the Esc chip with a terse verb matching the catalog grammar", () => {
+      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+
+      const footer = screen.getByRole("contentinfo");
+      // Catalog hints read "↓ next" / ". pin"; compare should read "Esc exit",
+      // not the wordier "Esc to exit".
+      expect(footer).toHaveTextContent("Esc exit");
+      expect(footer).not.toHaveTextContent(/esc to exit/i);
     });
 
     it("labels an empty slot instead of borrowing another theme's facts", () => {
