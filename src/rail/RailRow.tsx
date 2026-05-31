@@ -29,6 +29,10 @@ export function RailRow({
 }: RailRowProps) {
   const themeAccent = entry.theme.ui.accent;
   const themeVariant = entry.theme.type;
+  // Drop the family eyebrow when it only echoes the row's own name (e.g. the
+  // "Tokyo Night" family over the "Tokyo Night" theme). It still earns its place
+  // where the family groups distinct themes ("Rosé Pine" over "Rosé Pine Dawn").
+  const showEyebrow = variant === "featured" && entry.meta.family !== entry.theme.name;
 
   // Inline color escapes the --preview-* system on purpose: the row dot always
   // shows the entry's own accent, never the focused theme's.
@@ -53,9 +57,7 @@ export function RailRow({
       id={id}
     >
       <span className="rail-row__body">
-        {variant === "featured" ? (
-          <span className="rail-row__eyebrow">{entry.meta.family}</span>
-        ) : null}
+        {showEyebrow ? <span className="rail-row__eyebrow">{entry.meta.family}</span> : null}
         <span className="rail-row__name">{entry.theme.name}</span>
         {variant === "featured" ? (
           <span className="rail-row__glimpse" aria-hidden="true">

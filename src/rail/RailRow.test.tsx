@@ -42,6 +42,17 @@ describe("RailRow", () => {
     expect(swatches[0]).toHaveStyle({ backgroundColor: rose.theme.ui.primary });
   });
 
+  it("suppresses the family eyebrow when it merely repeats the theme name", () => {
+    // Tokyo Night's family label is literally "Tokyo Night", so an eyebrow above
+    // the identically-named row is pure duplication. Distinct families (Rosé Pine
+    // over Rosé Pine Dawn, above) still show theirs.
+    expect(tokyo.meta.family).toBe(tokyo.theme.name);
+    const { container } = render(
+      <RailRow entry={tokyo} selected={false} pinned={false} variant="featured" />,
+    );
+    expect(container.querySelector(".rail-row__eyebrow")).toBeNull();
+  });
+
   it("shows a pin glyph (with accessible label) when pinned", () => {
     render(<RailRow entry={tokyo} selected={false} pinned={true} variant="basic" />);
     expect(screen.getByLabelText(/pinned/i)).toBeInTheDocument();
