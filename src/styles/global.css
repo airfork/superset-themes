@@ -2706,10 +2706,10 @@ a.scene-workspace__footer-row:hover {
 }
 
 .layout-shell__rail {
-  position: sticky;
-  top: var(--chrome-top);
-  align-self: start;
-  max-height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom));
+  /* Stretch to the full body cell (grid default) so the surface + right border reach
+     the bottom bar even when the theme list is shorter than the viewport; min-height:0
+     lets the rail scroll internally once the list outgrows the column. */
+  min-height: 0;
   overflow-y: auto;
   border-right: 1px solid var(--preview-ui-border);
   background: var(--chrome-surface);
