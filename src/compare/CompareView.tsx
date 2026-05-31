@@ -70,6 +70,12 @@ export function CompareView({
   const [headerFocused, setHeaderFocused] = useState(false);
   const [undoHovered, setUndoHovered] = useState(false);
   const holdingUndo = headerFocused || undoHovered;
+  // A replacement never auto-focuses Undo, so a keyboard/SR user tabs to it from an
+  // out-of-header pin source. The header-focus hold only fires once they arrive, so
+  // the whole journey races the clock. Each Tab bumps this tick to restart the
+  // countdown, keeping the recovery reachable while they navigate; once tabbing goes
+  // idle for a full window, it dismisses.
+  const [navTick, setNavTick] = useState(0);
   const undoRef = useRef<HTMLButtonElement>(null);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -128,6 +134,22 @@ export function CompareView({
     }
   }, [state]);
 
+  // Only a replacement needs the travel-time grace: its Undo isn't auto-focused, so
+  // the user tabs in from outside the header. A clear auto-focuses Undo (handled by
+  // the header-focus hold), so we leave its blur-to-dismiss behavior untouched.
+  useEffect(() => {
+    if (!notice || notice.kind !== "replaced") {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        setNavTick((tick) => tick + 1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [notice]);
+
   useEffect(() => {
     if (!notice) {
       setHeaderFocused(false);
@@ -142,6 +164,11 @@ export function CompareView({
     }
   }, [notice]);
 
+  // The dismiss countdown. navTick is an intentional extra dependency, not read in the
+  // body: each Tab bumps it to restart the timer so an actively-navigating keyboard/SR
+  // user keeps the recovery within reach, and the window only elapses once tabbing has
+  // been idle for its full duration.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: navTick is a deliberate re-trigger, not read in the effect body.
   useEffect(() => {
     if (!notice) {
       return;
@@ -159,7 +186,7 @@ export function CompareView({
     const timeout = notice.kind === "replaced" ? REPLACED_UNDO_TIMEOUT_MS : UNDO_TIMEOUT_MS;
     const id = window.setTimeout(() => setNotice(null), timeout);
     return () => window.clearTimeout(id);
-  }, [notice, state, holdingUndo]);
+  }, [notice, state, holdingUndo, navTick]);
 
   const noticeName = notice ? (entryFor(notice.themeId)?.theme.name ?? notice.themeId) : null;
 

@@ -418,4 +418,42 @@ describe("CompareView", () => {
       vi.useRealTimers();
     }
   });
+
+  it("holds the replacement's auto-dismiss while the user keeps tabbing toward Undo, then dismisses once tabbing stops", () => {
+    vi.useFakeTimers();
+    try {
+      render(
+        <Harness
+          initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })}
+        />,
+      );
+
+      act(() => {
+        fireEvent.click(screen.getByRole("button", { name: /pin third theme/i }));
+      });
+      expect(screen.getByRole("status")).toHaveTextContent(/replaced/i);
+
+      // The pin leaves focus on the out-of-header source (rail row / ⌘K), so a
+      // keyboard/SR user must tab across the page to reach Undo. Each Tab before the
+      // window elapses restarts the countdown, keeping the recovery reachable even
+      // though focus hasn't entered the header yet — they never race the clock.
+      for (let i = 0; i < 4; i++) {
+        act(() => {
+          vi.advanceTimersByTime(REPLACED_UNDO_TIMEOUT_MS - 1000);
+        });
+        act(() => {
+          window.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }));
+        });
+      }
+      expect(screen.getByRole("status")).toHaveTextContent(/replaced/i);
+
+      // Once tabbing stops, the countdown runs out from the last keystroke.
+      act(() => {
+        vi.advanceTimersByTime(REPLACED_UNDO_TIMEOUT_MS + 500);
+      });
+      expect(screen.getByRole("status")).not.toHaveTextContent(/replaced/i);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
