@@ -38,7 +38,7 @@ export function scoreMatch(query: string, target: string): FuzzyMatch | null {
   return qi === q.length ? { tier: 2, score } : null;
 }
 
-function bestMatch(query: string, keys: readonly string[]): FuzzyMatch | null {
+export function bestMatch(query: string, keys: readonly string[]): FuzzyMatch | null {
   let best: FuzzyMatch | null = null;
   for (const key of keys) {
     const match = scoreMatch(query, key);

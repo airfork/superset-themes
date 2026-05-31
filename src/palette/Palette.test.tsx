@@ -160,6 +160,34 @@ describe("Palette", () => {
     expect(key.tagName).toBe("KBD");
   });
 
+  it("focuses a verb-matching action so Enter runs it, not an incidental theme", async () => {
+    const user = userEvent.setup();
+    const pinRun = vi.fn();
+    const onSelectTheme = vi.fn();
+    const commands: PaletteCommand[] = [
+      ...buildThemeCommands(onSelectTheme),
+      {
+        id: "pin-to-compare",
+        label: "Pin to compare",
+        section: "Actions",
+        keys: ["pin to compare", "compare"],
+        shortcut: ".",
+        run: pinRun,
+      },
+    ];
+    render(<Host commands={commands} />);
+    openPalette();
+
+    // "pin" prefix-matches the action (tier 1) but only subsequence-matches the
+    // Rosé Pine themes (tier 2), so Enter must run the action, not select a theme.
+    await user.keyboard("pin");
+    await user.keyboard("{Enter}");
+
+    expect(pinRun).toHaveBeenCalledTimes(1);
+    expect(onSelectTheme).not.toHaveBeenCalled();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("runs an action command when clicked", async () => {
     const user = userEvent.setup();
     const actionRun = vi.fn();

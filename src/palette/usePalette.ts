@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useReducer } from "react";
 import type { PaletteCommand } from "./commands";
+import { buildPaletteEntries } from "./paletteEntries";
 import { INITIAL_PALETTE_STATE, paletteReducer } from "./paletteState";
 
 export interface PaletteProps {
@@ -42,7 +43,12 @@ export function usePalette(commands: readonly PaletteCommand[]): UsePaletteResul
       focusedIndex: state.focusedIndex,
       actionsExpanded: state.actionsExpanded,
       commands,
-      onQueryChange: (query) => dispatch({ type: "setQuery", query }),
+      onQueryChange: (query) => {
+        // Seed focus on the intent-ranked entry (typing re-collapses the shelf,
+        // so compute entries as if actions are unexpanded).
+        const { defaultFocusIndex } = buildPaletteEntries(commands, query, false);
+        dispatch({ type: "setQuery", query, focusedIndex: defaultFocusIndex });
+      },
       onMove: (direction, count) => dispatch({ type: "move", direction, count }),
       onExpandActions: (focusedIndex) => dispatch({ type: "expandActions", focusedIndex }),
       onClose: () => dispatch({ type: "close" }),

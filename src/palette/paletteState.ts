@@ -10,7 +10,7 @@ export interface PaletteState {
 export type PaletteAction =
   | { type: "open" }
   | { type: "close" }
-  | { type: "setQuery"; query: string }
+  | { type: "setQuery"; query: string; focusedIndex?: number }
   | { type: "move"; direction: "up" | "down"; count: number }
   | { type: "expandActions"; focusedIndex: number }
   | { type: "submit" };
@@ -36,9 +36,15 @@ export function paletteReducer(state: PaletteState, action: PaletteAction): Pale
     case "close":
       return { ...state, open: false };
     case "setQuery":
-      // Typing always re-aims focus at the first result and re-collapses the
-      // shelf, since a matching query reveals actions on its own.
-      return { ...state, query: action.query, focusedIndex: 0, actionsExpanded: false };
+      // Typing re-aims focus at the intent-ranked result (a verb query seeds the
+      // matching action; otherwise the first theme) and re-collapses the shelf,
+      // since a matching query reveals actions on its own.
+      return {
+        ...state,
+        query: action.query,
+        focusedIndex: action.focusedIndex ?? 0,
+        actionsExpanded: false,
+      };
     case "move": {
       const delta = action.direction === "down" ? 1 : -1;
       return { ...state, focusedIndex: clampIndex(state.focusedIndex + delta, action.count) };

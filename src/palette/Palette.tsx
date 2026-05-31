@@ -1,7 +1,7 @@
 import { type KeyboardEvent as ReactKeyboardEvent, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { PaletteCommand } from "./commands";
-import { rankFuzzy } from "./fuzzy";
+import { buildPaletteEntries } from "./paletteEntries";
 import type { PaletteProps } from "./usePalette";
 
 interface PaletteComponentProps extends PaletteProps {
@@ -11,20 +11,8 @@ interface PaletteComponentProps extends PaletteProps {
 
 const MORE_ACTIONS_ID = "palette-option-more-actions";
 
-type PaletteEntry = { kind: "command"; command: PaletteCommand } | { kind: "more-actions" };
-
 function optionId(command: PaletteCommand): string {
   return `palette-option-${command.id}`;
-}
-
-function matchesAction(command: PaletteCommand, query: string): boolean {
-  if (query === "") {
-    return true;
-  }
-  return (
-    command.label.toLowerCase().includes(query) ||
-    command.keys.some((key) => key.toLowerCase().includes(query))
-  );
 }
 
 export function Palette({
@@ -44,29 +32,10 @@ export function Palette({
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
 
-  const { themes, actions, collapsed, entries } = useMemo(() => {
-    const themeCommands = commands.filter((command) => command.section === "Themes");
-    const actionCommands = commands.filter((command) => command.section === "Actions");
-    const rankedThemes = rankFuzzy(query, themeCommands);
-    const trimmed = query.trim().toLowerCase();
-    const filteredActions = actionCommands.filter((command) => matchesAction(command, trimmed));
-    // At rest the shelf is a single "More actions" teaser so the theme list
-    // owns the panel; a query reveals matching actions directly.
-    const isCollapsed = trimmed === "" && !actionsExpanded && filteredActions.length > 0;
-    const themeEntries: PaletteEntry[] = rankedThemes.map((command) => ({
-      kind: "command",
-      command,
-    }));
-    const actionEntries: PaletteEntry[] = isCollapsed
-      ? [{ kind: "more-actions" }]
-      : filteredActions.map((command) => ({ kind: "command", command }));
-    return {
-      themes: rankedThemes,
-      actions: filteredActions,
-      collapsed: isCollapsed,
-      entries: [...themeEntries, ...actionEntries],
-    };
-  }, [commands, query, actionsExpanded]);
+  const { themes, actions, collapsed, entries } = useMemo(
+    () => buildPaletteEntries(commands, query, actionsExpanded),
+    [commands, query, actionsExpanded],
+  );
 
   const activeEntry = entries[focusedIndex];
   const activeDescendant =
