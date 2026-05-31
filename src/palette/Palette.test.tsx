@@ -200,4 +200,18 @@ describe("Palette", () => {
     expect(actionRun).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
+
+  it("offers a recovery hint, not just a dead-end, when nothing matches", async () => {
+    const user = userEvent.setup();
+    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
+    openPalette();
+
+    await user.keyboard("zzzzz");
+
+    const empty = screen.getByRole("status");
+    // The bare "No matches" line leaves the user stuck; like the rail's empty state,
+    // the palette must suggest what to try next.
+    expect(empty).toHaveTextContent(/no matches/i);
+    expect(empty).toHaveTextContent(/try a theme name, family, or action/i);
+  });
 });

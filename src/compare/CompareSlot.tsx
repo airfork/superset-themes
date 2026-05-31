@@ -13,13 +13,16 @@ interface CompareSlotProps {
   entry?: CatalogThemeEntry;
   scene: SceneId;
   onUnpin: (slot: CompareSlotId) => void;
+  // A pin from outside the view swapped this slot's theme without moving focus
+  // here; the cue draws the eye to the change before the Undo window closes.
+  attention?: boolean;
 }
 
 function slotLabel(slot: CompareSlotId): string {
   return slot === "a" ? "A" : "B";
 }
 
-export function CompareSlot({ slot, entry, scene, onUnpin }: CompareSlotProps) {
+export function CompareSlot({ slot, entry, scene, onUnpin, attention }: CompareSlotProps) {
   const label = slotLabel(slot);
 
   if (!entry) {
@@ -43,6 +46,7 @@ export function CompareSlot({ slot, entry, scene, onUnpin }: CompareSlotProps) {
       aria-label={`Compare slot ${label}: ${entry.theme.name}`}
       style={scopedVars}
       data-theme-type={entry.theme.type}
+      data-attention={attention ? "true" : undefined}
     >
       <div className="compare-slot__chrome">
         <span className="compare-slot__eyebrow">Slot {label}</span>

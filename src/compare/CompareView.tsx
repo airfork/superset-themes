@@ -168,8 +168,20 @@ export function CompareView({
         </p>
       </header>
       <div className="compare-view__slots">
-        <CompareSlot slot="a" entry={a} scene={scene} onUnpin={handleUnpin} />
-        <CompareSlot slot="b" entry={b} scene={scene} onUnpin={handleUnpin} />
+        <CompareSlot
+          slot="a"
+          entry={a}
+          scene={scene}
+          onUnpin={handleUnpin}
+          attention={notice?.kind === "replaced" && notice.slot === "a"}
+        />
+        <CompareSlot
+          slot="b"
+          entry={b}
+          scene={scene}
+          onUnpin={handleUnpin}
+          attention={notice?.kind === "replaced" && notice.slot === "b"}
+        />
       </div>
       <SceneTabs current={scene} onChange={onSceneChange} />
     </div>

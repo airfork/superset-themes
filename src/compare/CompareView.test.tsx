@@ -251,6 +251,39 @@ describe("CompareView", () => {
     expect(screen.getByRole("status")).not.toHaveTextContent(/replaced/i);
   });
 
+  it("flags the slot a replacement landed in so a mouse user sees where the swap happened", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /pin third theme/i }));
+
+    // The replace path never steals focus, so the changed slot must carry its own
+    // peripheral cue or the swap goes unnoticed before the Undo window closes.
+    expect(
+      screen.getByRole("region", { name: /compare slot a: catppuccin mocha/i }),
+    ).toHaveAttribute("data-attention", "true");
+    // The untouched slot stays quiet.
+    expect(
+      screen.getByRole("region", { name: /compare slot b: solarized light/i }),
+    ).not.toHaveAttribute("data-attention");
+  });
+
+  it("drops the slot attention cue once the replacement notice is gone", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /pin third theme/i }));
+    await user.click(within(screen.getByRole("status")).getByRole("button", { name: /undo/i }));
+
+    expect(
+      screen.getByRole("region", { name: /compare slot a: tokyo night/i }),
+    ).not.toHaveAttribute("data-attention");
+  });
+
   it("keeps focus on the pin source after a replacement so rapid pinning stays fluid", async () => {
     const user = userEvent.setup();
     render(

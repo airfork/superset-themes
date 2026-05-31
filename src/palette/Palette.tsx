@@ -213,6 +213,7 @@ export function Palette({
           {entries.length === 0 ? (
             <div className="palette__empty" role="status">
               No matches for “{query.trim()}”
+              <span className="palette__empty-hint">Try a theme name, family, or action.</span>
             </div>
           ) : null}
         </div>
