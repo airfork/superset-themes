@@ -47,6 +47,28 @@ describe("BottomBar", () => {
     expect(footer.textContent).toMatch(/[0-9]+\.[0-9]:1/);
   });
 
+  it("collapses the family segment when it merely repeats the theme name", () => {
+    // Tokyo Night's family is literally "Tokyo Night"; showing it twice
+    // ("Tokyo Night · Tokyo Night · 8.1:1") reads as a glitch, so the family
+    // chip drops out and only the name remains.
+    const tokyo = entry("tokyo-night");
+    expect(tokyo.meta.family).toBe(tokyo.theme.name);
+    render(<BottomBar entry={tokyo} />);
+
+    const footer = screen.getByRole("contentinfo");
+    expect(footer.querySelector(".chrome-bottombar__family")).toBeNull();
+    expect(footer.querySelector(".chrome-bottombar__name")).toHaveTextContent("Tokyo Night");
+  });
+
+  it("keeps the family segment when it differs from the theme name", () => {
+    const cat = entry("catppuccin-mocha");
+    expect(cat.meta.family).not.toBe(cat.theme.name);
+    render(<BottomBar entry={cat} />);
+
+    const footer = screen.getByRole("contentinfo");
+    expect(footer.querySelector(".chrome-bottombar__family")).toHaveTextContent("Catppuccin");
+  });
+
   describe("compare variant", () => {
     it("renders both pinned slots' names and their own contrast ratios", () => {
       render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);

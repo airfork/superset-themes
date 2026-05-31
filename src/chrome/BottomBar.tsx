@@ -46,12 +46,19 @@ export function BottomBar(props: BottomBarProps) {
 }
 
 function CatalogBottomBar({ entry }: { entry: CatalogThemeEntry }) {
+  // Drop the family fact (and its separator) when it only echoes the name, e.g.
+  // the "Tokyo Night" theme in the "Tokyo Night" family.
+  const showFamily = entry.meta.family !== entry.theme.name;
   return (
     <footer className="chrome-bottombar">
       <div className="chrome-bottombar__facts">
         <span className="chrome-bottombar__name">{entry.theme.name}</span>
-        <Sep />
-        <span className="chrome-bottombar__family">{entry.meta.family}</span>
+        {showFamily ? (
+          <>
+            <Sep />
+            <span className="chrome-bottombar__family">{entry.meta.family}</span>
+          </>
+        ) : null}
         <Sep />
         <span className="chrome-bottombar__contrast">{formatContrast(entry.theme)}</span>
       </div>
