@@ -243,7 +243,7 @@ kbd {
   gap: 12px;
   padding: 8px 14px;
   border-bottom: 1px solid var(--preview-ui-border);
-  background: var(--preview-ui-background);
+  background: var(--chrome-surface);
   color: var(--preview-ui-foreground);
 }
 
@@ -253,7 +253,7 @@ kbd {
   gap: 6px;
   border: 0;
   background: transparent;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
   padding: 4px 8px;
   font: inherit;
   font-size: 0.78rem;
@@ -281,7 +281,7 @@ kbd {
 .compare-view__status {
   margin: 0;
   font-size: 0.78rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--chrome-muted-foreground);
 }
 
 .compare-view__slots {
@@ -362,8 +362,9 @@ kbd {
 }
 
 .compare-slot__unpin:hover {
-  border-color: var(--preview-ui-destructive);
-  color: var(--preview-ui-destructive);
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  color: var(--preview-ui-foreground);
 }
 
 .compare-slot__unpin:focus-visible {
