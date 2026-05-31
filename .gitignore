@@ -4,7 +4,7 @@
 .impeccable/
 research-output.json
 scripts/superset-inspect*.mjs
-docs/review/workspace-*.png
+docs/review/*.png
 
 # Dependencies
 node_modules/
