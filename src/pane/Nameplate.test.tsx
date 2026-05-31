@@ -96,6 +96,44 @@ describe("Nameplate", () => {
     writeText.mockRestore();
   });
 
+  it("collapses action labels to icon tooltips in compact mode", () => {
+    // Compare slots are narrow; full action labels starve the title of width and
+    // force it to wrap. Compact actions go icon-only, exposing the label as a
+    // title tooltip while the accessible name still comes from the hidden text.
+    render(<Nameplate entry={entryFor("tokyo-night")} compact />);
+
+    expect(screen.getByRole("link", { name: /open in lab/i })).toHaveAttribute(
+      "title",
+      "Open in Lab",
+    );
+    expect(screen.getByRole("button", { name: /copy json/i })).toHaveAttribute(
+      "title",
+      "Copy JSON",
+    );
+  });
+
+  it("omits style tags in compact mode to keep the identity strip single-line", () => {
+    // aurora-dark's wider tag set is what wraps the title in a narrow compare slot;
+    // compact drops the tags (redundant beside the visible preview) but keeps the
+    // core identity (name + family + mode).
+    const entry = entryFor("aurora-dark");
+    render(<Nameplate entry={entry} compact />);
+
+    for (const tag of entry.meta.styleTags) {
+      expect(screen.queryByText(tag)).not.toBeInTheDocument();
+    }
+    expect(screen.getByRole("heading", { name: entry.theme.name })).toBeInTheDocument();
+    expect(screen.getByText(entry.meta.family)).toBeInTheDocument();
+    expect(screen.getByLabelText(/dark theme/i)).toBeInTheDocument();
+  });
+
+  it("keeps full action labels without tooltips in the default layout", () => {
+    render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
+
+    expect(screen.getByRole("link", { name: /open in lab/i })).not.toHaveAttribute("title");
+    expect(screen.getByRole("button", { name: /copy json/i })).not.toHaveAttribute("title");
+  });
+
   it("nests the expand toggle inside the heading and reflects aria-expanded", () => {
     const entry = entryFor("tokyo-night");
     render(<Nameplate entry={entry} onPin={() => {}} expanded={false} onExpandToggle={() => {}} />);

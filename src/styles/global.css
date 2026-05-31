@@ -1187,6 +1187,21 @@ kbd {
   flex-shrink: 0;
 }
 
+/* Compare slots are ~490px wide. Icon-only actions free the title's width so it
+   stays on one line instead of wrapping and overflowing into the preview body. */
+.pane-nameplate--compact .pane-nameplate__action {
+  padding: 5px 6px;
+}
+
+.pane-nameplate--compact .pane-nameplate__action-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 @media (max-width: 720px) {
   .pane-nameplate {
     grid-template-columns: 1fr;
@@ -2384,28 +2399,10 @@ a.scene-workspace__footer-row:hover {
   }
 }
 
-/* Chrome neutral tokens. Persistent chrome (bars, rail, palette, nameplate) must
-   guarantee its own legibility no matter which theme it is wearing. Solarized Light,
-   for one, maps card/input/muted/popover all onto a single cream (#eee8d5) where even
-   full foreground only reaches 4.39:1 — below AA. So chrome text sits on
-   --chrome-surface (the theme's highest-contrast base) and secondary text uses a muted
-   pulled toward foreground. Re-declared on .compare-slot so each slot derives its own. */
-:root,
-.compare-slot {
-  --chrome-surface: var(--preview-ui-card);
-  --chrome-muted-foreground: color-mix(
-    in srgb,
-    var(--preview-ui-muted-foreground),
-    var(--preview-ui-foreground) 60%
-  );
-}
-
-/* Light themes can map card to a tint darker than background (Solarized base2), so
-   their reliable AA surface is background; dark themes keep the raised card look. */
-:root[data-theme-type="light"],
-.compare-slot[data-theme-type="light"] {
-  --chrome-surface: var(--preview-ui-background);
-}
+/* Chrome neutral tokens (--chrome-surface, --chrome-muted-foreground) are derived in
+   JS (see theme-core/chromeTokens) and applied alongside the --preview-* tokens, so
+   persistent chrome keeps AA legibility and a primary/secondary split on every theme,
+   including ones whose muted-foreground equals foreground. */
 
 /* Chrome — top bar */
 .chrome-topbar {

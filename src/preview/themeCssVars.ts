@@ -1,9 +1,14 @@
+import { getChromeMutedForeground, getChromeSurface } from "../theme-core/chromeTokens";
 import type { SupersetTheme } from "../theme-core/themeTypes";
 
-export type ThemeCssVars = Record<`--preview-${string}`, string>;
+export type ThemeCssVars = Record<`--preview-${string}` | `--chrome-${string}`, string>;
 
 export function getThemeCssVars(theme: SupersetTheme): ThemeCssVars {
   return {
+    // Chrome neutrals are derived (not raw tokens) so persistent chrome keeps its
+    // own AA legibility and primary/secondary split on every theme. See chromeTokens.
+    "--chrome-surface": getChromeSurface(theme),
+    "--chrome-muted-foreground": getChromeMutedForeground(theme),
     "--preview-ui-accent": theme.ui.accent,
     "--preview-ui-accent-foreground": theme.ui.accentForeground,
     "--preview-ui-background": theme.ui.background,

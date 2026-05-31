@@ -56,7 +56,7 @@ export function CompareSlot({ slot, entry, scene, onUnpin }: CompareSlotProps) {
           <span>Unpin</span>
         </button>
       </div>
-      <Nameplate entry={entry} />
+      <Nameplate entry={entry} compact />
       <div className="compare-slot__body">
         {scene === "workspace" ? <WorkspaceScene entry={entry} /> : <SettingsScene entry={entry} />}
       </div>

@@ -10,9 +10,18 @@ interface NameplateProps {
   onPin?: (themeId: string) => void;
   expanded?: boolean;
   onExpandToggle?: () => void;
+  // Compare slots are narrow; compact collapses the action labels to icon-only
+  // (label kept as an accessible tooltip) so the title keeps its full width.
+  compact?: boolean;
 }
 
-export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: NameplateProps) {
+export function Nameplate({
+  entry,
+  onPin,
+  expanded = false,
+  onExpandToggle,
+  compact = false,
+}: NameplateProps) {
   const { meta, theme } = entry;
   const [copyState, setCopyState] = useState<"copied" | "failed" | "idle">("idle");
   const isDark = theme.type === "dark";
@@ -37,7 +46,7 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
     // <div> instead of <header> to avoid double-banner against the TopBar — the
     // nameplate is inside <main>, but accessibility tooling sometimes still maps
     // <header> to role="banner" in that context.
-    <div className="pane-nameplate">
+    <div className={`pane-nameplate${compact ? " pane-nameplate--compact" : ""}`}>
       <div className="pane-nameplate__title">
         <h2 className="pane-nameplate__name-text">
           {onExpandToggle ? (
@@ -59,13 +68,15 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
         <span className="pane-nameplate__mode" role="img" aria-label={modeLabel}>
           {isDark ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
         </span>
-        <ul className="pane-nameplate__tags" aria-label="Theme style tags">
-          {meta.styleTags.map((tag) => (
-            <li key={tag} className="pane-nameplate__tag">
-              {tag}
-            </li>
-          ))}
-        </ul>
+        {compact ? null : (
+          <ul className="pane-nameplate__tags" aria-label="Theme style tags">
+            {meta.styleTags.map((tag) => (
+              <li key={tag} className="pane-nameplate__tag">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="pane-nameplate__actions" role="toolbar" aria-label={`${theme.name} actions`}>
@@ -82,9 +93,13 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
             <span className="pane-nameplate__divider" aria-hidden="true" />
           </>
         ) : null}
-        <a className="pane-nameplate__action" href={`/lab?from=${theme.id}`}>
+        <a
+          className="pane-nameplate__action"
+          href={`/lab?from=${theme.id}`}
+          title={compact ? "Open in Lab" : undefined}
+        >
           <FlaskConical aria-hidden="true" />
-          <span>Open in Lab</span>
+          <span className="pane-nameplate__action-label">Open in Lab</span>
         </a>
         <span className="pane-nameplate__divider" aria-hidden="true" />
         <button
@@ -93,9 +108,12 @@ export function Nameplate({ entry, onPin, expanded = false, onExpandToggle }: Na
             copyState === "failed" ? " pane-nameplate__action--error" : ""
           }`}
           onClick={copyJson}
+          title={compact ? copyLabel : undefined}
         >
           <Copy aria-hidden="true" />
-          <span aria-live="polite">{copyLabel}</span>
+          <span className="pane-nameplate__action-label" aria-live="polite">
+            {copyLabel}
+          </span>
         </button>
       </div>
     </div>
