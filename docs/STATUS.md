@@ -14,6 +14,14 @@ a11y is enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
+- Archive cleanup and Conductor config checkpoint added a repo-local `scripts/archive-clean.mjs`
+  command with `--dry-run`, package scripts (`archive:clean`, `archive:clean:dry-run`,
+  `archive:clean:test`), and root `conductor.json`. Conductor setup now runs
+  `pnpm install && pnpm browsers:install`, run starts Vite on `CONDUCTOR_PORT` with a
+  fallback to 5173, and archive runs `pnpm archive:clean`. Cleanup targets are explicit
+  generated/local-only paths: dependency/build/test outputs, caches, logs, local `.env*`
+  files except `.env.example`, agent scratch folders, research output, inspection scripts,
+  and ignored review PNGs.
 - Task 1 scaffold added: package scripts, pnpm workspace/lockfile, Vite config, Vitest config, Biome config, app entry point, routed catalog shell, neutral global styles, and `scripts/check.mjs`.
 - Focused app-shell smoke test added in `src/app/App.test.tsx`.
 - Task 1 review remediation added runnable Playwright, Storybook, browser-install, and theme utility scaffolds so exposed scripts do not fail before later tasks fill in deeper behavior.
@@ -65,6 +73,33 @@ Phase 1 verification:
 - `rtk pnpm check` passed (Biome, TypeScript, Vitest 17 files / 69 tests, Vite build).
 - `rtk pnpm themes:validate` validated 12 catalog themes from 12 JSON files.
 - `rtk pnpm themes:check-contrast` passed 7 pairs × 12 themes (zero warnings).
+
+## Workspace Archive Cleanup (2026-05-31)
+
+Status: Complete.
+
+- Added `scripts/archive-clean.mjs` as an idempotent archive cleanup command guarded to the
+  `superset-themes` package root.
+- Added `scripts/archive-clean.test.mjs` using temporary workspaces to verify dry-run output,
+  explicit target removal, `.env.example` preservation, source preservation, and package-root
+  refusal.
+- Added package scripts for `archive:clean`, `archive:clean:dry-run`, and
+  `archive:clean:test`; `scripts/check.mjs` now includes the cleanup test.
+- Added root `conductor.json` with shared setup, run, and archive commands. Setup includes
+  `pnpm browsers:install` so Playwright and Storybook browser-backed tests are ready in new
+  workspaces.
+- Updated `COMMANDS.md` with human-facing archive cleanup commands.
+
+Archive cleanup verification:
+
+- `rtk pnpm archive:clean:test` passed (3 Node tests).
+- `rtk pnpm archive:clean:dry-run` passed and listed generated/local cleanup targets without
+  deleting them.
+- `rtk pnpm check` passed (Biome, TypeScript, Vitest 43 files / 280 tests, research CLI
+  tests, archive cleanup tests, Vite build).
+- `rtk pnpm test:e2e` passed (29 passed / 1 skipped).
+- `rtk pnpm test:stories` passed (9 files / 31 stories).
+- `rtk pnpm build` passed.
 
 ## Phase 2 — Theme-match foundation
 

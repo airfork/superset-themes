@@ -16,6 +16,19 @@ pnpm browsers:install
 
 Install the Chromium browser used by Playwright and Storybook tests.
 
+```bash
+pnpm archive:clean:dry-run
+```
+
+Preview the generated, cached, and local-only files that archive cleanup would remove.
+
+```bash
+pnpm archive:clean
+```
+
+Remove dependency folders, build/test outputs, logs, local env files, and agent scratch files
+before archiving a workspace.
+
 ## Development
 
 ```bash
