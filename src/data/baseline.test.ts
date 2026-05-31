@@ -16,6 +16,22 @@ describe("baseline themes", () => {
     expect(baseline.map((entry) => entry.meta.family)).toEqual(["Superset", "Superset"]);
   });
 
+  it("tracks Superset Light's live app neutral tokens after hex conversion", () => {
+    const supersetLight = getBaselineThemes().find((entry) => entry.theme.id === "superset-light");
+
+    expect(supersetLight?.theme.ui).toMatchObject({
+      accent: "#e8e8e8",
+      background: "#ffffff",
+      border: "#e5e5e5",
+      foreground: "#0a0a0a",
+      muted: "#f5f5f5",
+      mutedForeground: "#737373",
+      primary: "#171717",
+      primaryForeground: "#fafafa",
+      ring: "#a1a1a1",
+    });
+  });
+
   it("leads with baselines, then Featured, then the remaining catalog order", () => {
     const ordered = getBaselineFirstThemes();
     const pinnedIds = [...BASELINE_IDS, ...FEATURED_IDS];

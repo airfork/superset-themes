@@ -49,7 +49,7 @@ select {
 }
 
 :focus-visible {
-  outline: 3px solid var(--preview-ui-ring);
+  outline: 3px solid var(--preview-focus-ring);
   outline-offset: 3px;
 }
 
@@ -274,7 +274,7 @@ kbd {
 }
 
 .compare-view__back:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 1px;
 }
 
@@ -309,10 +309,10 @@ kbd {
 
 @keyframes compare-undo-attention {
   from {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--preview-ui-ring) 70%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
   }
   to {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--preview-ui-ring) 0%, transparent);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--preview-focus-ring) 0%, transparent);
   }
 }
 
@@ -327,7 +327,7 @@ kbd {
 }
 
 .compare-view__undo:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
   border-radius: 3px;
 }
@@ -378,19 +378,19 @@ kbd {
    slots' overflow would clip; not a side border, which would read as a stripe)
    so it never shifts layout. The static ring is the reduced-motion fallback. */
 .compare-slot[data-attention="true"] {
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-ui-ring) 70%, transparent);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
   animation: compare-slot-attention 1100ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes compare-slot-attention {
   0% {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-ui-ring) 0%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 0%, transparent);
   }
   28% {
-    box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--preview-ui-ring) 90%, transparent);
+    box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--preview-focus-ring) 90%, transparent);
   }
   100% {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-ui-ring) 70%, transparent);
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
   }
 }
 
@@ -444,7 +444,7 @@ kbd {
 }
 
 .compare-slot__unpin:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -720,7 +720,7 @@ kbd {
 }
 
 .lab-color-field__swatch:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -824,7 +824,7 @@ kbd {
 }
 
 .lab-tokens__reroll:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -999,7 +999,7 @@ kbd {
 
 .lab-footer__back:focus-visible,
 .lab-footer__action:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -1087,7 +1087,7 @@ kbd {
 }
 
 .scene-tabs__tab:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -1149,7 +1149,7 @@ kbd {
 }
 
 .pane-nameplate__name--expandable:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 3px;
 }
 
@@ -1259,7 +1259,7 @@ kbd {
 }
 
 .pane-nameplate__action:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 1px;
 }
 
@@ -1304,6 +1304,18 @@ kbd {
 
 /* Pane — Workspace scene (Superset-shape three-column thread) */
 .scene-workspace {
+  --scene-workspace-active-row: var(--preview-ui-muted);
+  --scene-workspace-hover-row: color-mix(in srgb, var(--preview-ui-accent) 50%, transparent);
+  --scene-workspace-muted-icon: color-mix(
+    in srgb,
+    var(--preview-ui-muted-foreground) 85%,
+    transparent
+  );
+  --scene-workspace-sidebar: color-mix(
+    in srgb,
+    var(--preview-ui-background) 98.5%,
+    var(--preview-ui-foreground)
+  );
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
@@ -1324,7 +1336,7 @@ kbd {
   gap: 6px;
   padding: 10px 0 0;
   border-right: 1px solid var(--preview-ui-border);
-  background: var(--preview-ui-background);
+  background: var(--scene-workspace-sidebar);
   color: var(--preview-ui-foreground);
   min-width: 0;
   font-size: 14px;
@@ -1352,7 +1364,7 @@ kbd {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-muted-foreground);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -1361,7 +1373,8 @@ kbd {
 }
 
 .scene-workspace__team:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, transparent);
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-foreground);
 }
 
 .scene-workspace__team-mark {
@@ -1370,8 +1383,8 @@ kbd {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--preview-ui-foreground) 12%, transparent);
-  color: var(--preview-ui-foreground);
+  background: var(--preview-ui-muted);
+  color: var(--preview-ui-muted-foreground);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1390,7 +1403,7 @@ kbd {
   flex-shrink: 0;
   width: 12px;
   height: 12px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
 }
 
 .scene-workspace__nav {
@@ -1405,7 +1418,7 @@ kbd {
   gap: 10px;
   padding: 6px 10px;
   border-radius: 6px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 80%, transparent);
+  color: var(--preview-ui-muted-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1418,7 +1431,7 @@ kbd {
 }
 
 .scene-workspace__nav a:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
@@ -1427,7 +1440,7 @@ kbd {
 }
 
 .scene-workspace__new-workspace-trailing {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
 }
 
 .scene-workspace__divider {
@@ -1463,7 +1476,7 @@ kbd {
 }
 
 .scene-workspace__project-header:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, transparent);
+  background: var(--scene-workspace-hover-row);
 }
 
 .scene-workspace__project-avatar {
@@ -1492,7 +1505,7 @@ kbd {
 .scene-workspace__project-count {
   font-size: 12px;
   font-weight: 400;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: var(--preview-ui-muted-foreground);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1511,22 +1524,22 @@ kbd {
   gap: 10px;
   padding: 6px 12px 6px 24px;
   border-radius: 6px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 80%, transparent);
+  color: var(--preview-ui-muted-foreground);
   font-size: 13px;
   cursor: pointer;
 }
 
 .scene-workspace__branches li:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, transparent);
+  background: var(--scene-workspace-hover-row);
 }
 
 .scene-workspace__branches li[data-active] {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  background: var(--scene-workspace-active-row);
   color: var(--preview-ui-foreground);
 }
 
 .scene-workspace__branches li[data-active]:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 9%, transparent);
+  background: var(--preview-ui-accent);
 }
 
 .scene-workspace__branch-icon {
@@ -1534,7 +1547,7 @@ kbd {
   place-items: center;
   width: 16px;
   height: 16px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
 }
 
 .scene-workspace__branch-icon svg {
@@ -1567,7 +1580,7 @@ kbd {
 
 .scene-workspace__branch-added,
 .scene-workspace__branch-removed {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 45%, transparent);
+  color: var(--preview-ui-muted-foreground);
 }
 
 .scene-workspace__branches li[data-active] .scene-workspace__branch-added {
@@ -1598,7 +1611,7 @@ kbd {
   min-height: 38px;
   padding: 0 12px;
   border-top: 1px solid var(--preview-ui-border);
-  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
+  color: var(--preview-ui-muted-foreground);
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
@@ -1611,7 +1624,7 @@ kbd {
 }
 
 a.scene-workspace__footer-row:hover {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: var(--preview-ui-foreground);
 }
 
 .scene-workspace__footer-row--settings {
@@ -1632,7 +1645,7 @@ a.scene-workspace__footer-row:hover {
   min-width: 0;
   padding: 6px 8px;
   border-radius: 8px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
+  color: var(--preview-ui-muted-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1640,7 +1653,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__settings-link:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
@@ -1657,7 +1670,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
   cursor: pointer;
 }
 
@@ -1667,14 +1680,14 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__help-button:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
 .scene-workspace__footer-meta {
   font-size: 10px;
   font-weight: 400;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: var(--preview-ui-muted-foreground);
   font-variant-numeric: tabular-nums;
   letter-spacing: normal;
 }
@@ -1710,7 +1723,7 @@ a.scene-workspace__footer-row:hover {
   width: 160px;
   flex-shrink: 0;
   border-right: 1px solid var(--preview-ui-border);
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: var(--preview-ui-muted-foreground);
 }
 
 .scene-workspace__session[data-active] {
@@ -1752,7 +1765,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: var(--scene-workspace-muted-icon);
   opacity: 0;
   cursor: pointer;
 }
@@ -1768,7 +1781,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__session-close:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 10%, transparent);
+  background: var(--preview-ui-accent);
   color: var(--preview-ui-foreground);
 }
 
@@ -1779,7 +1792,7 @@ a.scene-workspace__footer-row:hover {
   flex-shrink: 0;
   border: 0;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 60%, transparent);
+  color: var(--preview-ui-muted-foreground);
   cursor: pointer;
 }
 
@@ -1789,7 +1802,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__session-new:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
@@ -1817,7 +1830,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
   cursor: pointer;
   margin-right: 4px;
 }
@@ -1849,7 +1862,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: var(--preview-ui-muted-foreground);
   font: inherit;
   font-size: 12px;
   font-weight: 400;
@@ -1857,12 +1870,12 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__tab:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
 .scene-workspace__tab[data-active] {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 8%, transparent);
+  background: var(--preview-ui-muted);
   color: var(--preview-ui-foreground);
 }
 
@@ -1872,7 +1885,7 @@ a.scene-workspace__footer-row:hover {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 80%, transparent);
+  color: var(--preview-ui-muted-foreground);
   opacity: 0.9;
 }
 
@@ -1911,7 +1924,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__run:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  background: var(--scene-workspace-hover-row);
 }
 
 .scene-workspace__run-icon {
@@ -1927,7 +1940,7 @@ a.scene-workspace__footer-row:hover {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: var(--preview-ui-muted-foreground);
 }
 
 .scene-workspace__run-chevron {
@@ -1937,8 +1950,8 @@ a.scene-workspace__footer-row:hover {
   height: 24px;
   border: 1px solid color-mix(in srgb, var(--preview-ui-border) 50%, transparent);
   border-radius: 0 6px 6px 0;
-  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  background: var(--preview-ui-muted);
+  color: var(--scene-workspace-muted-icon);
   cursor: pointer;
 }
 
@@ -1997,7 +2010,7 @@ a.scene-workspace__footer-row:hover {
 .scene-workspace__subheader-title svg {
   width: 12px;
   height: 12px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
 }
 
 .scene-workspace__subheader-actions {
@@ -2015,7 +2028,7 @@ a.scene-workspace__footer-row:hover {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: var(--scene-workspace-muted-icon);
   cursor: pointer;
 }
 
@@ -2025,7 +2038,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__icon-button:hover {
-  background: color-mix(in srgb, var(--preview-ui-foreground) 8%, transparent);
+  background: var(--scene-workspace-hover-row);
   color: var(--preview-ui-foreground);
 }
 
@@ -2034,17 +2047,25 @@ a.scene-workspace__footer-row:hover {
 .scene-workspace__terminal {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto auto auto;
-  background: var(--preview-ui-background);
+  background: var(--preview-terminal-background);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 84%,
+    var(--preview-terminal-background)
+  );
   overflow: hidden;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono", "Roboto Mono", monospace;
+  font-family: var(--app-font-terminal);
   font-size: 12.5px;
   line-height: 1.55;
 }
 
 .scene-workspace__activity {
   padding: 6px 18px 10px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 72%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__activity-status {
@@ -2064,7 +2085,11 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__activity-meta {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__activity-tip {
@@ -2073,11 +2098,19 @@ a.scene-workspace__footer-row:hover {
   gap: 6px;
   margin-left: 16px;
   margin-top: 2px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 75%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__activity-tip-glyph {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 44%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__terminal-output {
@@ -2087,7 +2120,11 @@ a.scene-workspace__footer-row:hover {
   padding: 14px 18px 0;
   border: 0;
   background: transparent;
-  color: var(--preview-ui-foreground);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 84%,
+    var(--preview-terminal-background)
+  );
   font: inherit;
   resize: none;
   white-space: pre;
@@ -2102,20 +2139,24 @@ a.scene-workspace__footer-row:hover {
   padding: 0 18px;
   border-top: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-terminal-foreground);
 }
 
 .scene-workspace__prompt-glyph {
   font-size: 18px;
   line-height: 1;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 55%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 55%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__terminal-cursor {
   display: inline-block;
   width: 7px;
   height: 14px;
-  background: var(--preview-ui-foreground);
+  background: var(--preview-terminal-cursor);
   opacity: 0.85;
   animation: scene-workspace-cursor-blink 1.1s steps(2) infinite;
 }
@@ -2127,7 +2168,11 @@ a.scene-workspace__footer-row:hover {
   min-height: 41px;
   padding: 0 18px;
   font-size: 11.5px;
-  color: color-mix(in srgb, var(--preview-ui-foreground) 65%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 64%,
+    var(--preview-terminal-background)
+  );
 }
 
 .scene-workspace__statusbar-perm {
@@ -2136,12 +2181,20 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__statusbar-dim {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 70%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
   font-weight: 400;
 }
 
 .scene-workspace__statusbar-meta {
-  color: color-mix(in srgb, var(--preview-ui-foreground) 50%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
 }
 
 @keyframes scene-workspace-cursor-blink {
@@ -2315,7 +2368,7 @@ a.scene-workspace__footer-row:hover {
 
 .scene-settings__radio:has(input:focus-visible),
 .scene-settings__check:has(input:focus-visible) {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -2462,15 +2515,15 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-settings__destructive:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
 .scene-settings__input:focus-visible,
 .scene-settings__select:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 1px;
-  border-color: var(--preview-ui-ring);
+  border-color: var(--preview-focus-ring);
 }
 
 @media (max-width: 720px) {
@@ -2540,7 +2593,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .chrome-topbar__search:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -2585,7 +2638,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .chrome-topbar__repo:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -2637,7 +2690,7 @@ a.scene-workspace__footer-row:hover {
 }
 
 .chrome-bottombar__shortcuts:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
   border-radius: 5px;
 }
@@ -2835,11 +2888,11 @@ a.scene-workspace__footer-row:hover {
 }
 
 .rail-row:focus-visible {
-  /* Focus rings use --preview-ui-ring (an AA-verified focus token on every theme)
+  /* Focus rings use --preview-focus-ring (a 3:1-verified focus token on every theme)
      rather than --row-accent. The row's own accent still colors the dot, hover, and
      selected tints; focus is a pointer cue and needs guaranteed 3:1 against the
      background regardless of the row's accent saturation. */
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: -2px;
 }
 
@@ -2953,7 +3006,7 @@ button.rail-search {
 
 .rail-search:focus-visible,
 .rail-search:focus-within {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 
@@ -3130,7 +3183,7 @@ button.rail-search {
 }
 
 .palette__search:has(.palette__input:focus-visible) {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: -2px;
 }
 
@@ -3346,7 +3399,7 @@ button.rail-search {
 }
 
 .shortcuts__close:focus-visible {
-  outline: 2px solid var(--preview-ui-ring);
+  outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }
 

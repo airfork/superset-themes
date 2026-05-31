@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
+import { getFocusRingColor } from "../theme-core/chromeTokens";
 import { getThemeCssVars } from "./themeCssVars";
 
 function requireValue<T>(value: T | undefined): T {
@@ -21,6 +22,7 @@ describe("getThemeCssVars", () => {
       "--preview-ui-destructive": theme.ui.destructive,
       "--preview-ui-destructive-foreground": theme.ui.destructiveForeground,
       "--preview-ui-foreground": theme.ui.foreground,
+      "--preview-focus-ring": getFocusRingColor(theme),
       "--preview-ui-primary": theme.ui.primary,
       "--preview-ui-primary-foreground": theme.ui.primaryForeground,
       "--preview-ui-selection": theme.ui.selection,

@@ -1,4 +1,8 @@
-import { getChromeMutedForeground, getChromeSurface } from "../theme-core/chromeTokens";
+import {
+  getChromeMutedForeground,
+  getChromeSurface,
+  getFocusRingColor,
+} from "../theme-core/chromeTokens";
 import type { SupersetTheme } from "../theme-core/themeTypes";
 
 export type ThemeCssVars = Record<`--preview-${string}` | `--chrome-${string}`, string>;
@@ -9,6 +13,7 @@ export function getThemeCssVars(theme: SupersetTheme): ThemeCssVars {
     // own AA legibility and primary/secondary split on every theme. See chromeTokens.
     "--chrome-surface": getChromeSurface(theme),
     "--chrome-muted-foreground": getChromeMutedForeground(theme),
+    "--preview-focus-ring": getFocusRingColor(theme),
     "--preview-ui-accent": theme.ui.accent,
     "--preview-ui-accent-foreground": theme.ui.accentForeground,
     "--preview-ui-background": theme.ui.background,

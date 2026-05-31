@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
-import { getChromeMutedForeground, getChromeSurface } from "./chromeTokens";
+import { getChromeMutedForeground, getChromeSurface, getFocusRingColor } from "./chromeTokens";
 import { getContrastRatio } from "./contrast";
 
 const AA = 4.5;
@@ -61,5 +61,14 @@ describe("getChromeMutedForeground", () => {
     const mutedRatio = getContrastRatio(muted, surface);
     expect(mutedRatio).toBeLessThan(primary - 0.5);
     expect(mutedRatio).toBeGreaterThanOrEqual(AA);
+  });
+});
+
+describe("getFocusRingColor", () => {
+  it("keeps the exported Superset Light ring token exact but derives an accessible focus ring", () => {
+    const { theme } = entryFor("superset-light");
+
+    expect(theme.ui.ring).toBe("#a1a1a1");
+    expect(getFocusRingColor(theme)).toBe("#737373");
   });
 });

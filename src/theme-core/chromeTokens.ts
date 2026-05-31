@@ -12,6 +12,7 @@ import type { SupersetTheme } from "./themeTypes";
 // math a stylesheet cannot do.
 
 const AA_CONTRAST = 4.5;
+const NON_TEXT_CONTRAST = 3.0;
 // Muted text aims for this share of the primary text's contrast, floored at AA. High
 // enough to stay comfortably legible, low enough to read as clearly secondary.
 const HIERARCHY_RATIO = 0.72;
@@ -74,4 +75,21 @@ export function getChromeMutedForeground(theme: SupersetTheme): string {
     }
   }
   return mixSrgb(foreground, surface, low);
+}
+
+export function getFocusRingColor(theme: SupersetTheme): string {
+  const candidates = [
+    theme.ui.ring,
+    theme.ui.mutedForeground,
+    theme.ui.foreground,
+    theme.ui.primary,
+  ].filter((candidate, index, all) => all.indexOf(candidate) === index);
+
+  return (
+    candidates.find(
+      (candidate) =>
+        getContrastRatio(candidate, theme.ui.background) >= NON_TEXT_CONTRAST &&
+        getContrastRatio(candidate, theme.ui.card) >= NON_TEXT_CONTRAST,
+    ) ?? theme.ui.foreground
+  );
 }

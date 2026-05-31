@@ -24,7 +24,7 @@
     "destructiveForeground": "#fafafa",
     "border": "#e5e5e5",
     "input": "#e5e5e5",
-    "ring": "#525252",
+    "ring": "#a1a1a1",
     "selection": "#add6ff",
     "selectionForeground": "#000000"
   },

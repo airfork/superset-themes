@@ -665,9 +665,42 @@ Phase 10 checkpoint verification:
   screenshot capture timed out, matching prior local-browser behavior in this worktree.
 - `rtk git diff --check` passed.
 
+Phase 10 follow-up — Superset Light calibration (2026-05-31):
+
+- Relaunched the installed Superset Electron app with `--remote-debugging-port=9222` and used CDP
+  to sample live light-theme computed tokens plus xterm styling. The live light UI still uses
+  OKLCH shadcn neutrals, but `ui.ring` converts to `#a1a1a1`, not the prior over-dark `#525252`.
+- Preserved the exported Superset Light baseline token as `ui.ring = #a1a1a1`, then added a derived
+  app-facing `--preview-focus-ring` so visible focus outlines continue to clear the repo's 3:1
+  non-text contrast gate. For Superset Light, that derived ring resolves to `#737373`.
+- Reworked the Workspace scene's light coloration to match the real app's hierarchy more closely:
+  secondary chrome labels now use `--preview-ui-muted-foreground`, the workspace rail derives a
+  sidebar-like surface from background/foreground, and the fake Claude terminal reads terminal
+  tokens with contrast-safe softened secondary transcript text.
+
+Phase 10 follow-up verification:
+
+- `rtk pnpm test src/data/baseline.test.ts src/styles/workspaceSceneStyleContracts.test.ts src/theme-core/chromeTokens.test.ts src/theme-core/focusRingContrast.test.ts src/preview/themeCssVars.test.ts`
+  passed: 5 files / 29 tests.
+- `rtk pnpm check` passed: Biome 160 files, TypeScript, Vitest 43 files / 280 tests, research
+  script tests 6 tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 tests.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` passed: 14 catalog themes checked across 7 contrast pairs each.
+- `rtk npx impeccable detect src/pane src/styles/global.css` passed.
+- Fetched the latest Web Interface Guidelines command from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed the changed color/focus/semantic UI surfaces; no further issues remained after the
+  focus-ring and Storybook a11y fixes.
+- Playwright visual smoke on `http://127.0.0.1:5175/?theme=superset-light` confirmed
+  `--preview-ui-ring = #a1a1a1`, `--preview-focus-ring = #737373`, and the muted Workspace chrome.
+- `rtk git diff --check` passed.
+
 ## Next Step
 
-Review and commit the Superset baseline/Lab-default checkpoint.
+User validation of the calibrated Superset Light preview against the live Superset app.
 
 ## Resumability Protocol
 
