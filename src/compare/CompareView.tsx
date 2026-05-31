@@ -174,8 +174,13 @@ export function CompareView({
         <p className="compare-view__status" role="status" aria-live="polite">
           {notice ? (
             <>
-              Slot {notice.slot === "a" ? "A" : "B"}{" "}
-              {notice.kind === "replaced" ? "replaced" : "cleared"}
+              {notice.kind === "replaced" ? (
+                <>
+                  {noticeName} replaced in Slot {notice.slot === "a" ? "A" : "B"}
+                </>
+              ) : (
+                <>Slot {notice.slot === "a" ? "A" : "B"} cleared</>
+              )}
               <span className="compare-view__status-sep" aria-hidden="true">
                 ·
               </span>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { catalogThemes } from "../data/catalog";
 import { getFeaturedThemes } from "../data/featured";
+import { foldForMatch } from "../text/foldForMatch";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import { RailRow } from "./RailRow";
 import { RailSearch } from "./RailSearch";
@@ -25,15 +26,6 @@ interface RowDescriptor {
 
 function byName(a: CatalogThemeEntry, b: CatalogThemeEntry): number {
   return a.theme.name.localeCompare(b.theme.name);
-}
-
-// Strip diacritics so a plain-ASCII query ("rose pine") still matches an accented
-// name ("Rosé Pine Dawn"); without this the filter dead-ends on the one accented theme.
-function foldForFilter(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
 }
 
 function rowKeyFor(section: RowSection, themeId: string): string {
@@ -84,12 +76,12 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
     [featured, lights, darks],
   );
 
-  const normalizedQuery = foldForFilter(query.trim());
+  const normalizedQuery = foldForMatch(query.trim());
   const visibleRows = useMemo(
     () =>
       orderedRows.filter(
         (row) =>
-          normalizedQuery === "" || foldForFilter(row.entry.theme.name).includes(normalizedQuery),
+          normalizedQuery === "" || foldForMatch(row.entry.theme.name).includes(normalizedQuery),
       ),
     [orderedRows, normalizedQuery],
   );

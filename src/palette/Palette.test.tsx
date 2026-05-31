@@ -58,6 +58,17 @@ describe("Palette", () => {
     expect(screen.queryByRole("option", { name: /^nord$/i })).not.toBeInTheDocument();
   });
 
+  it("folds diacritics so a plain-ASCII query surfaces an accented theme", async () => {
+    const user = userEvent.setup();
+    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
+    openPalette();
+
+    // "rose pine" (no accent) must still reach "Rosé Pine Dawn"; the rail already
+    // folds, and ⌘K is the canonical search surface, so it must not lag behind.
+    await user.keyboard("rose pine");
+    expect(screen.getByRole("option", { name: /rosé pine dawn/i })).toBeInTheDocument();
+  });
+
   it("moves the active option with ArrowDown", async () => {
     const user = userEvent.setup();
     render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);

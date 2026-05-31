@@ -1,3 +1,5 @@
+import { foldForMatch } from "../text/foldForMatch";
+
 export interface FuzzyMatch {
   // 0 = exact, 1 = prefix, 2 = subsequence. Lower tiers always rank first.
   tier: number;
@@ -11,8 +13,8 @@ export interface RankableItem {
 }
 
 export function scoreMatch(query: string, target: string): FuzzyMatch | null {
-  const q = query.trim().toLowerCase();
-  const t = target.toLowerCase();
+  const q = foldForMatch(query.trim());
+  const t = foldForMatch(target);
   if (q === "") {
     return { tier: 2, score: 0 };
   }

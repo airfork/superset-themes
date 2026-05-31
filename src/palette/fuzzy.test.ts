@@ -33,6 +33,13 @@ describe("scoreMatch", () => {
   it("is case-insensitive", () => {
     expect(scoreMatch("NORD", "nord")?.tier).toBe(0);
   });
+
+  it("folds diacritics so a plain-ASCII query matches an accented target", () => {
+    const match = scoreMatch("rose pine", "Rosé Pine Dawn");
+    expect(match).not.toBeNull();
+    // After folding, "rose pine" is a clean prefix of "rose pine dawn".
+    expect(match?.tier).toBe(1);
+  });
 });
 
 const items: RankableItem[] = [

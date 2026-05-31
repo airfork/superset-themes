@@ -226,8 +226,21 @@ describe("CompareView", () => {
     await user.click(screen.getByRole("button", { name: /pin third theme/i }));
 
     const status = screen.getByRole("status");
-    expect(status).toHaveTextContent(/slot a replaced/i);
+    expect(status).toHaveTextContent(/replaced/i);
     expect(within(status).getByRole("button", { name: /undo/i })).toBeInTheDocument();
+  });
+
+  it("names the displaced theme in the replacement notice so the loss is legible at a glance", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    // Slot a (least-recent) is replaced; the outgoing theme is Tokyo Night. "Slot A
+    // replaced" alone makes the user reconstruct what vanished — name it instead.
+    await user.click(screen.getByRole("button", { name: /pin third theme/i }));
+
+    expect(screen.getByRole("status")).toHaveTextContent(/tokyo night replaced in slot a/i);
   });
 
   it("restores the displaced theme to its original slot when Undo follows a replacement", async () => {
