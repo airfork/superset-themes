@@ -2632,6 +2632,23 @@ a.scene-workspace__footer-row:hover {
   font-family: var(--app-font-chrome);
 }
 
+/* The "?" hint is the one pressable chip in the cluster (opens the shortcut
+   reference); strip the button chrome so it sits flush with the static hints. */
+.chrome-bottombar__shortcuts {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.chrome-bottombar__shortcuts:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
 /* Chip the pressable key so it reads as an affordance, not muted filler. The
    glyph takes full foreground while the trailing verb stays muted. */
 .chrome-bottombar__key {
@@ -2643,6 +2660,12 @@ a.scene-workspace__footer-row:hover {
   border-radius: 4px;
   background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--chrome-surface));
   color: var(--preview-ui-foreground);
+}
+
+/* Defined after the base chip so the hover override reads in ascending
+   specificity (the "?" chip brightens when its button is hovered). */
+.chrome-bottombar__shortcuts:hover .chrome-bottombar__key {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 14%, var(--chrome-surface));
 }
 
 .chrome-bottombar__slot {
@@ -2709,16 +2732,62 @@ a.scene-workspace__footer-row:hover {
   border-right: 0;
 }
 
+/* The rail disclosure toggle is mobile-only; on desktop the rail stays docked. */
+.layout-shell__rail-toggle {
+  display: none;
+}
+
+.layout-shell__rail-toggle-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease-out;
+}
+
+.layout-shell__rail-toggle[aria-expanded="true"] .layout-shell__rail-toggle-icon {
+  transform: rotate(180deg);
+}
+
 @media (max-width: 720px) {
   .layout-shell__body {
     grid-template-columns: 1fr;
   }
 
+  .layout-shell__rail-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 16px;
+    background: var(--chrome-surface);
+    border: 0;
+    border-bottom: 1px solid var(--preview-ui-border);
+    color: var(--preview-ui-foreground);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  /* Collapsed by default so the preview + actions own the viewport; opening reveals
+     the rail as a self-scrolling panel that never pushes the pane fully offscreen. */
   .layout-shell__rail {
+    display: none;
     position: static;
-    max-height: none;
+    max-height: 60vh;
     border-right: 0;
     border-bottom: 1px solid var(--preview-ui-border);
+  }
+
+  .layout-shell__rail[data-open] {
+    display: block;
+  }
+
+  /* Touch devices can't press these keyboard hints (↓ / ⌘K / . / Esc), so drop the
+     whole cluster rather than show dead affordances. The facts stay. */
+  .chrome-bottombar__hints {
+    display: none;
   }
 }
 
@@ -3173,4 +3242,119 @@ button.rail-search {
   color: color-mix(in srgb, var(--preview-ui-primary) 80%, var(--preview-ui-popover-foreground));
   font-size: 0.78rem;
   font-weight: 600;
+}
+
+/* Keyboard-shortcut reference — the palette's quieter sibling. Shares the scrim,
+   surface, and key chips so the two overlays read as one family. */
+.shortcuts__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16vh 16px 16px;
+  background: color-mix(in srgb, oklch(0.17 0.015 265) 64%, transparent);
+}
+
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(520px, 100%);
+  padding: 16px 18px 18px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 10px;
+  background: var(--chrome-surface);
+  color: var(--preview-ui-popover-foreground);
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
+}
+
+.shortcuts__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shortcuts__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.shortcuts__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--chrome-muted-foreground);
+  cursor: pointer;
+}
+
+.shortcuts__close:hover {
+  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 8%, transparent);
+  color: var(--preview-ui-popover-foreground);
+}
+
+.shortcuts__close:focus-visible {
+  outline: 2px solid var(--preview-ui-ring);
+  outline-offset: 2px;
+}
+
+.shortcuts__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px 24px;
+}
+
+.shortcuts__group-title {
+  margin: 0 0 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--chrome-muted-foreground);
+}
+
+.shortcuts__list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcuts__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+}
+
+.shortcuts__label {
+  font-size: 0.86rem;
+}
+
+.shortcuts__keys {
+  flex: 0 0 auto;
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* Same chip as the palette's shortcut key, tinted for the popover surface. */
+.shortcuts__key {
+  font-family: var(--app-font-chrome);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 2px 6px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 8%, transparent);
+  color: var(--preview-ui-popover-foreground);
 }

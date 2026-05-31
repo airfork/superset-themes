@@ -20,8 +20,8 @@ function makeCommands(onSelectTheme: () => void, actionRun: () => void): Palette
   ];
 }
 
-function Host({ commands }: { commands: PaletteCommand[] }) {
-  const { paletteProps } = usePalette(commands);
+function Host({ commands, seedQuery }: { commands: PaletteCommand[]; seedQuery?: string }) {
+  const { paletteProps } = usePalette(commands, { seedQuery });
   return <Palette {...paletteProps} />;
 }
 
@@ -54,6 +54,17 @@ describe("Palette", () => {
     openPalette();
 
     await user.keyboard("rose");
+    expect(screen.getByRole("option", { name: /rosé pine dawn/i })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: /^nord$/i })).not.toBeInTheDocument();
+  });
+
+  it("seeds the query from the rail filter when ⌘K opens, carrying the typed text over", () => {
+    render(<Host commands={makeCommands(vi.fn(), vi.fn())} seedQuery="rose" />);
+    openPalette();
+
+    // The rail's empty-state hint sends users to ⌘K; the query they already typed
+    // must arrive with them, pre-filtered, not get thrown away.
+    expect(screen.getByRole("combobox")).toHaveValue("rose");
     expect(screen.getByRole("option", { name: /rosé pine dawn/i })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /^nord$/i })).not.toBeInTheDocument();
   });

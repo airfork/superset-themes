@@ -4,6 +4,9 @@ import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 interface CatalogBottomBarProps {
   variant?: "catalog";
   entry: CatalogThemeEntry;
+  // When set, the hint cluster gains a "?" trigger that opens the full shortcut
+  // reference. Omitted on surfaces that don't host the overlay (e.g. stories).
+  onShowShortcuts?: () => void;
 }
 
 interface CompareBottomBarProps {
@@ -42,10 +45,16 @@ export function BottomBar(props: BottomBarProps) {
   if (props.variant === "compare") {
     return <CompareBottomBar a={props.a} b={props.b} />;
   }
-  return <CatalogBottomBar entry={props.entry} />;
+  return <CatalogBottomBar entry={props.entry} onShowShortcuts={props.onShowShortcuts} />;
 }
 
-function CatalogBottomBar({ entry }: { entry: CatalogThemeEntry }) {
+function CatalogBottomBar({
+  entry,
+  onShowShortcuts,
+}: {
+  entry: CatalogThemeEntry;
+  onShowShortcuts?: () => void;
+}) {
   // Drop the family fact (and its separator) when it only echoes the name, e.g.
   // the "Tokyo Night" theme in the "Tokyo Night" family.
   const showFamily = entry.meta.family !== entry.theme.name;
@@ -68,6 +77,19 @@ function CatalogBottomBar({ entry }: { entry: CatalogThemeEntry }) {
         <KeyHint keyLabel="⌘K" />
         <Sep />
         <KeyHint keyLabel="." action="pin" />
+        {onShowShortcuts ? (
+          <>
+            <Sep />
+            <button
+              type="button"
+              className="chrome-bottombar__hint chrome-bottombar__shortcuts"
+              aria-label="Keyboard shortcuts"
+              onClick={onShowShortcuts}
+            >
+              <kbd className="chrome-bottombar__key">?</kbd>
+            </button>
+          </>
+        ) : null}
       </div>
     </footer>
   );

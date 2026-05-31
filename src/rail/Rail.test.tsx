@@ -64,10 +64,28 @@ describe("Rail", () => {
       .getAllByRole("button")
       .filter((b) => b.getAttribute("aria-current") === "true");
     expect(selected).toHaveLength(2);
-    // Featured + Light section both show Solarized Light, both flagged.
-    expect(selected.every((node) => node.getAttribute("aria-label") === "Solarized Light")).toBe(
-      true,
-    );
+    // Featured + Light section both show Solarized Light, both flagged. The Light
+    // occurrence carries the back-reference; the Featured one stays plain.
+    const labels = selected.map((node) => node.getAttribute("aria-label")).sort();
+    expect(labels).toEqual(["Solarized Light", "Solarized Light, also in Featured"]);
+  });
+
+  it("annotates a featured theme's section row while leaving its Featured row plain", () => {
+    renderRail();
+    const featured = screen.getByRole("region", { name: "Featured" });
+    const dark = screen.getByRole("region", { name: "Dark" });
+    // Tokyo Night is featured and dark: plain up top, back-referenced down in Dark.
+    expect(within(featured).getByRole("button", { name: "Tokyo Night" })).toBeInTheDocument();
+    expect(
+      within(dark).getByRole("button", { name: "Tokyo Night, also in Featured" }),
+    ).toBeInTheDocument();
+  });
+
+  it("leaves a non-featured theme's section row unannotated", () => {
+    renderRail();
+    const dark = screen.getByRole("region", { name: "Dark" });
+    expect(within(dark).getByRole("button", { name: "Dracula" })).toBeInTheDocument();
+    expect(within(dark).queryByRole("button", { name: "Dracula, also in Featured" })).toBeNull();
   });
 
   it("invokes onSelect with the theme id when a row is clicked", async () => {
@@ -88,6 +106,14 @@ describe("Rail", () => {
     expect(screen.getByRole("button", { name: "Dracula" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Tokyo Night" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Aurora Light" })).not.toBeInTheDocument();
+  });
+
+  it("reports filter changes so ⌘K can carry the typed query over", async () => {
+    const user = userEvent.setup();
+    const onFilterChange = vi.fn();
+    renderRail({ onFilterChange });
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "rose");
+    expect(onFilterChange).toHaveBeenLastCalledWith("rose");
   });
 
   it("folds diacritics so a plain-ASCII query matches an accented theme name", async () => {

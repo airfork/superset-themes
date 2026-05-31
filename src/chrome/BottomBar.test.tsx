@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import { catalogThemes } from "../data/catalog";
 import { BottomBar } from "./BottomBar";
 
@@ -38,6 +39,22 @@ describe("BottomBar", () => {
     const footer = screen.getByRole("contentinfo");
     const keys = [...footer.querySelectorAll("kbd")].map((key) => key.textContent);
     expect(keys).toEqual(["↓", "⌘K", "."]);
+  });
+
+  it("offers a shortcuts trigger when a handler is provided, firing it on click", async () => {
+    const user = userEvent.setup();
+    const onShowShortcuts = vi.fn();
+    render(<BottomBar entry={entry("solarized-light")} onShowShortcuts={onShowShortcuts} />);
+
+    const trigger = screen.getByRole("button", { name: /keyboard shortcuts/i });
+    expect(trigger).toHaveTextContent("?");
+    await user.click(trigger);
+    expect(onShowShortcuts).toHaveBeenCalledTimes(1);
+  });
+
+  it("omits the shortcuts trigger when no handler is provided", () => {
+    render(<BottomBar entry={entry("solarized-light")} />);
+    expect(screen.queryByRole("button", { name: /keyboard shortcuts/i })).not.toBeInTheDocument();
   });
 
   it("formats the contrast ratio to one decimal", () => {

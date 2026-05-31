@@ -76,6 +76,8 @@ export function CompareRouteView({
   const { focused, setFocusedId } = useFocusedTheme();
   const [state, setState] = useState<CompareState>(() => seedCompareState(search));
   const [scene, setScene] = useState<SceneId>(search.scene ?? "workspace");
+  // Mirror of the rail's filter so ⌘K can seed itself with whatever's typed there.
+  const [railFilter, setRailFilter] = useState("");
 
   // Chrome stays at the entry-state theme: apply `from` to :root via the provider.
   const fromId = state.enteredFromThemeId;
@@ -148,7 +150,7 @@ export function CompareRouteView({
       run: () => setEntryTheme(nextThemeId(fromId)),
     },
   ];
-  const palette = usePalette(commands);
+  const palette = usePalette(commands, { seedQuery: railFilter });
 
   return (
     <LayoutShell
@@ -156,7 +158,13 @@ export function CompareRouteView({
       palette={palette.paletteProps}
       bottomBar={<BottomBar variant="compare" a={entryFor(state.a)} b={entryFor(state.b)} />}
       rail={
-        <Rail focusedThemeId={fromId} pinnedThemeIds={pinnedThemeIds} hint={hint} onSelect={pin} />
+        <Rail
+          focusedThemeId={fromId}
+          pinnedThemeIds={pinnedThemeIds}
+          hint={hint}
+          onSelect={pin}
+          onFilterChange={setRailFilter}
+        />
       }
       pane={
         <CompareView

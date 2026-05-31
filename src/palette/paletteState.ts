@@ -8,7 +8,7 @@ export interface PaletteState {
 }
 
 export type PaletteAction =
-  | { type: "open" }
+  | { type: "open"; query?: string; focusedIndex?: number }
   | { type: "close" }
   | { type: "setQuery"; query: string; focusedIndex?: number }
   | { type: "move"; direction: "up" | "down"; count: number }
@@ -32,7 +32,14 @@ function clampIndex(index: number, count: number): number {
 export function paletteReducer(state: PaletteState, action: PaletteAction): PaletteState {
   switch (action.type) {
     case "open":
-      return { open: true, query: "", focusedIndex: 0, actionsExpanded: false };
+      // Open with the seeded query (the rail's current filter) so a search typed
+      // in the rail carries over; defaults to a blank palette when there's none.
+      return {
+        open: true,
+        query: action.query ?? "",
+        focusedIndex: action.focusedIndex ?? 0,
+        actionsExpanded: false,
+      };
     case "close":
       return { ...state, open: false };
     case "setQuery":

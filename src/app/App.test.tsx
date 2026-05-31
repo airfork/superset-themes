@@ -53,6 +53,28 @@ describe("App", () => {
     expect(footer).not.toHaveTextContent(/graphite dark/i);
   });
 
+  it("opens the keyboard shortcuts dialog when ? is pressed on the catalog", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByRole("banner");
+
+    await user.keyboard("?");
+    const dialog = await screen.findByRole("dialog", { name: /keyboard shortcuts/i });
+    expect(dialog).toHaveTextContent(/pin the focused theme to compare/i);
+  });
+
+  it("opens shortcuts from the bottom-bar trigger and closes them on Escape", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await screen.findByRole("banner");
+
+    await user.click(screen.getByRole("button", { name: /keyboard shortcuts/i }));
+    expect(await screen.findByRole("dialog", { name: /keyboard shortcuts/i })).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: /keyboard shortcuts/i })).not.toBeInTheDocument();
+  });
+
   it("renders the lab on the shared shell from catalog theme search params", async () => {
     const user = userEvent.setup();
     window.history.replaceState(null, "", "/lab?from=aurora-dark");

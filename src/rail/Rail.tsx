@@ -13,6 +13,8 @@ interface RailProps {
   pinnedThemeIds: ReadonlySet<string>;
   onSelect: (themeId: string) => void;
   hint?: string;
+  // Mirror the filter outward so ⌘K can seed itself with whatever's typed here.
+  onFilterChange?: (query: string) => void;
 }
 
 type RowSection = "featured" | "light" | "dark";
@@ -32,9 +34,24 @@ function rowKeyFor(section: RowSection, themeId: string): string {
   return `rail-row-${section}-${themeId}`;
 }
 
-export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailProps) {
+export function Rail({
+  focusedThemeId,
+  pinnedThemeIds,
+  onSelect,
+  hint,
+  onFilterChange,
+}: RailProps) {
   const [query, setQuery] = useState("");
+  const handleQueryChange = useCallback(
+    (next: string) => {
+      setQuery(next);
+      onFilterChange?.(next);
+    },
+    [onFilterChange],
+  );
   const featured = useMemo(() => getFeaturedThemes(), []);
+  // Themes that have a Featured row, so a later Light/Dark occurrence can name it.
+  const featuredIds = useMemo(() => new Set(featured.map((entry) => entry.theme.id)), [featured]);
   const lights = useMemo(
     () =>
       catalogThemes
@@ -139,6 +156,7 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
       selected={row.themeId === focusedThemeId}
       pinned={pinnedThemeIds.has(row.themeId)}
       variant={row.section === "featured" ? "featured" : "basic"}
+      alsoFeatured={row.section !== "featured" && featuredIds.has(row.themeId)}
       onSelect={() => {
         const nextIndex = visibleRows.findIndex((candidate) => candidate.rowKey === row.rowKey);
         if (nextIndex >= 0) {
@@ -154,7 +172,7 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
   return (
     <div className="rail" ref={containerRef}>
       <div className="rail__search">
-        <RailSearch value={query} onChange={setQuery} inputRef={searchInputRef} />
+        <RailSearch value={query} onChange={handleQueryChange} inputRef={searchInputRef} />
       </div>
       {hint ? (
         <p className="rail__hint" role="status" aria-live="polite">

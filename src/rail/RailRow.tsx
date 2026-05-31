@@ -9,6 +9,10 @@ interface RailRowProps {
   selected: boolean;
   pinned: boolean;
   variant: RailRowVariant;
+  // Set on a section row (Dark/Light) whose theme is also pinned to Featured, so
+  // the accessible name back-references that earlier appearance instead of looking
+  // like a duplicate to a screen-reader user roving the list.
+  alsoFeatured?: boolean;
   onSelect?: () => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLButtonElement>) => void;
   tabIndex?: number;
@@ -22,6 +26,7 @@ export function RailRow({
   selected,
   pinned,
   variant,
+  alsoFeatured = false,
   onSelect,
   onKeyDown,
   tabIndex,
@@ -29,6 +34,17 @@ export function RailRow({
 }: RailRowProps) {
   const themeAccent = entry.theme.ui.accent;
   const themeVariant = entry.theme.type;
+
+  // Build the accessible name from the bare theme name plus any qualifiers, in
+  // reading order: pinned status first, then the Featured back-reference.
+  const labelParts = [entry.theme.name];
+  if (pinned) {
+    labelParts.push("pinned for compare");
+  }
+  if (alsoFeatured) {
+    labelParts.push("also in Featured");
+  }
+  const accessibleName = labelParts.join(", ");
   // Drop the family eyebrow when it only echoes the row's own name (e.g. the
   // "Tokyo Night" family over the "Tokyo Night" theme). It still earns its place
   // where the family groups distinct themes ("Rosé Pine" over "Rosé Pine Dawn").
@@ -50,9 +66,10 @@ export function RailRow({
       onClick={onSelect}
       onKeyDown={onKeyDown}
       aria-current={selected ? "true" : undefined}
-      // Fold pinned state into the accessible name so screen readers announce it.
-      // The Pin SVG inside is aria-hidden because aria-label here overrides children.
-      aria-label={pinned ? `${entry.theme.name}, pinned for compare` : entry.theme.name}
+      // Fold pinned + Featured-duplicate state into the accessible name so screen
+      // readers announce it. The Pin SVG inside is aria-hidden because aria-label
+      // here overrides children.
+      aria-label={accessibleName}
       tabIndex={tabIndex}
       id={id}
     >

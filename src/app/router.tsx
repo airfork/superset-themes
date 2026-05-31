@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
+import { ShortcutsOverlay } from "../chrome/ShortcutsOverlay";
 import {
   buildThemeCommands,
   copyThemeJsonCommand,
@@ -38,6 +39,9 @@ const catalogRoute = createRoute({
     const search = catalogRoute.useSearch();
     const { focused, setFocusedId } = useFocusedTheme();
     const [expanded, setExpanded] = useState(false);
+    // Mirror of the rail's filter so ⌘K can seed itself with whatever's typed there.
+    const [railFilter, setRailFilter] = useState("");
+    const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
     // Sync URL ?theme= into the focused-theme context. Catalog drives, provider follows.
     useEffect(() => {
@@ -78,6 +82,32 @@ const catalogRoute = createRoute({
       return () => window.removeEventListener("keydown", handler);
     }, []);
 
+    // "?" anywhere (except while typing) opens the keyboard-shortcut reference —
+    // the convention power users reach for first.
+    useEffect(() => {
+      const handler = (event: KeyboardEvent) => {
+        if (event.key !== "?" || event.metaKey || event.ctrlKey || event.altKey) {
+          return;
+        }
+        const target = event.target as HTMLElement | null;
+        if (target) {
+          const tag = target.tagName;
+          if (
+            tag === "INPUT" ||
+            tag === "TEXTAREA" ||
+            tag === "SELECT" ||
+            target.isContentEditable
+          ) {
+            return;
+          }
+        }
+        event.preventDefault();
+        setShortcutsOpen(true);
+      };
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    }, []);
+
     const selectTheme = (themeId: string) => {
       setFocusedId(themeId);
       void navigate({ replace: true, search: { ...search, theme: themeId } });
@@ -111,33 +141,38 @@ const catalogRoute = createRoute({
       },
     ];
 
-    const palette = usePalette(commands);
+    const palette = usePalette(commands, { seedQuery: railFilter });
 
     return (
-      <LayoutShell
-        expanded={expanded}
-        onOpenPalette={palette.open}
-        palette={palette.paletteProps}
-        rail={
-          <Rail
-            focusedThemeId={focused.theme.id}
-            pinnedThemeIds={EMPTY_PINNED}
-            onSelect={selectTheme}
-          />
-        }
-        pane={
-          <Pane
-            entry={focused}
-            expanded={expanded}
-            onExpandToggle={() => setExpanded((value) => !value)}
-            onPin={(themeId) => {
-              // Pin to compare enters compare mode with the focused theme as slot a
-              // and as the entry-state theme the chrome keeps showing.
-              void navigate({ to: "/compare", search: { a: themeId, from: themeId } });
-            }}
-          />
-        }
-      />
+      <>
+        <LayoutShell
+          expanded={expanded}
+          onOpenPalette={palette.open}
+          onShowShortcuts={() => setShortcutsOpen(true)}
+          palette={palette.paletteProps}
+          rail={
+            <Rail
+              focusedThemeId={focused.theme.id}
+              pinnedThemeIds={EMPTY_PINNED}
+              onSelect={selectTheme}
+              onFilterChange={setRailFilter}
+            />
+          }
+          pane={
+            <Pane
+              entry={focused}
+              expanded={expanded}
+              onExpandToggle={() => setExpanded((value) => !value)}
+              onPin={(themeId) => {
+                // Pin to compare enters compare mode with the focused theme as slot a
+                // and as the entry-state theme the chrome keeps showing.
+                void navigate({ to: "/compare", search: { a: themeId, from: themeId } });
+              }}
+            />
+          }
+        />
+        <ShortcutsOverlay open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+      </>
     );
   },
   getParentRoute: () => rootRoute,

@@ -80,4 +80,21 @@ describe("RailRow", () => {
       "true",
     );
   });
+
+  it("annotates the accessible name when the theme also appears in Featured", () => {
+    // The section row (Dark/Light) of a featured theme is the row's second pass in
+    // the roving sequence; a screen-reader user hears the name twice with no clue
+    // why. The suffix back-references the earlier Featured listing.
+    render(<RailRow entry={tokyo} selected={false} pinned={false} variant="basic" alsoFeatured />);
+    expect(
+      screen.getByRole("button", { name: "Tokyo Night, also in Featured" }),
+    ).toBeInTheDocument();
+  });
+
+  it("composes the also-in-Featured annotation after the pinned state", () => {
+    render(<RailRow entry={tokyo} selected={false} pinned={true} variant="basic" alsoFeatured />);
+    expect(
+      screen.getByRole("button", { name: "Tokyo Night, pinned for compare, also in Featured" }),
+    ).toBeInTheDocument();
+  });
 });
