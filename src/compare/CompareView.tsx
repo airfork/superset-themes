@@ -10,6 +10,11 @@ import type { CompareSlotId, CompareState } from "./compareState";
 // live comparison status, giving a misclick a short window to be recovered.
 export const UNDO_TIMEOUT_MS = 6000;
 
+// A replacement never steals focus onto Undo (that would interrupt rapid pinning),
+// so a keyboard/SR user has to navigate to it from the pin source. Its window runs
+// longer than a clear's — which auto-focuses Undo and so needs no travel time.
+export const REPLACED_UNDO_TIMEOUT_MS = 9000;
+
 interface CompareViewProps {
   state: CompareState;
   scene: SceneId;
@@ -56,13 +61,38 @@ export function CompareView({
   // Remember the slot that just lost its theme so the status line can offer an
   // Undo. The notice clears itself once recovered or after a short timeout.
   const [notice, setNotice] = useState<CompareNotice | null>(null);
-  // The auto-dismiss is held while the user is on the Undo control, so the one
-  // recovery affordance can't vanish out from under them. Hover and focus are
-  // tracked apart so leaving one doesn't release the hold the other still has.
-  const [undoFocused, setUndoFocused] = useState(false);
+  // The auto-dismiss is held while the user is engaging with the recovery, so the
+  // one Undo affordance can't vanish out from under them. Focus is tracked at the
+  // whole header, not just Undo: a replacement never steals focus onto Undo, so a
+  // keyboard user tabs in via "Back"; pausing the moment they reach the header lets
+  // them finish the short hop to Undo without racing the clock. Hover stays on Undo
+  // itself, and the two are tracked apart so releasing one keeps the other's hold.
+  const [headerFocused, setHeaderFocused] = useState(false);
   const [undoHovered, setUndoHovered] = useState(false);
-  const holdingUndo = undoFocused || undoHovered;
+  const holdingUndo = headerFocused || undoHovered;
   const undoRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Track focus-within the header with native bubbling focusin/focusout (focus/blur
+  // don't bubble), releasing the hold only when focus leaves the header entirely.
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) {
+      return;
+    }
+    const onFocusIn = () => setHeaderFocused(true);
+    const onFocusOut = (event: FocusEvent) => {
+      if (!header.contains(event.relatedTarget as Node | null)) {
+        setHeaderFocused(false);
+      }
+    };
+    header.addEventListener("focusin", onFocusIn);
+    header.addEventListener("focusout", onFocusOut);
+    return () => {
+      header.removeEventListener("focusin", onFocusIn);
+      header.removeEventListener("focusout", onFocusOut);
+    };
+  }, []);
 
   const handleUnpin = (slot: CompareSlotId) => {
     const themeId = state[slot];
@@ -100,7 +130,7 @@ export function CompareView({
 
   useEffect(() => {
     if (!notice) {
-      setUndoFocused(false);
+      setHeaderFocused(false);
       setUndoHovered(false);
       return;
     }
@@ -126,7 +156,8 @@ export function CompareView({
     if (holdingUndo) {
       return;
     }
-    const id = window.setTimeout(() => setNotice(null), UNDO_TIMEOUT_MS);
+    const timeout = notice.kind === "replaced" ? REPLACED_UNDO_TIMEOUT_MS : UNDO_TIMEOUT_MS;
+    const id = window.setTimeout(() => setNotice(null), timeout);
     return () => window.clearTimeout(id);
   }, [notice, state, holdingUndo]);
 
@@ -134,7 +165,7 @@ export function CompareView({
 
   return (
     <div className="compare-view" data-scene={scene}>
-      <header className="compare-view__bar">
+      <header className="compare-view__bar" ref={headerRef}>
         <button type="button" className="compare-view__back" onClick={onExit}>
           <ArrowLeft aria-hidden="true" />
           <span>Back to catalog</span>
@@ -154,8 +185,6 @@ export function CompareView({
                 className="compare-view__undo"
                 aria-label={`Undo, restore ${noticeName} to slot ${notice.slot === "a" ? "A" : "B"}`}
                 onClick={() => onRestore(notice.slot, notice.themeId)}
-                onFocus={() => setUndoFocused(true)}
-                onBlur={() => setUndoFocused(false)}
                 onMouseEnter={() => setUndoHovered(true)}
                 onMouseLeave={() => setUndoHovered(false)}
               >

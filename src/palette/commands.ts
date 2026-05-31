@@ -21,7 +21,9 @@ export function buildThemeCommands(onSelectTheme: (themeId: string) => void): Pa
     id: theme.id,
     label: theme.name,
     section: "Themes",
-    hint: meta.family,
+    // Drop the hint when the family only echoes the name (e.g. "Tokyo Night" in
+    // the Tokyo Night family), matching the rail eyebrow and bottom-bar fact.
+    hint: meta.family === theme.name ? undefined : meta.family,
     keys: [theme.id, theme.name, meta.family],
     run: () => onSelectTheme(theme.id),
   }));

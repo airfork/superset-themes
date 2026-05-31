@@ -175,11 +175,22 @@ export function Rail({ focusedThemeId, pinnedThemeIds, onSelect, hint }: RailPro
           <span className="rail__empty-hint">Press ⌘K to search families &amp; ids</span>
         </p>
       ) : (
-        <>
-          <RailSection label="Featured">{sectionRows("featured").map(renderRow)}</RailSection>
-          <RailSection label="Light">{sectionRows("light").map(renderRow)}</RailSection>
-          <RailSection label="Dark">{sectionRows("dark").map(renderRow)}</RailSection>
-        </>
+        (
+          [
+            ["Featured", "featured"],
+            ["Light", "light"],
+            ["Dark", "dark"],
+          ] as const
+        ).map(([label, section]) => {
+          const rows = sectionRows(section);
+          // A filter can empty a section; render only the ones with matches so no
+          // heading lingers over zero rows.
+          return rows.length > 0 ? (
+            <RailSection key={section} label={label}>
+              {rows.map(renderRow)}
+            </RailSection>
+          ) : null;
+        })
       )}
     </div>
   );

@@ -29,6 +29,22 @@ describe("buildThemeCommands", () => {
     expect(commands).toHaveLength(catalogThemes.length);
     expect(new Set(commands.map((command) => command.id)).size).toBe(catalogThemes.length);
   });
+
+  it("drops the family hint when it only echoes the theme name", () => {
+    const commands = buildThemeCommands(() => {});
+    const byId = (id: string) => {
+      const found = commands.find((command) => command.id === id);
+      if (!found) {
+        throw new Error(`Expected command ${id}`);
+      }
+      return found;
+    };
+    // "Tokyo Night" sits in the "Tokyo Night" family, so the hint would only
+    // repeat the name; the palette omits it the way the rail eyebrow and bottom
+    // bar already do. A family that groups distinct themes still earns its hint.
+    expect(byId("tokyo-night").hint).toBeUndefined();
+    expect(byId("rose-pine-dawn").hint).toBe("Rosé Pine");
+  });
 });
 
 describe("copyThemeJsonCommand", () => {

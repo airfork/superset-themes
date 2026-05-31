@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { SceneId } from "../pane/SceneTabs";
-import { CompareView, UNDO_TIMEOUT_MS } from "./CompareView";
+import { CompareView, REPLACED_UNDO_TIMEOUT_MS, UNDO_TIMEOUT_MS } from "./CompareView";
 import { type CompareSlotId, type CompareState, compareReducer } from "./compareState";
 
 function stateWith(partial: Partial<CompareState>): CompareState {
@@ -332,6 +332,75 @@ describe("CompareView", () => {
         vi.advanceTimersByTime(UNDO_TIMEOUT_MS + 1000);
       });
       expect(screen.getByRole("status")).not.toHaveTextContent(/cleared/i);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("gives a replacement a longer dismiss window than a clear, since its Undo isn't auto-focused", () => {
+    vi.useFakeTimers();
+    try {
+      render(
+        <Harness
+          initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })}
+        />,
+      );
+
+      act(() => {
+        fireEvent.click(screen.getByRole("button", { name: /pin third theme/i }));
+      });
+
+      // A clear auto-focuses its Undo, so a 6s window suffices. A replacement leaves
+      // focus on the pin source, so the keyboard/SR user must navigate to Undo — the
+      // notice has to linger past the clear window to stay reachable.
+      act(() => {
+        vi.advanceTimersByTime(UNDO_TIMEOUT_MS + 500);
+      });
+      expect(screen.getByRole("status")).toHaveTextContent(/replaced/i);
+
+      act(() => {
+        vi.advanceTimersByTime(REPLACED_UNDO_TIMEOUT_MS);
+      });
+      expect(screen.getByRole("status")).not.toHaveTextContent(/replaced/i);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("holds the replacement's auto-dismiss while keyboard focus is anywhere in the compare header", () => {
+    vi.useFakeTimers();
+    try {
+      render(
+        <Harness
+          initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })}
+        />,
+      );
+
+      act(() => {
+        fireEvent.click(screen.getByRole("button", { name: /pin third theme/i }));
+      });
+      expect(screen.getByRole("status")).toHaveTextContent(/replaced/i);
+
+      // A keyboard user tabs into the header toward Undo. Landing on the first stop
+      // (Back) must pause the countdown so they never race it the rest of the way,
+      // even though the replacement never stole focus onto Undo itself.
+      const back = screen.getByRole("button", { name: /back to catalog/i });
+      act(() => {
+        fireEvent.focusIn(back);
+      });
+      act(() => {
+        vi.advanceTimersByTime(REPLACED_UNDO_TIMEOUT_MS + 2000);
+      });
+      expect(screen.getByRole("status")).toHaveTextContent(/replaced/i);
+
+      // Leaving the header entirely releases the hold; the notice then times out.
+      act(() => {
+        fireEvent.focusOut(back);
+      });
+      act(() => {
+        vi.advanceTimersByTime(REPLACED_UNDO_TIMEOUT_MS + 2000);
+      });
+      expect(screen.getByRole("status")).not.toHaveTextContent(/replaced/i);
     } finally {
       vi.useRealTimers();
     }

@@ -115,6 +115,18 @@ describe("Rail", () => {
     expect(screen.getByRole("button", { name: "Dracula" })).toHaveAttribute("tabindex", "0");
   });
 
+  it("hides a section heading when the filter leaves it with no rows", async () => {
+    const user = userEvent.setup();
+    renderRail();
+    await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "dracula");
+
+    // Only the Dark section still has a match; the empty Featured and Light
+    // headings must not linger over nothing.
+    expect(screen.getByRole("region", { name: "Dark" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Featured" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Light" })).not.toBeInTheDocument();
+  });
+
   it("shows an empty state when no theme matches the query", async () => {
     const user = userEvent.setup();
     renderRail();
