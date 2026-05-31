@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { catalogThemes } from "../data/catalog";
 import { type SceneId, SceneTabs } from "../pane/SceneTabs";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
@@ -8,7 +8,7 @@ import type { CompareSlotId, CompareState } from "./compareState";
 
 // How long the "Slot X cleared · Undo" notice lingers before reverting to the
 // live comparison status, giving a misclick a short window to be recovered.
-const UNDO_TIMEOUT_MS = 6000;
+export const UNDO_TIMEOUT_MS = 6000;
 
 interface CompareViewProps {
   state: CompareState;
@@ -49,6 +49,13 @@ export function CompareView({
   // notice clears itself once the slot is refilled (by Undo or a fresh pin) or
   // after a short timeout.
   const [cleared, setCleared] = useState<{ slot: CompareSlotId; themeId: string } | null>(null);
+  // The auto-dismiss is held while the user is on the Undo control, so the one
+  // recovery affordance can't vanish out from under them. Hover and focus are
+  // tracked apart so leaving one doesn't release the hold the other still has.
+  const [undoFocused, setUndoFocused] = useState(false);
+  const [undoHovered, setUndoHovered] = useState(false);
+  const holdingUndo = undoFocused || undoHovered;
+  const undoRef = useRef<HTMLButtonElement>(null);
 
   const handleUnpin = (slot: CompareSlotId) => {
     const themeId = state[slot];
@@ -57,6 +64,17 @@ export function CompareView({
     }
     onUnpin(slot);
   };
+
+  // Land focus on Undo when a slot clears so keyboard/SR users reach the
+  // recovery instead of dropping to <body>. Reset the hold when it dismisses.
+  useEffect(() => {
+    if (cleared) {
+      undoRef.current?.focus();
+    } else {
+      setUndoFocused(false);
+      setUndoHovered(false);
+    }
+  }, [cleared]);
 
   useEffect(() => {
     if (!cleared) {
@@ -67,9 +85,15 @@ export function CompareView({
       setCleared(null);
       return;
     }
+    // Don't run down the clock while the user is reaching for Undo.
+    if (holdingUndo) {
+      return;
+    }
     const id = window.setTimeout(() => setCleared(null), UNDO_TIMEOUT_MS);
     return () => window.clearTimeout(id);
-  }, [cleared, state]);
+  }, [cleared, state, holdingUndo]);
+
+  const clearedName = cleared ? (entryFor(cleared.themeId)?.theme.name ?? cleared.themeId) : null;
 
   return (
     <div className="compare-view" data-scene={scene}>
@@ -87,9 +111,15 @@ export function CompareView({
                 ·
               </span>
               <button
+                ref={undoRef}
                 type="button"
                 className="compare-view__undo"
+                aria-label={`Undo, restore ${clearedName} to slot ${cleared.slot === "a" ? "A" : "B"}`}
                 onClick={() => onPin(cleared.themeId)}
+                onFocus={() => setUndoFocused(true)}
+                onBlur={() => setUndoFocused(false)}
+                onMouseEnter={() => setUndoHovered(true)}
+                onMouseLeave={() => setUndoHovered(false)}
               >
                 Undo
               </button>

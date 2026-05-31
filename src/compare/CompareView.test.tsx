@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { SceneId } from "../pane/SceneTabs";
-import { CompareView } from "./CompareView";
+import { CompareView, UNDO_TIMEOUT_MS } from "./CompareView";
 import { type CompareSlotId, type CompareState, compareReducer } from "./compareState";
 
 function stateWith(partial: Partial<CompareState>): CompareState {
@@ -170,5 +170,69 @@ describe("CompareView", () => {
     ).toBeInTheDocument();
     // The notice dismisses once the slot is refilled.
     expect(screen.getByRole("status")).not.toHaveTextContent(/cleared/i);
+  });
+
+  it("moves focus to the Undo control so a keyboard user lands on the recovery", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /remove solarized light from comparison/i }),
+    );
+
+    // Unpinning removes the trigger from the DOM; focus must not fall to <body>.
+    expect(within(screen.getByRole("status")).getByRole("button", { name: /undo/i })).toHaveFocus();
+  });
+
+  it("labels the Undo control with the theme and slot it restores", async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })} />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /remove solarized light from comparison/i }),
+    );
+
+    expect(
+      screen.getByRole("button", { name: /restore solarized light to slot b/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("holds the auto-dismiss while Undo has focus, then dismisses once it blurs", () => {
+    vi.useFakeTimers();
+    try {
+      render(
+        <Harness
+          initial={stateWith({ a: "tokyo-night", b: "solarized-light", lastPinned: "b" })}
+        />,
+      );
+
+      act(() => {
+        fireEvent.click(
+          screen.getByRole("button", { name: /remove solarized light from comparison/i }),
+        );
+      });
+      const undo = within(screen.getByRole("status")).getByRole("button", { name: /undo/i });
+      // Undo is auto-focused, so the countdown is held past its window.
+      expect(undo).toHaveFocus();
+      act(() => {
+        vi.advanceTimersByTime(UNDO_TIMEOUT_MS + 1000);
+      });
+      expect(screen.getByRole("status")).toHaveTextContent(/cleared/i);
+
+      // Blurring releases the hold; the countdown then runs out and dismisses.
+      act(() => {
+        fireEvent.focusOut(undo);
+      });
+      act(() => {
+        vi.advanceTimersByTime(UNDO_TIMEOUT_MS + 1000);
+      });
+      expect(screen.getByRole("status")).not.toHaveTextContent(/cleared/i);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
