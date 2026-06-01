@@ -32,6 +32,25 @@ describe("baseline themes", () => {
     });
   });
 
+  it("tracks Superset Dark's pinned live app tokens where they clear export gates", () => {
+    const supersetDark = getBaselineThemes().find((entry) => entry.theme.id === "superset-dark");
+
+    expect(supersetDark?.theme.ui).toMatchObject({
+      accent: "#2a2827",
+      background: "#151110",
+      border: "#2a2827",
+      card: "#201e1c",
+      destructive: "#cc4444",
+      destructiveForeground: "#ffffff",
+      foreground: "#eae8e6",
+      muted: "#2a2827",
+      mutedForeground: "#a8a5a3",
+      primary: "#eae8e6",
+      primaryForeground: "#151110",
+      ring: "#3a3837",
+    });
+  });
+
   it("leads with baselines, then Featured, then the remaining catalog order", () => {
     const ordered = getBaselineFirstThemes();
     const pinnedIds = [...BASELINE_IDS, ...FEATURED_IDS];

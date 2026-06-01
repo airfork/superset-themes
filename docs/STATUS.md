@@ -733,9 +733,50 @@ Phase 10 follow-up verification:
   `--preview-ui-ring = #a1a1a1`, `--preview-focus-ring = #737373`, and the muted Workspace chrome.
 - `rtk git diff --check` passed.
 
+Phase 10 follow-up — Superset Dark calibration (2026-05-31):
+
+- Sampled the installed Superset Electron app launched with `--remote-debugging-port=9222` while
+  `html.dark` was active. Live root tokens confirmed `--background = #151110`,
+  `--foreground = #eae8e6`, `--card = #201E1C`, `--muted = #2a2827`,
+  `--muted-foreground = #a8a5a3`, and `--ring = #3a3837`.
+- Updated `superset-dark` so the exported `ui.ring` now matches the pinned live app value
+  (`#3a3837`). The derived app-facing focus ring still resolves to the accessible fallback
+  (`#a8a5a3`) because the live ring does not clear the repo's non-text contrast floor against
+  both dark surfaces.
+- Checked the live `--destructive-foreground = #ffcccc`, but kept the export token at `#ffffff`
+  because `#ffcccc` on live `#cc4444` is only 3.30:1 and fails the repo contrast gate.
+- Reworked the Workspace dark shell to use Superset's muted-layer sidebar rhythm
+  (`bg-muted/45`, dark override `bg-muted/35`), widened the simulated workspace rail to the
+  live 280px structure, quieted the active Claude/Codex tab chip, and raised the fake Claude
+  Code terminal to full terminal foreground at 14px.
+- Local Playwright visual smoke on `http://127.0.0.1:5173/?theme=superset-dark` confirmed
+  `--preview-ui-ring = #3a3837`, `--preview-focus-ring = #a8a5a3`, terminal output color
+  `rgb(234, 232, 230)`, and terminal font size `14px`.
+
+Phase 10 dark follow-up verification:
+
+- `rtk pnpm test src/data/baseline.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 2 files / 9 tests.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` first failed on live `#ffcccc` destructive foreground for
+  Superset Dark (`3.30 < 4.5`), then passed for all 14 themes after keeping the contrast-safe
+  exported foreground.
+- `rtk pnpm check` passed: Biome, TypeScript, Vitest 43 files / 283 tests, research CLI tests,
+  archive cleanup tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/pane src/styles/global.css` passed.
+- Fetched the latest Web Interface Guidelines command from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed the touched dark token, Workspace, and terminal surfaces; no additional issues were
+  found.
+- `rtk git diff --check` passed.
+
 ## Next Step
 
-User validation of the calibrated Superset Light preview against the live Superset app.
+User validation of the calibrated Superset Light and Superset Dark previews against the live
+Superset app.
 
 ## Resumability Protocol
 

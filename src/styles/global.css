@@ -1304,6 +1304,7 @@ kbd {
 
 /* Pane — Workspace scene (Superset-shape three-column thread) */
 .scene-workspace {
+  --scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent);
   --scene-workspace-active-row: var(--preview-ui-muted);
   --scene-workspace-hover-row: color-mix(in srgb, var(--preview-ui-accent) 50%, transparent);
   --scene-workspace-muted-icon: color-mix(
@@ -1311,13 +1312,9 @@ kbd {
     var(--preview-ui-muted-foreground) 85%,
     transparent
   );
-  --scene-workspace-sidebar: color-mix(
-    in srgb,
-    var(--preview-ui-background) 98.5%,
-    var(--preview-ui-foreground)
-  );
+  --scene-workspace-sidebar: var(--scene-workspace-muted-layer);
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   min-height: 480px;
   height: 100%;
@@ -1325,6 +1322,11 @@ kbd {
   color: var(--preview-ui-foreground);
   font-family: var(--app-font-chrome);
   font-size: 0.78rem;
+}
+
+:root[data-theme-type="dark"] .scene-workspace,
+.compare-slot[data-theme-type="dark"] .scene-workspace {
+  --scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 35%, transparent);
 }
 
 .scene-workspace__rail {
@@ -1706,7 +1708,7 @@ a.scene-workspace__footer-row:hover {
 .scene-workspace__sessions {
   display: flex;
   align-items: stretch;
-  background: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent);
+  background: var(--preview-ui-background);
   border-bottom: 1px solid var(--preview-ui-border);
   overflow-x: auto;
   overflow-y: hidden;
@@ -1875,8 +1877,9 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__tab[data-active] {
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-foreground);
+  background: transparent;
+  color: var(--preview-ui-muted-foreground);
+  font-weight: 500;
 }
 
 .scene-workspace__tab-icon {
@@ -2048,15 +2051,11 @@ a.scene-workspace__footer-row:hover {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto auto auto;
   background: var(--preview-terminal-background);
-  color: color-mix(
-    in srgb,
-    var(--preview-terminal-foreground) 84%,
-    var(--preview-terminal-background)
-  );
+  color: var(--preview-terminal-foreground);
   overflow: hidden;
   font-family: var(--app-font-terminal);
-  font-size: 12.5px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .scene-workspace__activity {
@@ -2120,11 +2119,7 @@ a.scene-workspace__footer-row:hover {
   padding: 14px 18px 0;
   border: 0;
   background: transparent;
-  color: color-mix(
-    in srgb,
-    var(--preview-terminal-foreground) 84%,
-    var(--preview-terminal-background)
-  );
+  color: var(--preview-terminal-foreground);
   font: inherit;
   resize: none;
   white-space: pre;

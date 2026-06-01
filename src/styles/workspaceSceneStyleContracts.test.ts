@@ -28,18 +28,39 @@ describe("workspace scene style contracts", () => {
     );
   });
 
+  it("uses the live Superset dark shell layers instead of hand-tinted sidebars", () => {
+    expect(ruleBody(".scene-workspace")).toContain(
+      "--scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent)",
+    );
+    expect(globalCss).toContain(':root[data-theme-type="dark"] .scene-workspace');
+    expect(globalCss).toContain(
+      "--scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 35%, transparent)",
+    );
+    expect(ruleBody(".scene-workspace__sessions")).toContain(
+      "background: var(--preview-ui-background)",
+    );
+  });
+
   it("paints the Claude terminal with terminal tokens instead of UI foreground tokens", () => {
     expect(ruleBody(".scene-workspace__terminal")).toContain(
       "background: var(--preview-terminal-background)",
     );
+    expect(ruleBody(".scene-workspace__terminal")).toContain("font-size: 14px");
     expect(ruleBody(".scene-workspace__terminal-output")).toContain(
-      "var(--preview-terminal-foreground)",
+      "color: var(--preview-terminal-foreground)",
     );
     expect(ruleBody(".scene-workspace__prompt")).toContain(
       "color: var(--preview-terminal-foreground)",
     );
     expect(ruleBody(".scene-workspace__terminal-cursor")).toContain(
       "background: var(--preview-terminal-cursor)",
+    );
+  });
+
+  it("keeps agent tabs quiet because the active Claude thread is named in the subheader", () => {
+    expect(ruleBody(".scene-workspace__tab[data-active]")).toContain("background: transparent");
+    expect(ruleBody(".scene-workspace__tab[data-active]")).toContain(
+      "color: var(--preview-ui-muted-foreground)",
     );
   });
 });
