@@ -49,23 +49,23 @@ interface Project {
 
 const projects: Project[] = [
   {
-    name: "superset-themes",
+    name: "inbox-pro",
     count: 1,
-    avatar: { kind: "letter", letter: "S", color: "oklch(0.95 0.004 250)" },
+    avatar: { kind: "letter", letter: "I", color: "oklch(0.95 0.004 250)" },
   },
   {
-    name: "Mac Notepad",
-    count: 1,
-    avatar: { kind: "project" },
-  },
-  {
-    name: "ID Resource Tracker",
+    name: "linear-clone",
     count: 1,
     avatar: { kind: "project" },
     branches: [{ name: "main", kind: "main", active: true }],
   },
   {
-    name: "snake-off",
+    name: "pulse-monitor",
+    count: 1,
+    avatar: { kind: "project" },
+  },
+  {
+    name: "storybook-lab",
     count: 1,
     avatar: { kind: "project" },
   },
@@ -209,8 +209,8 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
     <div className="scene-workspace">
       <aside className="scene-workspace__rail">
         <button type="button" className="scene-workspace__team" aria-label="Switch team">
-          <span className="scene-workspace__team-mark">TT</span>
-          <span className="scene-workspace__team-name">Tunji Afolabi-Brown's Team</span>
+          <span className="scene-workspace__team-mark">JT</span>
+          <span className="scene-workspace__team-name">John's Team</span>
           <ChevronsUpDown aria-hidden="true" className="scene-workspace__team-chevron" />
         </button>
         <nav aria-label="Workspaces" className="scene-workspace__nav">

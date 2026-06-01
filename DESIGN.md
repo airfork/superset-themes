@@ -249,7 +249,7 @@ The command palette is the reference overlay: 720px wide, 550px max height, 48px
 
 ### Superset Workspace Scene
 
-This is the signature preview. Preserve the Superset left rail ordering, 14px sidebar rhythm, muted top-level navigation, and only the nested active thread row as active. The terminal uses theme terminal tokens, not app foreground tokens.
+This is the signature preview. Preserve the Superset left rail ordering, 14px sidebar rhythm, muted top-level navigation, and only the nested active thread row as active. Use live Superset workspaces as structure-only references: fixture team, project, branch, and thread labels must stay anonymized. The terminal uses theme terminal tokens, not app foreground tokens.
 
 ## 6. Do's and Don'ts
 
@@ -261,6 +261,7 @@ This is the signature preview. Preserve the Superset left rail ordering, 14px si
 - **Do** use semantic CSS variables rather than fixed colors in UI implementation.
 - **Do** keep rows compact, aligned, and predictable. The user is comparing details, not admiring decoration.
 - **Do** preserve Superset Light and Dark fidelity when the request is to match the real app.
+- **Do** use anonymized fixture content when borrowing live Superset workspace structure.
 
 ### Don't:
 
@@ -272,3 +273,4 @@ This is the signature preview. Preserve the Superset left rail ordering, 14px si
 - **Don't** put agent-only shell wrappers in user-facing docs.
 - **Don't** use SaaS landing-page composition, oversized heroes, generic palette cards, gradient text, or decorative glass.
 - **Don't** add saturated inactive states or colored side-stripe accents. State is neutral and structural.
+- **Don't** copy real team names, project names, branch names, or other local workspace contents into previews, screenshots, tests, or docs.

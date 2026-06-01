@@ -903,10 +903,10 @@ Status: Complete.
 - CDP sampling of the running Superset app at `127.0.0.1:9222` confirmed the live sidebar
   typography: team/nav/project/thread rows use `14px` text and `20px` line height; team, top-level
   nav, and project labels are `500` weight, while the nested active `main` thread is `400`.
-- The workspace preview now mirrors the user's live Superset left pane labels and ordering:
-  `Tunji Afolabi-Brown's Team`, `superset-themes`, `Mac Notepad`, `ID Resource Tracker > main`,
-  and `snake-off`. The top-level `Workspaces` item is no longer marked active; only the nested
-  `main` row carries the active styling.
+- The workspace preview mirrors the live Superset left pane structure without copying the user's
+  workspace contents. Team/project labels are anonymized fixture data (`John's Team`, `inbox-pro`,
+  `linear-clone > main`, `pulse-monitor`, and `storybook-lab`). The top-level `Workspaces` item is
+  no longer marked active; only the nested `main` row carries the active styling.
 - The command palette search row now keeps the normal `1px` Superset border while focused instead
   of darkening the divider to the focus ring token. This intentionally preserves Superset Light/Dark
   styling rather than adding a separate accessibility affordance for those exact modes.
@@ -932,6 +932,46 @@ Superset workspace/palette fidelity verification:
   `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
   reviewed against the touched workspace/palette files; the palette input focus treatment remains
   an intentional Superset Light/Dark fidelity exception.
+- `rtk git diff --check` passed.
+
+## Workspace Fixture Privacy Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Corrected the workspace preview fixture so live Superset remains a structural and token reference
+  only. Real team names, project names, branch names, and workspace labels must not be copied into
+  code, docs, screenshots, or tests.
+- Updated the fixture regression test to assert the exact anonymized left-panel label set instead
+  of preserving private labels as negative examples.
+- Updated `DESIGN.md` to document the privacy boundary: live Superset workspaces are
+  structure-only references, and fixture labels must stay anonymized.
+- Local Playwright visual QA on `http://127.0.0.1:5174/?theme=superset-light` saved
+  `.context/workspace-left-pane-anonymized-after.png`; computed labels were `John's Team`,
+  `inbox-pro`, `linear-clone`, `pulse-monitor`, `storybook-lab`, and nested active `main`, with no
+  active top-level nav item.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched workspace fixture files; no new touched-surface findings.
+
+Workspace fixture privacy verification:
+
+- A targeted private-label search was run against `src`, docs, `DESIGN.md`, `PRODUCT.md`, and the
+  Impeccable sidecar and returned no matches. The private search terms are intentionally not
+  recorded in tracked files.
+- `rtk pnpm test:unit src/pane/WorkspaceScene.test.tsx src/styles/workspaceSceneStyleContracts.test.ts src/styles/focusContracts.test.ts`
+  passed: 3 files / 14 tests.
+- `rtk node -e "JSON.parse(require('fs').readFileSync('.impeccable/design.json','utf8')); console.log('design sidecar ok')"`
+  passed.
+- `rtk pnpm lint` passed: Biome checked 158 files.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk pnpm check` passed: Biome, TypeScript, 44 Vitest files / 290 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/pane/WorkspaceScene.tsx src/pane/WorkspaceScene.test.tsx DESIGN.md docs/STATUS.md docs/design/2026-05-27-catalog-redesign.md`
+  returned `ok`.
 - `rtk git diff --check` passed.
 
 ## Impeccable Design Context (2026-06-01)

@@ -107,7 +107,7 @@ A small Superset window with two columns visible and the third (files/changes/re
 │ • feat/x +13k    │ Cool. Here's the full anatomy…    │
 │   docs   +103    │                                    │
 │                  │ ┌─────────────────────────────┐    │
-│ ⊝ snake-off      │ │> the rail structure          │    │
+│ ⊝ storybook-lab  │ │> the rail structure          │    │
 │                  │ └─────────────────────────────┘    │
 │ ⊙ Ports 5174     │ »» bypass perms on (shift+tab)    │
 │ ⚙ Settings       │                                    │

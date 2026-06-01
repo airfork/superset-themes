@@ -32,14 +32,22 @@ describe("WorkspaceScene", () => {
     );
   });
 
-  it("mirrors the live Superset sidebar projects and marks only the nested thread active", () => {
+  it("uses a fixed anonymized Superset-shaped fixture and marks only the nested thread active", () => {
     render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
 
-    expect(screen.getByText("Tunji Afolabi-Brown's Team")).toBeInTheDocument();
-    expect(screen.getByText("superset-themes")).toBeInTheDocument();
-    expect(screen.getByText("Mac Notepad")).toBeInTheDocument();
-    expect(screen.getByText("ID Resource Tracker")).toBeInTheDocument();
-    expect(screen.getByText("snake-off")).toBeInTheDocument();
+    expect(document.querySelector(".scene-workspace__team-name")?.textContent).toBe("John's Team");
+    expect(
+      Array.from(
+        document.querySelectorAll(".scene-workspace__project-name"),
+        (element) => element.textContent,
+      ),
+    ).toEqual(["inbox-pro", "linear-clone", "pulse-monitor", "storybook-lab"]);
+    expect(
+      Array.from(
+        document.querySelectorAll(".scene-workspace__branch-name"),
+        (element) => element.textContent,
+      ),
+    ).toEqual(["main"]);
 
     const activeThread = screen.getByText("main").closest("li");
     expect(activeThread).toHaveAttribute("data-active", "true");
