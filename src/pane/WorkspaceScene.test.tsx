@@ -23,6 +23,29 @@ describe("WorkspaceScene", () => {
     expect(within(tree).getByText(/tasks & prs/i)).toBeInTheDocument();
   });
 
+  it("does not mark top-level Workspaces as active", () => {
+    render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
+
+    const tree = screen.getByRole("navigation", { name: /workspaces/i });
+    expect(within(tree).getByRole("link", { name: /^workspaces$/i })).not.toHaveAttribute(
+      "aria-current",
+    );
+  });
+
+  it("mirrors the live Superset sidebar projects and marks only the nested thread active", () => {
+    render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
+
+    expect(screen.getByText("Tunji Afolabi-Brown's Team")).toBeInTheDocument();
+    expect(screen.getByText("superset-themes")).toBeInTheDocument();
+    expect(screen.getByText("Mac Notepad")).toBeInTheDocument();
+    expect(screen.getByText("ID Resource Tracker")).toBeInTheDocument();
+    expect(screen.getByText("snake-off")).toBeInTheDocument();
+
+    const activeThread = screen.getByText("main").closest("li");
+    expect(activeThread).toHaveAttribute("data-active", "true");
+    expect(document.querySelectorAll(".scene-workspace__branches li[data-active]")).toHaveLength(1);
+  });
+
   it("renders the main column with session controls, agent controls, and a Run control", () => {
     render(<WorkspaceScene entry={entryFor("tokyo-night")} />);
 

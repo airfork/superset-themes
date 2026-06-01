@@ -63,4 +63,25 @@ describe("workspace scene style contracts", () => {
       "color: var(--preview-ui-muted-foreground)",
     );
   });
+
+  it("keeps top-level navigation muted because only the nested thread row is active", () => {
+    expect(ruleBody(".scene-workspace__nav a")).toContain("font-size: 14px");
+    expect(ruleBody(".scene-workspace__nav a")).toContain("font-weight: 500");
+    expect(ruleBody(".scene-workspace__nav a")).toContain("line-height: 20px");
+    expect(ruleBody(".scene-workspace__nav a")).toContain(
+      "color: var(--preview-ui-muted-foreground)",
+    );
+    expect(globalCss).not.toContain('.scene-workspace__nav a[aria-current="page"]');
+  });
+
+  it("uses Superset's 14px sidebar rhythm for team, project, and active thread rows", () => {
+    expect(ruleBody(".scene-workspace__team")).toContain("font-size: 14px");
+    expect(ruleBody(".scene-workspace__team")).toContain("font-weight: 500");
+    expect(ruleBody(".scene-workspace__team")).toContain("line-height: 20px");
+    expect(ruleBody(".scene-workspace__project-header")).toContain("font-size: 14px");
+    expect(ruleBody(".scene-workspace__project-header")).toContain("font-weight: 500");
+    expect(ruleBody(".scene-workspace__project-header")).toContain("line-height: 20px");
+    expect(ruleBody(".scene-workspace__branches li")).toContain("font-size: 14px");
+    expect(ruleBody(".scene-workspace__branches li")).toContain("line-height: 20px");
+  });
 });

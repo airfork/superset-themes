@@ -16,13 +16,18 @@ function ruleBody(selector: string): string {
 }
 
 describe("focus contracts", () => {
-  it("keeps the command palette input visibly focused without boxing the panel edge", () => {
-    const focusRule = globalCss.match(
-      /\.palette__search:has\(\.palette__input:focus-visible\)\s*\{(?<body>[^}]+)\}/,
+  it("keeps the command palette search divider at the normal Superset border", () => {
+    expect(ruleBody(".palette__search")).toContain(
+      "border-bottom: 1px solid var(--preview-ui-border)",
     );
+    expect(globalCss).not.toContain(".palette__search:has(.palette__input:focus-visible)");
+  });
 
-    expect(focusRule?.groups?.body).toContain("border-bottom-color:");
-    expect(focusRule?.groups?.body).not.toContain("outline: none");
+  it("uses the normal Superset palette divider instead of a focus-darkened rule", () => {
+    expect(ruleBody(".palette__search")).toContain(
+      "border-bottom: 1px solid var(--preview-ui-border)",
+    );
+    expect(globalCss).not.toContain("border-bottom-color: var(--preview-ui-ring)");
   });
 
   it("keeps the palette search icon muted like the live command input", () => {

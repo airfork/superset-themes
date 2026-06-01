@@ -30,10 +30,15 @@ interface ProjectBranch {
   active?: boolean;
 }
 
-interface AvatarSpec {
-  letter: string;
-  color: string;
-}
+type AvatarSpec =
+  | {
+      kind: "letter";
+      letter: string;
+      color: string;
+    }
+  | {
+      kind: "project";
+    };
 
 interface Project {
   name: string;
@@ -44,34 +49,25 @@ interface Project {
 
 const projects: Project[] = [
   {
-    name: "inbox-pro",
+    name: "superset-themes",
     count: 1,
-    avatar: { letter: "I", color: "oklch(0.58 0.15 252)" },
+    avatar: { kind: "letter", letter: "S", color: "oklch(0.95 0.004 250)" },
   },
   {
-    name: "linear-clone",
-    count: 2,
-    avatar: { letter: "L", color: "oklch(0.55 0.18 295)" },
-    branches: [
-      { name: "main", kind: "main" },
-      {
-        name: "Refactor task scheduler queue",
-        kind: "worktree",
-        active: true,
-      },
-    ],
+    name: "Mac Notepad",
+    count: 1,
+    avatar: { kind: "project" },
   },
   {
-    name: "pulse-monitor",
-    count: 2,
-    avatar: { letter: "P", color: "oklch(0.6 0.13 178)" },
-    branches: [
-      { name: "main", kind: "main" },
-      {
-        name: "Add Postgres exporter shim",
-        kind: "worktree",
-      },
-    ],
+    name: "ID Resource Tracker",
+    count: 1,
+    avatar: { kind: "project" },
+    branches: [{ name: "main", kind: "main", active: true }],
+  },
+  {
+    name: "snake-off",
+    count: 1,
+    avatar: { kind: "project" },
   },
 ];
 
@@ -159,6 +155,28 @@ const terminalOutput = `> refactor the task scheduler queue so retries flow thro
 `;
 
 function Avatar({ spec }: { spec: AvatarSpec }) {
+  if (spec.kind === "project") {
+    return (
+      <svg
+        viewBox="0 0 18 18"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect width="18" height="18" rx="5" fill="oklch(0.96 0.018 145)" />
+        <rect x="4.5" y="3.5" width="9" height="11" rx="1.4" fill="oklch(0.73 0.12 145)" />
+        <rect x="6" y="5" width="6" height="1.8" rx="0.6" fill="white" opacity="0.88" />
+        <path
+          d="M5.5 8.8h7v4.1h-7z"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.15"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
   return (
     <svg
       viewBox="0 0 18 18"
@@ -166,7 +184,7 @@ function Avatar({ spec }: { spec: AvatarSpec }) {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="9" cy="9" r="9" fill={spec.color} />
+      <rect width="18" height="18" rx="5" fill={spec.color} />
       <text
         x="9"
         y="12.6"
@@ -174,7 +192,7 @@ function Avatar({ spec }: { spec: AvatarSpec }) {
         fontSize="10"
         fontWeight="700"
         fontFamily="inherit"
-        fill="white"
+        fill="var(--preview-ui-muted-foreground)"
       >
         {spec.letter}
       </text>
@@ -191,12 +209,12 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
     <div className="scene-workspace">
       <aside className="scene-workspace__rail">
         <button type="button" className="scene-workspace__team" aria-label="Switch team">
-          <span className="scene-workspace__team-mark">JT</span>
-          <span className="scene-workspace__team-name">John's Team</span>
+          <span className="scene-workspace__team-mark">TT</span>
+          <span className="scene-workspace__team-name">Tunji Afolabi-Brown's Team</span>
           <ChevronsUpDown aria-hidden="true" className="scene-workspace__team-chevron" />
         </button>
         <nav aria-label="Workspaces" className="scene-workspace__nav">
-          <a aria-current="page" href="#workspaces">
+          <a href="#workspaces">
             <Layers aria-hidden="true" />
             <span>Workspaces</span>
           </a>

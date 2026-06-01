@@ -896,6 +896,44 @@ Superset light palette/chrome verification:
   all passed. Latest Web Interface Guidelines were fetched and reviewed; Superset Light/Dark muted
   and focus styling are intentional live-app fidelity exceptions. `rtk git diff --check` passed.
 
+## Superset Workspace/Palette Fidelity Follow-up (2026-05-31)
+
+Status: Complete.
+
+- CDP sampling of the running Superset app at `127.0.0.1:9222` confirmed the live sidebar
+  typography: team/nav/project/thread rows use `14px` text and `20px` line height; team, top-level
+  nav, and project labels are `500` weight, while the nested active `main` thread is `400`.
+- The workspace preview now mirrors the user's live Superset left pane labels and ordering:
+  `Tunji Afolabi-Brown's Team`, `superset-themes`, `Mac Notepad`, `ID Resource Tracker > main`,
+  and `snake-off`. The top-level `Workspaces` item is no longer marked active; only the nested
+  `main` row carries the active styling.
+- The command palette search row now keeps the normal `1px` Superset border while focused instead
+  of darkening the divider to the focus ring token. This intentionally preserves Superset Light/Dark
+  styling rather than adding a separate accessibility affordance for those exact modes.
+- Local Playwright visual QA on `http://127.0.0.1:5174/?theme=superset-light` saved
+  `.context/workspace-left-pane-superset-exact-after.png` and
+  `.context/palette-superset-light-divider-after.png`; computed local values matched the sampled
+  sidebar typography and confirmed the palette divider remains `rgb(229, 229, 229)`.
+
+Superset workspace/palette fidelity verification:
+
+- `rtk pnpm test:unit src/pane/WorkspaceScene.test.tsx src/styles/workspaceSceneStyleContracts.test.ts src/styles/focusContracts.test.ts`
+  passed: 3 files / 14 tests.
+- `rtk pnpm check` first failed on two Biome formatting diffs, then passed: Biome, TypeScript, 44
+  Vitest files / 290 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/pane src/styles/global.css src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched workspace/palette files; the palette input focus treatment remains
+  an intentional Superset Light/Dark fidelity exception.
+- `rtk git diff --check` passed.
+
 ## Verification
 
 Latest app verification:

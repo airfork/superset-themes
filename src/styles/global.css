@@ -1369,7 +1369,8 @@ kbd {
   color: var(--preview-ui-muted-foreground);
   font: inherit;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 20px;
   text-align: left;
   cursor: pointer;
 }
@@ -1418,12 +1419,13 @@ kbd {
   grid-template-columns: 16px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 6px;
   color: var(--preview-ui-muted-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
+  line-height: 20px;
 }
 
 .scene-workspace__nav a svg,
@@ -1434,10 +1436,6 @@ kbd {
 
 .scene-workspace__nav a:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
-}
-
-.scene-workspace__nav a[aria-current="page"] {
   color: var(--preview-ui-foreground);
 }
 
@@ -1474,6 +1472,7 @@ kbd {
   color: var(--preview-ui-foreground);
   font-size: 14px;
   font-weight: 500;
+  line-height: 20px;
   cursor: pointer;
 }
 
@@ -1527,7 +1526,8 @@ kbd {
   padding: 6px 12px 6px 24px;
   border-radius: 6px;
   color: var(--preview-ui-muted-foreground);
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 20px;
   cursor: pointer;
 }
 
@@ -3180,14 +3180,10 @@ button.rail-search {
   line-height: 1.25;
 }
 
-/* The input itself stays visually borderless; the search row's divider owns the
-   focus cue so the rounded panel edge is not boxed by a square inset outline. */
+/* The input itself stays visually borderless; Superset keeps the divider unchanged
+   while the command input is focused. */
 .palette__input:focus {
   outline: none;
-}
-
-.palette__search:has(.palette__input:focus-visible) {
-  border-bottom-color: var(--preview-ui-ring);
 }
 
 .palette__input::placeholder {
