@@ -1,9 +1,11 @@
 import { getContrastRatio } from "./contrast";
 import type { SupersetTheme } from "./themeTypes";
 
-// Persistent chrome (top/bottom bars, rail, palette, nameplate) must guarantee its
-// own legibility no matter which theme it is wearing, and keep a primary/secondary
-// split. Two themes break a naive CSS derivation:
+// Persistent chrome (top/bottom bars, rail, palette, nameplate) derives its own
+// legibility for most catalog themes and keeps a primary/secondary split. Superset
+// Light/Dark are fidelity exceptions: they keep the live app tokens even where the
+// live app is more subtle than our local contrast gates. Other themes break a naive
+// CSS derivation:
 //   - Solarized maps card/input/muted/popover onto a single cream where even full
 //     foreground barely clears AA, so chrome sits on the higher-contrast base below.
 //   - Several themes (Tokyo Night, Nord, Dracula, …) ship muted-foreground == fore-
@@ -43,6 +45,10 @@ function mixSrgb(baseHex: string, targetHex: string, weight: number): string {
 
 function sameHex(a: string, b: string): boolean {
   return a.toLowerCase() === b.toLowerCase();
+}
+
+function isSupersetBaseline(theme: SupersetTheme): boolean {
+  return theme.id === "superset-light" || theme.id === "superset-dark";
 }
 
 function raiseContrastTo(
@@ -116,6 +122,10 @@ export function getChromeMutedForeground(theme: SupersetTheme): string {
   const foreground = theme.ui.foreground;
   const muted = theme.ui.mutedForeground;
 
+  if (isSupersetBaseline(theme)) {
+    return muted;
+  }
+
   if (!sameHex(muted, foreground)) {
     return raiseContrastTo(muted, foreground, surface, AA_CONTRAST);
   }
@@ -132,6 +142,10 @@ export function getChromeMutedForeground(theme: SupersetTheme): string {
 }
 
 export function getFocusRingColor(theme: SupersetTheme): string {
+  if (isSupersetBaseline(theme)) {
+    return theme.ui.ring;
+  }
+
   const candidates = [
     theme.ui.ring,
     theme.ui.mutedForeground,

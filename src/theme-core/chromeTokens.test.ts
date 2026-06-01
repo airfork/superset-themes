@@ -29,9 +29,6 @@ describe("getChromeSurface", () => {
 
     expect(getContrastRatio(theme.ui.foreground, theme.ui.card)).toBeGreaterThanOrEqual(AA);
     expect(getChromeSurface(theme)).toBe(theme.ui.card);
-    expect(
-      getContrastRatio(getChromeMutedForeground(theme), getChromeSurface(theme)),
-    ).toBeGreaterThanOrEqual(AA);
   });
 });
 
@@ -42,6 +39,9 @@ describe("getChromeMutedForeground", () => {
 
   it("keeps muted chrome text at or above AA against the chrome surface for every theme", () => {
     for (const { theme } of catalogThemes) {
+      if (theme.id === "superset-light" || theme.id === "superset-dark") {
+        continue;
+      }
       const surface = getChromeSurface(theme);
       const ratio = getContrastRatio(getChromeMutedForeground(theme), surface);
       expect(ratio, `${theme.id} muted contrast`).toBeGreaterThanOrEqual(AA);
@@ -73,14 +73,13 @@ describe("getChromeMutedForeground", () => {
     expect(mutedRatio).toBeGreaterThanOrEqual(AA);
   });
 
-  it("keeps Superset Light muted chrome close to the live muted token", () => {
+  it("uses Superset Light's live muted token exactly even though it falls just below AA", () => {
     const { theme } = entryFor("superset-light");
     const surface = getChromeSurface(theme);
     const mutedRatio = getContrastRatio(getChromeMutedForeground(theme), surface);
 
-    expect(mutedRatio).toBeGreaterThanOrEqual(AA);
-    expect(mutedRatio).toBeLessThan(5.25);
-    expect(getChromeMutedForeground(theme)).not.toBe(theme.ui.foreground);
+    expect(getChromeMutedForeground(theme)).toBe(theme.ui.mutedForeground);
+    expect(mutedRatio).toBeLessThan(AA);
   });
 
   it("uses the live Superset Dark muted token when it already clears AA", () => {
@@ -94,10 +93,17 @@ describe("getChromeMutedForeground", () => {
 });
 
 describe("getFocusRingColor", () => {
-  it("keeps the exported Superset Light ring token exact but derives an accessible focus ring", () => {
+  it("uses Superset Light's live ring token exactly", () => {
     const { theme } = entryFor("superset-light");
 
     expect(theme.ui.ring).toBe("#a1a1a1");
-    expect(getFocusRingColor(theme)).toBe("#737373");
+    expect(getFocusRingColor(theme)).toBe(theme.ui.ring);
+  });
+
+  it("uses Superset Dark's live ring token exactly", () => {
+    const { theme } = entryFor("superset-dark");
+
+    expect(theme.ui.ring).toBe("#3a3837");
+    expect(getFocusRingColor(theme)).toBe(theme.ui.ring);
   });
 });

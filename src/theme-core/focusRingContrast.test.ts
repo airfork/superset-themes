@@ -3,17 +3,18 @@ import { catalogThemes } from "../data/catalog";
 import { getFocusRingColor } from "./chromeTokens";
 import { getContrastRatio } from "./contrast";
 
-// Raw exported theme tokens can track upstream exactly even when an upstream ring is
-// subtle. The app-facing focus variable is derived and must clear the WCAG 3:1 non-text
-// contrast bar against both the background and card surfaces of every catalog theme.
-// The rail row focus ring is the worst-case caller — it sits inside the rail
-// (.rail background uses --preview-ui-card) but visually reads against the page
-// background as well.
+// Non-Superset themes derive an app-facing focus variable that clears the WCAG 3:1
+// non-text contrast bar against both background and card. Superset Light/Dark are
+// fidelity exceptions: they keep the live app ring even when it is intentionally subtle.
 
 const NON_TEXT_CONTRAST_BAR = 3.0;
 
 describe("derived focus ring contrast vs ui.background and ui.card", () => {
   for (const { theme } of catalogThemes) {
+    if (theme.id === "superset-light" || theme.id === "superset-dark") {
+      continue;
+    }
+
     it(`${theme.id}: focus ring clears 3:1 against bg and card`, () => {
       const focusRing = getFocusRingColor(theme);
       const ringVsBg = getContrastRatio(focusRing, theme.ui.background);
