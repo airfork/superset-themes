@@ -14,6 +14,10 @@ a11y is enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
+- Solarized Light refinement replaced the prior washed-out catalog port with the updated custom
+  palette. Translucent highlight/terminal-selection inputs were normalized to hex for the catalog
+  schema, and required AA gates were preserved with the existing dark primary/terminal foreground
+  adjustments.
 - Superset token-surface checkpoint expanded the internal schema to preserve the official Superset
   theme JSON roles end to end: `tertiary*`, `sidebar*`, `chart1..5`, `highlight*`, terminal
   `cursorAccent`, and terminal `selectionBackground`. Superset Light/Dark now use the attached
@@ -1152,6 +1156,41 @@ Superset token surface verification:
 - `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
 - `rtk pnpm build` passed with the existing Vite chunk-size warning.
 - `rtk git diff --check` passed.
+
+## Solarized Light Refinement (2026-06-01)
+
+Status: Complete.
+
+- Reviewed the supplied refined Solarized Light JSON against the existing catalog port. It is an
+  improvement because it restores distinct chart hues, gives sidebar/tertiary surfaces a visible
+  warm paper step, improves input/border separation, and replaces the previous cream-on-cream
+  highlight roles with yellow search-highlight tokens.
+- Catalog JSON cannot store `rgba()` directly, so the supplied translucent values were composited
+  over the theme backgrounds:
+  - `highlightMatch` -> `#eddeb1`
+  - `highlightActive` / internal `ui.selection` -> `#ddc57d`
+  - `terminal.selectionBackground` / internal `terminal.selection` -> `#efe9d6`
+- The supplied `ui.primaryForeground = #002b36` and `terminal.foreground = #657b83` failed required
+  contrast gates, so the catalog keeps the existing required-pair-safe values:
+  `ui.primaryForeground = #001f27`, `ui.sidebarPrimaryForeground = #001f27`, and
+  `terminal.foreground = #586e75`.
+- Runtime smoke used direct Playwright because the preferred in-app Browser `iab` was unavailable.
+  `http://127.0.0.1:5174/?theme=solarized-light` confirmed the rendered root variables include
+  chart roles `#268bd2`, `#859900`, `#d33682`, `#b58900`, `#6c71c4`, highlight active
+  `#ddc57d`, terminal selection `#efe9d6`, and the workspace rail/active row resolve to the
+  refined sidebar roles. Screenshot:
+  `.context/browser-qa/solarized-light-refined-smoke.png`.
+
+Solarized Light refinement verification:
+
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes with only the 3 expected optional
+  Superset baseline warnings.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 300 tests, research/archive tests,
+  and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
 
 ## Verification
 
