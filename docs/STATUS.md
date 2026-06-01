@@ -802,10 +802,14 @@ Status: Complete.
 - Follow-up clarity pass added a quiet `Family` header on the Themes section's trailing metadata
   column, preserving omitted duplicate family values while making the visible right-column values
   self-explanatory.
+- Top-edge follow-up removed the square search-row focus outline that fought the rounded panel
+  corners and made the palette backdrop transparent, matching Superset's no-scrim command palette.
 - Visual QA screenshots were refreshed under ignored `.context/` files:
   `.context/palette-superset-dark-compact-desktop.png` and
   `.context/palette-superset-dark-compact-mobile.png`; the family-header follow-up added
-  `.context/palette-family-header-desktop.png` and `.context/palette-family-header-mobile.png`.
+  `.context/palette-family-header-desktop.png` and `.context/palette-family-header-mobile.png`;
+  the top-edge/no-scrim follow-up added `.context/palette-transparent-backdrop-desktop.png` and
+  `.context/palette-transparent-backdrop-mobile.png`.
 
 Superset dark palette verification:
 
@@ -823,6 +827,10 @@ Superset dark palette verification:
 - Family-header follow-up re-ran `rtk pnpm check`, `rtk pnpm test:e2e`,
   `rtk pnpm test:stories`, `rtk pnpm build`, `rtk npx impeccable detect src/palette
   src/styles/global.css`, and `rtk git diff --check`; all passed.
+- Top-edge/no-scrim follow-up re-ran `rtk pnpm test src/styles/focusContracts.test.ts`,
+  `rtk pnpm check`, `rtk pnpm test:e2e`, `rtk pnpm test:stories`, `rtk pnpm build`, and
+  `rtk npx impeccable detect src/palette src/styles/global.css src/styles/focusContracts.test.ts`;
+  all passed.
 
 ## Verification
 

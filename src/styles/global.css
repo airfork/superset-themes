@@ -3123,9 +3123,9 @@ button.rail-search {
   justify-content: center;
   align-items: center;
   padding: 16px;
-  /* Theme-independent dark scrim: tying it to --preview-ui-background washed
-     light themes with a near-white veil that never dimmed the page beneath. */
-  background: color-mix(in srgb, oklch(0.17 0.015 265) 64%, transparent);
+  /* Superset leaves the workspace visible behind the command palette; the
+     transparent backdrop only captures outside clicks. */
+  background: transparent;
 }
 
 .palette {
@@ -3176,15 +3176,14 @@ button.rail-search {
   line-height: 1.25;
 }
 
-/* The input itself stays visually borderless; the compound search row owns the
-   focus ring so keyboard focus is visible without boxing the text field alone. */
+/* The input itself stays visually borderless; the search row's divider owns the
+   focus cue so the rounded panel edge is not boxed by a square inset outline. */
 .palette__input:focus {
   outline: none;
 }
 
 .palette__search:has(.palette__input:focus-visible) {
-  outline: 1px solid var(--preview-ui-ring);
-  outline-offset: -1px;
+  border-bottom-color: var(--preview-ui-ring);
 }
 
 .palette__input::placeholder {
