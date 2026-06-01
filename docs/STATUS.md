@@ -832,6 +832,41 @@ Superset dark palette verification:
   `rtk npx impeccable detect src/palette src/styles/global.css src/styles/focusContracts.test.ts`;
   all passed.
 
+## Superset Light Palette/Chrome Follow-up (2026-05-31)
+
+Status: Complete; awaiting user visual validation.
+
+- Removed the palette-only `.` shortcut chip from the `Pin to compare` command row while preserving
+  the global `.` compare shortcut, the bottom-bar `. pin` hint, and the keyboard-shortcut overlay.
+- Softened Superset Light chrome by letting `getChromeSurface` use the raised card surface when the
+  light card is the softer surface and still clears AA. Superset Light now renders app chrome,
+  rail, and palette on `#f5f5f5`; Solarized Light stays on the higher-contrast background fallback.
+- Added a light-theme rail selected-row override that uses the neutral accent layer instead of the
+  primary ink tint, reducing the heavy selected-row block in Superset Light.
+- CDP sampling of the running Superset app at `127.0.0.1:9222` reconfirmed live light tokens:
+  `--card`, `--popover`, and `--muted` are `oklch(0.97 0 0)`. Local Playwright visual QA on
+  `http://127.0.0.1:5174/?theme=superset-light` confirmed `--chrome-surface = #f5f5f5`, no
+  shortcut glyphs in the Pin row, and saved `.context/light-palette-after.png`.
+
+Superset light palette/chrome verification:
+
+- `rtk pnpm test:unit src/app/App.test.tsx src/palette/Palette.test.tsx src/theme-core/chromeTokens.test.ts src/styles/railContracts.test.ts`
+  passed: 4 files / 30 tests.
+- `rtk pnpm check` first failed on one Biome formatting diff in `chromeTokens.test.ts`, then passed:
+  Biome, TypeScript, 44 Vitest files / 283 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/app src/palette src/styles/global.css src/theme-core/chromeTokens.ts src/theme-core/chromeTokens.test.ts`
+  returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched app, palette, style, and chrome-token surfaces; no new
+  touched-surface findings.
+- `rtk git diff --check` passed.
+
 ## Verification
 
 Latest app verification:

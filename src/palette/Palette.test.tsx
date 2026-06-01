@@ -149,20 +149,20 @@ describe("Palette", () => {
     const commands: PaletteCommand[] = [
       ...buildThemeCommands(vi.fn()),
       {
-        id: "pin-to-compare",
-        label: "Pin to compare",
+        id: "keyboard-shortcuts",
+        label: "Keyboard shortcuts",
         section: "Actions",
-        keys: ["pin to compare", "compare"],
-        shortcut: ".",
+        keys: ["keyboard shortcuts", "help"],
+        shortcut: "?",
         run: vi.fn(),
       },
     ];
     render(<Host commands={commands} />);
     openPalette();
 
-    await user.keyboard("pin");
-    const option = screen.getByRole("option", { name: /pin to compare/i });
-    const key = within(option).getByText(".");
+    await user.keyboard("shortcuts");
+    const option = screen.getByRole("option", { name: /keyboard shortcuts/i });
+    const key = within(option).getByText("?");
     expect(key.tagName).toBe("KBD");
   });
 
@@ -177,7 +177,6 @@ describe("Palette", () => {
         label: "Pin to compare",
         section: "Actions",
         keys: ["pin to compare", "compare"],
-        shortcut: ".",
         run: pinRun,
       },
     ];

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
@@ -73,6 +73,16 @@ describe("App", () => {
 
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: /keyboard shortcuts/i })).not.toBeInTheDocument();
+  });
+
+  it("does not render the pin shortcut as a stray palette glyph", async () => {
+    render(<App />);
+    await screen.findByRole("banner");
+
+    fireEvent.keyDown(window, { key: "k", metaKey: true });
+
+    const pinOption = await screen.findByRole("option", { name: /pin to compare/i });
+    expect(within(pinOption).queryByText(".")).not.toBeInTheDocument();
   });
 
   it("renders the lab on the shared shell from catalog theme search params", async () => {

@@ -13,7 +13,7 @@ export interface PaletteCommand extends RankableItem {
   section: PaletteSection;
   hint?: string;
   // The global keypress that triggers this command, shown as a muted glyph so the
-  // palette teaches the shortcut where power users look for it (e.g. "." pins).
+  // palette can teach shortcuts where they are clearer than the action label.
   shortcut?: string;
   // Leading glyph for action rows; theme rows use an accent swatch instead.
   icon?: LucideIcon;

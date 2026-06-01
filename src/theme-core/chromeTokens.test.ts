@@ -23,6 +23,16 @@ describe("getChromeSurface", () => {
     const { theme } = entryFor("solarized-light");
     expect(getChromeSurface(theme)).toBe(theme.ui.background);
   });
+
+  it("uses Superset Light's raised card when it can carry chrome text", () => {
+    const { theme } = entryFor("superset-light");
+
+    expect(getContrastRatio(theme.ui.foreground, theme.ui.card)).toBeGreaterThanOrEqual(AA);
+    expect(getChromeSurface(theme)).toBe(theme.ui.card);
+    expect(
+      getContrastRatio(getChromeMutedForeground(theme), getChromeSurface(theme)),
+    ).toBeGreaterThanOrEqual(AA);
+  });
 });
 
 describe("getChromeMutedForeground", () => {

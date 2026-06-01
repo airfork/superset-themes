@@ -131,7 +131,6 @@ const catalogRoute = createRoute({
         section: "Actions",
         icon: Columns2,
         keys: ["pin to compare", "compare", "split"],
-        shortcut: ".",
         run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
       },
       copyThemeJsonCommand(focused),

@@ -44,10 +44,21 @@ function mixSrgb(baseHex: string, targetHex: string, weight: number): string {
   ]);
 }
 
-// Light themes can map card to a tint darker than background (e.g. Solarized base2),
-// so their reliable AA surface is the background; dark themes keep the raised card.
+// Light themes usually keep chrome on the background, but Superset Light's real app
+// shell uses its raised card gray for sidebars and bars. Use a light card surface
+// only when it is the softer surface and foreground text still clears AA; Solarized's
+// cream card stays on the higher-contrast background fallback.
 export function getChromeSurface(theme: SupersetTheme): string {
-  return theme.type === "light" ? theme.ui.background : theme.ui.card;
+  if (theme.type !== "light") {
+    return theme.ui.card;
+  }
+
+  const cardContrast = getContrastRatio(theme.ui.foreground, theme.ui.card);
+  const backgroundContrast = getContrastRatio(theme.ui.foreground, theme.ui.background);
+
+  return cardContrast >= AA_CONTRAST && cardContrast <= backgroundContrast
+    ? theme.ui.card
+    : theme.ui.background;
 }
 
 export function getChromeMutedForeground(theme: SupersetTheme): string {

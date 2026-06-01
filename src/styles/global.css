@@ -2875,11 +2875,14 @@ a.scene-workspace__footer-row:hover {
 }
 
 /* Selected tint uses the focused theme's primary (an AA-gated, always-visible
-   token) rather than --row-accent. Per-row accents like Solarized Light's
-   #eee8d5 collapse into the cream rail surface; primary stays distinct on
-   every theme. The row's own accent still drives the dot and hover tint. */
+   token) by default. Light themes override to the neutral accent layer so
+   Superset Light reads like the real app instead of a heavy ink wash. */
 .rail-row[data-selected] {
   background: color-mix(in srgb, var(--preview-ui-primary) 18%, transparent);
+}
+
+:root[data-theme-type="light"] .rail-row[data-selected] {
+  background: color-mix(in srgb, var(--preview-ui-accent) 72%, transparent);
 }
 
 .rail-row:focus-visible {
