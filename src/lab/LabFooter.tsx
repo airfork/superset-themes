@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { exportThemeJson } from "../theme-core/exportTheme";
+import { downloadThemeJson, exportThemeJson } from "../theme-core/exportTheme";
 import type { SupersetTheme } from "../theme-core/themeTypes";
 
 interface LabFooterProps {
@@ -13,14 +13,7 @@ export function LabFooter({ onBackToCatalog, theme }: LabFooterProps) {
   };
 
   const downloadJson = () => {
-    const url = URL.createObjectURL(
-      new Blob([exportThemeJson(theme)], { type: "application/json" }),
-    );
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${theme.id}.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    downloadThemeJson(theme);
   };
 
   return (

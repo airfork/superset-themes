@@ -14,6 +14,11 @@ a11y is enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
+- Superset import/export checkpoint changed the catalog nameplate and command-palette JSON action
+  from clipboard copy to a downloaded `.json` file. Exports now use Superset's marketplace/starter
+  theme shape (`highlight*`, `selectionBackground`, sidebar/chart tokens, no app-only `version`),
+  while the Lab importer accepts both internal catalog JSON and official Superset downloaded JSON
+  with `oklch()`/`rgba()` colors normalized back to app tokens.
 - Archive cleanup and Conductor config checkpoint added a repo-local `scripts/archive-clean.mjs`
   command with `--dry-run`, package scripts (`archive:clean`, `archive:clean:dry-run`,
   `archive:clean:test`), and root `conductor.json`. Conductor setup now runs
@@ -1108,6 +1113,17 @@ Dedicated mode section badge verification:
 
 Latest app verification:
 
+- `rtk pnpm test:unit src/theme-core/exportTheme.test.ts src/pane/Nameplate.test.tsx src/palette/commands.test.ts src/lab/importTheme.test.ts` passed after the JSON download/import checkpoint.
+- A `tsx` importer smoke test parsed all 27 downloaded Superset marketplace theme JSON files from `.context/superset-marketplace-themes/`.
+- `rtk pnpm check` passed: Biome check, TypeScript check, Vitest run, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/pane/Nameplate.tsx src/pane/Nameplate.test.tsx src/palette/commands.ts src/palette/commands.test.ts src/theme-core/exportTheme.ts src/theme-core/exportTheme.test.ts src/lab/importTheme.ts src/lab/importTheme.test.ts src/lab/LabFooter.tsx src/styles/global.css docs/STATUS.md docs/design/2026-05-27-catalog-redesign.md` passed with `ok`.
+- `rtk git diff --check` passed.
+- Preferred in-app Browser was unavailable for this session, so direct Playwright QA against Vite at `http://127.0.0.1:5174/` confirmed one catalog `Download JSON` action, no catalog `Copy JSON` action, and a downloaded `tokyo-night.json` with Superset import keys. Screenshot saved to `.context/browser-qa/download-json-nameplate.png`.
 - `pnpm test -- src/app/App.test.tsx` passed.
 - `pnpm test:unit -- src/theme-core/schema.test.ts src/theme-core/exportTheme.test.ts` first failed on missing Task 2 modules, then passed after schema/export/catalog implementation.
 - `pnpm themes:validate` passed: 3 catalog themes from 3 JSON files validated.

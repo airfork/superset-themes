@@ -1258,11 +1258,6 @@ kbd {
   outline-offset: 1px;
 }
 
-.pane-nameplate__action--error,
-.pane-nameplate__action--error:hover {
-  color: var(--preview-ui-destructive);
-}
-
 .pane-nameplate__divider {
   width: 1px;
   height: 14px;

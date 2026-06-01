@@ -4,7 +4,7 @@ import { BASELINE_IDS } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
 import { FEATURED_IDS } from "../data/featured";
 import { exportThemeJson } from "../theme-core/exportTheme";
-import { buildThemeCommands, copyThemeJsonCommand } from "./commands";
+import { buildThemeCommands, downloadThemeJsonCommand } from "./commands";
 
 function entryFor(id: string) {
   const found = catalogThemes.find((candidate) => candidate.theme.id === id);
@@ -48,28 +48,34 @@ describe("buildThemeCommands", () => {
   });
 });
 
-describe("copyThemeJsonCommand", () => {
-  it("is an Actions command discoverable by copy, export, and json", () => {
-    const command = copyThemeJsonCommand(entryFor("tokyo-night"));
+describe("downloadThemeJsonCommand", () => {
+  it("is an Actions command discoverable by download, export, and json", () => {
+    const command = downloadThemeJsonCommand(entryFor("tokyo-night"));
 
     expect(command.section).toBe("Actions");
-    expect(command.label).toMatch(/copy theme json/i);
-    expect(command.keys).toEqual(expect.arrayContaining(["copy", "export", "json"]));
+    expect(command.label).toMatch(/download theme json/i);
+    expect(command.keys).toEqual(expect.arrayContaining(["download", "export", "json"]));
   });
 
-  it("writes the exported theme JSON to the clipboard when run", () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    const original = Object.getOwnPropertyDescriptor(navigator, "clipboard");
-    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+  it("downloads the exported theme JSON when run", async () => {
+    const createObjectURL = vi.fn().mockReturnValue("blob:theme-json");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createObjectURL });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeObjectURL });
+    const clicked: { download?: string; href?: string }[] = [];
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      clicked.push({ download: this.download, href: this.href });
+    });
     const entry = entryFor("rose-pine-dawn");
 
-    copyThemeJsonCommand(entry).run();
+    downloadThemeJsonCommand(entry).run();
 
-    expect(writeText).toHaveBeenCalledWith(exportThemeJson(entry));
-    if (original) {
-      Object.defineProperty(navigator, "clipboard", original);
-    } else {
-      Reflect.deleteProperty(navigator, "clipboard");
-    }
+    const blob = createObjectURL.mock.calls[0]?.[0] as Blob;
+    expect(await blob.text()).toBe(exportThemeJson(entry));
+    expect(clicked).toEqual([{ download: "rose-pine-dawn.json", href: "blob:theme-json" }]);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:theme-json");
+    click.mockRestore();
   });
 });

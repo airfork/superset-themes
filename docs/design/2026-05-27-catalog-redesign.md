@@ -89,7 +89,7 @@ The accent dots always show each row's own theme accent, never the site's curren
 
 **Nameplate (thin strip at top)**
 - Theme name + family chip + tag chips + light/dark indicator
-- Right-aligned subtle actions: `Pin to compare`, `Open in Lab`, `Copy JSON`
+- Right-aligned subtle actions: `Pin to compare`, `Open in Lab`, `Download JSON`
 - Actions invite the other workflows without selling them
 
 **Body — default Workspace scene**
@@ -132,12 +132,12 @@ Drop `Diff`, `Command palette`, `Editor` scenes from the current implementation.
 
 The site's navigation palette is a literal copy of Superset's command palette UI: light card, section labels (`Themes`, `Actions`), keyboard hints right-aligned, subtle row highlight on focus. Dual purpose:
 
-- Functional: jump to any theme, toggle light/dark filter, open Lab with current theme, copy JSON, exit compare, etc.
+- Functional: jump to any theme, toggle light/dark filter, open Lab with current theme, download JSON, exit compare, etc.
 - Demonstrative: since the palette is part of the site chrome and the site chrome takes on the focused theme's colors, ⌘K *is* the command-palette demo for whatever theme is currently focused.
 
 Sections:
 - **Themes** — fuzzy search across all catalog themes
-- **Actions** — `Pin to compare`, `Open in Lab`, `Copy JSON`, `Toggle next theme`, `Exit compare` (when active), `Back to catalog` (when in Lab)
+- **Actions** — `Pin to compare`, `Open in Lab`, `Download JSON`, `Toggle next theme`, `Exit compare` (when active), `Back to catalog` (when in Lab)
 
 ## Theme application rules
 

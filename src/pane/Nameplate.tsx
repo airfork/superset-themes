@@ -1,6 +1,5 @@
-import { Copy, FlaskConical, Maximize2, Minimize2, Moon, Pin, Sun } from "lucide-react";
-import { useState } from "react";
-import { exportThemeJson } from "../theme-core/exportTheme";
+import { Download, FlaskConical, Maximize2, Minimize2, Moon, Pin, Sun } from "lucide-react";
+import { downloadThemeJson } from "../theme-core/exportTheme";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 interface NameplateProps {
@@ -23,22 +22,8 @@ export function Nameplate({
   compact = false,
 }: NameplateProps) {
   const { meta, theme } = entry;
-  const [copyState, setCopyState] = useState<"copied" | "failed" | "idle">("idle");
   const isDark = theme.type === "dark";
-
-  const copyJson = async () => {
-    try {
-      await navigator.clipboard.writeText(exportThemeJson(entry));
-      setCopyState("copied");
-    } catch {
-      setCopyState("failed");
-    }
-    window.setTimeout(() => setCopyState("idle"), 1600);
-  };
-
-  const copyLabel =
-    copyState === "copied" ? "Copied" : copyState === "failed" ? "Copy failed" : "Copy JSON";
-
+  const downloadLabel = "Download JSON";
   const modeLabel = `${isDark ? "Dark" : "Light"} theme`;
   const expandActionLabel = `${expanded ? "Collapse" : "Expand"} ${theme.name} pane`;
 
@@ -104,16 +89,12 @@ export function Nameplate({
         <span className="pane-nameplate__divider" aria-hidden="true" />
         <button
           type="button"
-          className={`pane-nameplate__action${
-            copyState === "failed" ? " pane-nameplate__action--error" : ""
-          }`}
-          onClick={copyJson}
-          title={compact ? copyLabel : undefined}
+          className="pane-nameplate__action"
+          onClick={() => downloadThemeJson(entry)}
+          title={compact ? downloadLabel : undefined}
         >
-          <Copy aria-hidden="true" />
-          <span className="pane-nameplate__action-label" aria-live="polite">
-            {copyLabel}
-          </span>
+          <Download aria-hidden="true" />
+          <span className="pane-nameplate__action-label">{downloadLabel}</span>
         </button>
       </div>
     </div>
