@@ -974,6 +974,37 @@ Workspace fixture privacy verification:
   returned `ok`.
 - `rtk git diff --check` passed.
 
+## Theme Swap Font Flicker Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Investigated the reported font flicker while swapping themes. Runtime tracing showed
+  `font-family`, `font-size`, and `font-weight` stayed stable; the shimmer came from global
+  `color`, `fill`, and `stroke` transitions repainting text and icons during theme morphs.
+- Removed text/icon paint from the global theme transition and the rail-row transition. Theme
+  swaps still animate surface, border, and shadow changes, while text colors now snap to the new
+  theme immediately.
+- Added `src/styles/themeTransitionContracts.test.ts` to prevent reintroducing text/icon paint
+  transitions during theme swaps.
+- Local Playwright runtime verification on `http://127.0.0.1:5174/` confirmed a Tokyo Night to
+  Solarized Light swap fired zero `color`, `fill`, or `stroke` transition starts on rail,
+  nameplate, top bar, or bottom bar text surfaces; only background and border colors animated.
+
+Theme swap font-flicker verification:
+
+- `rtk pnpm test:unit src/styles/themeTransitionContracts.test.ts src/styles/railContracts.test.ts src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 4 files / 11 tests.
+- `rtk npx impeccable detect src/styles/global.css src/styles/themeTransitionContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 291 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
 ## Impeccable Design Context (2026-06-01)
 
 Status: Complete.

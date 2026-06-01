@@ -3,9 +3,7 @@
 }
 
 :root {
-  transition:
-    background-color var(--app-transition),
-    color var(--app-transition);
+  transition: background-color var(--app-transition);
 }
 
 *,
@@ -14,9 +12,6 @@
   transition:
     background-color var(--app-transition),
     border-color var(--app-transition),
-    color var(--app-transition),
-    fill var(--app-transition),
-    stroke var(--app-transition),
     box-shadow var(--app-transition);
 }
 
@@ -2863,7 +2858,8 @@ a.scene-workspace__footer-row:hover {
   touch-action: manipulation;
   transition:
     background-color 140ms ease-out,
-    color 140ms ease-out;
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
 }
 
 .rail-row[data-variant="featured"] {
