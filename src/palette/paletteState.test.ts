@@ -5,22 +5,19 @@ const baseState: PaletteState = {
   open: true,
   query: "",
   focusedIndex: 0,
-  actionsExpanded: false,
 };
 
 describe("paletteReducer", () => {
-  it("opens with a cleared query, reset focus, and a collapsed shelf", () => {
+  it("opens with a cleared query and reset focus", () => {
     const dirty: PaletteState = {
       open: false,
       query: "rose",
       focusedIndex: 4,
-      actionsExpanded: true,
     };
     expect(paletteReducer(dirty, { type: "open" })).toEqual({
       open: true,
       query: "",
       focusedIndex: 0,
-      actionsExpanded: false,
     });
   });
 
@@ -29,20 +26,13 @@ describe("paletteReducer", () => {
     expect(paletteReducer(open, { type: "close" }).open).toBe(false);
   });
 
-  it("resets focus to the top and re-collapses the shelf when the query changes", () => {
-    const state: PaletteState = { ...baseState, focusedIndex: 5, actionsExpanded: true };
+  it("resets focus to the top when the query changes", () => {
+    const state: PaletteState = { ...baseState, focusedIndex: 5 };
     expect(paletteReducer(state, { type: "setQuery", query: "tok" })).toEqual({
       open: true,
       query: "tok",
       focusedIndex: 0,
-      actionsExpanded: false,
     });
-  });
-
-  it("expands the actions shelf and lands focus on the given slot", () => {
-    const next = paletteReducer(baseState, { type: "expandActions", focusedIndex: 12 });
-    expect(next.actionsExpanded).toBe(true);
-    expect(next.focusedIndex).toBe(12);
   });
 
   it("moves focus down, clamped to the last result", () => {
@@ -84,7 +74,6 @@ describe("paletteReducer", () => {
       open: false,
       query: "",
       focusedIndex: 0,
-      actionsExpanded: false,
     });
   });
 });

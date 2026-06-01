@@ -786,6 +786,37 @@ After each meaningful implementation checkpoint:
 2. Update this file with current state, next step, verification run, and blockers.
 3. Commit coherent completed work.
 
+## Superset Dark Palette Follow-up (2026-05-31)
+
+Status: Complete.
+
+- Real Superset command palette was sampled through the running app's Chrome DevTools endpoint
+  at `127.0.0.1:9222`: 720px dialog width, 550px visible height, 48px search row, 44px command
+  rows, 14px labels, `#201e1c` popover surface, `#2a2827` border/selected row, and the
+  `Type a command or search…` placeholder.
+- The local command palette now matches that compact centered command surface instead of the
+  previous full-viewport overlay. Actions are visible directly at rest, the old `More actions`
+  shelf was removed, the placeholder and section labels match the real command vocabulary, and
+  desktop/mobile bounds keep the dialog contained without horizontal overflow.
+- Removed obsolete `actionsExpanded` reducer, prop, and story plumbing after the behavior switch.
+- Visual QA screenshots were refreshed under ignored `.context/` files:
+  `.context/palette-superset-dark-compact-desktop.png` and
+  `.context/palette-superset-dark-compact-mobile.png`.
+
+Superset dark palette verification:
+
+- `rtk pnpm test src/palette/Palette.test.tsx src/palette/paletteEntries.test.ts src/palette/paletteState.test.ts` passed.
+- `rtk pnpm check` passed: Biome, TypeScript, 43 Vitest files / 280 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/palette src/styles/global.css` returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched palette files; no new touched-surface findings.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+
 ## Verification
 
 Latest app verification:

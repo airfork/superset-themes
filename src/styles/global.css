@@ -3121,8 +3121,8 @@ button.rail-search {
   z-index: 200;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 12vh 16px 16px;
+  align-items: center;
+  padding: 16px;
   /* Theme-independent dark scrim: tying it to --preview-ui-background washed
      light themes with a near-white veil that never dimmed the page beneath. */
   background: color-mix(in srgb, oklch(0.17 0.015 265) 64%, transparent);
@@ -3131,14 +3131,16 @@ button.rail-search {
 .palette {
   display: flex;
   flex-direction: column;
-  width: min(560px, 100%);
-  max-height: min(60vh, 460px);
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(550px, calc(100dvh - 32px));
   overflow: hidden;
   border: 1px solid var(--preview-ui-border);
   border-radius: 10px;
-  background: var(--chrome-surface);
+  background: var(--preview-ui-popover);
   color: var(--preview-ui-popover-foreground);
-  box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
+  box-shadow:
+    0 10px 15px -3px color-mix(in srgb, oklch(0 0 0) 18%, transparent),
+    0 4px 6px -4px color-mix(in srgb, oklch(0 0 0) 18%, transparent);
 }
 
 /* Search row: a leading magnifier sits beside the borderless input, matching the
@@ -3148,27 +3150,30 @@ button.rail-search {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 16px;
+  min-height: 48px;
+  padding: 0 12px;
   border-bottom: 1px solid var(--preview-ui-border);
 }
 
 .palette__search-icon {
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  color: var(--chrome-muted-foreground);
+  width: 16px;
+  height: 16px;
+  color: var(--preview-ui-popover-foreground);
+  stroke-width: 2;
 }
 
 .palette__input {
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 52px;
+  min-height: 48px;
   border: 0;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
   padding: 0;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  line-height: 1.25;
 }
 
 /* The input itself stays visually borderless; the compound search row owns the
@@ -3178,8 +3183,8 @@ button.rail-search {
 }
 
 .palette__search:has(.palette__input:focus-visible) {
-  outline: 2px solid var(--preview-focus-ring);
-  outline-offset: -2px;
+  outline: 1px solid var(--preview-ui-ring);
+  outline-offset: -1px;
 }
 
 .palette__input::placeholder {
@@ -3190,62 +3195,53 @@ button.rail-search {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  gap: 0;
   min-height: 0;
-  overflow: hidden;
-  padding: 6px;
+  max-height: min(500px, calc(80dvh - 48px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 4px 8px;
 }
 
 .palette__group {
-  /* Column flex stacks the label above its options and lets the themes group
-     own the scroll while the actions shelf keeps its height. */
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
 }
 
-/* The theme list owns the scroll; the Actions shelf below stays put. */
 .palette__group--themes {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  flex: 0 0 auto;
 }
 
-/* Actions are a small fixed set; dock them as a footer so they stay
-   discoverable on an empty query instead of sitting below the fold under a
-   tall theme list. Reserves its own space so it never overlays the themes. */
 .palette__group--actions {
   flex: 0 0 auto;
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px solid var(--preview-ui-border);
-  background: var(--chrome-surface);
-}
-
-/* Collapsed shelf: just the "More actions" teaser, no section label. */
-.palette__group--collapsed {
-  padding-top: 0;
 }
 
 .palette__group-label {
-  margin: 8px 10px 4px;
-  padding: 0;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin: 0;
+  padding: 6px 8px;
   color: var(--chrome-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1rem;
+  text-transform: none;
+}
+
+.palette__group + .palette__group {
+  margin-top: 0;
 }
 
 .palette__option {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  column-gap: 8px;
   width: 100%;
-  min-height: 40px;
+  min-height: 44px;
   border: 0;
-  border-radius: 7px;
-  padding: 0 10px;
+  border-radius: 0;
+  padding: 12px 8px;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
   font: inherit;
@@ -3253,34 +3249,31 @@ button.rail-search {
   cursor: pointer;
 }
 
-/* Pointer feedback the list was missing: a quiet neutral wash on hover that sits
-   under the keyboard-selected band without competing with it. */
-.palette__option:hover {
-  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 7%, transparent);
+.palette__option + .palette__option {
+  margin-top: 0;
 }
 
-/* Derive the active band from primary: per-theme selection collapses against the
-   popover surface in light themes (Solarized Light, Rosé Pine Dawn). Active wins
-   over hover so keyboard and pointer focus never read as two selected rows. */
+.palette__option:hover {
+  background: color-mix(in srgb, var(--preview-ui-accent) 64%, transparent);
+}
+
 .palette__option[data-active],
 .palette__option[data-active]:hover {
-  background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--chrome-surface));
+  background: var(--preview-ui-accent);
+  color: var(--preview-ui-accent-foreground);
 }
 
-/* Leading column — fixed width so every label shares one left edge whether the row
-   leads with a theme swatch, an action icon, or the blank placeholder. */
 .palette__option-icon {
-  flex: 0 0 auto;
+  justify-self: center;
   width: 16px;
   height: 16px;
   color: var(--chrome-muted-foreground);
 }
 
 .palette__option-swatch {
-  flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  margin: 0 1px;
+  justify-self: center;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   /* Inset ring keeps light-theme swatches legible on the popover surface without
      the rail's separate ring-vs-fill split. */
@@ -3289,43 +3282,44 @@ button.rail-search {
 }
 
 .palette__option-label {
-  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* The teaser reads as a secondary meta-row, not a primary command. */
-.palette__more-actions .palette__option-label {
-  color: var(--chrome-muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.25rem;
 }
 
 .palette__option-hint {
-  flex: 0 0 auto;
-  font-size: 0.78rem;
+  justify-self: end;
   color: var(--chrome-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
 }
 
 /* Plain muted glyph, not a boxed chip: the reference palette trails each row with a
    bare shortcut so the right rail stays quiet. Reset the base kbd chrome. */
 .palette__option-key {
-  flex: 0 0 auto;
+  justify-self: end;
   border: 0;
   padding: 0;
   background: transparent;
   font-family: var(--app-font-chrome);
-  font-size: 0.78rem;
-  line-height: 1;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  line-height: 1rem;
   color: var(--chrome-muted-foreground);
 }
 
 .palette__empty {
   display: grid;
   gap: 6px;
-  padding: 16px 12px;
+  padding: 12px 8px;
   color: var(--chrome-muted-foreground);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 /* Mirrors the rail's dead-end recovery: a tinted next-step suggestion, not a
@@ -3334,6 +3328,18 @@ button.rail-search {
   color: color-mix(in srgb, var(--preview-ui-primary) 80%, var(--preview-ui-popover-foreground));
   font-size: 0.78rem;
   font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .palette__backdrop {
+    align-items: flex-start;
+    padding: 8px;
+  }
+
+  .palette {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
 }
 
 /* Keyboard-shortcut reference — the palette's quieter sibling. Shares the scrim,
