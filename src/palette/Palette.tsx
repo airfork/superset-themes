@@ -163,9 +163,10 @@ export function Palette({
     themes.length > 0 ? (
       // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
       <div role="group" aria-label="Themes" className="palette__group palette__group--themes">
-        <span className="palette__group-label" aria-hidden="true">
-          Themes
-        </span>
+        <div className="palette__group-label palette__group-label--themes" aria-hidden="true">
+          <span className="palette__group-title">Themes</span>
+          <span className="palette__group-meta-label">Family</span>
+        </div>
         {themes.map((command, index) => renderOption(command, themeBase + index))}
       </div>
     ) : null;

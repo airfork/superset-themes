@@ -127,6 +127,8 @@ describe("Palette", () => {
     expect(screen.queryByRole("option", { name: /more actions/i })).not.toBeInTheDocument();
     expect(screen.getByRole("option", { name: /tokyo night/i })).toBeInTheDocument();
 
+    expect(within(screen.getByRole("group", { name: "Themes" })).getByText("Family")).toBeVisible();
+
     const options = screen.getAllByRole("option");
     expect(options[0]).toHaveAccessibleName(/open in lab/i);
     expect(options[1]).toHaveAccessibleName(/superset light/i);

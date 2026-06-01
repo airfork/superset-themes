@@ -3228,6 +3228,25 @@ button.rail-search {
   text-transform: none;
 }
 
+.palette__group-label--themes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.palette__group-title,
+.palette__group-meta-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette__group-meta-label {
+  justify-self: end;
+}
+
 .palette__group + .palette__group {
   margin-top: 0;
 }

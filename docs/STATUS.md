@@ -799,9 +799,13 @@ Status: Complete.
   shelf was removed, the placeholder and section labels match the real command vocabulary, and
   desktop/mobile bounds keep the dialog contained without horizontal overflow.
 - Removed obsolete `actionsExpanded` reducer, prop, and story plumbing after the behavior switch.
+- Follow-up clarity pass added a quiet `Family` header on the Themes section's trailing metadata
+  column, preserving omitted duplicate family values while making the visible right-column values
+  self-explanatory.
 - Visual QA screenshots were refreshed under ignored `.context/` files:
   `.context/palette-superset-dark-compact-desktop.png` and
-  `.context/palette-superset-dark-compact-mobile.png`.
+  `.context/palette-superset-dark-compact-mobile.png`; the family-header follow-up added
+  `.context/palette-family-header-desktop.png` and `.context/palette-family-header-mobile.png`.
 
 Superset dark palette verification:
 
@@ -816,6 +820,9 @@ Superset dark palette verification:
   reviewed against the touched palette files; no new touched-surface findings.
 - `rtk pnpm themes:validate` passed for 14 catalog themes.
 - `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- Family-header follow-up re-ran `rtk pnpm check`, `rtk pnpm test:e2e`,
+  `rtk pnpm test:stories`, `rtk pnpm build`, `rtk npx impeccable detect src/palette
+  src/styles/global.css`, and `rtk git diff --check`; all passed.
 
 ## Verification
 
