@@ -1,6 +1,6 @@
 {
   "author": "Superset Theme Catalog",
-  "description": "A cool daylight fixture with blue structure, teal accents, and crisp terminal contrast.",
+  "description": "Aurora Light keeps cool daylight surfaces with blue structure and a teal accent. A five-hue chart palette (blue, green, violet, amber, cyan) separates data series, with red reserved for destructive actions, the teal accent now carries legible foreground text, and search highlights ramp from a faint match wash to the current match.",
   "id": "aurora-light",
   "name": "Aurora Light",
   "terminal": {
@@ -30,7 +30,7 @@
   },
   "type": "light",
   "ui": {
-    "accent": "#0f9f8f",
+    "accent": "#0b7c6e",
     "accentForeground": "#ffffff",
     "background": "#f7fbff",
     "border": "#c9d7e8",
@@ -62,13 +62,13 @@
     "sidebarBorder": "#c9d7e8",
     "sidebarRing": "#3b82f6",
     "chart1": "#2563eb",
-    "chart2": "#0f9f8f",
-    "chart3": "#dbeafe",
-    "chart4": "#c2410c",
-    "chart5": "#e8f1fb",
-    "highlightMatch": "#bfdbfe",
+    "chart2": "#047857",
+    "chart3": "#7c3aed",
+    "chart4": "#b45309",
+    "chart5": "#0891b2",
+    "highlightMatch": "#dbeafe",
     "highlightActive": "#bfdbfe",
-    "highlight": "#bfdbfe",
+    "highlight": "#3b82f6",
     "highlightForeground": "#0f172a"
   },
   "version": 1

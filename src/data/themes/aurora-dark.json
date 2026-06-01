@@ -1,6 +1,6 @@
 {
   "author": "Superset Theme Catalog",
-  "description": "A paired dark fixture with deep navy surfaces, clear blue focus states, and aurora cyan accents.",
+  "description": "Aurora Dark pairs deep navy surfaces with a luminous blue and teal accent line. A five-hue chart palette (blue, green, violet, amber, cyan) keeps data series separable, with red reserved for destructive actions, a three-step blue highlight ramp marks the active find match apart from the rest, and selected text stays legible on the selection wash.",
   "id": "aurora-dark",
   "name": "Aurora Dark",
   "terminal": {
@@ -62,13 +62,13 @@
     "sidebarBorder": "#2a3b55",
     "sidebarRing": "#93c5fd",
     "chart1": "#60a5fa",
-    "chart2": "#2dd4bf",
-    "chart3": "#1f2f49",
-    "chart4": "#fb7185",
-    "chart5": "#18263d",
-    "highlightMatch": "#1d4ed8",
+    "chart2": "#34d399",
+    "chart3": "#a78bfa",
+    "chart4": "#fbbf24",
+    "chart5": "#22d3ee",
+    "highlightMatch": "#1e3a8a",
     "highlightActive": "#1d4ed8",
-    "highlight": "#1d4ed8",
+    "highlight": "#60a5fa",
     "highlightForeground": "#eff6ff"
   },
   "version": 1

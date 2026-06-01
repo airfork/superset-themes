@@ -1,6 +1,6 @@
 {
   "author": "Atom",
-  "description": "Schema-clean One Dark port honoring the Atom-lineage palette with cool blue actions and balanced syntax accents.",
+  "description": "A One Dark port honoring the Atom-lineage palette with cool blue actions. A five-hue chart palette (blue, green, purple, yellow, cyan) separates data series, with red reserved for destructive actions, a slate muted tone steps below the foreground, and the highlight ramp rises to a warm yellow marker with legible selected text.",
   "id": "one-dark",
   "name": "One Dark",
   "terminal": {
@@ -41,7 +41,7 @@
     "foreground": "#abb2bf",
     "input": "#1d2025",
     "muted": "#2c313a",
-    "mutedForeground": "#abb2bf",
+    "mutedForeground": "#949ba8",
     "popover": "#21252b",
     "popoverForeground": "#abb2bf",
     "primary": "#61afef",
@@ -50,7 +50,7 @@
     "secondary": "#3e4451",
     "secondaryForeground": "#abb2bf",
     "selection": "#3e4451",
-    "selectionForeground": "#abb2bf",
+    "selectionForeground": "#c8ccd4",
     "tertiary": "#2c313a",
     "tertiaryActive": "#3e4451",
     "sidebar": "#21252b",
@@ -62,14 +62,14 @@
     "sidebarBorder": "#3e4451",
     "sidebarRing": "#61afef",
     "chart1": "#61afef",
-    "chart2": "#3e4451",
-    "chart3": "#3e4451",
-    "chart4": "#e06c75",
-    "chart5": "#2c313a",
-    "highlightMatch": "#3e4451",
+    "chart2": "#98c379",
+    "chart3": "#c678dd",
+    "chart4": "#e5c07b",
+    "chart5": "#56b6c2",
+    "highlightMatch": "#2c313a",
     "highlightActive": "#3e4451",
-    "highlight": "#3e4451",
-    "highlightForeground": "#abb2bf"
+    "highlight": "#e5c07b",
+    "highlightForeground": "#c8ccd4"
   },
   "version": 1
 }

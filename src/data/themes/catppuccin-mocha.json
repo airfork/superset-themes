@@ -1,6 +1,6 @@
 {
   "author": "Catppuccin",
-  "description": "A Catppuccin Mocha port with pastel accents, deep blue-black surfaces, and a rich terminal palette.",
+  "description": "A Catppuccin Mocha port keeping the pastel accents and deep blue-black surfaces. A five-hue chart palette (blue, green, mauve, peach, teal) separates data series, with red reserved for destructive actions, search and selection ramp across the surface grays toward a yellow marker, and selected text stays legible on the active highlight.",
   "id": "catppuccin-mocha",
   "name": "Catppuccin Mocha",
   "terminal": {
@@ -49,7 +49,7 @@
     "ring": "#89b4fa",
     "secondary": "#45475a",
     "secondaryForeground": "#cdd6f4",
-    "selection": "#45475a",
+    "selection": "#585b70",
     "selectionForeground": "#cdd6f4",
     "tertiary": "#313244",
     "tertiaryActive": "#45475a",
@@ -62,13 +62,13 @@
     "sidebarBorder": "#585b70",
     "sidebarRing": "#89b4fa",
     "chart1": "#89b4fa",
-    "chart2": "#45475a",
-    "chart3": "#45475a",
-    "chart4": "#f38ba8",
-    "chart5": "#313244",
+    "chart2": "#a6e3a1",
+    "chart3": "#cba6f7",
+    "chart4": "#fab387",
+    "chart5": "#94e2d5",
     "highlightMatch": "#45475a",
-    "highlightActive": "#45475a",
-    "highlight": "#45475a",
+    "highlightActive": "#585b70",
+    "highlight": "#f9e2af",
     "highlightForeground": "#cdd6f4"
   },
   "version": 1

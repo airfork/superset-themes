@@ -1,6 +1,6 @@
 {
   "author": "Enkia",
-  "description": "A Tokyo Night port with downtown-night surfaces, saturated blue actions, and balanced neon syntax accents.",
+  "description": "A Tokyo Night port with downtown-night surfaces and saturated blue actions. A five-hue chart palette (blue, green, purple, orange, cyan) separates data series, with red reserved for destructive actions, a muted blue tone steps below the foreground, and the highlight ramp rises to a yellow marker with legible selected text.",
   "id": "tokyo-night",
   "name": "Tokyo Night",
   "terminal": {
@@ -41,7 +41,7 @@
     "foreground": "#a9b1d6",
     "input": "#16161e",
     "muted": "#24283b",
-    "mutedForeground": "#a9b1d6",
+    "mutedForeground": "#868fb8",
     "popover": "#24283b",
     "popoverForeground": "#c0caf5",
     "primary": "#7aa2f7",
@@ -62,13 +62,13 @@
     "sidebarBorder": "#414868",
     "sidebarRing": "#7aa2f7",
     "chart1": "#7aa2f7",
-    "chart2": "#414868",
-    "chart3": "#414868",
-    "chart4": "#f7768e",
-    "chart5": "#24283b",
-    "highlightMatch": "#414868",
+    "chart2": "#9ece6a",
+    "chart3": "#bb9af7",
+    "chart4": "#ff9e64",
+    "chart5": "#7dcfff",
+    "highlightMatch": "#2a2f44",
     "highlightActive": "#414868",
-    "highlight": "#414868",
+    "highlight": "#e0af68",
     "highlightForeground": "#c0caf5"
   },
   "version": 1

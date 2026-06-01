@@ -1,6 +1,6 @@
 {
   "author": "Pavel Pertsev",
-  "description": "A Gruvbox Dark port with warm retro surfaces, amber actions, and the original groove terminal palette.",
+  "description": "A Gruvbox Dark port with warm retro surfaces and amber actions. A five-hue chart palette (blue, green, orange, purple, aqua) separates data series, with red reserved for destructive actions, and a three-step highlight ramp rises from the groove surfaces to a bright yellow marker.",
   "id": "gruvbox-dark",
   "name": "Gruvbox Dark",
   "terminal": {
@@ -61,14 +61,14 @@
     "sidebarAccentForeground": "#fbf1c7",
     "sidebarBorder": "#665c54",
     "sidebarRing": "#fabd2f",
-    "chart1": "#fabd2f",
-    "chart2": "#458588",
-    "chart3": "#504945",
-    "chart4": "#cc241d",
-    "chart5": "#3c3836",
-    "highlightMatch": "#504945",
+    "chart1": "#83a598",
+    "chart2": "#b8bb26",
+    "chart3": "#fe8019",
+    "chart4": "#d3869b",
+    "chart5": "#8ec07c",
+    "highlightMatch": "#3c3836",
     "highlightActive": "#504945",
-    "highlight": "#504945",
+    "highlight": "#fabd2f",
     "highlightForeground": "#fbf1c7"
   },
   "version": 1

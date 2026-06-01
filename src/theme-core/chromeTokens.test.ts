@@ -58,9 +58,11 @@ describe("getChromeMutedForeground", () => {
   });
 
   it("restores hierarchy on equal-token themes where muted-foreground equals foreground", () => {
-    // Tokyo Night ships muted-foreground == foreground, so the old CSS mix collapsed
-    // chrome muted onto primary. The derivation must pull it perceptibly lighter.
-    const { theme } = entryFor("tokyo-night");
+    // Imported or hand-authored themes can ship muted-foreground == foreground, which
+    // collapses a naive CSS mix of chrome muted onto primary. Force the equal-token
+    // condition on a real dark theme; the derivation must pull it perceptibly lighter.
+    const { theme: base } = entryFor("tokyo-night");
+    const theme = { ...base, ui: { ...base.ui, mutedForeground: base.ui.foreground } };
     expect(theme.ui.mutedForeground.toLowerCase()).toBe(theme.ui.foreground.toLowerCase());
 
     const surface = getChromeSurface(theme);

@@ -8,8 +8,8 @@ import type { SupersetTheme } from "./themeTypes";
 // CSS derivation:
 //   - Solarized maps card/input/muted/popover onto a single cream where even full
 //     foreground barely clears AA, so chrome sits on the higher-contrast base below.
-//   - Several themes (Tokyo Night, Nord, Dracula, …) ship muted-foreground == fore-
-//     ground, so any "mix muted toward foreground" derivation collapses onto primary.
+//   - Imported or hand-authored themes can ship muted-foreground == foreground, so any
+//     "mix muted toward foreground" derivation collapses onto primary.
 // So the muted token is synthesised here from foreground + surface with the contrast
 // math a stylesheet cannot do.
 
