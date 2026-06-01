@@ -16,10 +16,26 @@ function ruleBody(selector: string): string {
 }
 
 describe("rail style contracts", () => {
-  it("softens light-theme selected rows with accent instead of primary ink", () => {
-    const body = ruleBody(':root[data-theme-type="light"] .rail-row[data-selected]');
+  it("keeps selected rail rows neutral instead of tinting them with theme accents", () => {
+    const body = ruleBody(".rail-row[data-selected]");
 
-    expect(body).toContain("var(--preview-ui-accent)");
+    expect(body).toContain("var(--preview-ui-foreground)");
     expect(body).not.toContain("var(--preview-ui-primary)");
+    expect(body).not.toContain("var(--preview-ui-accent)");
+    expect(body).not.toContain("var(--row-accent)");
+    expect(globalCss).not.toContain(':root[data-theme-type="light"] .rail-row[data-selected]');
+  });
+
+  it("does not use the row accent for rail hover fills", () => {
+    const body = ruleBody(".rail-row:hover");
+
+    expect(body).toContain("var(--preview-ui-foreground)");
+    expect(body).not.toContain("var(--row-accent)");
+  });
+
+  it("uses an explicit neutral mode badge instead of a color-as-mode dot", () => {
+    expect(globalCss).not.toContain(".rail-row__dot");
+    expect(ruleBody(".rail-row__mode")).toContain("color: var(--preview-ui-foreground)");
+    expect(ruleBody(".rail-row__mode")).toContain("border: 1px solid");
   });
 });

@@ -2867,25 +2867,20 @@ a.scene-workspace__footer-row:hover {
 }
 
 .rail-row:hover {
-  background: color-mix(in srgb, var(--row-accent) 8%, transparent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
 }
 
-/* Selected tint uses the focused theme's primary (an AA-gated, always-visible
-   token) by default. Light themes override to the neutral accent layer so
-   Superset Light reads like the real app instead of a heavy ink wash. */
+/* Selected rows are neutral chrome state. Theme color belongs in the swatches, not
+   in row fills, otherwise the rail's readability swings wildly between themes. */
 .rail-row[data-selected] {
-  background: color-mix(in srgb, var(--preview-ui-primary) 18%, transparent);
-}
-
-:root[data-theme-type="light"] .rail-row[data-selected] {
-  background: color-mix(in srgb, var(--preview-ui-accent) 72%, transparent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--preview-ui-foreground) 10%, transparent);
 }
 
 .rail-row:focus-visible {
   /* Focus rings use --preview-focus-ring (a 3:1-verified focus token on every theme)
-     rather than --row-accent. The row's own accent still colors the dot, hover, and
-     selected tints; focus is a pointer cue and needs guaranteed 3:1 against the
-     background regardless of the row's accent saturation. */
+     rather than row-specific theme color. Focus is a pointer cue and needs guaranteed
+     3:1 against the background regardless of the row theme's accent saturation. */
   outline: 2px solid var(--preview-focus-ring);
   outline-offset: -2px;
 }
@@ -2926,10 +2921,11 @@ a.scene-workspace__footer-row:hover {
 }
 
 .rail-row__swatch {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 26%, var(--chrome-surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--chrome-surface) 78%, transparent);
 }
 
 .rail-row__trailing {
@@ -2944,15 +2940,22 @@ a.scene-workspace__footer-row:hover {
   flex-shrink: 0;
 }
 
-.rail-row__dot {
-  width: 9px;
-  height: 9px;
+.rail-row__mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 18%, transparent);
   border-radius: 999px;
-}
-
-.rail-row__dot[data-variant="light"] {
-  background: transparent;
-  border: 1.5px solid var(--row-accent);
+  background: color-mix(in srgb, var(--chrome-surface) 80%, var(--preview-ui-foreground) 4%);
+  color: var(--preview-ui-foreground);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 /* Rail — composition */

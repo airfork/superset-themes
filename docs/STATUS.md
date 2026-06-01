@@ -1037,6 +1037,44 @@ Impeccable design-context verification:
 - `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
 - `rtk pnpm build` passed.
 
+## Theme Rail Display Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Replaced the ambiguous trailing accent/ring dot in `RailRow` with an explicit neutral
+  `LIGHT` / `DARK` badge. The row's mode is now labeled directly instead of encoded by fill
+  vs. outline color.
+- Moved rail hover and selected-row fills to neutral foreground-derived chrome states. Theme
+  identity now stays in the five-swatch glimpse instead of tinting row chrome, so row visibility
+  stays steady across light, dark, and high-chroma themes.
+- Strengthened the swatch ring treatment so light and low-contrast swatches remain visible on
+  both light and dark chrome surfaces.
+- Local Playwright visual QA refreshed:
+  `.context/rail-superset-light-mode-badges.png`,
+  `.context/rail-tokyo-night-mode-badges.png`,
+  `.context/rail-rose-pine-dawn-mode-badges.png`, and
+  `.context/rail-superset-dark-mode-badges.png`.
+- Browser contrast probing after transition settle confirmed selected row text and mode badges
+  clear at least 4.5:1 on Superset Light, Tokyo Night, Rosé Pine Dawn, Superset Dark, Solarized
+  Light, Catppuccin Mocha, Dracula, and Graphite Dark; the old dot count is zero.
+
+Theme rail display verification:
+
+- `rtk pnpm test:unit src/rail/RailRow.test.tsx src/styles/railContracts.test.ts src/styles/themeTransitionContracts.test.ts src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 5 files / 23 tests.
+- `rtk node --input-type=module <<'NODE' ... NODE` Playwright contrast probe passed for eight
+  representative themes with zero `.rail-row__dot` / `rail-accent-dot` elements.
+- `rtk npx impeccable detect src/rail/RailRow.tsx src/rail/RailRow.test.tsx src/styles/global.css src/styles/railContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 293 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
 ## Verification
 
 Latest app verification:

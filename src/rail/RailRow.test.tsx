@@ -19,17 +19,20 @@ describe("RailRow", () => {
   const tokyo = entryFor("tokyo-night");
   const solarizedLight = entryFor("solarized-light");
 
-  it("colors the accent dot with the row's own theme accent", () => {
+  it("labels dark themes with an explicit mode badge instead of an ambiguous dot", () => {
     render(<RailRow entry={tokyo} selected={false} pinned={false} variant="basic" />);
-    const dot = screen.getByTestId("rail-accent-dot");
-    expect(dot).toHaveStyle({ backgroundColor: tokyo.theme.ui.accent });
-    expect(dot).toHaveAttribute("data-variant", "dark");
+    const badge = screen.getByTestId("rail-mode-badge");
+    expect(badge).toHaveAttribute("data-mode", "dark");
+    expect(badge).toHaveTextContent("Dark");
+    expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
   });
 
-  it("renders a ring (not filled) dot for light themes", () => {
+  it("labels light themes with an explicit mode badge instead of a low-contrast ring", () => {
     render(<RailRow entry={solarizedLight} selected={false} pinned={false} variant="basic" />);
-    const dot = screen.getByTestId("rail-accent-dot");
-    expect(dot).toHaveAttribute("data-variant", "light");
+    const badge = screen.getByTestId("rail-mode-badge");
+    expect(badge).toHaveAttribute("data-mode", "light");
+    expect(badge).toHaveTextContent("Light");
+    expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
   });
 
   it("shows family eyebrow and a five-swatch glimpse on featured variant", () => {
