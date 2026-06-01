@@ -13,9 +13,6 @@ import type { SupersetTheme } from "./themeTypes";
 
 const AA_CONTRAST = 4.5;
 const NON_TEXT_CONTRAST = 3.0;
-// Muted text aims for this share of the primary text's contrast, floored at AA. High
-// enough to stay comfortably legible, low enough to read as clearly secondary.
-const HIERARCHY_RATIO = 0.72;
 
 type Rgb = readonly [number, number, number];
 
@@ -44,6 +41,59 @@ function mixSrgb(baseHex: string, targetHex: string, weight: number): string {
   ]);
 }
 
+function sameHex(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase();
+}
+
+function raiseContrastTo(
+  baseHex: string,
+  targetHex: string,
+  surfaceHex: string,
+  minContrast: number,
+): string {
+  if (getContrastRatio(baseHex, surfaceHex) >= minContrast) {
+    return baseHex;
+  }
+  if (getContrastRatio(targetHex, surfaceHex) <= minContrast) {
+    return targetHex;
+  }
+
+  let low = 0;
+  let high = 1;
+  for (let i = 0; i < 24; i += 1) {
+    const mid = (low + high) / 2;
+    if (getContrastRatio(mixSrgb(baseHex, targetHex, mid), surfaceHex) < minContrast) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  return mixSrgb(baseHex, targetHex, high);
+}
+
+function lowerContrastTo(
+  baseHex: string,
+  targetHex: string,
+  surfaceHex: string,
+  targetContrast: number,
+): string {
+  if (getContrastRatio(baseHex, surfaceHex) <= targetContrast) {
+    return baseHex;
+  }
+
+  let low = 0;
+  let high = 1;
+  for (let i = 0; i < 24; i += 1) {
+    const mid = (low + high) / 2;
+    if (getContrastRatio(mixSrgb(baseHex, targetHex, mid), surfaceHex) > targetContrast) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  return mixSrgb(baseHex, targetHex, low);
+}
+
 // Light themes usually keep chrome on the background, but Superset Light's real app
 // shell uses its raised card gray for sidebars and bars. Use a light card surface
 // only when it is the softer surface and foreground text still clears AA; Solarized's
@@ -64,28 +114,21 @@ export function getChromeSurface(theme: SupersetTheme): string {
 export function getChromeMutedForeground(theme: SupersetTheme): string {
   const surface = getChromeSurface(theme);
   const foreground = theme.ui.foreground;
-  const primary = getContrastRatio(foreground, surface);
+  const muted = theme.ui.mutedForeground;
 
-  const target = Math.max(AA_CONTRAST, primary * HIERARCHY_RATIO);
-  if (target >= primary) {
-    // No headroom between AA and primary (foreground itself is barely legible, e.g.
-    // Solarized): a distinct muted would drop below AA, so keep parity with primary.
+  if (!sameHex(muted, foreground)) {
+    return raiseContrastTo(muted, foreground, surface, AA_CONTRAST);
+  }
+
+  const primary = getContrastRatio(foreground, surface);
+  if (AA_CONTRAST >= primary) {
+    // No headroom between AA and primary; a distinct muted would drop below AA.
     return foreground;
   }
 
-  // Contrast falls monotonically as foreground slides toward the surface, so binary
-  // search the blend weight that lands on the target contrast.
-  let low = 0;
-  let high = 1;
-  for (let i = 0; i < 24; i += 1) {
-    const mid = (low + high) / 2;
-    if (getContrastRatio(mixSrgb(foreground, surface, mid), surface) > target) {
-      low = mid;
-    } else {
-      high = mid;
-    }
-  }
-  return mixSrgb(foreground, surface, low);
+  // Equal-token themes need a synthesized secondary. Fade foreground toward the
+  // surface only until AA, keeping it muted instead of another foreground label.
+  return lowerContrastTo(foreground, surface, surface, AA_CONTRAST);
 }
 
 export function getFocusRingColor(theme: SupersetTheme): string {

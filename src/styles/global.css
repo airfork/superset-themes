@@ -3162,7 +3162,8 @@ button.rail-search {
   flex: 0 0 auto;
   width: 16px;
   height: 16px;
-  color: var(--preview-ui-popover-foreground);
+  color: var(--preview-ui-foreground);
+  opacity: 0.5;
   stroke-width: 2;
 }
 

@@ -847,6 +847,12 @@ Status: Complete; awaiting user visual validation.
   `--card`, `--popover`, and `--muted` are `oklch(0.97 0 0)`. Local Playwright visual QA on
   `http://127.0.0.1:5174/?theme=superset-light` confirmed `--chrome-surface = #f5f5f5`, no
   shortcut glyphs in the Pin row, and saved `.context/light-palette-after.png`.
+- Typography follow-up sampled the live command input: placeholder color is
+  `oklch(0.556 0 0)`, font size `14px`, weight `400`, and the search icon is foreground at
+  `opacity-50`. The local `--chrome-muted-foreground` was previously over-derived to `#2a2a2a`
+  on Superset Light; it now resolves to `#707070` (4.54:1 on `#f5f5f5`), close to the live
+  `#737373` muted token while staying over AA. The palette search icon now uses foreground at
+  `opacity: 0.5`, and Playwright saved `.context/light-palette-typography-after.png`.
 
 Superset light palette/chrome verification:
 
@@ -866,6 +872,13 @@ Superset light palette/chrome verification:
   reviewed against the touched app, palette, style, and chrome-token surfaces; no new
   touched-surface findings.
 - `rtk git diff --check` passed.
+- Typography follow-up verification: `rtk pnpm test:unit src/theme-core/chromeTokens.test.ts src/styles/focusContracts.test.ts`
+  passed; `rtk pnpm check` passed with 44 Vitest files / 286 tests; `rtk pnpm test:e2e`
+  passed with 29 flows and 1 skipped; `rtk pnpm test:stories` passed with 9 files / 31 stories;
+  `rtk pnpm build`, `rtk pnpm themes:validate`, `rtk pnpm themes:check-contrast`, and
+  `rtk npx impeccable detect src/styles/global.css src/styles/focusContracts.test.ts src/theme-core/chromeTokens.ts src/theme-core/chromeTokens.test.ts`
+  all passed. Latest Web Interface Guidelines were fetched and reviewed against the touched
+  typography/token surfaces with no new touched-surface findings. `rtk git diff --check` passed.
 
 ## Verification
 

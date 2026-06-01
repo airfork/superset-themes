@@ -72,6 +72,25 @@ describe("getChromeMutedForeground", () => {
     expect(mutedRatio).toBeLessThan(primary - 0.5);
     expect(mutedRatio).toBeGreaterThanOrEqual(AA);
   });
+
+  it("keeps Superset Light muted chrome close to the live muted token", () => {
+    const { theme } = entryFor("superset-light");
+    const surface = getChromeSurface(theme);
+    const mutedRatio = getContrastRatio(getChromeMutedForeground(theme), surface);
+
+    expect(mutedRatio).toBeGreaterThanOrEqual(AA);
+    expect(mutedRatio).toBeLessThan(5.25);
+    expect(getChromeMutedForeground(theme)).not.toBe(theme.ui.foreground);
+  });
+
+  it("uses the live Superset Dark muted token when it already clears AA", () => {
+    const { theme } = entryFor("superset-dark");
+
+    expect(
+      getContrastRatio(theme.ui.mutedForeground, getChromeSurface(theme)),
+    ).toBeGreaterThanOrEqual(AA);
+    expect(getChromeMutedForeground(theme)).toBe(theme.ui.mutedForeground);
+  });
 });
 
 describe("getFocusRingColor", () => {
