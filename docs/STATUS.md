@@ -934,6 +934,38 @@ Superset workspace/palette fidelity verification:
   an intentional Superset Light/Dark fidelity exception.
 - `rtk git diff --check` passed.
 
+## Impeccable Design Context (2026-06-01)
+
+Status: Complete.
+
+- Ran Impeccable `document` in scan mode because `PRODUCT.md` exists and the implemented app has
+  substantial token/component surfaces, while `DESIGN.md` was missing.
+- Generated root `DESIGN.md` in the six-section DESIGN.md format with YAML frontmatter for
+  representative Superset Light tokens, typography roles, radii, spacing, and core component
+  primitives. The prose documents the semantic split between `--chrome-*` app chrome tokens and
+  `--preview-*` theme preview tokens.
+- Generated local `.impeccable/design.json` sidecar for the Impeccable live panel with color
+  metadata, typography metadata, shadow/motion/breakpoint extensions, and rendered component
+  snippets for chrome search, rail rows, command palette, workspace thread row, settings field, and
+  terminal preview. The sidecar remains under the repo's ignored `.impeccable/` scratch directory.
+- Rendered `http://127.0.0.1:5174/?theme=superset-light` and sampled computed styles for chrome,
+  rail, workspace, terminal, and command palette surfaces to ground the document in actual UI
+  values.
+
+Impeccable design-context verification:
+
+- `rtk node -e "JSON.parse(require('fs').readFileSync('.impeccable/design.json','utf8')); console.log('design sidecar ok')"`
+  passed.
+- `rtk node /Users/tunji/.agents/skills/impeccable/scripts/load-context.mjs` passed and now reports
+  `hasDesign: true` with `designPath: DESIGN.md`.
+- `rtk pnpm lint` passed: Biome checked 158 files.
+- `rtk npx impeccable detect DESIGN.md docs/STATUS.md` returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 44 Vitest files / 290 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+
 ## Verification
 
 Latest app verification:
