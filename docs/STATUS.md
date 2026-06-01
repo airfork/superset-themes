@@ -1075,6 +1075,35 @@ Theme rail display verification:
 - `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
 - `rtk git diff --check` passed.
 
+## Dedicated Mode Section Badge Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Removed redundant `LIGHT` / `DARK` mode badges from the dedicated Light and Dark rail sections.
+  Those rows now rely on their section headers for mode context.
+- Kept mode badges in the mixed-mode Superset and Featured rail sections, where the row mode still
+  needs to be visible without reading across sections.
+- Preserved the row pin affordance when a basic Light/Dark section row is pinned; only the
+  redundant mode badge is suppressed.
+- Local Playwright visual QA saved
+  `.context/rail-light-dark-sections-no-mode-badges.png`. Runtime DOM inspection confirmed
+  Superset has 2 badges, Featured has 5 badges, and both Light and Dark have zero mode badges.
+
+Dedicated mode section badge verification:
+
+- `rtk pnpm test:unit src/rail/RailRow.test.tsx src/rail/Rail.test.tsx` passed: 2 files /
+  31 tests.
+- `rtk npx impeccable detect src/rail/RailRow.tsx src/rail/RailRow.test.tsx src/rail/Rail.test.tsx docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 296 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
 ## Verification
 
 Latest app verification:

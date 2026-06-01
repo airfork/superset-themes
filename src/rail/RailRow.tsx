@@ -49,6 +49,8 @@ export function RailRow({
   // "Tokyo Night" family over the "Tokyo Night" theme). It still earns its place
   // where the family groups distinct themes ("Rosé Pine" over "Rosé Pine Dawn").
   const showEyebrow = variant === "featured" && entry.meta.family !== entry.theme.name;
+  const showModeBadge = variant === "featured";
+  const showTrailing = pinned || showModeBadge;
 
   return (
     <button
@@ -82,25 +84,29 @@ export function RailRow({
           </span>
         ) : null}
       </span>
-      <span className="rail-row__trailing">
-        {pinned ? (
-          <Pin
-            className="rail-row__pin"
-            data-testid="rail-pin"
-            aria-hidden="true"
-            width={12}
-            height={12}
-          />
-        ) : null}
-        <span
-          className="rail-row__mode"
-          data-testid="rail-mode-badge"
-          data-mode={themeVariant}
-          aria-hidden="true"
-        >
-          {themeModeLabel}
+      {showTrailing ? (
+        <span className="rail-row__trailing">
+          {pinned ? (
+            <Pin
+              className="rail-row__pin"
+              data-testid="rail-pin"
+              aria-hidden="true"
+              width={12}
+              height={12}
+            />
+          ) : null}
+          {showModeBadge ? (
+            <span
+              className="rail-row__mode"
+              data-testid="rail-mode-badge"
+              data-mode={themeVariant}
+              aria-hidden="true"
+            >
+              {themeModeLabel}
+            </span>
+          ) : null}
         </span>
-      </span>
+      ) : null}
     </button>
   );
 }

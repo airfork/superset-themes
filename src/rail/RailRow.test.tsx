@@ -19,19 +19,26 @@ describe("RailRow", () => {
   const tokyo = entryFor("tokyo-night");
   const solarizedLight = entryFor("solarized-light");
 
-  it("labels dark themes with an explicit mode badge instead of an ambiguous dot", () => {
-    render(<RailRow entry={tokyo} selected={false} pinned={false} variant="basic" />);
+  it("labels featured dark themes with an explicit mode badge instead of an ambiguous dot", () => {
+    render(<RailRow entry={tokyo} selected={false} pinned={false} variant="featured" />);
     const badge = screen.getByTestId("rail-mode-badge");
     expect(badge).toHaveAttribute("data-mode", "dark");
     expect(badge).toHaveTextContent("Dark");
     expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
   });
 
-  it("labels light themes with an explicit mode badge instead of a low-contrast ring", () => {
-    render(<RailRow entry={solarizedLight} selected={false} pinned={false} variant="basic" />);
+  it("labels featured light themes with an explicit mode badge instead of a low-contrast ring", () => {
+    render(<RailRow entry={solarizedLight} selected={false} pinned={false} variant="featured" />);
     const badge = screen.getByTestId("rail-mode-badge");
     expect(badge).toHaveAttribute("data-mode", "light");
     expect(badge).toHaveTextContent("Light");
+    expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
+  });
+
+  it("omits the mode badge from basic rows because Light and Dark sections already label mode", () => {
+    render(<RailRow entry={tokyo} selected={false} pinned={false} variant="basic" />);
+
+    expect(screen.queryByTestId("rail-mode-badge")).not.toBeInTheDocument();
     expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
   });
 

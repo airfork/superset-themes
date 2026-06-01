@@ -70,6 +70,28 @@ describe("Rail", () => {
     expect(names).toEqual(sorted);
   });
 
+  it("does not repeat mode badges inside the dedicated Light and Dark sections", () => {
+    renderRail();
+
+    expect(
+      within(screen.getByRole("region", { name: "Light" })).queryAllByTestId("rail-mode-badge"),
+    ).toHaveLength(0);
+    expect(
+      within(screen.getByRole("region", { name: "Dark" })).queryAllByTestId("rail-mode-badge"),
+    ).toHaveLength(0);
+  });
+
+  it("keeps mode badges in mixed-mode Superset and Featured sections", () => {
+    renderRail();
+
+    expect(
+      within(screen.getByRole("region", { name: "Superset" })).getAllByTestId("rail-mode-badge"),
+    ).toHaveLength(2);
+    expect(
+      within(screen.getByRole("region", { name: "Featured" })).getAllByTestId("rail-mode-badge"),
+    ).toHaveLength(5);
+  });
+
   it("marks the focused theme as selected", () => {
     renderRail({ focusedThemeId: "solarized-light" });
     const selected = screen
