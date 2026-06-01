@@ -27,6 +27,11 @@ body {
   min-width: 320px;
 }
 
+::selection {
+  background: var(--preview-ui-highlight-active);
+  color: var(--preview-ui-highlight-foreground);
+}
+
 button,
 input,
 textarea,
@@ -1294,15 +1299,18 @@ kbd {
 
 /* Pane — Workspace scene (Superset-shape three-column thread) */
 .scene-workspace {
-  --scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent);
-  --scene-workspace-active-row: var(--preview-ui-muted);
-  --scene-workspace-hover-row: color-mix(in srgb, var(--preview-ui-accent) 50%, transparent);
-  --scene-workspace-muted-icon: color-mix(
+  --scene-workspace-active-row: var(--preview-ui-sidebar-accent);
+  --scene-workspace-hover-row: color-mix(
     in srgb,
-    var(--preview-ui-muted-foreground) 85%,
+    var(--preview-ui-sidebar-accent) 70%,
     transparent
   );
-  --scene-workspace-sidebar: var(--scene-workspace-muted-layer);
+  --scene-workspace-muted-icon: color-mix(
+    in srgb,
+    var(--preview-ui-sidebar-foreground) 72%,
+    transparent
+  );
+  --scene-workspace-sidebar: var(--preview-ui-sidebar);
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
@@ -1314,11 +1322,6 @@ kbd {
   font-size: 0.78rem;
 }
 
-:root[data-theme-type="dark"] .scene-workspace,
-.compare-slot[data-theme-type="dark"] .scene-workspace {
-  --scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 35%, transparent);
-}
-
 .scene-workspace__rail {
   --scene-workspace-added: oklch(0.66 0.13 150);
   --scene-workspace-removed: oklch(0.66 0.16 28);
@@ -1327,9 +1330,9 @@ kbd {
   flex-direction: column;
   gap: 6px;
   padding: 10px 0 0;
-  border-right: 1px solid var(--preview-ui-border);
+  border-right: 1px solid var(--preview-ui-sidebar-border);
   background: var(--scene-workspace-sidebar);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   min-width: 0;
   font-size: 14px;
 }
@@ -1337,7 +1340,7 @@ kbd {
 .scene-workspace__rail-divider {
   height: 1px;
   margin: 6px 0;
-  background: var(--preview-ui-border);
+  background: var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__team,
@@ -1356,7 +1359,7 @@ kbd {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -1367,7 +1370,7 @@ kbd {
 
 .scene-workspace__team:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__team-mark {
@@ -1376,8 +1379,8 @@ kbd {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-muted-foreground);
+  background: var(--preview-ui-sidebar-primary);
+  color: var(--preview-ui-sidebar-primary-foreground);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1411,7 +1414,7 @@ kbd {
   gap: 10px;
   padding: 6px 8px;
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1426,7 +1429,7 @@ kbd {
 
 .scene-workspace__nav a:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__new-workspace-trailing {
@@ -1435,7 +1438,7 @@ kbd {
 
 .scene-workspace__divider {
   height: 1px;
-  background: var(--preview-ui-border);
+  background: var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__divider--gutter {
@@ -1459,7 +1462,7 @@ kbd {
   gap: 10px;
   padding: 6px 12px;
   border-radius: 6px;
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -1496,7 +1499,7 @@ kbd {
 .scene-workspace__project-count {
   font-size: 12px;
   font-weight: 400;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1515,7 +1518,7 @@ kbd {
   gap: 10px;
   padding: 6px 12px 6px 24px;
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-size: 14px;
   line-height: 20px;
   cursor: pointer;
@@ -1527,11 +1530,11 @@ kbd {
 
 .scene-workspace__branches li[data-active] {
   background: var(--scene-workspace-active-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__branches li[data-active]:hover {
-  background: var(--preview-ui-accent);
+  background: var(--preview-ui-sidebar-accent);
 }
 
 .scene-workspace__branch-icon {
@@ -1553,7 +1556,7 @@ kbd {
 }
 
 .scene-workspace__branches li[data-active] .scene-workspace__branch-icon {
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__branch-name {
@@ -1602,8 +1605,8 @@ kbd {
   gap: 6px;
   min-height: 38px;
   padding: 0 12px;
-  border-top: 1px solid var(--preview-ui-border);
-  color: var(--preview-ui-muted-foreground);
+  border-top: 1px solid var(--preview-ui-sidebar-border);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
@@ -1616,7 +1619,7 @@ kbd {
 }
 
 a.scene-workspace__footer-row:hover {
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__footer-row--settings {
@@ -1625,7 +1628,7 @@ a.scene-workspace__footer-row:hover {
   gap: 4px;
   min-height: 41px;
   padding: 4px 8px;
-  border-top: 1px solid var(--preview-ui-border);
+  border-top: 1px solid var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__settings-link {
@@ -1637,7 +1640,7 @@ a.scene-workspace__footer-row:hover {
   min-width: 0;
   padding: 6px 8px;
   border-radius: 8px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1646,7 +1649,7 @@ a.scene-workspace__footer-row:hover {
 
 .scene-workspace__settings-link:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__settings-link svg {
@@ -1673,13 +1676,13 @@ a.scene-workspace__footer-row:hover {
 
 .scene-workspace__help-button:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__footer-meta {
   font-size: 10px;
   font-weight: 400;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-variant-numeric: tabular-nums;
   letter-spacing: normal;
 }
@@ -2114,6 +2117,11 @@ a.scene-workspace__footer-row:hover {
   resize: none;
   white-space: pre;
   overflow: auto;
+}
+
+.scene-workspace__terminal-output::selection {
+  background: var(--preview-terminal-selection-background);
+  color: var(--preview-terminal-selection-foreground);
 }
 
 .scene-workspace__prompt {

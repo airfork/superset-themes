@@ -78,15 +78,27 @@ export function updateDraftUiToken<TKey extends keyof UiTokens>(
   token: TKey,
   value: UiTokens[TKey],
 ): ThemeDraft {
+  const nextUi = {
+    ...draft.theme.ui,
+    [token]: value,
+  };
+
+  if (token === "selection") {
+    nextUi.highlightActive = value;
+    nextUi.highlightMatch = value;
+    nextUi.highlight = value;
+  }
+
+  if (token === "selectionForeground") {
+    nextUi.highlightForeground = value;
+  }
+
   return {
     ...draft,
     dirty: true,
     theme: {
       ...draft.theme,
-      ui: {
-        ...draft.theme.ui,
-        [token]: value,
-      },
+      ui: nextUi,
     },
   };
 }
@@ -96,15 +108,21 @@ export function updateDraftTerminalToken<TKey extends keyof TerminalTokens>(
   token: TKey,
   value: TerminalTokens[TKey],
 ): ThemeDraft {
+  const nextTerminal = {
+    ...draft.theme.terminal,
+    [token]: value,
+  };
+
+  if (token === "selection") {
+    nextTerminal.selectionBackground = value;
+  }
+
   return {
     ...draft,
     dirty: true,
     theme: {
       ...draft.theme,
-      terminal: {
-        ...draft.theme.terminal,
-        [token]: value,
-      },
+      terminal: nextTerminal,
     },
   };
 }

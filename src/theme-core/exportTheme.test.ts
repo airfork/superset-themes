@@ -27,38 +27,72 @@ describe("exportThemeJson", () => {
     expect(exportedTheme).not.toHaveProperty("styleTags");
   });
 
-  it("maps internal selection tokens to Superset's official UI and terminal download keys", () => {
+  it("preserves Superset's official UI and terminal download keys", () => {
     const entry = requireValue(
       catalogThemes.find((candidate) => candidate.theme.id === "tokyo-night"),
     );
+    const theme = {
+      ...entry.theme,
+      terminal: {
+        ...entry.theme.terminal,
+        cursorAccent: "#101010",
+        selectionBackground: "#202020",
+      },
+      ui: {
+        ...entry.theme.ui,
+        chart1: "#111111",
+        chart2: "#222222",
+        chart3: "#333333",
+        chart4: "#444444",
+        chart5: "#555555",
+        highlight: "#666666",
+        highlightActive: "#777777",
+        highlightForeground: "#888888",
+        highlightMatch: "#999999",
+        sidebar: "#aaaaaa",
+        sidebarAccent: "#bbbbbb",
+        sidebarAccentForeground: "#cccccc",
+        sidebarBorder: "#dddddd",
+        sidebarForeground: "#eeeeee",
+        sidebarPrimary: "#121212",
+        sidebarPrimaryForeground: "#232323",
+        sidebarRing: "#343434",
+        tertiary: "#454545",
+        tertiaryActive: "#565656",
+      },
+    };
 
-    const exportedTheme = JSON.parse(exportThemeJson(entry));
+    const exportedTheme = JSON.parse(exportThemeJson(theme));
 
     expect(exportedTheme.ui).not.toHaveProperty("selection");
     expect(exportedTheme.ui).not.toHaveProperty("selectionForeground");
     expect(exportedTheme.ui).toMatchObject({
-      chart1: entry.theme.ui.primary,
-      highlight: entry.theme.ui.selection,
-      highlightActive: entry.theme.ui.selection,
-      highlightForeground: entry.theme.ui.selectionForeground,
-      highlightMatch: entry.theme.ui.selection,
-      sidebar: entry.theme.ui.card,
-      sidebarAccent: entry.theme.ui.secondary,
-      sidebarAccentForeground: entry.theme.ui.secondaryForeground,
-      sidebarBorder: entry.theme.ui.border,
-      sidebarForeground: entry.theme.ui.foreground,
-      sidebarPrimary: entry.theme.ui.primary,
-      sidebarPrimaryForeground: entry.theme.ui.primaryForeground,
-      sidebarRing: entry.theme.ui.ring,
-      tertiary: entry.theme.ui.muted,
-      tertiaryActive: entry.theme.ui.secondary,
+      chart1: "#111111",
+      chart2: "#222222",
+      chart3: "#333333",
+      chart4: "#444444",
+      chart5: "#555555",
+      highlight: "#666666",
+      highlightActive: "#777777",
+      highlightForeground: "#888888",
+      highlightMatch: "#999999",
+      sidebar: "#aaaaaa",
+      sidebarAccent: "#bbbbbb",
+      sidebarAccentForeground: "#cccccc",
+      sidebarBorder: "#dddddd",
+      sidebarForeground: "#eeeeee",
+      sidebarPrimary: "#121212",
+      sidebarPrimaryForeground: "#232323",
+      sidebarRing: "#343434",
+      tertiary: "#454545",
+      tertiaryActive: "#565656",
     });
 
     expect(exportedTheme.terminal).not.toHaveProperty("selection");
     expect(exportedTheme.terminal).not.toHaveProperty("selectionForeground");
     expect(exportedTheme.terminal).toMatchObject({
-      cursorAccent: entry.theme.terminal.background,
-      selectionBackground: entry.theme.terminal.selection,
+      cursorAccent: "#101010",
+      selectionBackground: "#202020",
     });
   });
 });

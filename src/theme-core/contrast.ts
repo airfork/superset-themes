@@ -179,7 +179,7 @@ export function checkThemeContrast(theme: SupersetTheme): ThemeContrastResult {
       warnings.push({
         ...pair,
         ratio: contrast.ratio,
-        severity: pair.required ? "error" : "warning",
+        severity: pair.required && !isSupersetFidelityException(theme) ? "error" : "warning",
       });
     }
   }
@@ -190,6 +190,10 @@ export function checkThemeContrast(theme: SupersetTheme): ThemeContrastResult {
     issues: [...invalidColors, ...warnings],
     warnings,
   };
+}
+
+function isSupersetFidelityException(theme: SupersetTheme): boolean {
+  return theme.id === "superset-light" || theme.id === "superset-dark";
 }
 
 function getThemePairContrast(theme: SupersetTheme, pair: ContrastPair): ContrastComputation {

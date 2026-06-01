@@ -51,6 +51,25 @@ const UI_TOKEN_KEYS: (keyof UiTokens)[] = [
   "secondaryForeground",
   "selection",
   "selectionForeground",
+  "tertiary",
+  "tertiaryActive",
+  "sidebar",
+  "sidebarForeground",
+  "sidebarPrimary",
+  "sidebarPrimaryForeground",
+  "sidebarAccent",
+  "sidebarAccentForeground",
+  "sidebarBorder",
+  "sidebarRing",
+  "chart1",
+  "chart2",
+  "chart3",
+  "chart4",
+  "chart5",
+  "highlightMatch",
+  "highlightActive",
+  "highlight",
+  "highlightForeground",
 ];
 const TERMINAL_TOKEN_KEYS: (keyof TerminalTokens)[] = [
   "background",
@@ -72,6 +91,8 @@ const TERMINAL_TOKEN_KEYS: (keyof TerminalTokens)[] = [
   "red",
   "selection",
   "selectionForeground",
+  "cursorAccent",
+  "selectionBackground",
   "white",
   "yellow",
 ];
@@ -174,6 +195,11 @@ function normalizeOfficialSupersetTheme(value: unknown): SupersetTheme | undefin
     colorToHex(uiSource[key] ?? fallback, uiBackground);
   const terminalColor = (key: string, fallback?: unknown) =>
     colorToHex(terminalSource[key] ?? fallback, terminalBackground);
+  const highlightMatch = uiColor("highlightMatch", uiSource.highlight ?? uiSource.accent);
+  const highlightActive = uiColor("highlightActive", highlightMatch ?? uiSource.highlight);
+  const highlight = uiColor("highlight", uiSource.highlightActive ?? highlightActive);
+  const highlightForeground = uiColor("highlightForeground", uiSource.foreground);
+  const terminalSelectionBackground = terminalColor("selectionBackground");
 
   const ui = completeUiTokens({
     accent: uiColor("accent"),
@@ -195,8 +221,27 @@ function normalizeOfficialSupersetTheme(value: unknown): SupersetTheme | undefin
     ring: uiColor("ring"),
     secondary: uiColor("secondary"),
     secondaryForeground: uiColor("secondaryForeground"),
-    selection: uiColor("highlightActive", uiSource.highlightMatch ?? uiSource.highlight),
-    selectionForeground: uiColor("highlightForeground", uiSource.foreground),
+    selection: highlightActive,
+    selectionForeground: highlightForeground,
+    tertiary: uiColor("tertiary", uiSource.muted),
+    tertiaryActive: uiColor("tertiaryActive", uiSource.secondary),
+    sidebar: uiColor("sidebar", uiSource.card),
+    sidebarForeground: uiColor("sidebarForeground", uiSource.foreground),
+    sidebarPrimary: uiColor("sidebarPrimary", uiSource.primary),
+    sidebarPrimaryForeground: uiColor("sidebarPrimaryForeground", uiSource.primaryForeground),
+    sidebarAccent: uiColor("sidebarAccent", uiSource.secondary),
+    sidebarAccentForeground: uiColor("sidebarAccentForeground", uiSource.secondaryForeground),
+    sidebarBorder: uiColor("sidebarBorder", uiSource.border),
+    sidebarRing: uiColor("sidebarRing", uiSource.ring),
+    chart1: uiColor("chart1", uiSource.primary),
+    chart2: uiColor("chart2", uiSource.accent),
+    chart3: uiColor("chart3", uiSource.secondary),
+    chart4: uiColor("chart4", uiSource.destructive),
+    chart5: uiColor("chart5", uiSource.muted),
+    highlightMatch,
+    highlightActive,
+    highlight,
+    highlightForeground,
   });
 
   const terminal = completeTerminalTokens({
@@ -212,12 +257,14 @@ function normalizeOfficialSupersetTheme(value: unknown): SupersetTheme | undefin
     brightWhite: terminalColor("brightWhite"),
     brightYellow: terminalColor("brightYellow"),
     cursor: terminalColor("cursor"),
+    cursorAccent: terminalColor("cursorAccent", terminalSource.background),
     cyan: terminalColor("cyan"),
     foreground: terminalColor("foreground"),
     green: terminalColor("green"),
     magenta: terminalColor("magenta"),
     red: terminalColor("red"),
-    selection: terminalColor("selectionBackground"),
+    selection: terminalSelectionBackground,
+    selectionBackground: terminalSelectionBackground,
     selectionForeground: terminalColor("selectionForeground", terminalSource.foreground),
     white: terminalColor("white"),
     yellow: terminalColor("yellow"),

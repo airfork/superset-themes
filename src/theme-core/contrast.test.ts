@@ -126,6 +126,26 @@ describe("checkThemeContrast", () => {
     ).toBeCloseTo(1.0085, 4);
   });
 
+  it("treats Superset baseline contrast misses as fidelity warnings, not theme errors", () => {
+    const supersetDark = requireValue(
+      catalogThemes.find((entry) => entry.theme.id === "superset-dark"),
+    ).theme;
+
+    const result = checkThemeContrast(supersetDark);
+
+    expect(result.warnings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backgroundPath: "ui.destructive",
+          foregroundPath: "ui.destructiveForeground",
+          required: true,
+          severity: "warning",
+        }),
+      ]),
+    );
+    expect(result.warnings.filter((warning) => warning.severity === "error")).toEqual([]);
+  });
+
   it("returns structured invalid-color issues without throwing", () => {
     const baseTheme = requireValue(catalogThemes[0]).theme;
     const invalidTheme: SupersetTheme = {

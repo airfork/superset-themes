@@ -19,6 +19,56 @@ describe("theme schema", () => {
     }
   });
 
+  it("normalizes legacy app themes into Superset's full theme token surface", () => {
+    const theme = requireValue(themeFixtures[0]);
+    const parsed = supersetThemeSchema.parse({
+      ...theme,
+      terminal: {
+        ...theme.terminal,
+        cursorAccent: undefined,
+        selectionBackground: undefined,
+      },
+      ui: {
+        ...theme.ui,
+        chart1: undefined,
+        highlightActive: undefined,
+        highlightForeground: undefined,
+        highlightMatch: undefined,
+        sidebar: undefined,
+        sidebarAccent: undefined,
+        sidebarAccentForeground: undefined,
+        sidebarBorder: undefined,
+        sidebarForeground: undefined,
+        sidebarPrimary: undefined,
+        sidebarPrimaryForeground: undefined,
+        sidebarRing: undefined,
+        tertiary: undefined,
+        tertiaryActive: undefined,
+      },
+    });
+
+    expect(parsed.ui).toMatchObject({
+      chart1: theme.ui.primary,
+      highlightActive: theme.ui.selection,
+      highlightForeground: theme.ui.selectionForeground,
+      highlightMatch: theme.ui.selection,
+      sidebar: theme.ui.card,
+      sidebarAccent: theme.ui.secondary,
+      sidebarAccentForeground: theme.ui.secondaryForeground,
+      sidebarBorder: theme.ui.border,
+      sidebarForeground: theme.ui.foreground,
+      sidebarPrimary: theme.ui.primary,
+      sidebarPrimaryForeground: theme.ui.primaryForeground,
+      sidebarRing: theme.ui.ring,
+      tertiary: theme.ui.muted,
+      tertiaryActive: theme.ui.secondary,
+    });
+    expect(parsed.terminal).toMatchObject({
+      cursorAccent: theme.terminal.background,
+      selectionBackground: theme.terminal.selection,
+    });
+  });
+
   it("rejects invalid theme types", () => {
     expect(() =>
       supersetThemeSchema.parse({

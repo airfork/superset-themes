@@ -16,9 +16,9 @@ function ruleBody(selector: string): string {
 }
 
 describe("workspace scene style contracts", () => {
-  it("uses Superset's muted foreground token for secondary chrome labels", () => {
+  it("uses Superset's sidebar token family for sidebar chrome labels", () => {
     expect(ruleBody(".scene-workspace__nav a")).toContain(
-      "color: var(--preview-ui-muted-foreground)",
+      "color: var(--preview-ui-sidebar-foreground)",
     );
     expect(ruleBody(".scene-workspace__session")).toContain(
       "color: var(--preview-ui-muted-foreground)",
@@ -28,16 +28,13 @@ describe("workspace scene style contracts", () => {
     );
   });
 
-  it("uses the live Superset dark shell layers instead of hand-tinted sidebars", () => {
-    expect(ruleBody(".scene-workspace")).toContain(
-      "--scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent)",
+  it("uses Superset's explicit sidebar tokens instead of hand-tinted sidebars", () => {
+    expect(globalCss).toContain("--scene-workspace-sidebar: var(--preview-ui-sidebar)");
+    expect(ruleBody(".scene-workspace__rail")).toContain(
+      "border-right: 1px solid var(--preview-ui-sidebar-border)",
     );
-    expect(globalCss).toContain(':root[data-theme-type="dark"] .scene-workspace');
-    expect(globalCss).toContain(
-      "--scene-workspace-muted-layer: color-mix(in srgb, var(--preview-ui-muted) 35%, transparent)",
-    );
-    expect(ruleBody(".scene-workspace__sessions")).toContain(
-      "background: var(--preview-ui-background)",
+    expect(ruleBody(".scene-workspace__rail")).toContain(
+      "background: var(--scene-workspace-sidebar)",
     );
   });
 
@@ -69,7 +66,7 @@ describe("workspace scene style contracts", () => {
     expect(ruleBody(".scene-workspace__nav a")).toContain("font-weight: 500");
     expect(ruleBody(".scene-workspace__nav a")).toContain("line-height: 20px");
     expect(ruleBody(".scene-workspace__nav a")).toContain(
-      "color: var(--preview-ui-muted-foreground)",
+      "color: var(--preview-ui-sidebar-foreground)",
     );
     expect(globalCss).not.toContain('.scene-workspace__nav a[aria-current="page"]');
   });
@@ -83,5 +80,11 @@ describe("workspace scene style contracts", () => {
     expect(ruleBody(".scene-workspace__project-header")).toContain("line-height: 20px");
     expect(ruleBody(".scene-workspace__branches li")).toContain("font-size: 14px");
     expect(ruleBody(".scene-workspace__branches li")).toContain("line-height: 20px");
+    expect(ruleBody(".scene-workspace__branches li[data-active]")).toContain(
+      "background: var(--scene-workspace-active-row)",
+    );
+    expect(ruleBody(".scene-workspace__branches li[data-active]")).toContain(
+      "color: var(--preview-ui-sidebar-accent-foreground)",
+    );
   });
 });

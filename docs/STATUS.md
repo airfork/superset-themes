@@ -14,6 +14,11 @@ a11y is enforced globally for the current story suite.
 
 Latest completed checkpoint:
 
+- Superset token-surface checkpoint expanded the internal schema to preserve the official Superset
+  theme JSON roles end to end: `tertiary*`, `sidebar*`, `chart1..5`, `highlight*`, terminal
+  `cursorAccent`, and terminal `selectionBackground`. Superset Light/Dark now use the attached
+  official starter JSON values directly, and their known low-contrast pairs are reported as
+  warnings instead of being rewritten for accessibility.
 - Superset import/export checkpoint changed the catalog nameplate and command-palette JSON action
   from clipboard copy to a downloaded `.json` file. Exports now use Superset's marketplace/starter
   theme shape (`highlight*`, `selectionBackground`, sidebar/chart tokens, no app-only `version`),
@@ -1107,6 +1112,45 @@ Dedicated mode section badge verification:
 - `rtk pnpm build` passed.
 - `rtk pnpm themes:validate` passed for 14 catalog themes.
 - `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
+## Superset Token Surface Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Expanded `src/theme-core/schema.ts` so catalog themes and imported official Superset JSON preserve
+  the full starter/marketplace token surface instead of collapsing it into compact app-only aliases.
+  Existing compact catalog data still parses through schema defaults, but generated/catalog JSON now
+  physically includes the official token sections.
+- Updated `src/theme-core/exportTheme.ts` and `src/lab/importTheme.ts` so download/import is
+  round-trippable for Superset's own JSON shape. App-only aliases such as `ui.selection` remain
+  compatibility/editing fields and are omitted from downloads.
+- Replaced Superset Light/Dark catalog token payloads with the attached official starter exports.
+  `superset-dark` now keeps live Superset values such as `ui.destructiveForeground = #ffcccc`
+  and `ui.highlightActive = #7b4530`; the local contrast checker warns on those official misses
+  instead of changing them.
+- Added preview CSS variables for the official roles and moved the workspace rail/active rows,
+  highlight selection, and terminal selection onto those roles (`sidebar*`, `highlight*`,
+  `terminal.selectionBackground`) rather than re-derived approximations.
+- Updated lab draft editing and random generation to keep the hidden official aliases synchronized
+  when a compact editor token changes.
+- Browser verification attempted the preferred in-app Browser path, but `iab` was unavailable.
+  Direct Playwright against Vite at `http://127.0.0.1:5174/` confirmed Superset Light/Dark root
+  variables and rendered workspace surfaces resolve from the same official roles. Screenshots:
+  `.context/browser-qa/superset-light-official-token-smoke.png` and
+  `.context/browser-qa/superset-dark-official-token-smoke.png`.
+
+Superset token surface verification:
+
+- `rtk pnpm test:unit src/lab/draftTheme.test.ts src/theme-core/contrast.test.ts src/theme-core/schema.test.ts src/theme-core/exportTheme.test.ts src/preview/themeCssVars.test.ts src/theme/applyTheme.test.ts src/lab/importTheme.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 8 files / 37 tests.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` passed with 3 optional Superset baseline warnings.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 300 tests, research/archive tests,
+  and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
 - `rtk git diff --check` passed.
 
 ## Verification
