@@ -1,0 +1,118 @@
+/* Layout shell — master/detail grid */
+:root {
+  --chrome-top: 38px;
+  --chrome-bottom: 32px;
+  --rail-width: 300px;
+}
+
+.layout-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+}
+
+.layout-shell__body {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  min-height: 0;
+}
+
+.layout-shell__rail {
+  /* Stretch to the full body cell (grid default) so the surface + right border reach
+     the bottom bar even when the theme list is shorter than the viewport; min-height:0
+     lets the rail scroll internally once the list outgrows the column. */
+  min-height: 0;
+  overflow-y: auto;
+  border-right: 1px solid var(--preview-ui-border);
+  background: var(--chrome-surface);
+}
+
+.layout-shell__pane {
+  min-width: 0;
+  min-height: 0;
+  background: var(--preview-ui-background);
+}
+
+/* Expand: when the shell carries data-expanded, the rail collapses to 0 so the
+   pane fills the body. Top and bottom bars stay put. */
+.layout-shell[data-expanded] .layout-shell__body {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.layout-shell[data-expanded] .layout-shell__rail {
+  visibility: hidden;
+  border-right: 0;
+}
+
+/* The rail disclosure toggle is mobile-only; on desktop the rail stays docked. */
+.layout-shell__rail-toggle {
+  display: none;
+}
+
+.layout-shell__rail-toggle-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 160ms ease-out;
+}
+
+.layout-shell__rail-toggle[aria-expanded="true"] .layout-shell__rail-toggle-icon {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 720px) {
+  .layout-shell__body {
+    grid-template-columns: 1fr;
+  }
+
+  .layout-shell__rail-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 11px 16px;
+    background: var(--chrome-surface);
+    border: 0;
+    border-bottom: 1px solid var(--preview-ui-border);
+    color: var(--preview-ui-foreground);
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  /* Collapsed by default so the preview + actions own the viewport; opening reveals
+     the rail as a self-scrolling panel that never pushes the pane fully offscreen. */
+  .layout-shell__rail {
+    display: none;
+    position: static;
+    max-height: 60vh;
+    border-right: 0;
+    border-bottom: 1px solid var(--preview-ui-border);
+  }
+
+  .layout-shell__rail[data-open] {
+    display: block;
+  }
+
+  /* Touch devices can't press these keyboard hints (↓ / ⌘K / . / Esc), so drop the
+     whole cluster rather than show dead affordances. The facts stay. */
+  .chrome-bottombar__hints {
+    display: none;
+  }
+}
+
+.layout-shell__rail-placeholder,
+.layout-shell__pane-placeholder {
+  padding: 16px;
+  font-size: 0.84rem;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.layout-shell__rail-placeholder p,
+.layout-shell__pane-placeholder p {
+  margin: 0 0 8px;
+}

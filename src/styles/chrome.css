@@ -1,0 +1,196 @@
+/* Chrome neutral tokens (--chrome-surface, --chrome-muted-foreground) are derived in
+   JS (see theme-core/chromeTokens) and applied alongside the --preview-* tokens, so
+   persistent chrome keeps AA legibility and a primary/secondary split on every theme,
+   including ones whose muted-foreground equals foreground. */
+
+/* Chrome — top bar */
+.chrome-topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 12px;
+  background: var(--chrome-surface);
+  border-bottom: 1px solid var(--preview-ui-border);
+  color: var(--preview-ui-foreground);
+  font-size: 0.84rem;
+}
+
+.chrome-topbar__name {
+  justify-self: start;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.chrome-topbar__search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: clamp(180px, 38vw, 480px);
+  min-width: 0;
+  justify-self: center;
+  height: 28px;
+  padding: 0 10px;
+  background: var(--chrome-surface);
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  color: var(--chrome-muted-foreground);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.chrome-topbar__search-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chrome-topbar__search:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+}
+
+.chrome-topbar__search:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.chrome-topbar__search > svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.chrome-topbar__search-label {
+  flex: 1;
+}
+
+.chrome-topbar__search kbd {
+  font-family: var(--app-font-chrome);
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
+}
+
+.chrome-topbar__repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+  color: var(--chrome-muted-foreground);
+  text-decoration: none;
+  font-size: 0.78rem;
+}
+
+.chrome-topbar__repo > svg {
+  width: 15px;
+  height: 15px;
+}
+
+.chrome-topbar__repo:hover {
+  color: var(--preview-ui-foreground);
+}
+
+.chrome-topbar__repo:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Chrome — bottom bar */
+.chrome-bottombar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--chrome-surface);
+  border-top: 1px solid var(--preview-ui-border);
+  color: var(--chrome-muted-foreground);
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chrome-bottombar__facts,
+.chrome-bottombar__hints {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chrome-bottombar__name {
+  color: var(--preview-ui-foreground);
+  font-weight: 600;
+}
+
+.chrome-bottombar__sep {
+  color: color-mix(in srgb, var(--preview-ui-muted-foreground) 60%, transparent);
+}
+
+.chrome-bottombar__hint {
+  font-family: var(--app-font-chrome);
+}
+
+/* The "?" hint is the one pressable chip in the cluster (opens the shortcut
+   reference); strip the button chrome so it sits flush with the static hints. */
+.chrome-bottombar__shortcuts {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.chrome-bottombar__shortcuts:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+/* Chip the pressable key so it reads as an affordance, not muted filler. The
+   glyph takes full foreground while the trailing verb stays muted. */
+.chrome-bottombar__key {
+  font-family: var(--app-font-chrome);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 1px 5px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--chrome-surface));
+  color: var(--preview-ui-foreground);
+}
+
+/* Defined after the base chip so the hover override reads in ascending
+   specificity (the "?" chip brightens when its button is hovered). */
+.chrome-bottombar__shortcuts:hover .chrome-bottombar__key {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 14%, var(--chrome-surface));
+}
+
+.chrome-bottombar__slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chrome-bottombar__slot-label {
+  font-weight: 600;
+  font-variant-numeric: normal;
+  color: var(--chrome-muted-foreground);
+}
+
+.chrome-bottombar__empty {
+  font-style: italic;
+}

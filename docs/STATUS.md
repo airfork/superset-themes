@@ -6,58 +6,44 @@ The Superset Theme Catalog is a complete static React/Vite app for browsing, com
 generating, validating, and exporting Superset-compatible themes. It currently ships 14 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
-Previous committed checkpoint: `b7574e9 feat: optimize GitHub Pages bundle`.
+Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mapping`.
 
 Latest completed checkpoint:
 
-- Critical first-paint theme CSS now uses the runtime `getThemeCssVars()` mapper instead of a
-  separate hand-built variable loop. This keeps `--chrome-*`, `--preview-focus-ring`, selection,
-  and terminal selection variables aligned between first paint and runtime theme application.
-- `docs/STATUS.md` has been trimmed to current state, active work, verification, blockers, and
-  references. The old phase-by-phase historical log remains recoverable from
-  `b7574e9:docs/STATUS.md`.
+- Catalog assembly now joins theme metadata to theme JSON by `themeId` instead of array position.
+- Featured and baseline theme IDs derive from catalog `featuredRank` / `baselineRank` metadata.
+- Critical first-paint theme CSS reads the same runtime default focused theme as the app.
+- `global.css` now acts as an ordered import manifest for split surface CSS files; style contract
+  tests read the full CSS import graph.
 
 ## Active Work
 
-- Commit the cleanup slice after verification.
+- None. The bundle/repo-structure cleanup opportunities tracked from the audit have been handled.
 
 ## Verification
-
-Last full verification for `b7574e9` passed:
-
-- `rtk git diff --check`
-- `rtk pnpm check`
-- `rtk pnpm test:e2e`
-- `rtk pnpm test:stories`
-- `rtk pnpm build`
-- `rtk pnpm build:pages`
 
 Current slice verification passed:
 
 - `rtk git diff --check`
-- `rtk pnpm check`
-- `rtk pnpm exec tsx --test scripts/vite-plugin-critical-theme.test.mjs` passed.
+- `rtk pnpm check` passed: Biome checked 179 files with no warnings, Vitest passed 48 files /
+  311 tests, script tests passed, and the production build inside `check` succeeded.
 - `rtk pnpm test:e2e` passed: 29 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
-- `rtk pnpm build`
-- `rtk pnpm build:pages`
-- Pages artifact inspection confirmed `--chrome-surface`, `--chrome-muted-foreground`, and
-  `--preview-focus-ring` in both `dist/index.html` and `dist/404.html`.
+- `rtk pnpm build` passed; initial JS `368.60 kB` minified / `113.73 kB` gzip.
+- `rtk pnpm build:pages` passed; Pages initial JS `368.63 kB` minified / `113.74 kB` gzip.
 
 ## GitHub Pages And Bundle Baseline
 
 - `pnpm build:pages` builds with the `/superset-themes/` base path.
 - Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
-- Current initial JS baseline from `b7574e9`:
-  - normal build: `368.34 kB` minified / `113.60 kB` gzip
-  - Pages build: `368.38 kB` minified / `113.61 kB` gzip
-- Current critical CSS adds the shared chrome/focus variables; initial JS remains unchanged.
+- Current initial JS baseline:
+  - normal build: `368.60 kB` minified / `113.73 kB` gzip
+  - Pages build: `368.63 kB` minified / `113.74 kB` gzip
 
 ## Remaining Opportunities
 
-- Reduce manual catalog registration duplication in `src/data/catalog.ts`.
-- Split `src/styles/global.css` by app surface while keeping the existing style contract tests.
+None currently tracked from the bundle/repo-structure audit.
 
 ## Blockers
 

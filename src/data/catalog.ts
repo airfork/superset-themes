@@ -14,6 +14,8 @@ import supersetDarkTheme from "./themes/superset-dark.json" with { type: "json" 
 import supersetLightTheme from "./themes/superset-light.json" with { type: "json" };
 import tokyoNightTheme from "./themes/tokyo-night.json" with { type: "json" };
 
+type CatalogRankKey = "baselineRank" | "featuredRank";
+
 export const catalogThemeMetadata = [
   {
     themeId: "aurora-light",
@@ -263,63 +265,50 @@ export const catalogThemeMetadata = [
   },
 ] as const satisfies CatalogThemeMeta[];
 
-const rawCatalogThemes = [
-  {
-    theme: auroraLightTheme as SupersetTheme,
-    meta: catalogThemeMetadata[0],
-  },
-  {
-    theme: auroraDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[1],
-  },
-  {
-    theme: graphiteDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[2],
-  },
-  {
-    theme: solarizedLightTheme as SupersetTheme,
-    meta: catalogThemeMetadata[3],
-  },
-  {
-    theme: solarizedDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[4],
-  },
-  {
-    theme: nordTheme as SupersetTheme,
-    meta: catalogThemeMetadata[5],
-  },
-  {
-    theme: catppuccinMochaTheme as SupersetTheme,
-    meta: catalogThemeMetadata[6],
-  },
-  {
-    theme: draculaTheme as SupersetTheme,
-    meta: catalogThemeMetadata[7],
-  },
-  {
-    theme: gruvboxDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[8],
-  },
-  {
-    theme: tokyoNightTheme as SupersetTheme,
-    meta: catalogThemeMetadata[9],
-  },
-  {
-    theme: rosePineDawnTheme as SupersetTheme,
-    meta: catalogThemeMetadata[10],
-  },
-  {
-    theme: oneDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[11],
-  },
-  {
-    theme: supersetLightTheme as SupersetTheme,
-    meta: catalogThemeMetadata[12],
-  },
-  {
-    theme: supersetDarkTheme as SupersetTheme,
-    meta: catalogThemeMetadata[13],
-  },
-] as const satisfies CatalogThemeEntry[];
+const catalogThemesById = {
+  "aurora-light": auroraLightTheme as SupersetTheme,
+  "aurora-dark": auroraDarkTheme as SupersetTheme,
+  "graphite-dark": graphiteDarkTheme as SupersetTheme,
+  "solarized-light": solarizedLightTheme as SupersetTheme,
+  "solarized-dark": solarizedDarkTheme as SupersetTheme,
+  nord: nordTheme as SupersetTheme,
+  "catppuccin-mocha": catppuccinMochaTheme as SupersetTheme,
+  dracula: draculaTheme as SupersetTheme,
+  "gruvbox-dark": gruvboxDarkTheme as SupersetTheme,
+  "tokyo-night": tokyoNightTheme as SupersetTheme,
+  "rose-pine-dawn": rosePineDawnTheme as SupersetTheme,
+  "one-dark": oneDarkTheme as SupersetTheme,
+  "superset-light": supersetLightTheme as SupersetTheme,
+  "superset-dark": supersetDarkTheme as SupersetTheme,
+} as const satisfies Record<string, SupersetTheme>;
 
-export const catalogThemes = [...rawCatalogThemes] satisfies CatalogThemeEntry[];
+export function buildCatalogThemes(
+  metadata: readonly CatalogThemeMeta[],
+  themesById: Readonly<Record<string, SupersetTheme>>,
+): CatalogThemeEntry[] {
+  return metadata.map((meta) => {
+    const theme = themesById[meta.themeId];
+
+    if (!theme) {
+      throw new Error(`Missing theme JSON for catalog metadata "${meta.themeId}".`);
+    }
+
+    if (theme.id !== meta.themeId) {
+      throw new Error(`Catalog metadata "${meta.themeId}" points at theme JSON "${theme.id}".`);
+    }
+
+    return { theme, meta };
+  });
+}
+
+export const catalogThemes = buildCatalogThemes(catalogThemeMetadata, catalogThemesById);
+
+export function getRankedCatalogThemeIds(
+  entries: readonly CatalogThemeEntry[],
+  rankKey: CatalogRankKey,
+): string[] {
+  return entries
+    .filter((entry) => entry.meta[rankKey] !== null)
+    .toSorted((a, b) => Number(a.meta[rankKey]) - Number(b.meta[rankKey]))
+    .map((entry) => entry.theme.id);
+}

@@ -1,0 +1,320 @@
+/* Pane — Settings scene */
+.scene-settings {
+  display: grid;
+  gap: 18px;
+  padding: 18px 22px 22px;
+  /* Superset's settings page sits on a solid --tertiary surface (`bg-tertiary`),
+     a step lighter than the workspace canvas. Verified live via CDP; the form
+     controls below stay on --background so they read as recessed wells. */
+  background: var(--preview-ui-tertiary);
+  color: var(--preview-ui-foreground);
+  font-family: var(--app-font-chrome);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.scene-settings__header {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--preview-ui-border);
+}
+
+.scene-settings__heading {
+  margin: 0;
+  font-size: 1.04rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.scene-settings__lede {
+  margin: 0;
+  color: var(--preview-ui-foreground);
+  font-size: 0.82rem;
+  max-width: 62ch;
+}
+
+.scene-settings__row {
+  display: grid;
+  grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  padding: 8px 0;
+  border-top: 1px solid color-mix(in srgb, var(--preview-ui-border) 50%, transparent);
+}
+
+.scene-settings__row:first-of-type {
+  border-top: 0;
+}
+
+.scene-settings__field {
+  display: grid;
+  gap: 4px;
+}
+
+.scene-settings__field label,
+.scene-settings__field .scene-settings__group-label {
+  font-weight: 600;
+  color: var(--preview-ui-foreground);
+  font-size: 0.86rem;
+}
+
+.scene-settings__hint {
+  margin: 0;
+  color: var(--preview-ui-foreground);
+  font-size: 0.78rem;
+  opacity: 0.85;
+  max-width: 36ch;
+}
+
+/* Paired hints sit alone in the left column for grouped (fieldset) rows where
+   the visible label moves into the right-column legend. The vertical-padding
+   nudge keeps the hint baseline-aligned with the legend across themes. */
+.scene-settings__hint--paired {
+  padding-top: 2px;
+}
+
+/* fieldset wrapper for radio + checkbox groups. The legend acts as the visible
+   group label; CSS resets the browser's default fieldset chrome. */
+.scene-settings__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.scene-settings__group > .scene-settings__group-label {
+  display: block;
+  padding: 0 0 6px;
+  font-weight: 600;
+  color: var(--preview-ui-foreground);
+  font-size: 0.86rem;
+}
+
+.scene-settings__input,
+.scene-settings__select {
+  min-height: 34px;
+  width: min(100%, 480px);
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  padding: 0 12px;
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.scene-settings__select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--preview-ui-foreground) 50%),
+    linear-gradient(135deg, var(--preview-ui-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 14px,
+    calc(100% - 12px) 14px;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
+.scene-settings__radios,
+.scene-settings__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.scene-settings__radio,
+.scene-settings__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  font-size: 0.84rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scene-settings__radio:hover,
+.scene-settings__check:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 35%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-foreground) 5%, var(--preview-ui-background));
+}
+
+.scene-settings__radio:has(input:focus-visible),
+.scene-settings__check:has(input:focus-visible) {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.scene-settings__radio:has(input:checked),
+.scene-settings__check:has(input:checked) {
+  border-color: color-mix(in srgb, var(--preview-ui-accent) 55%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-accent) 14%, transparent);
+}
+
+.scene-settings__radio input,
+.scene-settings__check input {
+  accent-color: var(--preview-ui-accent);
+}
+
+.scene-settings__row--sample {
+  align-items: stretch;
+}
+
+.scene-settings__code,
+.scene-settings__terminal {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 8px;
+  background: var(--preview-ui-background);
+  font-family: var(--app-font-editor);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  overflow: auto;
+  display: grid;
+  gap: 2px;
+}
+
+.scene-settings__code code {
+  font-family: inherit;
+  display: grid;
+  gap: 2px;
+}
+
+.scene-settings__code-line {
+  white-space: pre;
+}
+
+.scene-settings__code-keyword {
+  color: var(--preview-terminal-magenta);
+  font-weight: 600;
+}
+
+.scene-settings__code-fn {
+  color: var(--preview-terminal-blue);
+}
+
+.scene-settings__code-type {
+  color: var(--preview-terminal-cyan);
+}
+
+.scene-settings__code-string {
+  color: var(--preview-terminal-green);
+}
+
+.scene-settings__terminal {
+  font-family: var(--app-font-terminal);
+  background: var(--preview-terminal-background);
+  color: var(--preview-terminal-foreground);
+}
+
+.scene-settings__terminal-prompt {
+  color: var(--preview-terminal-green);
+  font-weight: 600;
+}
+
+.scene-settings__terminal-success {
+  color: var(--preview-terminal-green);
+}
+
+.scene-settings__terminal-warning {
+  color: var(--preview-terminal-yellow);
+}
+
+.scene-settings__terminal-error {
+  color: var(--preview-terminal-red);
+}
+
+.scene-settings__destructive-cluster {
+  display: grid;
+  gap: 6px;
+}
+
+.scene-settings__destructive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--preview-ui-destructive);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--preview-ui-destructive);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+  touch-action: manipulation;
+}
+
+.scene-settings__destructive svg {
+  width: 14px;
+  height: 14px;
+}
+
+.scene-settings__destructive:hover {
+  background: color-mix(in srgb, var(--preview-ui-destructive) 12%, transparent);
+}
+
+/* Confirming: the button flips to filled-destructive so a second click reads as
+   a committed action, not an exploratory hover. */
+.scene-settings__destructive[data-state="confirming"] {
+  background: var(--preview-ui-destructive);
+  color: var(--preview-ui-destructive-foreground);
+  animation: scene-settings-destructive-pulse 1.6s ease-in-out 0s 2;
+}
+
+.scene-settings__destructive[data-state="done"] {
+  border-color: var(--preview-terminal-green);
+  color: var(--preview-terminal-green);
+  background: transparent;
+}
+
+@keyframes scene-settings-destructive-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-settings__destructive[data-state="confirming"] {
+    animation: none;
+  }
+}
+
+.scene-settings__destructive:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.scene-settings__input:focus-visible,
+.scene-settings__select:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 1px;
+  border-color: var(--preview-focus-ring);
+}
+
+@media (max-width: 720px) {
+  .scene-settings__row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

@@ -1,8 +1,8 @@
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
-import { catalogThemes } from "./catalog";
+import { catalogThemes, getRankedCatalogThemeIds } from "./catalog";
 import { FEATURED_IDS, getFeaturedThemes } from "./featured";
 
-export const BASELINE_IDS = ["superset-light", "superset-dark"] as const;
+export const BASELINE_IDS = getRankedCatalogThemeIds(catalogThemes, "baselineRank");
 
 export type BaselineId = (typeof BASELINE_IDS)[number];
 
