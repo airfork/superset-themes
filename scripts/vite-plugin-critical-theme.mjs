@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
 
 const FEATURED_DEFAULT_ID = "tokyo-night";
 const MARKER_REGEX = /<style id="critical-theme">[\s\S]*?<\/style>/;
@@ -9,19 +10,10 @@ function readDefaultTheme(root) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
-function kebab(str) {
-  return str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-}
-
 function buildVarDeclarations(theme) {
-  const decls = [];
-  for (const [key, value] of Object.entries(theme.ui)) {
-    decls.push(`--preview-ui-${kebab(key)}: ${value};`);
-  }
-  for (const [key, value] of Object.entries(theme.terminal)) {
-    decls.push(`--preview-terminal-${kebab(key)}: ${value};`);
-  }
-  return decls.join("\n  ");
+  return Object.entries(getThemeCssVars(theme))
+    .map(([key, value]) => `${key}: ${value};`)
+    .join("\n  ");
 }
 
 function buildCriticalStyleTag(theme) {
