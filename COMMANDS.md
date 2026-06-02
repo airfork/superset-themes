@@ -152,3 +152,15 @@ pnpm themes:generate -- --seed atlas --mode dark
 ```
 
 Generate a deterministic dark draft from a named seed.
+
+```bash
+pnpm themes:uninstall
+```
+
+Remove imported custom themes from the installed Superset desktop app (the app
+has no in-app delete for imported themes). Shows a checkbox list of installed
+custom themes — use `↑`/`↓` to move, `space` to select, `enter` to confirm —
+then, after a `y/N` prompt, backs up `~/.superset/app-state.json`, quits
+Superset, removes the selected themes, and relaunches. If Superset prompts you
+to confirm quitting, accept it; the script waits for the app to fully exit
+before editing. Requires an interactive terminal.
