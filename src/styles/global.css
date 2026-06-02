@@ -2151,6 +2151,20 @@ a.scene-workspace__footer-row:hover {
   );
 }
 
+/* Tool name in a tool-call line ("Bash", "Update", …) reads bold like Superset. */
+.scene-workspace__term-tool {
+  font-weight: 600;
+}
+
+/* Echoed user prompt: a subtle highlighted band, mirroring Superset's prompt echo. */
+.scene-workspace__term-prompt-line {
+  box-sizing: border-box;
+  margin: 2px 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--preview-terminal-foreground) 10%, transparent);
+}
+
 .scene-workspace__prompt {
   display: flex;
   align-items: center;

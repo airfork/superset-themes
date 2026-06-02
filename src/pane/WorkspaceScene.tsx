@@ -167,11 +167,31 @@ function renderTerminalLine(line: string, key: string) {
       </div>
     );
   }
+  // The echoed user prompt sits in a subtle highlighted band, like Superset.
+  if (line.startsWith("> ")) {
+    return (
+      <div className="scene-workspace__term-line scene-workspace__term-prompt-line" key={key}>
+        {line}
+      </div>
+    );
+  }
   if (line.startsWith("● ")) {
+    const body = line.slice(2);
+    const parenIndex = body.indexOf("(");
+    // Only tool calls (e.g. "Bash(...)", "Update(...)") get the green dot and a
+    // bold tool name; a plain assistant message keeps a foreground bullet.
+    if (parenIndex > 0 && /^[A-Z]\w*$/.test(body.slice(0, parenIndex))) {
+      return (
+        <div className="scene-workspace__term-line" key={key}>
+          <span className="scene-workspace__term-ok">● </span>
+          <span className="scene-workspace__term-tool">{body.slice(0, parenIndex)}</span>
+          {body.slice(parenIndex)}
+        </div>
+      );
+    }
     return (
       <div className="scene-workspace__term-line" key={key}>
-        <span className="scene-workspace__term-ok">● </span>
-        {line.slice(2)}
+        {line}
       </div>
     );
   }
