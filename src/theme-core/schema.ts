@@ -4,7 +4,7 @@ const colorTokenSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, "Use six-digit he
 
 export const themeTypeSchema = z.enum(["light", "dark"]);
 
-export const uiTokensSchema = z
+const uiTokensInputSchema = z
   .object({
     accent: colorTokenSchema,
     accentForeground: colorTokenSchema,
@@ -27,10 +27,52 @@ export const uiTokensSchema = z
     secondaryForeground: colorTokenSchema,
     selection: colorTokenSchema,
     selectionForeground: colorTokenSchema,
+    tertiary: colorTokenSchema.optional(),
+    tertiaryActive: colorTokenSchema.optional(),
+    sidebar: colorTokenSchema.optional(),
+    sidebarForeground: colorTokenSchema.optional(),
+    sidebarPrimary: colorTokenSchema.optional(),
+    sidebarPrimaryForeground: colorTokenSchema.optional(),
+    sidebarAccent: colorTokenSchema.optional(),
+    sidebarAccentForeground: colorTokenSchema.optional(),
+    sidebarBorder: colorTokenSchema.optional(),
+    sidebarRing: colorTokenSchema.optional(),
+    chart1: colorTokenSchema.optional(),
+    chart2: colorTokenSchema.optional(),
+    chart3: colorTokenSchema.optional(),
+    chart4: colorTokenSchema.optional(),
+    chart5: colorTokenSchema.optional(),
+    highlightMatch: colorTokenSchema.optional(),
+    highlightActive: colorTokenSchema.optional(),
+    highlight: colorTokenSchema.optional(),
+    highlightForeground: colorTokenSchema.optional(),
   })
   .strict();
 
-export const terminalTokensSchema = z
+export const uiTokensSchema = uiTokensInputSchema.transform((ui) => ({
+  ...ui,
+  tertiary: ui.tertiary ?? ui.muted,
+  tertiaryActive: ui.tertiaryActive ?? ui.secondary,
+  sidebar: ui.sidebar ?? ui.card,
+  sidebarForeground: ui.sidebarForeground ?? ui.foreground,
+  sidebarPrimary: ui.sidebarPrimary ?? ui.primary,
+  sidebarPrimaryForeground: ui.sidebarPrimaryForeground ?? ui.primaryForeground,
+  sidebarAccent: ui.sidebarAccent ?? ui.secondary,
+  sidebarAccentForeground: ui.sidebarAccentForeground ?? ui.secondaryForeground,
+  sidebarBorder: ui.sidebarBorder ?? ui.border,
+  sidebarRing: ui.sidebarRing ?? ui.ring,
+  chart1: ui.chart1 ?? ui.primary,
+  chart2: ui.chart2 ?? ui.accent,
+  chart3: ui.chart3 ?? ui.secondary,
+  chart4: ui.chart4 ?? ui.destructive,
+  chart5: ui.chart5 ?? ui.muted,
+  highlightMatch: ui.highlightMatch ?? ui.selection,
+  highlightActive: ui.highlightActive ?? ui.selection,
+  highlight: ui.highlight ?? ui.selection,
+  highlightForeground: ui.highlightForeground ?? ui.selectionForeground,
+}));
+
+const terminalTokensInputSchema = z
   .object({
     background: colorTokenSchema,
     black: colorTokenSchema,
@@ -51,10 +93,18 @@ export const terminalTokensSchema = z
     red: colorTokenSchema,
     selection: colorTokenSchema,
     selectionForeground: colorTokenSchema,
+    cursorAccent: colorTokenSchema.optional(),
+    selectionBackground: colorTokenSchema.optional(),
     white: colorTokenSchema,
     yellow: colorTokenSchema,
   })
   .strict();
+
+export const terminalTokensSchema = terminalTokensInputSchema.transform((terminal) => ({
+  ...terminal,
+  cursorAccent: terminal.cursorAccent ?? terminal.background,
+  selectionBackground: terminal.selectionBackground ?? terminal.selection,
+}));
 
 export const supersetThemeSchema = z
   .object({

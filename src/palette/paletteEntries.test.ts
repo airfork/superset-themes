@@ -13,7 +13,7 @@ function action(id: string, keys: string[]): PaletteCommand {
 }
 
 function focusedCommand(commands: PaletteCommand[], query: string) {
-  const { entries, defaultFocusIndex } = buildPaletteEntries(commands, query, false);
+  const { entries, defaultFocusIndex } = buildPaletteEntries(commands, query);
   const entry = entries[defaultFocusIndex];
   return entry?.kind === "command" ? entry.command : undefined;
 }
@@ -58,15 +58,22 @@ describe("buildPaletteEntries default focus", () => {
   it("seeds focus at the first entry for an empty query", () => {
     const commands = [theme("nord", ["nord"]), action("pin-to-compare", ["pin to compare"])];
 
-    expect(buildPaletteEntries(commands, "", false).defaultFocusIndex).toBe(0);
+    expect(buildPaletteEntries(commands, "").defaultFocusIndex).toBe(0);
   });
 
-  it("collapses actions to the More actions teaser at rest", () => {
+  it("keeps actions visible first at rest like a command surface", () => {
     const commands = [theme("nord", ["nord"]), action("pin-to-compare", ["pin to compare"])];
-    const { collapsed, entries, defaultFocusIndex } = buildPaletteEntries(commands, "", false);
+    const { collapsed, entries, defaultFocusIndex } = buildPaletteEntries(commands, "");
 
-    expect(collapsed).toBe(true);
-    expect(entries.at(-1)?.kind).toBe("more-actions");
+    expect(collapsed).toBe(false);
+    expect(entries[0]).toMatchObject({
+      kind: "command",
+      command: expect.objectContaining({ id: "pin-to-compare" }),
+    });
+    expect(entries[1]).toMatchObject({
+      kind: "command",
+      command: expect.objectContaining({ id: "nord" }),
+    });
     expect(defaultFocusIndex).toBe(0);
   });
 });

@@ -1,13 +1,8 @@
 import {
   ChevronDown,
-  ChevronsUpDown,
   Circle,
-  CircleHelp,
-  ClipboardList,
   Clock,
-  Columns2,
   FolderPlus,
-  Laptop,
   Layers,
   Play,
   Plus,
@@ -30,10 +25,15 @@ interface ProjectBranch {
   active?: boolean;
 }
 
-interface AvatarSpec {
-  letter: string;
-  color: string;
-}
+type AvatarSpec =
+  | {
+      kind: "letter";
+      letter: string;
+      color: string;
+    }
+  | {
+      kind: "project";
+    };
 
 interface Project {
   name: string;
@@ -46,32 +46,23 @@ const projects: Project[] = [
   {
     name: "inbox-pro",
     count: 1,
-    avatar: { letter: "I", color: "oklch(0.58 0.15 252)" },
+    avatar: { kind: "letter", letter: "I", color: "oklch(0.95 0.004 250)" },
   },
   {
     name: "linear-clone",
-    count: 2,
-    avatar: { letter: "L", color: "oklch(0.55 0.18 295)" },
-    branches: [
-      { name: "main", kind: "main" },
-      {
-        name: "Refactor task scheduler queue",
-        kind: "worktree",
-        active: true,
-      },
-    ],
+    count: 1,
+    avatar: { kind: "project" },
+    branches: [{ name: "main", kind: "main", active: true }],
   },
   {
     name: "pulse-monitor",
-    count: 2,
-    avatar: { letter: "P", color: "oklch(0.6 0.13 178)" },
-    branches: [
-      { name: "main", kind: "main" },
-      {
-        name: "Add Postgres exporter shim",
-        kind: "worktree",
-      },
-    ],
+    count: 1,
+    avatar: { kind: "project" },
+  },
+  {
+    name: "storybook-lab",
+    count: 1,
+    avatar: { kind: "project" },
   },
 ];
 
@@ -158,7 +149,94 @@ const terminalOutput = `> refactor the task scheduler queue so retries flow thro
   All 14 tests green; the old tight-loop in worker.ts is gone.
 `;
 
+// Color the scripted Claude session the way Superset actually paints it (verified
+// against a live run via CDP): completed-step bullets and ✓ marks use the terminal
+// green, tool results and "expand" hints are dimmed, and prose plus the final
+// summary stay on the terminal foreground. Background, foreground, and font all
+// come from the theme's terminal tokens.
+function renderTerminalLine(line: string, key: string) {
+  if (line === "") {
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        {" "}
+      </div>
+    );
+  }
+  // The echoed user prompt sits in a subtle highlighted band, like Superset.
+  if (line.startsWith("> ")) {
+    return (
+      <div className="scene-workspace__term-line scene-workspace__term-prompt-line" key={key}>
+        {line}
+      </div>
+    );
+  }
+  if (line.startsWith("● ")) {
+    const body = line.slice(2);
+    const parenIndex = body.indexOf("(");
+    // Only tool calls (e.g. "Bash(...)", "Update(...)") get the green dot and a
+    // bold tool name; a plain assistant message keeps a foreground bullet.
+    if (parenIndex > 0 && /^[A-Z]\w*$/.test(body.slice(0, parenIndex))) {
+      return (
+        <div className="scene-workspace__term-line" key={key}>
+          <span className="scene-workspace__term-ok">● </span>
+          <span className="scene-workspace__term-tool">{body.slice(0, parenIndex)}</span>
+          {body.slice(parenIndex)}
+        </div>
+      );
+    }
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        {line}
+      </div>
+    );
+  }
+  if (line.startsWith("   ⎿") || line.startsWith("     ")) {
+    const checkIndex = line.indexOf("✓");
+    if (checkIndex === -1) {
+      return (
+        <div className="scene-workspace__term-line" key={key}>
+          <span className="scene-workspace__term-dim">{line}</span>
+        </div>
+      );
+    }
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        <span className="scene-workspace__term-dim">{line.slice(0, checkIndex)}</span>
+        <span className="scene-workspace__term-ok">✓</span>
+        <span className="scene-workspace__term-dim">{line.slice(checkIndex + 1)}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="scene-workspace__term-line" key={key}>
+      {line}
+    </div>
+  );
+}
+
 function Avatar({ spec }: { spec: AvatarSpec }) {
+  if (spec.kind === "project") {
+    return (
+      <svg
+        viewBox="0 0 18 18"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect width="18" height="18" rx="5" fill="oklch(0.96 0.018 145)" />
+        <rect x="4.5" y="3.5" width="9" height="11" rx="1.4" fill="oklch(0.73 0.12 145)" />
+        <rect x="6" y="5" width="6" height="1.8" rx="0.6" fill="white" opacity="0.88" />
+        <path
+          d="M5.5 8.8h7v4.1h-7z"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.15"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
   return (
     <svg
       viewBox="0 0 18 18"
@@ -166,7 +244,7 @@ function Avatar({ spec }: { spec: AvatarSpec }) {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="9" cy="9" r="9" fill={spec.color} />
+      <rect width="18" height="18" rx="5" fill={spec.color} />
       <text
         x="9"
         y="12.6"
@@ -174,10 +252,130 @@ function Avatar({ spec }: { spec: AvatarSpec }) {
         fontSize="10"
         fontWeight="700"
         fontFamily="inherit"
-        fill="white"
+        fill="var(--preview-ui-muted-foreground)"
       >
         {spec.letter}
       </text>
+    </svg>
+  );
+}
+
+// Superset renders these two rail icons with Heroicons (stroke 1.5), not lucide,
+// so the catalog inlines the exact paths to match. Workspaces/Automations are
+// lucide in Superset too and already match. Verified live via CDP.
+function TasksIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+    </svg>
+  );
+}
+
+function SettingsGearIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+      <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+    </svg>
+  );
+}
+
+// Superset uses a Heroicons solid chevron-up-down for the team switcher.
+function OrgChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.47 4.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1-1.06 1.06L12 6.31 8.78 9.53a.75.75 0 0 1-1.06-1.06l3.75-3.75Zm-3.75 9.75a.75.75 0 0 1 1.06 0L12 17.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 0 1 0-1.06Z"
+      />
+    </svg>
+  );
+}
+
+// Superset's Help button uses the Heroicons outline question-mark-circle.
+function HelpIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+    </svg>
+  );
+}
+
+// Superset marks the primary ("main") thread with a solid desktop-monitor glyph.
+function MonitorIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V14C21 15.1046 20.1046 16 19 16H5C3.89543 16 3 15.1046 3 14V6ZM5 6H19V14H5V6Z"
+      />
+      <path d="M2 18C1.44772 18 1 18.4477 1 19C1 19.5523 1.44772 20 2 20H22C22.5523 20 23 19.5523 23 19C23 18.4477 22.5523 18 22 18H2Z" />
+    </svg>
+  );
+}
+
+// Superset's split-view control is a rounded two-column layout glyph, not lucide's
+// square Columns2.
+function SplitIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+      <path d="M12 4l0 16" />
     </svg>
   );
 }
@@ -193,10 +391,10 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         <button type="button" className="scene-workspace__team" aria-label="Switch team">
           <span className="scene-workspace__team-mark">JT</span>
           <span className="scene-workspace__team-name">John's Team</span>
-          <ChevronsUpDown aria-hidden="true" className="scene-workspace__team-chevron" />
+          <OrgChevronIcon className="scene-workspace__team-chevron" />
         </button>
         <nav aria-label="Workspaces" className="scene-workspace__nav">
-          <a aria-current="page" href="#workspaces">
+          <a href="#workspaces">
             <Layers aria-hidden="true" />
             <span>Workspaces</span>
           </a>
@@ -205,11 +403,11 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
             <span>Automations</span>
           </a>
           <a href="#tasks">
-            <ClipboardList aria-hidden="true" />
+            <TasksIcon />
             <span>Tasks & PRs</span>
           </a>
           <a href="#new-workspace" className="scene-workspace__new-workspace">
-            <Plus aria-hidden="true" />
+            <Plus aria-hidden="true" strokeWidth={1.5} />
             <span>New Workspace</span>
             <FolderPlus aria-hidden="true" className="scene-workspace__new-workspace-trailing" />
           </a>
@@ -234,7 +432,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
                         data-kind={branch.kind}
                         aria-hidden="true"
                       >
-                        {branch.kind === "main" ? <Laptop /> : <Circle />}
+                        {branch.kind === "main" ? <MonitorIcon /> : <Circle />}
                       </span>
                       <span className="scene-workspace__branch-name">{branch.name}</span>
                     </li>
@@ -246,17 +444,17 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         </div>
         <div className="scene-workspace__footer">
           <a href="#ports" className="scene-workspace__footer-row">
-            <RadioTower aria-hidden="true" />
+            <RadioTower aria-hidden="true" strokeWidth={1.5} />
             <span>Ports</span>
             <span className="scene-workspace__footer-meta">1</span>
           </a>
           <div className="scene-workspace__footer-row scene-workspace__footer-row--settings">
             <a href="#settings" className="scene-workspace__settings-link">
-              <Settings aria-hidden="true" />
+              <SettingsGearIcon />
               <span>Settings</span>
             </a>
             <button type="button" className="scene-workspace__help-button" aria-label="Help">
-              <CircleHelp aria-hidden="true" />
+              <HelpIcon />
             </button>
           </div>
         </div>
@@ -288,7 +486,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
             </div>
           ))}
           <button type="button" aria-label="New session" className="scene-workspace__session-new">
-            <Plus aria-hidden="true" />
+            <Plus aria-hidden="true" strokeWidth={1.5} />
           </button>
         </div>
 
@@ -345,7 +543,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
           </button>
           <div className="scene-workspace__subheader-actions">
             <button type="button" aria-label="Split view" className="scene-workspace__icon-button">
-              <Columns2 aria-hidden="true" />
+              <SplitIcon />
             </button>
             <button
               type="button"
@@ -359,15 +557,19 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
 
         {/* Terminal content area — fake Claude Code session output */}
         <div className="scene-workspace__terminal" role="log" aria-live="polite" id={threadId}>
-          <textarea
-            aria-label="Terminal output"
-            autoComplete="off"
+          {/* biome-ignore lint/a11y/useSemanticElements: this read-only transcript keeps ANSI-marked spans that a native textarea cannot render. */}
+          <div
             className="scene-workspace__terminal-output"
-            name="workspace-terminal-output"
-            readOnly
-            spellCheck={false}
-            value={terminalOutput}
-          />
+            role="textbox"
+            aria-multiline="true"
+            aria-readonly="true"
+            tabIndex={0}
+            aria-label="Terminal output"
+          >
+            {terminalOutput
+              .split("\n")
+              .map((line, index) => renderTerminalLine(line, `${index}:${line}`))}
+          </div>
           <div className="scene-workspace__activity">
             <div className="scene-workspace__activity-status">
               <span aria-hidden="true" className="scene-workspace__activity-icon">

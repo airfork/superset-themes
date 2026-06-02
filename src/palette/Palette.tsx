@@ -10,8 +10,6 @@ interface PaletteComponentProps extends PaletteProps {
   container?: HTMLElement | null;
 }
 
-const MORE_ACTIONS_ID = "palette-option-more-actions";
-
 function optionId(command: PaletteCommand): string {
   return `palette-option-${command.id}`;
 }
@@ -40,11 +38,9 @@ export function Palette({
   open,
   query,
   focusedIndex,
-  actionsExpanded,
   commands,
   onQueryChange,
   onMove,
-  onExpandActions,
   onClose,
   onSubmit,
   container,
@@ -53,18 +49,14 @@ export function Palette({
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreRef = useRef<HTMLElement | null>(null);
 
-  const { themes, actions, collapsed, entries } = useMemo(
-    () => buildPaletteEntries(commands, query, actionsExpanded),
-    [commands, query, actionsExpanded],
+  const { themes, actions, entries } = useMemo(
+    () => buildPaletteEntries(commands, query),
+    [commands, query],
   );
 
   const activeEntry = entries[focusedIndex];
   const activeDescendant =
-    activeEntry?.kind === "command"
-      ? optionId(activeEntry.command)
-      : activeEntry?.kind === "more-actions"
-        ? MORE_ACTIONS_ID
-        : undefined;
+    activeEntry?.kind === "command" ? optionId(activeEntry.command) : undefined;
 
   // Focus the input on open; return focus to the opener on close.
   useEffect(() => {
@@ -108,9 +100,7 @@ export function Palette({
       case "Enter": {
         event.preventDefault();
         const entry = entries[focusedIndex];
-        if (entry?.kind === "more-actions") {
-          onExpandActions(themes.length);
-        } else if (entry) {
+        if (entry) {
           onSubmit(entry.command);
         }
         break;
@@ -154,28 +144,32 @@ export function Palette({
     );
   };
 
-  // The collapsed shelf's single option: activating it expands the full Actions
-  // list in place rather than running a command, so the palette stays open.
-  const renderMoreActions = (index: number) => {
-    const active = index === focusedIndex;
-    return (
-      <button
-        type="button"
-        id={MORE_ACTIONS_ID}
-        role="option"
-        aria-selected={active}
-        tabIndex={-1}
-        className="palette__option palette__more-actions"
-        data-active={active || undefined}
-        onClick={() => onExpandActions(themes.length)}
-        onMouseDown={(event) => event.preventDefault()}
-      >
-        <span className="palette__option-icon" aria-hidden="true" />
-        <span className="palette__option-label">More actions</span>
-        <span className="palette__option-hint">{actions.length}</span>
-      </button>
-    );
-  };
+  const actionsFirst = query.trim() === "";
+  const actionBase = actionsFirst ? 0 : themes.length;
+  const themeBase = actionsFirst ? actions.length : 0;
+
+  const renderActionsGroup = () =>
+    actions.length > 0 ? (
+      // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
+      <div role="group" aria-label="Actions" className="palette__group palette__group--actions">
+        <span className="palette__group-label" aria-hidden="true">
+          Actions
+        </span>
+        {actions.map((command, index) => renderOption(command, actionBase + index))}
+      </div>
+    ) : null;
+
+  const renderThemesGroup = () =>
+    themes.length > 0 ? (
+      // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
+      <div role="group" aria-label="Themes" className="palette__group palette__group--themes">
+        <div className="palette__group-label palette__group-label--themes" aria-hidden="true">
+          <span className="palette__group-title">Themes</span>
+          <span className="palette__group-meta-label">Family</span>
+        </div>
+        {themes.map((command, index) => renderOption(command, themeBase + index))}
+      </div>
+    ) : null;
 
   const overlay = (
     <div className="palette__backdrop">
@@ -200,7 +194,7 @@ export function Palette({
             aria-activedescendant={activeDescendant}
             autoComplete="off"
             name="command-palette-search"
-            placeholder="Search themes and actions…"
+            placeholder="Type a command or search…"
             spellCheck={false}
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
@@ -208,37 +202,8 @@ export function Palette({
           />
         </div>
         <div id="palette-listbox" role="listbox" aria-label="Commands" className="palette__results">
-          {themes.length > 0 ? (
-            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
-            <div role="group" aria-label="Themes" className="palette__group palette__group--themes">
-              <span className="palette__group-label" aria-hidden="true">
-                Themes
-              </span>
-              {themes.map((command, index) => renderOption(command, index))}
-            </div>
-          ) : null}
-          {collapsed ? (
-            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
-            <div
-              role="group"
-              aria-label="Actions"
-              className="palette__group palette__group--actions palette__group--collapsed"
-            >
-              {renderMoreActions(themes.length)}
-            </div>
-          ) : actions.length > 0 ? (
-            // biome-ignore lint/a11y/useSemanticElements: a listbox groups options with ARIA role="group"; <fieldset> is a form element whose <legend> renders on the group's border (strikethrough).
-            <div
-              role="group"
-              aria-label="Actions"
-              className="palette__group palette__group--actions"
-            >
-              <span className="palette__group-label" aria-hidden="true">
-                Actions
-              </span>
-              {actions.map((command, index) => renderOption(command, themes.length + index))}
-            </div>
-          ) : null}
+          {actionsFirst ? renderActionsGroup() : renderThemesGroup()}
+          {actionsFirst ? renderThemesGroup() : renderActionsGroup()}
           {entries.length === 0 ? (
             <div className="palette__empty" role="status">
               No matches for “{query.trim()}”

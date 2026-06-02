@@ -5,7 +5,7 @@ import { LayoutShell } from "../chrome/LayoutShell";
 import { ShortcutsOverlay } from "../chrome/ShortcutsOverlay";
 import {
   buildThemeCommands,
-  copyThemeJsonCommand,
+  downloadThemeJsonCommand,
   nextThemeId,
   type PaletteCommand,
 } from "../palette/commands";
@@ -131,10 +131,9 @@ const catalogRoute = createRoute({
         section: "Actions",
         icon: Columns2,
         keys: ["pin to compare", "compare", "split"],
-        shortcut: ".",
         run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
       },
-      copyThemeJsonCommand(focused),
+      downloadThemeJsonCommand(focused),
       {
         id: "action-toggle-next-theme",
         label: "Toggle next theme",

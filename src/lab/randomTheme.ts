@@ -1,5 +1,6 @@
 import { clampGamut, formatHex } from "culori";
 import { checkThemeContrast } from "../theme-core/contrast";
+import { terminalTokensSchema, uiTokensSchema } from "../theme-core/schema";
 import type { SupersetTheme, TerminalTokens, ThemeType, UiTokens } from "../theme-core/themeTypes";
 
 export type RandomThemeTokenGroup = "accent" | "highlights" | "surfaces" | "terminal";
@@ -110,7 +111,7 @@ function buildUiTokens(mode: ThemeType, hue: number, prng: Prng): UiTokens {
     const accent = oklchHex(0.5, 0.14, hue);
     const selection = oklchHex(0.88, 0.055, hue);
 
-    return {
+    return uiTokensSchema.parse({
       accent,
       accentForeground: "#ffffff",
       background: oklchHex(0.98, 0.012, surfaceHue),
@@ -132,14 +133,14 @@ function buildUiTokens(mode: ThemeType, hue: number, prng: Prng): UiTokens {
       secondaryForeground: oklchHex(0.24, 0.03, surfaceHue),
       selection,
       selectionForeground: oklchHex(0.18, 0.04, hue),
-    };
+    });
   }
 
   const primary = oklchHex(0.7, 0.16, hue);
   const accent = oklchHex(0.72, 0.14, hue);
   const selection = oklchHex(0.33, 0.075, hue);
 
-  return {
+  return uiTokensSchema.parse({
     accent,
     accentForeground: "#07111f",
     background: oklchHex(0.16, 0.02, surfaceHue),
@@ -161,7 +162,7 @@ function buildUiTokens(mode: ThemeType, hue: number, prng: Prng): UiTokens {
     secondaryForeground: oklchHex(0.9, 0.018, surfaceHue),
     selection,
     selectionForeground: oklchHex(0.94, 0.02, hue),
-  };
+  });
 }
 
 function buildTerminalTokens(mode: ThemeType, hue: number, prng: Prng): TerminalTokens {
@@ -173,7 +174,7 @@ function buildTerminalTokens(mode: ThemeType, hue: number, prng: Prng): Terminal
   const redHue = 27;
 
   if (mode === "light") {
-    return {
+    return terminalTokensSchema.parse({
       background: oklchHex(0.985, 0.008, hue),
       black: oklchHex(0.2, 0.018, hue),
       blue: oklchHex(0.48, 0.16, blueHue),
@@ -195,10 +196,10 @@ function buildTerminalTokens(mode: ThemeType, hue: number, prng: Prng): Terminal
       selectionForeground: oklchHex(0.18, 0.03, hue),
       white: oklchHex(0.9, 0.006, hue),
       yellow: oklchHex(0.57, 0.14, yellowHue),
-    };
+    });
   }
 
-  return {
+  return terminalTokensSchema.parse({
     background: oklchHex(0.14, 0.018, hue),
     black: oklchHex(0.18, 0.018, hue),
     blue: oklchHex(0.69, 0.16, blueHue),
@@ -220,7 +221,7 @@ function buildTerminalTokens(mode: ThemeType, hue: number, prng: Prng): Terminal
     selectionForeground: oklchHex(0.94, 0.018, hue),
     white: oklchHex(0.86, 0.006, hue),
     yellow: oklchHex(0.77, 0.14, yellowHue),
-  };
+  });
 }
 
 function applyLocks(
@@ -247,6 +248,13 @@ function applyLocks(
     nextTheme.ui.popoverForeground = baseTheme.ui.popoverForeground;
     nextTheme.ui.secondary = baseTheme.ui.secondary;
     nextTheme.ui.secondaryForeground = baseTheme.ui.secondaryForeground;
+    nextTheme.ui.tertiary = baseTheme.ui.tertiary;
+    nextTheme.ui.tertiaryActive = baseTheme.ui.tertiaryActive;
+    nextTheme.ui.sidebar = baseTheme.ui.sidebar;
+    nextTheme.ui.sidebarForeground = baseTheme.ui.sidebarForeground;
+    nextTheme.ui.sidebarAccent = baseTheme.ui.sidebarAccent;
+    nextTheme.ui.sidebarAccentForeground = baseTheme.ui.sidebarAccentForeground;
+    nextTheme.ui.sidebarBorder = baseTheme.ui.sidebarBorder;
   }
 
   if (locks.accent) {
@@ -256,14 +264,28 @@ function applyLocks(
     nextTheme.ui.destructiveForeground = baseTheme.ui.destructiveForeground;
     nextTheme.ui.primary = baseTheme.ui.primary;
     nextTheme.ui.primaryForeground = baseTheme.ui.primaryForeground;
+    nextTheme.ui.sidebarPrimary = baseTheme.ui.sidebarPrimary;
+    nextTheme.ui.sidebarPrimaryForeground = baseTheme.ui.sidebarPrimaryForeground;
+    nextTheme.ui.sidebarRing = baseTheme.ui.sidebarRing;
+    nextTheme.ui.chart1 = baseTheme.ui.chart1;
+    nextTheme.ui.chart2 = baseTheme.ui.chart2;
+    nextTheme.ui.chart3 = baseTheme.ui.chart3;
+    nextTheme.ui.chart4 = baseTheme.ui.chart4;
+    nextTheme.ui.chart5 = baseTheme.ui.chart5;
   }
 
   if (locks.highlights) {
     nextTheme.ui.ring = baseTheme.ui.ring;
     nextTheme.ui.selection = baseTheme.ui.selection;
     nextTheme.ui.selectionForeground = baseTheme.ui.selectionForeground;
+    nextTheme.ui.highlightMatch = baseTheme.ui.highlightMatch;
+    nextTheme.ui.highlightActive = baseTheme.ui.highlightActive;
+    nextTheme.ui.highlight = baseTheme.ui.highlight;
+    nextTheme.ui.highlightForeground = baseTheme.ui.highlightForeground;
     nextTheme.terminal.selection = baseTheme.terminal.selection;
     nextTheme.terminal.selectionForeground = baseTheme.terminal.selectionForeground;
+    nextTheme.terminal.cursorAccent = baseTheme.terminal.cursorAccent;
+    nextTheme.terminal.selectionBackground = baseTheme.terminal.selectionBackground;
   }
 
   if (locks.terminal) {

@@ -14,6 +14,19 @@ function renderRail(props?: Partial<Parameters<typeof Rail>[0]>) {
   );
 }
 
+function themeFor(id: string) {
+  const found = catalogThemes.find((candidate) => candidate.theme.id === id);
+  if (!found) {
+    throw new Error(`Expected theme ${id}`);
+  }
+  return found.theme;
+}
+
+function featuredLabel(id: string) {
+  const theme = themeFor(id);
+  return `${theme.name}, ${theme.type === "light" ? "Light" : "Dark"} theme`;
+}
+
 describe("Rail", () => {
   it("renders four sections in order: Superset, Featured, Light, Dark", () => {
     renderRail();
@@ -30,9 +43,7 @@ describe("Rail", () => {
     renderRail();
     const baseline = screen.getByRole("region", { name: "Superset" });
     const buttons = within(baseline).getAllByRole("button");
-    const expected = BASELINE_IDS.map(
-      (id) => catalogThemes.find((candidate) => candidate.theme.id === id)?.theme.name ?? "",
-    );
+    const expected = BASELINE_IDS.map(featuredLabel);
 
     expect(buttons.map((button) => button.getAttribute("aria-label"))).toEqual(expected);
   });
@@ -44,9 +55,7 @@ describe("Rail", () => {
     // First button is the search trigger lives outside the section; section has 5 rows.
     expect(buttons).toHaveLength(5);
     const names = buttons.map((b) => b.getAttribute("aria-label"));
-    const expected = FEATURED_IDS.map(
-      (id) => catalogThemes.find((c) => c.theme.id === id)?.theme.name ?? "",
-    );
+    const expected = FEATURED_IDS.map(featuredLabel);
     expect(names).toEqual(expected);
   });
 
@@ -70,6 +79,28 @@ describe("Rail", () => {
     expect(names).toEqual(sorted);
   });
 
+  it("does not repeat mode badges inside the dedicated Light and Dark sections", () => {
+    renderRail();
+
+    expect(
+      within(screen.getByRole("region", { name: "Light" })).queryAllByTestId("rail-mode-badge"),
+    ).toHaveLength(0);
+    expect(
+      within(screen.getByRole("region", { name: "Dark" })).queryAllByTestId("rail-mode-badge"),
+    ).toHaveLength(0);
+  });
+
+  it("keeps mode badges in mixed-mode Superset and Featured sections", () => {
+    renderRail();
+
+    expect(
+      within(screen.getByRole("region", { name: "Superset" })).getAllByTestId("rail-mode-badge"),
+    ).toHaveLength(2);
+    expect(
+      within(screen.getByRole("region", { name: "Featured" })).getAllByTestId("rail-mode-badge"),
+    ).toHaveLength(5);
+  });
+
   it("marks the focused theme as selected", () => {
     renderRail({ focusedThemeId: "solarized-light" });
     const selected = screen
@@ -79,7 +110,7 @@ describe("Rail", () => {
     // Featured + Light section both show Solarized Light, both flagged. The Light
     // occurrence carries the back-reference; the Featured one stays plain.
     const labels = selected.map((node) => node.getAttribute("aria-label")).sort();
-    expect(labels).toEqual(["Solarized Light", "Solarized Light, also in Featured"]);
+    expect(labels).toEqual(["Solarized Light, Light theme", "Solarized Light, also in Featured"]);
   });
 
   it("annotates a Superset baseline theme's section row while leaving its pinned row plain", () => {
@@ -87,7 +118,9 @@ describe("Rail", () => {
     const baseline = screen.getByRole("region", { name: "Superset" });
     const light = screen.getByRole("region", { name: "Light" });
 
-    expect(within(baseline).getByRole("button", { name: "Superset Light" })).toBeInTheDocument();
+    expect(
+      within(baseline).getByRole("button", { name: "Superset Light, Light theme" }),
+    ).toBeInTheDocument();
     expect(
       within(light).getByRole("button", { name: "Superset Light, also in Superset" }),
     ).toBeInTheDocument();
@@ -97,8 +130,10 @@ describe("Rail", () => {
     renderRail();
     const featured = screen.getByRole("region", { name: "Featured" });
     const dark = screen.getByRole("region", { name: "Dark" });
-    // Tokyo Night is featured and dark: plain up top, back-referenced down in Dark.
-    expect(within(featured).getByRole("button", { name: "Tokyo Night" })).toBeInTheDocument();
+    // Tokyo Night is featured and dark: mode-labeled up top, back-referenced down in Dark.
+    expect(
+      within(featured).getByRole("button", { name: "Tokyo Night, Dark theme" }),
+    ).toBeInTheDocument();
     expect(
       within(dark).getByRole("button", { name: "Tokyo Night, also in Featured" }),
     ).toBeInTheDocument();
@@ -144,7 +179,7 @@ describe("Rail", () => {
     renderRail();
     await user.type(screen.getByRole("textbox", { name: /filter by name/i }), "rose pine");
 
-    expect(screen.getAllByRole("button", { name: "Rosé Pine Dawn" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("button", { name: /Rosé Pine Dawn/ }).length).toBeGreaterThan(0);
     expect(screen.queryByRole("button", { name: "Dracula" })).not.toBeInTheDocument();
   });
 

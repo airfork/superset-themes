@@ -67,8 +67,8 @@ Generated themes are draft JSON for inspection or lab import. Catalog metadata s
 
 - [Product context](PRODUCT.md)
 - [Design direction](DESIGN.md)
+- [Catalog redesign design record](docs/design/2026-05-27-catalog-redesign.md)
 - [Theme attributions](docs/THEME_ATTRIBUTIONS.md)
-- [Implementation plan](docs/superpowers/plans/2026-05-27-superset-theme-catalog-implementation.md)
 - [Status and handoff](docs/STATUS.md)
 
 Private GitHub remote:

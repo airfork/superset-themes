@@ -25,6 +25,8 @@
     "themes:research": "node scripts/themes-research.mjs",
     "themes:research:test": "node --test scripts/themes-research.test.mjs",
     "themes:generate": "tsx scripts/themes-generate.mjs",
+    "themes:generate:test": "node --test scripts/themes-generate.test.mjs",
+    "themes:uninstall": "node scripts/themes-uninstall.mjs",
     "check": "node scripts/check.mjs"
   },
   "dependencies": {

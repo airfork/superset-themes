@@ -16,7 +16,9 @@ interface TokenGroup {
 
 // Display groups mirror the generator's reroll groups (see `applyLocks` in
 // randomTheme.ts) so each sticky header's reroll button maps to a real group.
-// Every UI + terminal token appears in exactly one group.
+// This is the compact editing subset. Hidden Superset-specific aliases
+// (sidebar/chart/highlight/selectionBackground) are preserved by the theme model
+// and synced from these rows where the UI exposes the older compact names.
 const TOKEN_GROUPS: TokenGroup[] = [
   {
     group: "surfaces",

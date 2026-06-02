@@ -40,7 +40,7 @@ describe("Nameplate", () => {
     expect(screen.getByLabelText(/dark theme/i)).not.toHaveTextContent(/dark/i);
   });
 
-  it("renders Pin to compare, Open in Lab, and Copy JSON actions", () => {
+  it("renders Pin to compare, Open in Lab, and Download JSON actions", () => {
     render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
 
     expect(screen.getByRole("button", { name: /pin to compare/i })).toBeInTheDocument();
@@ -48,7 +48,8 @@ describe("Nameplate", () => {
       "href",
       "/lab?from=tokyo-night",
     );
-    expect(screen.getByRole("button", { name: /copy json/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /download json/i })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /copy json/i })).not.toBeInTheDocument();
   });
 
   it("omits the Pin to compare action when no onPin handler is provided", () => {
@@ -58,7 +59,7 @@ describe("Nameplate", () => {
 
     expect(screen.queryByRole("button", { name: /pin to compare/i })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /open in lab/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /copy json/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /download json/i })).toBeInTheDocument();
   });
 
   it("calls onPin with the focused theme id when Pin to compare is activated", async () => {
@@ -71,29 +72,28 @@ describe("Nameplate", () => {
     expect(onPin).toHaveBeenCalledWith("tokyo-night");
   });
 
-  it("copies the exported theme JSON to the clipboard when Copy JSON is activated", async () => {
-    // jsdom now provides a real navigator.clipboard with a non-configurable
-    // writeText; spy on it rather than redefining the property.
-    const writeText = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue(undefined);
+  it("downloads the exported theme JSON as a file when Download JSON is activated", async () => {
+    const createObjectURL = vi.fn().mockReturnValue("blob:theme-json");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createObjectURL });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeObjectURL });
+    const clicked: { download?: string; href?: string }[] = [];
+    const click = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      clicked.push({ download: this.download, href: this.href });
+    });
     const entry = entryFor("rose-pine-dawn");
     const user = userEvent.setup();
     render(<Nameplate entry={entry} onPin={() => {}} />);
 
-    await user.click(screen.getByRole("button", { name: /copy json/i }));
-    expect(writeText).toHaveBeenCalledWith(exportThemeJson(entry));
-    writeText.mockRestore();
-  });
+    await user.click(screen.getByRole("button", { name: /download json/i }));
 
-  it("surfaces a visible failure status when the clipboard write rejects", async () => {
-    const writeText = vi
-      .spyOn(navigator.clipboard, "writeText")
-      .mockRejectedValue(new Error("clipboard blocked"));
-    const user = userEvent.setup();
-    render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
-
-    await user.click(screen.getByRole("button", { name: /copy json/i }));
-    expect(await screen.findByRole("button", { name: /copy failed/i })).toBeInTheDocument();
-    writeText.mockRestore();
+    const blob = createObjectURL.mock.calls[0]?.[0] as Blob;
+    expect(await blob.text()).toBe(exportThemeJson(entry));
+    expect(clicked).toEqual([{ download: "rose-pine-dawn.json", href: "blob:theme-json" }]);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:theme-json");
+    click.mockRestore();
   });
 
   it("collapses action labels to icon tooltips in compact mode", () => {
@@ -106,9 +106,9 @@ describe("Nameplate", () => {
       "title",
       "Open in Lab",
     );
-    expect(screen.getByRole("button", { name: /copy json/i })).toHaveAttribute(
+    expect(screen.getByRole("button", { name: /download json/i })).toHaveAttribute(
       "title",
-      "Copy JSON",
+      "Download JSON",
     );
   });
 
@@ -131,7 +131,7 @@ describe("Nameplate", () => {
     render(<Nameplate entry={entryFor("tokyo-night")} onPin={() => {}} />);
 
     expect(screen.getByRole("link", { name: /open in lab/i })).not.toHaveAttribute("title");
-    expect(screen.getByRole("button", { name: /copy json/i })).not.toHaveAttribute("title");
+    expect(screen.getByRole("button", { name: /download json/i })).not.toHaveAttribute("title");
   });
 
   it("nests the expand toggle inside the heading and reflects aria-expanded", () => {

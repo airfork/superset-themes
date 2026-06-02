@@ -2,18 +2,45 @@
 
 ## Current State
 
-The repo contains a completed Task 10 Vite/React/TypeScript static app checkpoint on branch
-`feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
-light/dark pair comparison, and the first theme lab import/edit/export workflow
-are implemented. The lab also has deterministic constrained random generation.
-Browser, Storybook, accessibility, and design QA coverage has been expanded.
-README, command reference, and agent handoff docs are synced with the current app. Post-Task 10
-theme expansion now brings the catalog to 10 themes total: Aurora Light/Dark, Graphite Dark,
-Solarized Light/Dark, Nord, Catppuccin Mocha, Dracula, Gruvbox Dark, and Tokyo Night. Storybook
-a11y is enforced globally for the current story suite.
+The catalog redesign is fully shipped: a Superset-adjacent master/detail shell where the whole
+site morphs into the focused theme. All ten redesign phases (data prep → research script + legacy
+cleanup) plus the Superset Light/Dark calibration and the workspace/palette/rail fidelity
+follow-ups are complete; blockers: none. The catalog now ships **14 themes**: Superset Light/Dark,
+Aurora Light/Dark, Graphite Dark, Solarized Light/Dark, Nord, Catppuccin Mocha, Dracula, Gruvbox
+Dark, Tokyo Night, Rosé Pine Dawn, and One Dark. The Lab supports import, edit, constrained random
+generation, contrast validation, and export-clean JSON. Storybook a11y is enforced globally for the
+current story suite; full app, e2e, and story suites pass (see Verification).
+
+The implementation plans and the original design spec were execution artifacts and have been
+removed now that the work is complete (recoverable from git history). Durable context lives in
+`PRODUCT.md`, `DESIGN.md`, `docs/design/2026-05-27-catalog-redesign.md`, `README.md`, and
+`COMMANDS.md`. The detailed phase-by-phase log below is preserved as the historical record.
 
 Latest completed checkpoint:
 
+- Review-remediation checkpoint addressed the Conductor review findings from June 2, 2026:
+  generator output now keeps the full catalog schema while UI downloads keep the Superset download
+  shape, terminal selection foreground survives download/import round trips, selection contrast
+  validation checks the highlight tokens that the preview actually renders, the Superset fidelity
+  warning is limited to the exact known destructive-token miss, the uninstall script backs up state
+  after Superset quits with an exclusive timestamped copy, and the rail/palette/workspace terminal
+  accessibility regressions have focused tests. Verification passed with `rtk pnpm check`,
+  `rtk pnpm test:e2e`, `rtk pnpm test:stories`, and `rtk pnpm build`; remaining contrast output is
+  limited to the documented optional Superset fidelity warnings.
+- Solarized Light refinement replaced the prior washed-out catalog port with the updated custom
+  palette. Translucent highlight/terminal-selection inputs were normalized to hex for the catalog
+  schema, and required AA gates were preserved with the existing dark primary/terminal foreground
+  adjustments.
+- Superset token-surface checkpoint expanded the internal schema to preserve the official Superset
+  theme JSON roles end to end: `tertiary*`, `sidebar*`, `chart1..5`, `highlight*`, terminal
+  `cursorAccent`, and terminal `selectionBackground`. Superset Light/Dark now use the attached
+  official starter JSON values directly, and their known low-contrast pairs are reported as
+  warnings instead of being rewritten for accessibility.
+- Superset import/export checkpoint changed the catalog nameplate and command-palette JSON action
+  from clipboard copy to a downloaded `.json` file. Exports now use Superset's marketplace/starter
+  theme shape (`highlight*`, `selectionBackground`, sidebar/chart tokens, no app-only `version`),
+  while the Lab importer accepts both internal catalog JSON and official Superset downloaded JSON
+  with `oklch()`/`rgba()` colors normalized back to app tokens.
 - Archive cleanup and Conductor config checkpoint added a repo-local `scripts/archive-clean.mjs`
   command with `--dry-run`, package scripts (`archive:clean`, `archive:clean:dry-run`,
   `archive:clean:test`), and root `conductor.json`. Conductor setup now runs
@@ -52,8 +79,9 @@ Latest completed checkpoint:
 
 ## Active Plan
 
-- [docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md](superpowers/plans/2026-05-27-catalog-redesign-implementation.md)
-  (replaces the prior superset-theme-catalog plan now that Phase 1 of the redesign is in flight).
+None. The catalog redesign plan and the original implementation plan are complete and have been
+removed (recoverable from git history). A future multi-step effort should add a fresh plan under
+`docs/superpowers/plans/` per `AGENTS.md`.
 
 ## Phase 1 — Catalog Redesign (2026-05-27)
 
@@ -733,9 +761,50 @@ Phase 10 follow-up verification:
   `--preview-ui-ring = #a1a1a1`, `--preview-focus-ring = #737373`, and the muted Workspace chrome.
 - `rtk git diff --check` passed.
 
+Phase 10 follow-up — Superset Dark calibration (2026-05-31):
+
+- Sampled the installed Superset Electron app launched with `--remote-debugging-port=9222` while
+  `html.dark` was active. Live root tokens confirmed `--background = #151110`,
+  `--foreground = #eae8e6`, `--card = #201E1C`, `--muted = #2a2827`,
+  `--muted-foreground = #a8a5a3`, and `--ring = #3a3837`.
+- Updated `superset-dark` so the exported `ui.ring` now matches the pinned live app value
+  (`#3a3837`). The derived app-facing focus ring still resolves to the accessible fallback
+  (`#a8a5a3`) because the live ring does not clear the repo's non-text contrast floor against
+  both dark surfaces.
+- Checked the live `--destructive-foreground = #ffcccc`, but kept the export token at `#ffffff`
+  because `#ffcccc` on live `#cc4444` is only 3.30:1 and fails the repo contrast gate.
+- Reworked the Workspace dark shell to use Superset's muted-layer sidebar rhythm
+  (`bg-muted/45`, dark override `bg-muted/35`), widened the simulated workspace rail to the
+  live 280px structure, quieted the active Claude/Codex tab chip, and raised the fake Claude
+  Code terminal to full terminal foreground at 14px.
+- Local Playwright visual smoke on `http://127.0.0.1:5173/?theme=superset-dark` confirmed
+  `--preview-ui-ring = #3a3837`, `--preview-focus-ring = #a8a5a3`, terminal output color
+  `rgb(234, 232, 230)`, and terminal font size `14px`.
+
+Phase 10 dark follow-up verification:
+
+- `rtk pnpm test src/data/baseline.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 2 files / 9 tests.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` first failed on live `#ffcccc` destructive foreground for
+  Superset Dark (`3.30 < 4.5`), then passed for all 14 themes after keeping the contrast-safe
+  exported foreground.
+- `rtk pnpm check` passed: Biome, TypeScript, Vitest 43 files / 283 tests, research CLI tests,
+  archive cleanup tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 passed / 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/pane src/styles/global.css` passed.
+- Fetched the latest Web Interface Guidelines command from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed the touched dark token, Workspace, and terminal surfaces; no additional issues were
+  found.
+- `rtk git diff --check` passed.
+
 ## Next Step
 
-User validation of the calibrated Superset Light preview against the live Superset app.
+User validation of the calibrated Superset Light and Superset Dark previews against the live
+Superset app.
 
 ## Resumability Protocol
 
@@ -745,10 +814,413 @@ After each meaningful implementation checkpoint:
 2. Update this file with current state, next step, verification run, and blockers.
 3. Commit coherent completed work.
 
+## Superset Dark Palette Follow-up (2026-05-31)
+
+Status: Complete.
+
+- Real Superset command palette was sampled through the running app's Chrome DevTools endpoint
+  at `127.0.0.1:9222`: 720px dialog width, 550px visible height, 48px search row, 44px command
+  rows, 14px labels, `#201e1c` popover surface, `#2a2827` border/selected row, and the
+  `Type a command or search…` placeholder.
+- The local command palette now matches that compact centered command surface instead of the
+  previous full-viewport overlay. Actions are visible directly at rest, the old `More actions`
+  shelf was removed, the placeholder and section labels match the real command vocabulary, and
+  desktop/mobile bounds keep the dialog contained without horizontal overflow.
+- Removed obsolete `actionsExpanded` reducer, prop, and story plumbing after the behavior switch.
+- Follow-up clarity pass added a quiet `Family` header on the Themes section's trailing metadata
+  column, preserving omitted duplicate family values while making the visible right-column values
+  self-explanatory.
+- Top-edge follow-up removed the square search-row focus outline that fought the rounded panel
+  corners and made the palette backdrop transparent, matching Superset's no-scrim command palette.
+- Visual QA screenshots were refreshed under ignored `.context/` files:
+  `.context/palette-superset-dark-compact-desktop.png` and
+  `.context/palette-superset-dark-compact-mobile.png`; the family-header follow-up added
+  `.context/palette-family-header-desktop.png` and `.context/palette-family-header-mobile.png`;
+  the top-edge/no-scrim follow-up added `.context/palette-transparent-backdrop-desktop.png` and
+  `.context/palette-transparent-backdrop-mobile.png`.
+
+Superset dark palette verification:
+
+- `rtk pnpm test src/palette/Palette.test.tsx src/palette/paletteEntries.test.ts src/palette/paletteState.test.ts` passed.
+- `rtk pnpm check` passed: Biome, TypeScript, 43 Vitest files / 280 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/palette src/styles/global.css` returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched palette files; no new touched-surface findings.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- Family-header follow-up re-ran `rtk pnpm check`, `rtk pnpm test:e2e`,
+  `rtk pnpm test:stories`, `rtk pnpm build`, `rtk npx impeccable detect src/palette
+  src/styles/global.css`, and `rtk git diff --check`; all passed.
+- Top-edge/no-scrim follow-up re-ran `rtk pnpm test src/styles/focusContracts.test.ts`,
+  `rtk pnpm check`, `rtk pnpm test:e2e`, `rtk pnpm test:stories`, `rtk pnpm build`, and
+  `rtk npx impeccable detect src/palette src/styles/global.css src/styles/focusContracts.test.ts`;
+  all passed.
+
+## Superset Light Palette/Chrome Follow-up (2026-05-31)
+
+Status: Complete; awaiting user visual validation.
+
+- Removed the palette-only `.` shortcut chip from the `Pin to compare` command row while preserving
+  the global `.` compare shortcut, the bottom-bar `. pin` hint, and the keyboard-shortcut overlay.
+- Softened Superset Light chrome by letting `getChromeSurface` use the raised card surface when the
+  light card is the softer surface and still clears AA. Superset Light now renders app chrome,
+  rail, and palette on `#f5f5f5`; Solarized Light stays on the higher-contrast background fallback.
+- Added a light-theme rail selected-row override that uses the neutral accent layer instead of the
+  primary ink tint, reducing the heavy selected-row block in Superset Light.
+- CDP sampling of the running Superset app at `127.0.0.1:9222` reconfirmed live light tokens:
+  `--card`, `--popover`, and `--muted` are `oklch(0.97 0 0)`. Local Playwright visual QA on
+  `http://127.0.0.1:5174/?theme=superset-light` confirmed `--chrome-surface = #f5f5f5`, no
+  shortcut glyphs in the Pin row, and saved `.context/light-palette-after.png`.
+- Typography follow-up sampled the live command input: placeholder color is
+  `oklch(0.556 0 0)`, font size `14px`, weight `400`, and the search icon is foreground at
+  `opacity-50`. The local `--chrome-muted-foreground` was previously over-derived away from the
+  live Superset Light token; it now resolves exactly to `#737373` (4.35:1 on `#f5f5f5`), accepting
+  the below-AA live value for fidelity. The palette search icon now uses foreground at
+  `opacity: 0.5`, and Playwright saved `.context/light-palette-typography-after.png`.
+- Superset Light/Dark now bypass app-facing accessibility derivations for chrome muted text and
+  focus rings. Runtime vars match the raw live tokens: Superset Light uses muted `#737373` and
+  ring `#a1a1a1`; Superset Dark uses muted `#a8a5a3` and ring `#3a3837`. Non-Superset catalog
+  themes still use the contrast-safe derivations. Local Playwright visual QA saved
+  `.context/light-palette-exact-superset-after.png` and confirmed the Superset Light palette
+  placeholder renders as `rgb(115, 115, 115)`.
+
+Superset light palette/chrome verification:
+
+- `rtk pnpm test:unit src/app/App.test.tsx src/palette/Palette.test.tsx src/theme-core/chromeTokens.test.ts src/styles/railContracts.test.ts`
+  passed: 4 files / 30 tests.
+- `rtk pnpm check` first failed on one Biome formatting diff in `chromeTokens.test.ts`, then passed:
+  Biome, TypeScript, 44 Vitest files / 283 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/app src/palette src/styles/global.css src/theme-core/chromeTokens.ts src/theme-core/chromeTokens.test.ts`
+  returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched app, palette, style, and chrome-token surfaces; no new
+  touched-surface findings.
+- `rtk git diff --check` passed.
+- Typography follow-up verification: `rtk pnpm test:unit src/theme-core/chromeTokens.test.ts src/styles/focusContracts.test.ts`
+  passed; `rtk pnpm check` passed with 44 Vitest files / 286 tests; `rtk pnpm test:e2e`
+  passed with 29 flows and 1 skipped; `rtk pnpm test:stories` passed with 9 files / 31 stories;
+  `rtk pnpm build`, `rtk pnpm themes:validate`, `rtk pnpm themes:check-contrast`, and
+  `rtk npx impeccable detect src/styles/global.css src/styles/focusContracts.test.ts src/theme-core/chromeTokens.ts src/theme-core/chromeTokens.test.ts`
+  all passed. Latest Web Interface Guidelines were fetched and reviewed against the touched
+  typography/token surfaces with no new touched-surface findings. `rtk git diff --check` passed.
+- Fidelity follow-up verification: `rtk pnpm test:unit src/theme-core/chromeTokens.test.ts src/theme-core/focusRingContrast.test.ts`
+  passed, and a runtime CSS-var check confirmed Superset Light/Dark muted/focus vars equal the raw
+  theme tokens rather than accessibility fallbacks.
+- Exact-Superset follow-up verification: `rtk pnpm check` passed with 44 Vitest files / 285 tests;
+  `rtk pnpm test:e2e` passed with 29 flows and 1 skipped; `rtk pnpm test:stories` passed with
+  9 files / 31 stories; `rtk pnpm build`, `rtk pnpm themes:validate`,
+  `rtk pnpm themes:check-contrast`, and
+  `rtk npx impeccable detect src/theme-core/chromeTokens.ts src/theme-core/chromeTokens.test.ts src/theme-core/focusRingContrast.test.ts src/styles/global.css docs/STATUS.md`
+  all passed. Latest Web Interface Guidelines were fetched and reviewed; Superset Light/Dark muted
+  and focus styling are intentional live-app fidelity exceptions. `rtk git diff --check` passed.
+
+## Superset Workspace/Palette Fidelity Follow-up (2026-05-31)
+
+Status: Complete.
+
+- CDP sampling of the running Superset app at `127.0.0.1:9222` confirmed the live sidebar
+  typography: team/nav/project/thread rows use `14px` text and `20px` line height; team, top-level
+  nav, and project labels are `500` weight, while the nested active `main` thread is `400`.
+- The workspace preview mirrors the live Superset left pane structure without copying the user's
+  workspace contents. Team/project labels are anonymized fixture data (`John's Team`, `inbox-pro`,
+  `linear-clone > main`, `pulse-monitor`, and `storybook-lab`). The top-level `Workspaces` item is
+  no longer marked active; only the nested `main` row carries the active styling.
+- The command palette search row now keeps the normal `1px` Superset border while focused instead
+  of darkening the divider to the focus ring token. This intentionally preserves Superset Light/Dark
+  styling rather than adding a separate accessibility affordance for those exact modes.
+- Local Playwright visual QA on `http://127.0.0.1:5174/?theme=superset-light` saved
+  `.context/workspace-left-pane-superset-exact-after.png` and
+  `.context/palette-superset-light-divider-after.png`; computed local values matched the sampled
+  sidebar typography and confirmed the palette divider remains `rgb(229, 229, 229)`.
+
+Superset workspace/palette fidelity verification:
+
+- `rtk pnpm test:unit src/pane/WorkspaceScene.test.tsx src/styles/workspaceSceneStyleContracts.test.ts src/styles/focusContracts.test.ts`
+  passed: 3 files / 14 tests.
+- `rtk pnpm check` first failed on two Biome formatting diffs, then passed: Biome, TypeScript, 44
+  Vitest files / 290 tests, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/pane src/styles/global.css src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched workspace/palette files; the palette input focus treatment remains
+  an intentional Superset Light/Dark fidelity exception.
+- `rtk git diff --check` passed.
+
+## Workspace Fixture Privacy Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Corrected the workspace preview fixture so live Superset remains a structural and token reference
+  only. Real team names, project names, branch names, and workspace labels must not be copied into
+  code, docs, screenshots, or tests.
+- Updated the fixture regression test to assert the exact anonymized left-panel label set instead
+  of preserving private labels as negative examples.
+- Updated `DESIGN.md` to document the privacy boundary: live Superset workspaces are
+  structure-only references, and fixture labels must stay anonymized.
+- Local Playwright visual QA on `http://127.0.0.1:5174/?theme=superset-light` saved
+  `.context/workspace-left-pane-anonymized-after.png`; computed labels were `John's Team`,
+  `inbox-pro`, `linear-clone`, `pulse-monitor`, `storybook-lab`, and nested active `main`, with no
+  active top-level nav item.
+- Latest Web Interface Guidelines were fetched from
+  `https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md` and
+  reviewed against the touched workspace fixture files; no new touched-surface findings.
+
+Workspace fixture privacy verification:
+
+- A targeted private-label search was run against `src`, docs, `DESIGN.md`, `PRODUCT.md`, and the
+  Impeccable sidecar and returned no matches. The private search terms are intentionally not
+  recorded in tracked files.
+- `rtk pnpm test:unit src/pane/WorkspaceScene.test.tsx src/styles/workspaceSceneStyleContracts.test.ts src/styles/focusContracts.test.ts`
+  passed: 3 files / 14 tests.
+- `rtk node -e "JSON.parse(require('fs').readFileSync('.impeccable/design.json','utf8')); console.log('design sidecar ok')"`
+  passed.
+- `rtk pnpm lint` passed: Biome checked 158 files.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk pnpm check` passed: Biome, TypeScript, 44 Vitest files / 290 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk npx impeccable detect src/pane/WorkspaceScene.tsx src/pane/WorkspaceScene.test.tsx DESIGN.md docs/STATUS.md docs/design/2026-05-27-catalog-redesign.md`
+  returned `ok`.
+- `rtk git diff --check` passed.
+
+## Theme Swap Font Flicker Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Investigated the reported font flicker while swapping themes. Runtime tracing showed
+  `font-family`, `font-size`, and `font-weight` stayed stable; the shimmer came from global
+  `color`, `fill`, and `stroke` transitions repainting text and icons during theme morphs.
+- Removed text/icon paint from the global theme transition and the rail-row transition. Theme
+  swaps still animate surface, border, and shadow changes, while text colors now snap to the new
+  theme immediately.
+- Added `src/styles/themeTransitionContracts.test.ts` to prevent reintroducing text/icon paint
+  transitions during theme swaps.
+- Local Playwright runtime verification on `http://127.0.0.1:5174/` confirmed a Tokyo Night to
+  Solarized Light swap fired zero `color`, `fill`, or `stroke` transition starts on rail,
+  nameplate, top bar, or bottom bar text surfaces; only background and border colors animated.
+
+Theme swap font-flicker verification:
+
+- `rtk pnpm test:unit src/styles/themeTransitionContracts.test.ts src/styles/railContracts.test.ts src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 4 files / 11 tests.
+- `rtk npx impeccable detect src/styles/global.css src/styles/themeTransitionContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 291 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
+## Impeccable Design Context (2026-06-01)
+
+Status: Complete.
+
+- Ran Impeccable `document` in scan mode because `PRODUCT.md` exists and the implemented app has
+  substantial token/component surfaces, while `DESIGN.md` was missing.
+- Generated root `DESIGN.md` in the six-section DESIGN.md format with YAML frontmatter for
+  representative Superset Light tokens, typography roles, radii, spacing, and core component
+  primitives. The prose documents the semantic split between `--chrome-*` app chrome tokens and
+  `--preview-*` theme preview tokens.
+- Generated local `.impeccable/design.json` sidecar for the Impeccable live panel with color
+  metadata, typography metadata, shadow/motion/breakpoint extensions, and rendered component
+  snippets for chrome search, rail rows, command palette, workspace thread row, settings field, and
+  terminal preview. The sidecar remains under the repo's ignored `.impeccable/` scratch directory.
+- Rendered `http://127.0.0.1:5174/?theme=superset-light` and sampled computed styles for chrome,
+  rail, workspace, terminal, and command palette surfaces to ground the document in actual UI
+  values.
+
+Impeccable design-context verification:
+
+- `rtk node -e "JSON.parse(require('fs').readFileSync('.impeccable/design.json','utf8')); console.log('design sidecar ok')"`
+  passed.
+- `rtk node /Users/tunji/.agents/skills/impeccable/scripts/load-context.mjs` passed and now reports
+  `hasDesign: true` with `designPath: DESIGN.md`.
+- `rtk pnpm lint` passed: Biome checked 158 files.
+- `rtk npx impeccable detect DESIGN.md docs/STATUS.md` returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 44 Vitest files / 290 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+
+## Theme Rail Display Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Replaced the ambiguous trailing accent/ring dot in `RailRow` with an explicit neutral
+  `LIGHT` / `DARK` badge. The row's mode is now labeled directly instead of encoded by fill
+  vs. outline color.
+- Moved rail hover and selected-row fills to neutral foreground-derived chrome states. Theme
+  identity now stays in the five-swatch glimpse instead of tinting row chrome, so row visibility
+  stays steady across light, dark, and high-chroma themes.
+- Strengthened the swatch ring treatment so light and low-contrast swatches remain visible on
+  both light and dark chrome surfaces.
+- Local Playwright visual QA refreshed:
+  `.context/rail-superset-light-mode-badges.png`,
+  `.context/rail-tokyo-night-mode-badges.png`,
+  `.context/rail-rose-pine-dawn-mode-badges.png`, and
+  `.context/rail-superset-dark-mode-badges.png`.
+- Browser contrast probing after transition settle confirmed selected row text and mode badges
+  clear at least 4.5:1 on Superset Light, Tokyo Night, Rosé Pine Dawn, Superset Dark, Solarized
+  Light, Catppuccin Mocha, Dracula, and Graphite Dark; the old dot count is zero.
+
+Theme rail display verification:
+
+- `rtk pnpm test:unit src/rail/RailRow.test.tsx src/styles/railContracts.test.ts src/styles/themeTransitionContracts.test.ts src/styles/focusContracts.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 5 files / 23 tests.
+- `rtk node --input-type=module <<'NODE' ... NODE` Playwright contrast probe passed for eight
+  representative themes with zero `.rail-row__dot` / `rail-accent-dot` elements.
+- `rtk npx impeccable detect src/rail/RailRow.tsx src/rail/RailRow.test.tsx src/styles/global.css src/styles/railContracts.test.ts docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 293 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
+## Dedicated Mode Section Badge Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Removed redundant `LIGHT` / `DARK` mode badges from the dedicated Light and Dark rail sections.
+  Those rows now rely on their section headers for mode context.
+- Kept mode badges in the mixed-mode Superset and Featured rail sections, where the row mode still
+  needs to be visible without reading across sections.
+- Preserved the row pin affordance when a basic Light/Dark section row is pinned; only the
+  redundant mode badge is suppressed.
+- Local Playwright visual QA saved
+  `.context/rail-light-dark-sections-no-mode-badges.png`. Runtime DOM inspection confirmed
+  Superset has 2 badges, Featured has 5 badges, and both Light and Dark have zero mode badges.
+
+Dedicated mode section badge verification:
+
+- `rtk pnpm test:unit src/rail/RailRow.test.tsx src/rail/Rail.test.tsx` passed: 2 files /
+  31 tests.
+- `rtk npx impeccable detect src/rail/RailRow.tsx src/rail/RailRow.test.tsx src/rail/Rail.test.tsx docs/STATUS.md`
+  returned `ok`.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 296 tests,
+  research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk git diff --check` passed.
+
+## Superset Token Surface Follow-up (2026-06-01)
+
+Status: Complete.
+
+- Expanded `src/theme-core/schema.ts` so catalog themes and imported official Superset JSON preserve
+  the full starter/marketplace token surface instead of collapsing it into compact app-only aliases.
+  Existing compact catalog data still parses through schema defaults, but generated/catalog JSON now
+  physically includes the official token sections.
+- Updated `src/theme-core/exportTheme.ts` and `src/lab/importTheme.ts` so download/import is
+  round-trippable for Superset's own JSON shape. App-only aliases such as `ui.selection` remain
+  compatibility/editing fields and are omitted from downloads.
+- Replaced Superset Light/Dark catalog token payloads with the attached official starter exports.
+  `superset-dark` now keeps live Superset values such as `ui.destructiveForeground = #ffcccc`
+  and `ui.highlightActive = #7b4530`; the local contrast checker warns on those official misses
+  instead of changing them.
+- Added preview CSS variables for the official roles and moved the workspace rail/active rows,
+  highlight selection, and terminal selection onto those roles (`sidebar*`, `highlight*`,
+  `terminal.selectionBackground`) rather than re-derived approximations.
+- Updated lab draft editing and random generation to keep the hidden official aliases synchronized
+  when a compact editor token changes.
+- Browser verification attempted the preferred in-app Browser path, but `iab` was unavailable.
+  Direct Playwright against Vite at `http://127.0.0.1:5174/` confirmed Superset Light/Dark root
+  variables and rendered workspace surfaces resolve from the same official roles. Screenshots:
+  `.context/browser-qa/superset-light-official-token-smoke.png` and
+  `.context/browser-qa/superset-dark-official-token-smoke.png`.
+
+Superset token surface verification:
+
+- `rtk pnpm test:unit src/lab/draftTheme.test.ts src/theme-core/contrast.test.ts src/theme-core/schema.test.ts src/theme-core/exportTheme.test.ts src/preview/themeCssVars.test.ts src/theme/applyTheme.test.ts src/lab/importTheme.test.ts src/styles/workspaceSceneStyleContracts.test.ts`
+  passed: 8 files / 37 tests.
+- `rtk pnpm themes:validate` passed: 14 catalog themes from 14 JSON files validated.
+- `rtk pnpm themes:check-contrast` passed with 3 optional Superset baseline warnings.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 300 tests, research/archive tests,
+  and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
+- `rtk git diff --check` passed.
+
+## Solarized Light Refinement (2026-06-01)
+
+Status: Complete.
+
+- Reviewed the supplied refined Solarized Light JSON against the existing catalog port. It is an
+  improvement because it restores distinct chart hues, gives sidebar/tertiary surfaces a visible
+  warm paper step, improves input/border separation, and replaces the previous cream-on-cream
+  highlight roles with yellow search-highlight tokens.
+- Catalog JSON cannot store `rgba()` directly, so the supplied translucent values were composited
+  over the theme backgrounds:
+  - `highlightMatch` -> `#eddeb1`
+  - `highlightActive` / internal `ui.selection` -> `#ddc57d`
+  - `terminal.selectionBackground` / internal `terminal.selection` -> `#efe9d6`
+- The supplied `ui.primaryForeground = #002b36` and `terminal.foreground = #657b83` failed required
+  contrast gates, so the catalog keeps the existing required-pair-safe values:
+  `ui.primaryForeground = #001f27`, `ui.sidebarPrimaryForeground = #001f27`, and
+  `terminal.foreground = #586e75`.
+- Runtime smoke used direct Playwright because the preferred in-app Browser `iab` was unavailable.
+  `http://127.0.0.1:5174/?theme=solarized-light` confirmed the rendered root variables include
+  chart roles `#268bd2`, `#859900`, `#d33682`, `#b58900`, `#6c71c4`, highlight active
+  `#ddc57d`, terminal selection `#efe9d6`, and the workspace rail/active row resolve to the
+  refined sidebar roles. Screenshot:
+  `.context/browser-qa/solarized-light-refined-smoke.png`.
+
+Solarized Light refinement verification:
+
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes with only the 3 expected optional
+  Superset baseline warnings.
+- `rtk pnpm check` passed: Biome, TypeScript, 45 Vitest files / 300 tests, research/archive tests,
+  and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
+
 ## Verification
 
 Latest app verification:
 
+- `rtk pnpm test:unit src/theme-core/exportTheme.test.ts src/pane/Nameplate.test.tsx src/palette/commands.test.ts src/lab/importTheme.test.ts` passed after the JSON download/import checkpoint.
+- A `tsx` importer smoke test parsed all 27 downloaded Superset marketplace theme JSON files from `.context/superset-marketplace-themes/`.
+- `rtk pnpm check` passed: Biome check, TypeScript check, Vitest run, research/archive tests, and Vite build.
+- `rtk pnpm test:e2e` passed: 29 Playwright flows passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 story test files / 31 stories.
+- `rtk pnpm build` passed with the existing Vite chunk-size warning.
+- `rtk pnpm themes:validate` passed for 14 catalog themes.
+- `rtk pnpm themes:check-contrast` passed for 14 catalog themes.
+- `rtk npx impeccable detect src/pane/Nameplate.tsx src/pane/Nameplate.test.tsx src/palette/commands.ts src/palette/commands.test.ts src/theme-core/exportTheme.ts src/theme-core/exportTheme.test.ts src/lab/importTheme.ts src/lab/importTheme.test.ts src/lab/LabFooter.tsx src/styles/global.css docs/STATUS.md docs/design/2026-05-27-catalog-redesign.md` passed with `ok`.
+- `rtk git diff --check` passed.
+- Preferred in-app Browser was unavailable for this session, so direct Playwright QA against Vite at `http://127.0.0.1:5174/` confirmed one catalog `Download JSON` action, no catalog `Copy JSON` action, and a downloaded `tokyo-night.json` with Superset import keys. Screenshot saved to `.context/browser-qa/download-json-nameplate.png`.
 - `pnpm test -- src/app/App.test.tsx` passed.
 - `pnpm test:unit -- src/theme-core/schema.test.ts src/theme-core/exportTheme.test.ts` first failed on missing Task 2 modules, then passed after schema/export/catalog implementation.
 - `pnpm themes:validate` passed: 3 catalog themes from 3 JSON files validated.

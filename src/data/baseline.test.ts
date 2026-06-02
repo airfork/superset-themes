@@ -24,11 +24,37 @@ describe("baseline themes", () => {
       background: "#ffffff",
       border: "#e5e5e5",
       foreground: "#0a0a0a",
+      highlightActive: "#ffc58e",
       muted: "#f5f5f5",
       mutedForeground: "#737373",
       primary: "#171717",
       primaryForeground: "#fafafa",
       ring: "#a1a1a1",
+      sidebar: "#fafafa",
+      sidebarAccent: "#f5f5f5",
+    });
+  });
+
+  it("tracks Superset Dark's pinned live app tokens without accessibility rewrites", () => {
+    const supersetDark = getBaselineThemes().find((entry) => entry.theme.id === "superset-dark");
+
+    expect(supersetDark?.theme.ui).toMatchObject({
+      accent: "#2a2827",
+      background: "#151110",
+      border: "#2a2827",
+      card: "#201e1c",
+      destructive: "#cc4444",
+      destructiveForeground: "#ffcccc",
+      foreground: "#eae8e6",
+      highlightActive: "#7b4530",
+      muted: "#2a2827",
+      mutedForeground: "#a8a5a3",
+      primary: "#eae8e6",
+      primaryForeground: "#151110",
+      ring: "#3a3837",
+      sidebar: "#1a1716",
+      sidebarAccent: "#252220",
+      sidebarPrimary: "#e07850",
     });
   });
 

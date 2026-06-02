@@ -1,8 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { Copy } from "lucide-react";
+import { Download } from "lucide-react";
 import { getBaselineFirstThemes } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
-import { exportThemeJson } from "../theme-core/exportTheme";
+import { downloadThemeJson } from "../theme-core/exportTheme";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import type { RankableItem } from "./fuzzy";
 
@@ -13,7 +13,7 @@ export interface PaletteCommand extends RankableItem {
   section: PaletteSection;
   hint?: string;
   // The global keypress that triggers this command, shown as a muted glyph so the
-  // palette teaches the shortcut where power users look for it (e.g. "." pins).
+  // palette can teach shortcuts where they are clearer than the action label.
   shortcut?: string;
   // Leading glyph for action rows; theme rows use an accent swatch instead.
   icon?: LucideIcon;
@@ -39,16 +39,16 @@ export function buildThemeCommands(onSelectTheme: (themeId: string) => void): Pa
   }));
 }
 
-// Mirrors the nameplate's Copy JSON so the palette stays the canonical action
-// surface: searching "export"/"copy"/"json" must not dead-end at "No matches".
-export function copyThemeJsonCommand(entry: CatalogThemeEntry): PaletteCommand {
+// Mirrors the nameplate's Download JSON so the palette stays the canonical
+// action surface: searching "download"/"export"/"json" must not dead-end.
+export function downloadThemeJsonCommand(entry: CatalogThemeEntry): PaletteCommand {
   return {
-    id: "action-copy-theme-json",
-    label: "Copy theme JSON",
+    id: "action-download-theme-json",
+    label: "Download theme JSON",
     section: "Actions",
-    icon: Copy,
-    keys: ["copy theme json", "copy", "export", "json"],
-    run: () => void navigator.clipboard.writeText(exportThemeJson(entry)),
+    icon: Download,
+    keys: ["download theme json", "download", "export", "json"],
+    run: () => downloadThemeJson(entry),
   };
 }
 

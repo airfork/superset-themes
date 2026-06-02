@@ -1,7 +1,8 @@
 # Catalog Redesign
 
 Date: 2026-05-27
-Status: Design locked. Implementation plan to follow.
+Status: Implemented. This document is kept as the design-of-record for the shipped master/detail
+shell. The implementation plan it drove is complete and has been removed (see git history).
 
 ## Overview
 
@@ -89,7 +90,7 @@ The accent dots always show each row's own theme accent, never the site's curren
 
 **Nameplate (thin strip at top)**
 - Theme name + family chip + tag chips + light/dark indicator
-- Right-aligned subtle actions: `Pin to compare`, `Open in Lab`, `Copy JSON`
+- Right-aligned subtle actions: `Pin to compare`, `Open in Lab`, `Download JSON`
 - Actions invite the other workflows without selling them
 
 **Body — default Workspace scene**
@@ -107,7 +108,7 @@ A small Superset window with two columns visible and the third (files/changes/re
 │ • feat/x +13k    │ Cool. Here's the full anatomy…    │
 │   docs   +103    │                                    │
 │                  │ ┌─────────────────────────────┐    │
-│ ⊝ snake-off      │ │> the rail structure          │    │
+│ ⊝ storybook-lab  │ │> the rail structure          │    │
 │                  │ └─────────────────────────────┘    │
 │ ⊙ Ports 5174     │ »» bypass perms on (shift+tab)    │
 │ ⚙ Settings       │                                    │
@@ -132,12 +133,12 @@ Drop `Diff`, `Command palette`, `Editor` scenes from the current implementation.
 
 The site's navigation palette is a literal copy of Superset's command palette UI: light card, section labels (`Themes`, `Actions`), keyboard hints right-aligned, subtle row highlight on focus. Dual purpose:
 
-- Functional: jump to any theme, toggle light/dark filter, open Lab with current theme, copy JSON, exit compare, etc.
+- Functional: jump to any theme, toggle light/dark filter, open Lab with current theme, download JSON, exit compare, etc.
 - Demonstrative: since the palette is part of the site chrome and the site chrome takes on the focused theme's colors, ⌘K *is* the command-palette demo for whatever theme is currently focused.
 
 Sections:
 - **Themes** — fuzzy search across all catalog themes
-- **Actions** — `Pin to compare`, `Open in Lab`, `Copy JSON`, `Toggle next theme`, `Exit compare` (when active), `Back to catalog` (when in Lab)
+- **Actions** — `Pin to compare`, `Open in Lab`, `Download JSON`, `Toggle next theme`, `Exit compare` (when active), `Back to catalog` (when in Lab)
 
 ## Theme application rules
 
@@ -322,8 +323,7 @@ These are not design questions; they need answers when writing the implementatio
 - Keyboard navigation for rail (arrow keys, Home/End)
 - Compare-mode rail-row hover state to signal "this slot will fill"
 
-## Next steps
+## Outcome
 
-1. Replace `DESIGN.md` with a pointer to this document, or remove it.
-2. Write the implementation plan in `docs/superpowers/plans/`.
-3. Execute against the plan in a worktree.
+This design shipped in full. `DESIGN.md` was regenerated as the living design system reference for
+the implemented app, and the phase-by-phase execution record lives in `docs/STATUS.md`.

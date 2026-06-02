@@ -59,8 +59,8 @@ describe("checkThemeContrast", () => {
           required: true,
         }),
         expect.objectContaining({
-          backgroundPath: "ui.selection",
-          foregroundPath: "ui.selectionForeground",
+          backgroundPath: "ui.highlightActive",
+          foregroundPath: "ui.highlightForeground",
           required: false,
         }),
         expect.objectContaining({
@@ -124,6 +124,79 @@ describe("checkThemeContrast", () => {
     expect(
       result.warnings.find((warning) => warning.foregroundPath === "ui.foreground")?.ratio,
     ).toBeCloseTo(1.0085, 4);
+  });
+
+  it("treats Superset baseline contrast misses as fidelity warnings, not theme errors", () => {
+    const supersetDark = requireValue(
+      catalogThemes.find((entry) => entry.theme.id === "superset-dark"),
+    ).theme;
+
+    const result = checkThemeContrast(supersetDark);
+
+    expect(result.warnings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backgroundPath: "ui.destructive",
+          foregroundPath: "ui.destructiveForeground",
+          required: true,
+          severity: "warning",
+        }),
+      ]),
+    );
+    expect(result.warnings.filter((warning) => warning.severity === "error")).toEqual([]);
+  });
+
+  it("checks the highlight tokens used for rendered UI selection", () => {
+    const baseTheme = requireValue(catalogThemes[0]).theme;
+    const failingTheme: SupersetTheme = {
+      ...baseTheme,
+      ui: {
+        ...baseTheme.ui,
+        highlightActive: "#000000",
+        highlightForeground: "#000000",
+        selection: "#000000",
+        selectionForeground: "#ffffff",
+      },
+    };
+
+    const result = checkThemeContrast(failingTheme);
+
+    expect(result.warnings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backgroundPath: "ui.highlightActive",
+          foregroundPath: "ui.highlightForeground",
+          ratio: 1,
+          required: false,
+          severity: "warning",
+        }),
+      ]),
+    );
+  });
+
+  it("does not let imported themes spoof Superset baseline warning exceptions by id", () => {
+    const baseTheme = requireValue(catalogThemes[0]).theme;
+    const failingTheme: SupersetTheme = {
+      ...baseTheme,
+      id: "superset-dark",
+      ui: {
+        ...baseTheme.ui,
+        background: "#000000",
+        foreground: "#000000",
+      },
+    };
+
+    const result = checkThemeContrast(failingTheme);
+
+    expect(result.warnings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backgroundPath: "ui.background",
+          foregroundPath: "ui.foreground",
+          severity: "error",
+        }),
+      ]),
+    );
   });
 
   it("returns structured invalid-color issues without throwing", () => {

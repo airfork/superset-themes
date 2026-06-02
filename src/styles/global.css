@@ -3,9 +3,7 @@
 }
 
 :root {
-  transition:
-    background-color var(--app-transition),
-    color var(--app-transition);
+  transition: background-color var(--app-transition);
 }
 
 *,
@@ -14,9 +12,6 @@
   transition:
     background-color var(--app-transition),
     border-color var(--app-transition),
-    color var(--app-transition),
-    fill var(--app-transition),
-    stroke var(--app-transition),
     box-shadow var(--app-transition);
 }
 
@@ -30,6 +25,11 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+}
+
+::selection {
+  background: var(--preview-ui-highlight-active);
+  color: var(--preview-ui-highlight-foreground);
 }
 
 button,
@@ -1263,11 +1263,6 @@ kbd {
   outline-offset: 1px;
 }
 
-.pane-nameplate__action--error,
-.pane-nameplate__action--error:hover {
-  color: var(--preview-ui-destructive);
-}
-
 .pane-nameplate__divider {
   width: 1px;
   height: 14px;
@@ -1304,20 +1299,21 @@ kbd {
 
 /* Pane — Workspace scene (Superset-shape three-column thread) */
 .scene-workspace {
+  /* Selected and hovered rail rows are solid --muted in Superset (bg-muted /
+     hover:bg-muted), verified live via CDP on Superset 1.12.1. */
   --scene-workspace-active-row: var(--preview-ui-muted);
-  --scene-workspace-hover-row: color-mix(in srgb, var(--preview-ui-accent) 50%, transparent);
+  --scene-workspace-hover-row: var(--preview-ui-muted);
   --scene-workspace-muted-icon: color-mix(
     in srgb,
-    var(--preview-ui-muted-foreground) 85%,
+    var(--preview-ui-sidebar-foreground) 72%,
     transparent
   );
-  --scene-workspace-sidebar: color-mix(
-    in srgb,
-    var(--preview-ui-background) 98.5%,
-    var(--preview-ui-foreground)
-  );
+  /* Superset paints the team/workspace rail as `bg-muted/35` (dark) /
+     `bg-muted/45` (light): a translucent --muted fill over the canvas, not the
+     solid --sidebar token. Mirror it so the preview rail matches the app. */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 35%, transparent);
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   min-height: 480px;
   height: 100%;
@@ -1325,6 +1321,11 @@ kbd {
   color: var(--preview-ui-foreground);
   font-family: var(--app-font-chrome);
   font-size: 0.78rem;
+}
+
+:root[data-theme-type="light"] .scene-workspace {
+  /* Superset uses bg-muted/45 in light mode (vs /35 in dark). */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 45%, transparent);
 }
 
 .scene-workspace__rail {
@@ -1335,9 +1336,9 @@ kbd {
   flex-direction: column;
   gap: 6px;
   padding: 10px 0 0;
-  border-right: 1px solid var(--preview-ui-border);
+  border-right: 1px solid var(--preview-ui-sidebar-border);
   background: var(--scene-workspace-sidebar);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   min-width: 0;
   font-size: 14px;
 }
@@ -1345,7 +1346,7 @@ kbd {
 .scene-workspace__rail-divider {
   height: 1px;
   margin: 6px 0;
-  background: var(--preview-ui-border);
+  background: var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__team,
@@ -1364,17 +1365,18 @@ kbd {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font: inherit;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 20px;
   text-align: left;
   cursor: pointer;
 }
 
 .scene-workspace__team:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__team-mark {
@@ -1383,8 +1385,8 @@ kbd {
   width: 22px;
   height: 22px;
   border-radius: 6px;
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-muted-foreground);
+  background: var(--preview-ui-sidebar-primary);
+  color: var(--preview-ui-sidebar-primary-foreground);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1416,12 +1418,13 @@ kbd {
   grid-template-columns: 16px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
+  line-height: 20px;
 }
 
 .scene-workspace__nav a svg,
@@ -1432,11 +1435,7 @@ kbd {
 
 .scene-workspace__nav a:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
-}
-
-.scene-workspace__nav a[aria-current="page"] {
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__new-workspace-trailing {
@@ -1445,7 +1444,7 @@ kbd {
 
 .scene-workspace__divider {
   height: 1px;
-  background: var(--preview-ui-border);
+  background: var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__divider--gutter {
@@ -1469,9 +1468,10 @@ kbd {
   gap: 10px;
   padding: 6px 12px;
   border-radius: 6px;
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-size: 14px;
   font-weight: 500;
+  line-height: 20px;
   cursor: pointer;
 }
 
@@ -1505,7 +1505,7 @@ kbd {
 .scene-workspace__project-count {
   font-size: 12px;
   font-weight: 400;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1524,8 +1524,9 @@ kbd {
   gap: 10px;
   padding: 6px 12px 6px 24px;
   border-radius: 6px;
-  color: var(--preview-ui-muted-foreground);
-  font-size: 13px;
+  color: var(--preview-ui-sidebar-foreground);
+  font-size: 14px;
+  line-height: 20px;
   cursor: pointer;
 }
 
@@ -1535,11 +1536,11 @@ kbd {
 
 .scene-workspace__branches li[data-active] {
   background: var(--scene-workspace-active-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__branches li[data-active]:hover {
-  background: var(--preview-ui-accent);
+  background: var(--preview-ui-sidebar-accent);
 }
 
 .scene-workspace__branch-icon {
@@ -1561,7 +1562,7 @@ kbd {
 }
 
 .scene-workspace__branches li[data-active] .scene-workspace__branch-icon {
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__branch-name {
@@ -1610,8 +1611,8 @@ kbd {
   gap: 6px;
   min-height: 38px;
   padding: 0 12px;
-  border-top: 1px solid var(--preview-ui-border);
-  color: var(--preview-ui-muted-foreground);
+  border-top: 1px solid var(--preview-ui-sidebar-border);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
@@ -1624,7 +1625,7 @@ kbd {
 }
 
 a.scene-workspace__footer-row:hover {
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__footer-row--settings {
@@ -1633,7 +1634,7 @@ a.scene-workspace__footer-row:hover {
   gap: 4px;
   min-height: 41px;
   padding: 4px 8px;
-  border-top: 1px solid var(--preview-ui-border);
+  border-top: 1px solid var(--preview-ui-sidebar-border);
 }
 
 .scene-workspace__settings-link {
@@ -1645,7 +1646,7 @@ a.scene-workspace__footer-row:hover {
   min-width: 0;
   padding: 6px 8px;
   border-radius: 8px;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   text-decoration: none;
   font-size: 14px;
   font-weight: 500;
@@ -1654,7 +1655,7 @@ a.scene-workspace__footer-row:hover {
 
 .scene-workspace__settings-link:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__settings-link svg {
@@ -1681,13 +1682,13 @@ a.scene-workspace__footer-row:hover {
 
 .scene-workspace__help-button:hover {
   background: var(--scene-workspace-hover-row);
-  color: var(--preview-ui-foreground);
+  color: var(--preview-ui-sidebar-accent-foreground);
 }
 
 .scene-workspace__footer-meta {
   font-size: 10px;
   font-weight: 400;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--preview-ui-sidebar-foreground);
   font-variant-numeric: tabular-nums;
   letter-spacing: normal;
 }
@@ -1706,7 +1707,7 @@ a.scene-workspace__footer-row:hover {
 .scene-workspace__sessions {
   display: flex;
   align-items: stretch;
-  background: color-mix(in srgb, var(--preview-ui-muted) 45%, transparent);
+  background: var(--preview-ui-background);
   border-bottom: 1px solid var(--preview-ui-border);
   overflow-x: auto;
   overflow-y: hidden;
@@ -1875,8 +1876,9 @@ a.scene-workspace__footer-row:hover {
 }
 
 .scene-workspace__tab[data-active] {
-  background: var(--preview-ui-muted);
-  color: var(--preview-ui-foreground);
+  background: transparent;
+  color: var(--preview-ui-muted-foreground);
+  font-weight: 500;
 }
 
 .scene-workspace__tab-icon {
@@ -2048,15 +2050,11 @@ a.scene-workspace__footer-row:hover {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto auto auto;
   background: var(--preview-terminal-background);
-  color: color-mix(
-    in srgb,
-    var(--preview-terminal-foreground) 84%,
-    var(--preview-terminal-background)
-  );
+  color: var(--preview-terminal-foreground);
   overflow: hidden;
   font-family: var(--app-font-terminal);
-  font-size: 12.5px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .scene-workspace__activity {
@@ -2120,15 +2118,62 @@ a.scene-workspace__footer-row:hover {
   padding: 14px 18px 0;
   border: 0;
   background: transparent;
-  color: color-mix(
-    in srgb,
-    var(--preview-terminal-foreground) 84%,
-    var(--preview-terminal-background)
-  );
+  color: var(--preview-terminal-foreground);
   font: inherit;
   resize: none;
   white-space: pre;
   overflow: auto;
+}
+
+.scene-workspace__terminal-output::selection {
+  background: var(--preview-terminal-selection-background);
+  color: var(--preview-terminal-selection-foreground);
+}
+
+/* Each output line is as wide as its content so long lines scroll horizontally
+   (terminal behavior) instead of wrapping. */
+.scene-workspace__term-line {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Claude-output ANSI roles — see renderTerminalLine in WorkspaceScene.tsx.
+   Mirrors how Superset paints Claude Code: green bullets/checks, dimmed results. */
+.scene-workspace__term-ok {
+  color: var(--preview-terminal-green);
+}
+
+.scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 74%,
+    var(--preview-terminal-background)
+  );
+}
+
+/* Mixing a dark foreground toward a light background loses contrast, so light
+   themes need a stronger blend to keep dimmed terminal text legible. Claude's own
+   light mode washes this text out; the catalog stays readable on purpose. */
+:root[data-theme-type="light"] .scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 80%,
+    var(--preview-terminal-background)
+  );
+}
+
+/* Tool name in a tool-call line ("Bash", "Update", …) reads bold like Superset. */
+.scene-workspace__term-tool {
+  font-weight: 600;
+}
+
+/* Echoed user prompt: a subtle highlighted band, mirroring Superset's prompt echo. */
+.scene-workspace__term-prompt-line {
+  box-sizing: border-box;
+  margin: 2px 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--preview-terminal-foreground) 10%, transparent);
 }
 
 .scene-workspace__prompt {
@@ -2220,7 +2265,10 @@ a.scene-workspace__footer-row:hover {
   display: grid;
   gap: 18px;
   padding: 18px 22px 22px;
-  background: var(--preview-ui-background);
+  /* Superset's settings page sits on a solid --tertiary surface (`bg-tertiary`),
+     a step lighter than the workspace canvas. Verified live via CDP; the form
+     controls below stay on --background so they read as recessed wells. */
+  background: var(--preview-ui-tertiary);
   color: var(--preview-ui-foreground);
   font-family: var(--app-font-chrome);
   font-size: 0.84rem;
@@ -2868,7 +2916,8 @@ a.scene-workspace__footer-row:hover {
   touch-action: manipulation;
   transition:
     background-color 140ms ease-out,
-    color 140ms ease-out;
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
 }
 
 .rail-row[data-variant="featured"] {
@@ -2876,22 +2925,20 @@ a.scene-workspace__footer-row:hover {
 }
 
 .rail-row:hover {
-  background: color-mix(in srgb, var(--row-accent) 8%, transparent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
 }
 
-/* Selected tint uses the focused theme's primary (an AA-gated, always-visible
-   token) rather than --row-accent. Per-row accents like Solarized Light's
-   #eee8d5 collapse into the cream rail surface; primary stays distinct on
-   every theme. The row's own accent still drives the dot and hover tint. */
+/* Selected rows are neutral chrome state. Theme color belongs in the swatches, not
+   in row fills, otherwise the rail's readability swings wildly between themes. */
 .rail-row[data-selected] {
-  background: color-mix(in srgb, var(--preview-ui-primary) 18%, transparent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--preview-ui-foreground) 10%, transparent);
 }
 
 .rail-row:focus-visible {
   /* Focus rings use --preview-focus-ring (a 3:1-verified focus token on every theme)
-     rather than --row-accent. The row's own accent still colors the dot, hover, and
-     selected tints; focus is a pointer cue and needs guaranteed 3:1 against the
-     background regardless of the row's accent saturation. */
+     rather than row-specific theme color. Focus is a pointer cue and needs guaranteed
+     3:1 against the background regardless of the row theme's accent saturation. */
   outline: 2px solid var(--preview-focus-ring);
   outline-offset: -2px;
 }
@@ -2932,10 +2979,11 @@ a.scene-workspace__footer-row:hover {
 }
 
 .rail-row__swatch {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 26%, var(--chrome-surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--chrome-surface) 78%, transparent);
 }
 
 .rail-row__trailing {
@@ -2950,15 +2998,22 @@ a.scene-workspace__footer-row:hover {
   flex-shrink: 0;
 }
 
-.rail-row__dot {
-  width: 9px;
-  height: 9px;
+.rail-row__mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 18%, transparent);
   border-radius: 999px;
-}
-
-.rail-row__dot[data-variant="light"] {
-  background: transparent;
-  border: 1.5px solid var(--row-accent);
+  background: color-mix(in srgb, var(--chrome-surface) 80%, var(--preview-ui-foreground) 4%);
+  color: var(--preview-ui-foreground);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 /* Rail — composition */
@@ -3126,24 +3181,26 @@ button.rail-search {
   z-index: 200;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 12vh 16px 16px;
-  /* Theme-independent dark scrim: tying it to --preview-ui-background washed
-     light themes with a near-white veil that never dimmed the page beneath. */
-  background: color-mix(in srgb, oklch(0.17 0.015 265) 64%, transparent);
+  align-items: center;
+  padding: 16px;
+  /* Superset leaves the workspace visible behind the command palette; the
+     transparent backdrop only captures outside clicks. */
+  background: transparent;
 }
 
 .palette {
   display: flex;
   flex-direction: column;
-  width: min(560px, 100%);
-  max-height: min(60vh, 460px);
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(550px, calc(100dvh - 32px));
   overflow: hidden;
   border: 1px solid var(--preview-ui-border);
   border-radius: 10px;
-  background: var(--chrome-surface);
+  background: var(--preview-ui-popover);
   color: var(--preview-ui-popover-foreground);
-  box-shadow: 0 24px 64px color-mix(in srgb, var(--preview-ui-background) 64%, transparent);
+  box-shadow:
+    0 10px 15px -3px color-mix(in srgb, oklch(0 0 0) 18%, transparent),
+    0 4px 6px -4px color-mix(in srgb, oklch(0 0 0) 18%, transparent);
 }
 
 /* Search row: a leading magnifier sits beside the borderless input, matching the
@@ -3153,38 +3210,43 @@ button.rail-search {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 16px;
+  min-height: 48px;
+  padding: 0 12px;
   border-bottom: 1px solid var(--preview-ui-border);
 }
 
 .palette__search-icon {
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
-  color: var(--chrome-muted-foreground);
+  width: 16px;
+  height: 16px;
+  color: var(--preview-ui-foreground);
+  opacity: 0.5;
+  stroke-width: 2;
 }
 
 .palette__input {
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 52px;
+  min-height: 48px;
   border: 0;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
   padding: 0;
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  line-height: 1.25;
 }
 
-/* The input itself stays visually borderless; the compound search row owns the
-   focus ring so keyboard focus is visible without boxing the text field alone. */
+/* The input itself stays visually borderless; Superset keeps the divider unchanged
+   while the command input is focused. */
 .palette__input:focus {
   outline: none;
 }
 
-.palette__search:has(.palette__input:focus-visible) {
+.palette__input:focus-visible {
   outline: 2px solid var(--preview-focus-ring);
-  outline-offset: -2px;
+  outline-offset: -4px;
+  border-radius: 4px;
 }
 
 .palette__input::placeholder {
@@ -3195,62 +3257,72 @@ button.rail-search {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  gap: 0;
   min-height: 0;
-  overflow: hidden;
-  padding: 6px;
+  max-height: min(500px, calc(80dvh - 48px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 4px 8px;
 }
 
 .palette__group {
-  /* Column flex stacks the label above its options and lets the themes group
-     own the scroll while the actions shelf keeps its height. */
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
 }
 
-/* The theme list owns the scroll; the Actions shelf below stays put. */
 .palette__group--themes {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  flex: 0 0 auto;
 }
 
-/* Actions are a small fixed set; dock them as a footer so they stay
-   discoverable on an empty query instead of sitting below the fold under a
-   tall theme list. Reserves its own space so it never overlays the themes. */
 .palette__group--actions {
   flex: 0 0 auto;
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px solid var(--preview-ui-border);
-  background: var(--chrome-surface);
-}
-
-/* Collapsed shelf: just the "More actions" teaser, no section label. */
-.palette__group--collapsed {
-  padding-top: 0;
 }
 
 .palette__group-label {
-  margin: 8px 10px 4px;
-  padding: 0;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin: 0;
+  padding: 6px 8px;
   color: var(--chrome-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1rem;
+  text-transform: none;
+}
+
+.palette__group-label--themes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.palette__group-title,
+.palette__group-meta-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette__group-meta-label {
+  justify-self: end;
+}
+
+.palette__group + .palette__group {
+  margin-top: 0;
 }
 
 .palette__option {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
+  column-gap: 8px;
   width: 100%;
-  min-height: 40px;
+  min-height: 44px;
   border: 0;
-  border-radius: 7px;
-  padding: 0 10px;
+  border-radius: 0;
+  padding: 12px 8px;
   background: transparent;
   color: var(--preview-ui-popover-foreground);
   font: inherit;
@@ -3258,34 +3330,31 @@ button.rail-search {
   cursor: pointer;
 }
 
-/* Pointer feedback the list was missing: a quiet neutral wash on hover that sits
-   under the keyboard-selected band without competing with it. */
-.palette__option:hover {
-  background: color-mix(in srgb, var(--preview-ui-popover-foreground) 7%, transparent);
+.palette__option + .palette__option {
+  margin-top: 0;
 }
 
-/* Derive the active band from primary: per-theme selection collapses against the
-   popover surface in light themes (Solarized Light, Rosé Pine Dawn). Active wins
-   over hover so keyboard and pointer focus never read as two selected rows. */
+.palette__option:hover {
+  background: color-mix(in srgb, var(--preview-ui-accent) 64%, transparent);
+}
+
 .palette__option[data-active],
 .palette__option[data-active]:hover {
-  background: color-mix(in srgb, var(--preview-ui-primary) 22%, var(--chrome-surface));
+  background: var(--preview-ui-accent);
+  color: var(--preview-ui-accent-foreground);
 }
 
-/* Leading column — fixed width so every label shares one left edge whether the row
-   leads with a theme swatch, an action icon, or the blank placeholder. */
 .palette__option-icon {
-  flex: 0 0 auto;
+  justify-self: center;
   width: 16px;
   height: 16px;
   color: var(--chrome-muted-foreground);
 }
 
 .palette__option-swatch {
-  flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
-  margin: 0 1px;
+  justify-self: center;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   /* Inset ring keeps light-theme swatches legible on the popover surface without
      the rail's separate ring-vs-fill split. */
@@ -3294,43 +3363,44 @@ button.rail-search {
 }
 
 .palette__option-label {
-  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-/* The teaser reads as a secondary meta-row, not a primary command. */
-.palette__more-actions .palette__option-label {
-  color: var(--chrome-muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.25rem;
 }
 
 .palette__option-hint {
-  flex: 0 0 auto;
-  font-size: 0.78rem;
+  justify-self: end;
   color: var(--chrome-muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
 }
 
 /* Plain muted glyph, not a boxed chip: the reference palette trails each row with a
    bare shortcut so the right rail stays quiet. Reset the base kbd chrome. */
 .palette__option-key {
-  flex: 0 0 auto;
+  justify-self: end;
   border: 0;
   padding: 0;
   background: transparent;
   font-family: var(--app-font-chrome);
-  font-size: 0.78rem;
-  line-height: 1;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  line-height: 1rem;
   color: var(--chrome-muted-foreground);
 }
 
 .palette__empty {
   display: grid;
   gap: 6px;
-  padding: 16px 12px;
+  padding: 12px 8px;
   color: var(--chrome-muted-foreground);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 /* Mirrors the rail's dead-end recovery: a tinted next-step suggestion, not a
@@ -3339,6 +3409,18 @@ button.rail-search {
   color: color-mix(in srgb, var(--preview-ui-primary) 80%, var(--preview-ui-popover-foreground));
   font-size: 0.78rem;
   font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .palette__backdrop {
+    align-items: flex-start;
+    padding: 8px;
+  }
+
+  .palette {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+  }
 }
 
 /* Keyboard-shortcut reference — the palette's quieter sibling. Shares the scrim,

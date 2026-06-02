@@ -1,5 +1,5 @@
 import { Pin } from "lucide-react";
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 export type RailRowVariant = "basic" | "featured";
@@ -32,12 +32,17 @@ export function RailRow({
   tabIndex,
   id,
 }: RailRowProps) {
-  const themeAccent = entry.theme.ui.accent;
   const themeVariant = entry.theme.type;
+  const themeModeLabel = themeVariant === "light" ? "Light" : "Dark";
+  const showModeBadge = variant === "featured";
+  const showTrailing = pinned || showModeBadge;
 
   // Build the accessible name from the bare theme name plus any qualifiers, in
   // reading order: pinned status first, then the pinned-section back-reference.
   const labelParts = [entry.theme.name];
+  if (showModeBadge) {
+    labelParts.push(`${themeModeLabel} theme`);
+  }
   if (pinned) {
     labelParts.push("pinned for compare");
   }
@@ -50,19 +55,12 @@ export function RailRow({
   // where the family groups distinct themes ("Rosé Pine" over "Rosé Pine Dawn").
   const showEyebrow = variant === "featured" && entry.meta.family !== entry.theme.name;
 
-  // Inline color escapes the --preview-* system on purpose: the row dot always
-  // shows the entry's own accent, never the focused theme's.
-  const rowStyle: CSSProperties = {
-    "--row-accent": themeAccent,
-  } as CSSProperties;
-
   return (
     <button
       type="button"
       className="rail-row"
       data-variant={variant}
       data-selected={selected || undefined}
-      style={rowStyle}
       onClick={onSelect}
       onKeyDown={onKeyDown}
       aria-current={selected ? "true" : undefined}
@@ -89,26 +87,29 @@ export function RailRow({
           </span>
         ) : null}
       </span>
-      <span className="rail-row__trailing">
-        {pinned ? (
-          <Pin
-            className="rail-row__pin"
-            data-testid="rail-pin"
-            aria-hidden="true"
-            width={12}
-            height={12}
-          />
-        ) : null}
-        <span
-          className="rail-row__dot"
-          data-testid="rail-accent-dot"
-          data-variant={themeVariant}
-          // Dark themes fill the dot; light themes paint a ring via border, so leave
-          // the background unset on light rows so the CSS rule isn't overridden inline.
-          style={themeVariant === "dark" ? { backgroundColor: themeAccent } : undefined}
-          aria-hidden="true"
-        />
-      </span>
+      {showTrailing ? (
+        <span className="rail-row__trailing">
+          {pinned ? (
+            <Pin
+              className="rail-row__pin"
+              data-testid="rail-pin"
+              aria-hidden="true"
+              width={12}
+              height={12}
+            />
+          ) : null}
+          {showModeBadge ? (
+            <span
+              className="rail-row__mode"
+              data-testid="rail-mode-badge"
+              data-mode={themeVariant}
+              aria-hidden="true"
+            >
+              {themeModeLabel}
+            </span>
+          ) : null}
+        </span>
+      ) : null}
     </button>
   );
 }

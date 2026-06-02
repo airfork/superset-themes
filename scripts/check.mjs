@@ -5,6 +5,7 @@ const commands = [
   ["pnpm", ["typecheck"]],
   ["pnpm", ["test"]],
   ["pnpm", ["themes:research:test"]],
+  ["pnpm", ["themes:generate:test"]],
   ["pnpm", ["archive:clean:test"]],
   ["pnpm", ["build"]],
 ];

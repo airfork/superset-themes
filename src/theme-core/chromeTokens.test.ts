@@ -23,6 +23,13 @@ describe("getChromeSurface", () => {
     const { theme } = entryFor("solarized-light");
     expect(getChromeSurface(theme)).toBe(theme.ui.background);
   });
+
+  it("uses Superset Light's raised card when it can carry chrome text", () => {
+    const { theme } = entryFor("superset-light");
+
+    expect(getContrastRatio(theme.ui.foreground, theme.ui.card)).toBeGreaterThanOrEqual(AA);
+    expect(getChromeSurface(theme)).toBe(theme.ui.card);
+  });
 });
 
 describe("getChromeMutedForeground", () => {
@@ -32,6 +39,9 @@ describe("getChromeMutedForeground", () => {
 
   it("keeps muted chrome text at or above AA against the chrome surface for every theme", () => {
     for (const { theme } of catalogThemes) {
+      if (theme.id === "superset-light" || theme.id === "superset-dark") {
+        continue;
+      }
       const surface = getChromeSurface(theme);
       const ratio = getContrastRatio(getChromeMutedForeground(theme), surface);
       expect(ratio, `${theme.id} muted contrast`).toBeGreaterThanOrEqual(AA);
@@ -48,9 +58,11 @@ describe("getChromeMutedForeground", () => {
   });
 
   it("restores hierarchy on equal-token themes where muted-foreground equals foreground", () => {
-    // Tokyo Night ships muted-foreground == foreground, so the old CSS mix collapsed
-    // chrome muted onto primary. The derivation must pull it perceptibly lighter.
-    const { theme } = entryFor("tokyo-night");
+    // Imported or hand-authored themes can ship muted-foreground == foreground, which
+    // collapses a naive CSS mix of chrome muted onto primary. Force the equal-token
+    // condition on a real dark theme; the derivation must pull it perceptibly lighter.
+    const { theme: base } = entryFor("tokyo-night");
+    const theme = { ...base, ui: { ...base.ui, mutedForeground: base.ui.foreground } };
     expect(theme.ui.mutedForeground.toLowerCase()).toBe(theme.ui.foreground.toLowerCase());
 
     const surface = getChromeSurface(theme);
@@ -62,13 +74,38 @@ describe("getChromeMutedForeground", () => {
     expect(mutedRatio).toBeLessThan(primary - 0.5);
     expect(mutedRatio).toBeGreaterThanOrEqual(AA);
   });
+
+  it("uses Superset Light's live muted token exactly even though it falls just below AA", () => {
+    const { theme } = entryFor("superset-light");
+    const surface = getChromeSurface(theme);
+    const mutedRatio = getContrastRatio(getChromeMutedForeground(theme), surface);
+
+    expect(getChromeMutedForeground(theme)).toBe(theme.ui.mutedForeground);
+    expect(mutedRatio).toBeLessThan(AA);
+  });
+
+  it("uses the live Superset Dark muted token when it already clears AA", () => {
+    const { theme } = entryFor("superset-dark");
+
+    expect(
+      getContrastRatio(theme.ui.mutedForeground, getChromeSurface(theme)),
+    ).toBeGreaterThanOrEqual(AA);
+    expect(getChromeMutedForeground(theme)).toBe(theme.ui.mutedForeground);
+  });
 });
 
 describe("getFocusRingColor", () => {
-  it("keeps the exported Superset Light ring token exact but derives an accessible focus ring", () => {
+  it("uses Superset Light's live ring token exactly", () => {
     const { theme } = entryFor("superset-light");
 
     expect(theme.ui.ring).toBe("#a1a1a1");
-    expect(getFocusRingColor(theme)).toBe("#737373");
+    expect(getFocusRingColor(theme)).toBe(theme.ui.ring);
+  });
+
+  it("uses Superset Dark's live ring token exactly", () => {
+    const { theme } = entryFor("superset-dark");
+
+    expect(theme.ui.ring).toBe("#3a3837");
+    expect(getFocusRingColor(theme)).toBe(theme.ui.ring);
   });
 });

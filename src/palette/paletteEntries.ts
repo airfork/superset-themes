@@ -1,7 +1,7 @@
 import type { PaletteCommand } from "./commands";
 import { bestMatch, type FuzzyMatch, rankFuzzy } from "./fuzzy";
 
-export type PaletteEntry = { kind: "command"; command: PaletteCommand } | { kind: "more-actions" };
+export type PaletteEntry = { kind: "command"; command: PaletteCommand };
 
 export interface PaletteEntries {
   themes: PaletteCommand[];
@@ -39,31 +39,31 @@ function isBetter(candidate: FuzzyMatch, incumbent: FuzzyMatch | null): boolean 
 export function buildPaletteEntries(
   commands: readonly PaletteCommand[],
   query: string,
-  actionsExpanded: boolean,
 ): PaletteEntries {
   const themeCommands = commands.filter((command) => command.section === "Themes");
   const actionCommands = commands.filter((command) => command.section === "Actions");
   const rankedThemes = rankFuzzy(query, themeCommands);
   const trimmed = query.trim().toLowerCase();
   const filteredActions = actionCommands.filter((command) => matchesAction(command, trimmed));
-  // At rest the shelf is a single "More actions" teaser so the theme list owns
-  // the panel; a query reveals matching actions directly.
-  const collapsed = trimmed === "" && !actionsExpanded && filteredActions.length > 0;
+  const collapsed = false;
 
   const themeEntries: PaletteEntry[] = rankedThemes.map((command) => ({
     kind: "command",
     command,
   }));
-  const actionEntries: PaletteEntry[] = collapsed
-    ? [{ kind: "more-actions" }]
-    : filteredActions.map((command) => ({ kind: "command", command }));
+  const actionEntries: PaletteEntry[] = filteredActions.map((command) => ({
+    kind: "command",
+    command,
+  }));
+  const entries =
+    trimmed === "" ? [...actionEntries, ...themeEntries] : [...themeEntries, ...actionEntries];
 
   return {
     themes: rankedThemes,
     actions: filteredActions,
     collapsed,
-    entries: [...themeEntries, ...actionEntries],
-    defaultFocusIndex: defaultFocusIndex(query, rankedThemes, filteredActions, collapsed),
+    entries,
+    defaultFocusIndex: defaultFocusIndex(query, rankedThemes, filteredActions),
   };
 }
 
@@ -71,9 +71,8 @@ function defaultFocusIndex(
   query: string,
   rankedThemes: readonly PaletteCommand[],
   filteredActions: readonly PaletteCommand[],
-  collapsed: boolean,
 ): number {
-  if (query.trim() === "" || collapsed) {
+  if (query.trim() === "") {
     return 0;
   }
 

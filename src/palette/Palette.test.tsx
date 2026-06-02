@@ -3,7 +3,6 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { catalogThemes } from "../data/catalog";
 import { buildThemeCommands, type PaletteCommand } from "./commands";
 import { Palette } from "./Palette";
 import { usePalette } from "./usePalette";
@@ -120,30 +119,19 @@ describe("Palette", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("collapses Actions to a single row on an empty query so themes own the panel", () => {
+  it("shows action commands directly before themes at rest like Superset's palette", () => {
     render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
     openPalette();
 
-    // At rest the Actions shelf is one "More actions" row, not the full list, so
-    // the theme list reclaims the panel instead of being squeezed to a porthole.
-    expect(screen.getByRole("option", { name: /more actions/i })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: /open in lab/i })).not.toBeInTheDocument();
-    // Themes are still fully present above the shelf.
-    expect(screen.getByRole("option", { name: /tokyo night/i })).toBeInTheDocument();
-  });
-
-  it("expands the Actions group when the More actions row is activated, staying open", async () => {
-    const user = userEvent.setup();
-    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
-    openPalette();
-
-    await user.click(screen.getByRole("option", { name: /more actions/i }));
-
-    // Expanding reveals the actions and must NOT close the palette (it is not a
-    // command submission).
     expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /more actions/i })).not.toBeInTheDocument();
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: /tokyo night/i })).toBeInTheDocument();
+
+    expect(within(screen.getByRole("group", { name: "Themes" })).getByText("Family")).toBeVisible();
+
+    const options = screen.getAllByRole("option");
+    expect(options[0]).toHaveAccessibleName(/open in lab/i);
+    expect(options[1]).toHaveAccessibleName(/superset light/i);
   });
 
   it("reveals a matching action directly when the query matches it", async () => {
@@ -153,23 +141,7 @@ describe("Palette", () => {
 
     await user.keyboard("lab");
     expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
-    // A query drives action visibility, so the collapsed teaser does not appear.
     expect(screen.queryByRole("option", { name: /more actions/i })).not.toBeInTheDocument();
-  });
-
-  it("expands actions with Enter when the More actions row is focused", async () => {
-    const user = userEvent.setup();
-    render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
-    openPalette();
-
-    // All themes precede the shelf; arrow past them to the More actions row.
-    for (let i = 0; i < catalogThemes.length; i += 1) {
-      await user.keyboard("{ArrowDown}");
-    }
-    await user.keyboard("{Enter}");
-
-    expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it("renders an action's keyboard shortcut as a key chip the user can learn", async () => {
@@ -177,20 +149,20 @@ describe("Palette", () => {
     const commands: PaletteCommand[] = [
       ...buildThemeCommands(vi.fn()),
       {
-        id: "pin-to-compare",
-        label: "Pin to compare",
+        id: "keyboard-shortcuts",
+        label: "Keyboard shortcuts",
         section: "Actions",
-        keys: ["pin to compare", "compare"],
-        shortcut: ".",
+        keys: ["keyboard shortcuts", "help"],
+        shortcut: "?",
         run: vi.fn(),
       },
     ];
     render(<Host commands={commands} />);
     openPalette();
 
-    await user.keyboard("pin");
-    const option = screen.getByRole("option", { name: /pin to compare/i });
-    const key = within(option).getByText(".");
+    await user.keyboard("shortcuts");
+    const option = screen.getByRole("option", { name: /keyboard shortcuts/i });
+    const key = within(option).getByText("?");
     expect(key.tagName).toBe("KBD");
   });
 
@@ -205,7 +177,6 @@ describe("Palette", () => {
         label: "Pin to compare",
         section: "Actions",
         keys: ["pin to compare", "compare"],
-        shortcut: ".",
         run: pinRun,
       },
     ];
@@ -228,7 +199,7 @@ describe("Palette", () => {
     render(<Host commands={makeCommands(vi.fn(), actionRun)} />);
     openPalette();
 
-    // The action lives behind a query (or the More actions row); reach it by typing.
+    // Reach the action by intent text, matching keyboard-first command use.
     await user.keyboard("lab");
     await user.click(screen.getByRole("option", { name: /open in lab/i }));
     expect(actionRun).toHaveBeenCalledTimes(1);

@@ -51,6 +51,27 @@ describe("theme drafts", () => {
     expect(withTerminal.dirty).toBe(true);
   });
 
+  it("keeps legacy highlight editors wired to Superset's official highlight keys", () => {
+    const draft = createDraftFromCatalogEntry(auroraLightEntry);
+    const withSelection = updateDraftUiToken(draft, "selection", "#123456");
+    const withSelectionForeground = updateDraftUiToken(
+      withSelection,
+      "selectionForeground",
+      "#abcdef",
+    );
+    const withTerminalSelection = updateDraftTerminalToken(
+      withSelectionForeground,
+      "selection",
+      "#654321",
+    );
+
+    expect(withSelection.theme.ui.highlightActive).toBe("#123456");
+    expect(withSelection.theme.ui.highlightMatch).toBe("#123456");
+    expect(withSelection.theme.ui.highlight).toBe("#123456");
+    expect(withSelectionForeground.theme.ui.highlightForeground).toBe("#abcdef");
+    expect(withTerminalSelection.theme.terminal.selectionBackground).toBe("#654321");
+  });
+
   it("resets a draft to its source theme", () => {
     const draft = updateDraftUiToken(
       createDraftFromCatalogEntry(auroraLightEntry),

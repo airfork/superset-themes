@@ -7,11 +7,9 @@ export interface PaletteProps {
   open: boolean;
   query: string;
   focusedIndex: number;
-  actionsExpanded: boolean;
   commands: readonly PaletteCommand[];
   onQueryChange: (query: string) => void;
   onMove: (direction: "up" | "down", count: number) => void;
-  onExpandActions: (focusedIndex: number) => void;
   onClose: () => void;
   onSubmit: (command: PaletteCommand | undefined) => void;
 }
@@ -43,8 +41,8 @@ export function usePalette(
   const open = useCallback(() => {
     const seed = seedRef.current.trim();
     // Aim focus at the intent-ranked entry for the seed, matching what typing it
-    // would produce (compute as if the actions shelf is collapsed).
-    const { defaultFocusIndex } = buildPaletteEntries(commandsRef.current, seed, false);
+    // would produce.
+    const { defaultFocusIndex } = buildPaletteEntries(commandsRef.current, seed);
     dispatch({ type: "open", query: seed, focusedIndex: defaultFocusIndex });
   }, []);
 
@@ -65,23 +63,20 @@ export function usePalette(
       open: state.open,
       query: state.query,
       focusedIndex: state.focusedIndex,
-      actionsExpanded: state.actionsExpanded,
       commands,
       onQueryChange: (query) => {
-        // Seed focus on the intent-ranked entry (typing re-collapses the shelf,
-        // so compute entries as if actions are unexpanded).
-        const { defaultFocusIndex } = buildPaletteEntries(commands, query, false);
+        // Seed focus on the intent-ranked entry.
+        const { defaultFocusIndex } = buildPaletteEntries(commands, query);
         dispatch({ type: "setQuery", query, focusedIndex: defaultFocusIndex });
       },
       onMove: (direction, count) => dispatch({ type: "move", direction, count }),
-      onExpandActions: (focusedIndex) => dispatch({ type: "expandActions", focusedIndex }),
       onClose: () => dispatch({ type: "close" }),
       onSubmit: (command) => {
         command?.run();
         dispatch({ type: "submit" });
       },
     }),
-    [state.open, state.query, state.focusedIndex, state.actionsExpanded, commands],
+    [state.open, state.query, state.focusedIndex, commands],
   );
 
   return useMemo(() => ({ open, paletteProps }), [open, paletteProps]);

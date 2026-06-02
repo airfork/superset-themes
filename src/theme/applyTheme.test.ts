@@ -17,8 +17,15 @@ describe("applyTheme", () => {
     const root = document.documentElement;
     expect(root.style.getPropertyValue("--preview-ui-background")).toBe(entry.theme.ui.background);
     expect(root.style.getPropertyValue("--preview-ui-foreground")).toBe(entry.theme.ui.foreground);
+    expect(root.style.getPropertyValue("--preview-ui-sidebar")).toBe(entry.theme.ui.sidebar);
+    expect(root.style.getPropertyValue("--preview-ui-highlight-active")).toBe(
+      entry.theme.ui.highlightActive,
+    );
     expect(root.style.getPropertyValue("--preview-terminal-background")).toBe(
       entry.theme.terminal.background,
+    );
+    expect(root.style.getPropertyValue("--preview-terminal-selection-background")).toBe(
+      entry.theme.terminal.selectionBackground,
     );
     expect(root.getAttribute("data-theme-type")).toBe(entry.theme.type);
     expect(root.getAttribute("data-theme-id")).toBe(entry.theme.id);

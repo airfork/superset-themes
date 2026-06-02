@@ -1,9 +1,118 @@
 import { supersetThemeSchema } from "./schema";
 import type { CatalogThemeEntry, SupersetTheme } from "./themeTypes";
 
-export function exportThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
-  const theme = "theme" in themeOrEntry ? themeOrEntry.theme : themeOrEntry;
-  const parsedTheme = supersetThemeSchema.parse(theme);
+type SupersetDownloadTheme = {
+  author: string;
+  description: string;
+  id: string;
+  name: string;
+  terminal: Record<string, string>;
+  type: "dark" | "light";
+  ui: Record<string, string>;
+};
 
-  return `${JSON.stringify(parsedTheme, null, 2)}\n`;
+function themeFrom(themeOrEntry: SupersetTheme | CatalogThemeEntry): SupersetTheme {
+  return "theme" in themeOrEntry ? themeOrEntry.theme : themeOrEntry;
+}
+
+export function toSupersetDownloadTheme(
+  themeOrEntry: SupersetTheme | CatalogThemeEntry,
+): SupersetDownloadTheme {
+  const theme = supersetThemeSchema.parse(themeFrom(themeOrEntry));
+  const { terminal, ui } = theme;
+
+  return {
+    author: theme.author,
+    description: theme.description,
+    id: theme.id,
+    name: theme.name,
+    terminal: {
+      background: terminal.background,
+      foreground: terminal.foreground,
+      cursor: terminal.cursor,
+      cursorAccent: terminal.cursorAccent,
+      selectionBackground: terminal.selectionBackground,
+      selectionForeground: terminal.selectionForeground,
+      black: terminal.black,
+      red: terminal.red,
+      green: terminal.green,
+      yellow: terminal.yellow,
+      blue: terminal.blue,
+      magenta: terminal.magenta,
+      cyan: terminal.cyan,
+      white: terminal.white,
+      brightBlack: terminal.brightBlack,
+      brightRed: terminal.brightRed,
+      brightGreen: terminal.brightGreen,
+      brightYellow: terminal.brightYellow,
+      brightBlue: terminal.brightBlue,
+      brightMagenta: terminal.brightMagenta,
+      brightCyan: terminal.brightCyan,
+      brightWhite: terminal.brightWhite,
+    },
+    type: theme.type,
+    ui: {
+      background: ui.background,
+      foreground: ui.foreground,
+      card: ui.card,
+      cardForeground: ui.cardForeground,
+      popover: ui.popover,
+      popoverForeground: ui.popoverForeground,
+      primary: ui.primary,
+      primaryForeground: ui.primaryForeground,
+      secondary: ui.secondary,
+      secondaryForeground: ui.secondaryForeground,
+      muted: ui.muted,
+      mutedForeground: ui.mutedForeground,
+      accent: ui.accent,
+      accentForeground: ui.accentForeground,
+      tertiary: ui.tertiary,
+      tertiaryActive: ui.tertiaryActive,
+      destructive: ui.destructive,
+      destructiveForeground: ui.destructiveForeground,
+      border: ui.border,
+      input: ui.input,
+      ring: ui.ring,
+      sidebar: ui.sidebar,
+      sidebarForeground: ui.sidebarForeground,
+      sidebarPrimary: ui.sidebarPrimary,
+      sidebarPrimaryForeground: ui.sidebarPrimaryForeground,
+      sidebarAccent: ui.sidebarAccent,
+      sidebarAccentForeground: ui.sidebarAccentForeground,
+      sidebarBorder: ui.sidebarBorder,
+      sidebarRing: ui.sidebarRing,
+      chart1: ui.chart1,
+      chart2: ui.chart2,
+      chart3: ui.chart3,
+      chart4: ui.chart4,
+      chart5: ui.chart5,
+      highlightMatch: ui.highlightMatch,
+      highlightActive: ui.highlightActive,
+      highlight: ui.highlight,
+      highlightForeground: ui.highlightForeground,
+    },
+  };
+}
+
+export function getThemeDownloadFileName(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
+  return `${themeFrom(themeOrEntry).id}.json`;
+}
+
+export function exportCatalogThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
+  return `${JSON.stringify(supersetThemeSchema.parse(themeFrom(themeOrEntry)), null, 2)}\n`;
+}
+
+export function exportThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
+  return `${JSON.stringify(toSupersetDownloadTheme(themeOrEntry), null, 2)}\n`;
+}
+
+export function downloadThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): void {
+  const url = URL.createObjectURL(
+    new Blob([exportThemeJson(themeOrEntry)], { type: "application/json" }),
+  );
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = getThemeDownloadFileName(themeOrEntry);
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
