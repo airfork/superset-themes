@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
 import { Columns2, FlaskConical, Shuffle } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { lazy, type ReactNode, Suspense, useEffect, useRef, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { ShortcutsOverlay } from "../chrome/ShortcutsOverlay";
 import {
@@ -13,9 +13,20 @@ import { usePalette } from "../palette/usePalette";
 import { Pane } from "../pane/Pane";
 import { Rail } from "../rail/Rail";
 import { useFocusedTheme } from "../theme/useFocusedTheme";
+import { APP_BASEPATH, toAppHref } from "./basepath";
 import { parseCatalogRouteSearch } from "./routes/catalogRoute";
-import { CompareRouteView, parseCompareRouteSearch } from "./routes/compareRoute";
-import { LabRouteView, parseLabRouteSearch } from "./routes/labRoute";
+import { parseCompareRouteSearch } from "./routes/compareRouteSearch";
+import { parseLabRouteSearch } from "./routes/labRouteSearch";
+
+const LazyCompareRouteView = lazy(async () => {
+  const { CompareRouteView } = await import("./routes/compareRoute");
+  return { default: CompareRouteView };
+});
+
+const LazyLabRouteView = lazy(async () => {
+  const { LabRouteView } = await import("./routes/labRoute");
+  return { default: LabRouteView };
+});
 
 function RootLayout() {
   return (
@@ -193,24 +204,34 @@ function LegacyRouteMain({ children }: { children: ReactNode }) {
   );
 }
 
+function RouteLoading() {
+  return (
+    <LegacyRouteMain>
+      <p>Loading route…</p>
+    </LegacyRouteMain>
+  );
+}
+
 const compareRoute = createRoute({
   component: function CompareRouteContainer() {
     const navigate = compareRoute.useNavigate();
     const search = compareRoute.useSearch();
 
     return (
-      <CompareRouteView
-        search={search}
-        onChangeSearch={(nextSearch) => {
-          void navigate({ replace: true, search: nextSearch });
-        }}
-        onExit={(themeId) => {
-          void navigate({ to: "/", search: themeId ? { theme: themeId } : {} });
-        }}
-        onOpenLab={(themeId) => {
-          void navigate({ to: "/lab", search: { from: themeId } });
-        }}
-      />
+      <Suspense fallback={<RouteLoading />}>
+        <LazyCompareRouteView
+          search={search}
+          onChangeSearch={(nextSearch) => {
+            void navigate({ replace: true, search: nextSearch });
+          }}
+          onExit={(themeId) => {
+            void navigate({ to: "/", search: themeId ? { theme: themeId } : {} });
+          }}
+          onOpenLab={(themeId) => {
+            void navigate({ to: "/lab", search: { from: themeId } });
+          }}
+        />
+      </Suspense>
     );
   },
   getParentRoute: () => rootRoute,
@@ -224,18 +245,20 @@ const labRoute = createRoute({
     const search = labRoute.useSearch();
 
     return (
-      <LabRouteView
-        onBackToCatalog={() => {
-          void navigate({ search: {}, to: "/" });
-        }}
-        onStartFromCatalog={(themeId) => {
-          void navigate({
-            search: { from: themeId },
-            to: "/lab",
-          });
-        }}
-        search={search}
-      />
+      <Suspense fallback={<RouteLoading />}>
+        <LazyLabRouteView
+          onBackToCatalog={() => {
+            void navigate({ search: {}, to: "/" });
+          }}
+          onStartFromCatalog={(themeId) => {
+            void navigate({
+              search: { from: themeId },
+              to: "/lab",
+            });
+          }}
+          search={search}
+        />
+      </Suspense>
     );
   },
   getParentRoute: () => rootRoute,
@@ -246,12 +269,13 @@ const labRoute = createRoute({
 const routeTree = rootRoute.addChildren([catalogRoute, compareRoute, labRoute]);
 
 export const router = createRouter({
+  basepath: APP_BASEPATH,
   defaultNotFoundComponent: () => (
     <LegacyRouteMain>
       <section aria-label="Route not found" className="theme-detail theme-detail--missing">
         <h2>Route not found</h2>
         <p>The requested catalog route does not exist.</p>
-        <a className="theme-detail__back" href="/">
+        <a className="theme-detail__back" href={toAppHref("/")}>
           Back to catalog
         </a>
       </section>

@@ -2,20 +2,7 @@ import { getDefaultLabTheme } from "../../data/baseline";
 import { getCatalogThemeById } from "../../data/fixtures";
 import { createDraftFromCatalogEntry } from "../../lab/draftTheme";
 import { LabView } from "../../lab/LabView";
-
-export interface LabRouteSearch {
-  from?: string;
-}
-
-function stringParam(value: unknown): string | undefined {
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
-export function parseLabRouteSearch(search: Record<string, unknown>): LabRouteSearch {
-  return {
-    from: stringParam(search.from),
-  };
-}
+import type { LabRouteSearch } from "./labRouteSearch";
 
 export function LabRouteView({
   onBackToCatalog,
@@ -48,3 +35,6 @@ export function LabRouteView({
     />
   );
 }
+
+export type { LabRouteSearch } from "./labRouteSearch";
+export { parseLabRouteSearch } from "./labRouteSearch";

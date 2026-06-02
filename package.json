@@ -15,6 +15,7 @@
     "test:e2e": "playwright test",
     "test:stories": "vitest --config vitest.storybook.config.ts --run",
     "browsers:install": "playwright install chromium",
+    "build:pages": "GITHUB_PAGES=true pnpm build",
     "archive:clean": "node scripts/archive-clean.mjs",
     "archive:clean:dry-run": "node scripts/archive-clean.mjs --dry-run",
     "archive:clean:test": "node --test scripts/archive-clean.test.mjs",

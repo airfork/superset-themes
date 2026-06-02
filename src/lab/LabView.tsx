@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useLayoutEffect, useMemo, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { getCatalogThemeById } from "../data/fixtures";
 import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
@@ -92,12 +92,12 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   const { setTransientEntry } = useFocusedTheme();
 
   // Push the live draft into the focused-theme context so the whole chrome morphs.
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTransientEntry(entry);
   }, [entry, setTransientEntry]);
 
   // Clear the override when leaving the lab so the catalog focus resumes.
-  useEffect(() => () => setTransientEntry(null), [setTransientEntry]);
+  useLayoutEffect(() => () => setTransientEntry(null), [setTransientEntry]);
 
   const generate = (generationSeed: string) => {
     setDraft(

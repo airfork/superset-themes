@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { Download } from "lucide-react";
 import { getBaselineFirstThemes } from "../data/baseline";
 import { catalogThemes } from "../data/catalog";
-import { downloadThemeJson } from "../theme-core/exportTheme";
+import { downloadThemeJsonLazy } from "../theme-core/downloadThemeLazy";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 import type { RankableItem } from "./fuzzy";
 
@@ -21,7 +21,7 @@ export interface PaletteCommand extends RankableItem {
   // color, never the focused theme's.
   accent?: string;
   themeType?: "light" | "dark";
-  run: () => void;
+  run: () => Promise<void> | void;
 }
 
 export function buildThemeCommands(onSelectTheme: (themeId: string) => void): PaletteCommand[] {
@@ -48,7 +48,7 @@ export function downloadThemeJsonCommand(entry: CatalogThemeEntry): PaletteComma
     section: "Actions",
     icon: Download,
     keys: ["download theme json", "download", "export", "json"],
-    run: () => downloadThemeJson(entry),
+    run: () => downloadThemeJsonLazy(entry),
   };
 }
 

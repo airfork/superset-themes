@@ -18,6 +18,19 @@ removed now that the work is complete (recoverable from git history). Durable co
 
 Latest completed checkpoint:
 
+- GitHub Pages and bundle-size audit checkpoint addressed the static-hosting risks and first-load
+  bundle warning. The router now derives its `basepath` from Vite's build base, `pnpm build:pages`
+  builds with the `/superset-themes/` project-page base, Vite emits a matching `404.html` SPA
+  fallback plus `.nojekyll`, and `.github/workflows/pages.yml` verifies and deploys the Pages
+  artifact from `main`. `/compare`, `/lab`, and theme JSON export code are now lazy-loaded chunks;
+  the initial production JS dropped from 521.04 kB minified / 158.30 kB gzip to 368.34 kB
+  minified / 113.60 kB gzip for the normal build, and 368.38 kB / 113.61 kB gzip for the Pages
+  build. Verification passed with `rtk git diff --check`, `rtk pnpm check`, `rtk pnpm test:e2e`,
+  `rtk pnpm test:stories`, `rtk pnpm build`, and `rtk pnpm build:pages`. Pages artifact inspection
+  confirmed `/superset-themes/` asset URLs, a generated `.nojekyll`, and `404.html` matching
+  `index.html`. Remaining improvement opportunities are non-blocking: share the critical-theme
+  CSS mapping with the runtime mapper, reduce manual catalog registration duplication, and consider
+  splitting the large global stylesheet by app surface.
 - Review-remediation checkpoint addressed the Conductor review findings from June 2, 2026:
   generator output now keeps the full catalog schema while UI downloads keep the Superset download
   shape, terminal selection foreground survives download/import round trips, selection contrast

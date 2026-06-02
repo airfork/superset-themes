@@ -1,5 +1,6 @@
 import { Download, FlaskConical, Maximize2, Minimize2, Moon, Pin, Sun } from "lucide-react";
-import { downloadThemeJson } from "../theme-core/exportTheme";
+import { toAppHref } from "../app/basepath";
+import { downloadThemeJsonLazy } from "../theme-core/downloadThemeLazy";
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 
 interface NameplateProps {
@@ -80,7 +81,7 @@ export function Nameplate({
         ) : null}
         <a
           className="pane-nameplate__action"
-          href={`/lab?from=${theme.id}`}
+          href={toAppHref(`/lab?from=${theme.id}`)}
           title={compact ? "Open in Lab" : undefined}
         >
           <FlaskConical aria-hidden="true" />
@@ -90,7 +91,9 @@ export function Nameplate({
         <button
           type="button"
           className="pane-nameplate__action"
-          onClick={() => downloadThemeJson(entry)}
+          onClick={() => {
+            void downloadThemeJsonLazy(entry);
+          }}
           title={compact ? downloadLabel : undefined}
         >
           <Download aria-hidden="true" />

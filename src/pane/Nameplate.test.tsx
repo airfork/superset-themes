@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { catalogThemes } from "../data/catalog";
@@ -89,6 +89,7 @@ describe("Nameplate", () => {
 
     await user.click(screen.getByRole("button", { name: /download json/i }));
 
+    await waitFor(() => expect(createObjectURL).toHaveBeenCalled());
     const blob = createObjectURL.mock.calls[0]?.[0] as Blob;
     expect(await blob.text()).toBe(exportThemeJson(entry));
     expect(clicked).toEqual([{ download: "rose-pine-dawn.json", href: "blob:theme-json" }]);
