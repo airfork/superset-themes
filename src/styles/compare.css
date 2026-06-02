@@ -155,6 +155,18 @@
   text-align: center;
 }
 
+@media (max-width: 640px) {
+  .compare-view__slots {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .compare-slot + .compare-slot {
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent);
+  }
+}
+
 .compare-slot__placeholder {
   margin: 0;
   max-width: 28ch;
