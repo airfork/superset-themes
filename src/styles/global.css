@@ -2151,6 +2151,17 @@ a.scene-workspace__footer-row:hover {
   );
 }
 
+/* Mixing a dark foreground toward a light background loses contrast, so light
+   themes need a stronger blend to keep dimmed terminal text legible. Claude's own
+   light mode washes this text out; the catalog stays readable on purpose. */
+:root[data-theme-type="light"] .scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 80%,
+    var(--preview-terminal-background)
+  );
+}
+
 /* Tool name in a tool-call line ("Bash", "Update", …) reads bold like Superset. */
 .scene-workspace__term-tool {
   font-weight: 600;
