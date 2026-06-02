@@ -116,6 +116,13 @@ pnpm build
 Build the static app.
 
 ```bash
+pnpm build:pages
+```
+
+Build the static app for the GitHub Pages project site at `/superset-themes/`.
+The output includes a `404.html` SPA fallback for deep links and `.nojekyll`.
+
+```bash
 pnpm preview
 ```
 

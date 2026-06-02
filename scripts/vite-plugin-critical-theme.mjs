@@ -1,27 +1,12 @@
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { getDefaultFocusedTheme } from "../src/data/featured.ts";
+import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
 
-const FEATURED_DEFAULT_ID = "tokyo-night";
 const MARKER_REGEX = /<style id="critical-theme">[\s\S]*?<\/style>/;
 
-function readDefaultTheme(root) {
-  const path = resolve(root, `src/data/themes/${FEATURED_DEFAULT_ID}.json`);
-  return JSON.parse(readFileSync(path, "utf8"));
-}
-
-function kebab(str) {
-  return str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
-}
-
 function buildVarDeclarations(theme) {
-  const decls = [];
-  for (const [key, value] of Object.entries(theme.ui)) {
-    decls.push(`--preview-ui-${kebab(key)}: ${value};`);
-  }
-  for (const [key, value] of Object.entries(theme.terminal)) {
-    decls.push(`--preview-terminal-${kebab(key)}: ${value};`);
-  }
-  return decls.join("\n  ");
+  return Object.entries(getThemeCssVars(theme))
+    .map(([key, value]) => `${key}: ${value};`)
+    .join("\n  ");
 }
 
 function buildCriticalStyleTag(theme) {
@@ -36,14 +21,10 @@ html { background: ${theme.ui.background}; color: ${theme.ui.foreground}; }`;
 }
 
 export function criticalThemePlugin() {
-  let root = process.cwd();
   return {
     name: "critical-theme",
-    configResolved(config) {
-      root = config.root;
-    },
     transformIndexHtml(html) {
-      const theme = readDefaultTheme(root);
+      const theme = getDefaultFocusedTheme().theme;
       const tag = buildCriticalStyleTag(theme);
       if (MARKER_REGEX.test(html)) {
         return html.replace(MARKER_REGEX, tag);

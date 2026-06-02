@@ -72,7 +72,7 @@ export function usePalette(
       onMove: (direction, count) => dispatch({ type: "move", direction, count }),
       onClose: () => dispatch({ type: "close" }),
       onSubmit: (command) => {
-        command?.run();
+        void command?.run();
         dispatch({ type: "submit" });
       },
     }),

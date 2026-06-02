@@ -38,16 +38,17 @@ those variables, so changing the focused theme re-skins the whole site.
 - `preview/` — `themeCssVars`: the theme → CSS-variable mapping consumed by `theme/applyTheme`.
 - `data/` — `catalog`, `featured`, `baseline` (Superset defaults), `fixtures`, and `themes/`
   (one JSON per catalog theme). Catalog metadata stays out of exported theme JSON.
-- `styles/` — `global.css`, `tokens.css`, plus `*Contracts.test.ts` style-invariant tests
-  (focus rings, rail, theme transitions, workspace scene).
+- `styles/` — `tokens.css`, `global.css` as the ordered surface-style import manifest, split
+  surface CSS files, plus `*Contracts.test.ts` style-invariant tests (focus rings, rail, theme
+  transitions, workspace scene).
 - `text/` — `foldForMatch` text normalization shared by search/fuzzy.
 
 ## Conventions
 
 - Tests are colocated: `*.test.ts(x)` (Vitest) and `*.stories.tsx` (Storybook + a11y).
 - Keep pure logic in `theme-core/` (and other `*State`/`*.ts` helpers) testable without a DOM.
-- `styles/*Contracts.test.ts` lock visual/accessibility invariants — extend them rather than
-  silently relaxing them.
+- `styles/*Contracts.test.ts` lock visual/accessibility invariants and read the full CSS import
+  graph through `styleTestUtils.ts` — extend them rather than silently relaxing them.
 - Exported theme JSON must stay Superset-compatible and free of app-only metadata.
 - Superset Light/Dark are deliberate live-app fidelity baselines; some of their tokens
   intentionally bypass the contrast-safe derivations other catalog themes use.

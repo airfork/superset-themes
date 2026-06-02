@@ -1,8 +1,8 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { readStyleSheetGraph } from "./styleTestUtils";
 
-const globalCss = readFileSync(join(process.cwd(), "src/styles/global.css"), "utf8");
+const globalCss = readStyleSheetGraph(join(process.cwd(), "src/styles/global.css"));
 
 function ruleBody(selector: string): string {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

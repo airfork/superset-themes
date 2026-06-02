@@ -70,7 +70,10 @@ describe("downloadThemeJsonCommand", () => {
     });
     const entry = entryFor("rose-pine-dawn");
 
-    downloadThemeJsonCommand(entry).run();
+    const result = downloadThemeJsonCommand(entry).run();
+
+    expect(result).toBeInstanceOf(Promise);
+    await result;
 
     const blob = createObjectURL.mock.calls[0]?.[0] as Blob;
     expect(await blob.text()).toBe(exportThemeJson(entry));

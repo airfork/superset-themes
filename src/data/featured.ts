@@ -1,13 +1,7 @@
 import type { CatalogThemeEntry } from "../theme-core/themeTypes";
-import { catalogThemes } from "./catalog";
+import { catalogThemes, getRankedCatalogThemeIds } from "./catalog";
 
-export const FEATURED_IDS = [
-  "tokyo-night",
-  "catppuccin-mocha",
-  "solarized-light",
-  "rose-pine-dawn",
-  "one-dark",
-] as const;
+export const FEATURED_IDS = getRankedCatalogThemeIds(catalogThemes, "featuredRank");
 
 export type FeaturedId = (typeof FEATURED_IDS)[number];
 

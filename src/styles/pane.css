@@ -1,0 +1,257 @@
+/* Pane — composition */
+.pane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.pane__body {
+  min-height: 0;
+  overflow: auto;
+}
+
+/* Scene tabs (below body per design) */
+.scene-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--preview-ui-border);
+  background: var(--preview-ui-background);
+}
+
+.scene-tabs__tab {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 550;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.scene-tabs__tab:hover {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+}
+
+.scene-tabs__tab[data-active] {
+  border-color: var(--preview-ui-border);
+  background: color-mix(in srgb, var(--preview-ui-accent) 18%, transparent);
+  color: var(--preview-ui-foreground);
+  font-weight: 650;
+}
+
+.scene-tabs__tab:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Pane — nameplate */
+.pane-nameplate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--preview-ui-border);
+  background: var(--chrome-surface);
+  color: var(--preview-ui-foreground);
+  min-height: 44px;
+}
+
+.pane-nameplate__title {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pane-nameplate__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pane-nameplate__name--expandable svg {
+  width: 13px;
+  height: 13px;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.pane-nameplate__name--expandable:hover svg {
+  color: var(--preview-ui-foreground);
+}
+
+.pane-nameplate__name-text {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.2;
+  color: var(--preview-ui-foreground);
+}
+
+.pane-nameplate__name--expandable {
+  border-radius: 4px;
+}
+
+.pane-nameplate__name--expandable:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 3px;
+}
+
+.pane-nameplate__name--expandable:hover .pane-nameplate__name-label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.pane-nameplate__family {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 999px;
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Bare glyph, not a pill: the family chip already owns the bordered-pill slot, so the
+   mode reads as a single quiet signal beside it rather than an identical twin. */
+.pane-nameplate__mode {
+  display: inline-flex;
+  align-items: center;
+  color: var(--chrome-muted-foreground);
+}
+
+.pane-nameplate__mode svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pane-nameplate__tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+.pane-nameplate__tag {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--preview-ui-accent) 14%, transparent);
+  color: var(--preview-ui-foreground);
+  padding: 1px 7px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.pane-nameplate__status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 999px;
+  background: var(--preview-ui-muted);
+  color: var(--preview-ui-muted-foreground);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* Dirty drafts tint the status pill from primary against the card so it reads in
+   both light and dark themes (selection/muted collapse against the surface). */
+.pane-nameplate__status[data-dirty] {
+  border-color: color-mix(in srgb, var(--preview-ui-primary) 45%, var(--preview-ui-border));
+  background: color-mix(in srgb, var(--preview-ui-primary) 16%, var(--preview-ui-card));
+  color: var(--preview-ui-foreground);
+}
+
+.pane-nameplate__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pane-nameplate__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--chrome-muted-foreground);
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 550;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.pane-nameplate__action svg {
+  width: 13px;
+  height: 13px;
+}
+
+.pane-nameplate__action:hover {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+  color: var(--preview-ui-foreground);
+}
+
+.pane-nameplate__action:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 1px;
+}
+
+.pane-nameplate__divider {
+  width: 1px;
+  height: 14px;
+  background: var(--preview-ui-border);
+  flex-shrink: 0;
+}
+
+/* Compare slots are ~490px wide. Icon-only actions free the title's width so it
+   stays on one line instead of wrapping and overflowing into the preview body. */
+.pane-nameplate--compact .pane-nameplate__action {
+  padding: 5px 6px;
+}
+
+.pane-nameplate--compact .pane-nameplate__action-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .pane-nameplate {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .pane-nameplate__actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}

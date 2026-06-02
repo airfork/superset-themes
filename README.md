@@ -7,7 +7,7 @@ The existing `itsbariscan/superset-themes` repo and GitHub Pages site are refere
 ## Current App
 
 - Catalog browsing with search, light/dark filters, metadata filters, sort controls, and shareable URL state.
-- Theme detail routes with export-clean copy/download actions and full preview tabs.
+- URL-addressable focused themes with export-clean copy/download actions and full preview tabs.
 - Side-by-side light/dark comparison at `/compare` with synchronized preview tabs.
 - Theme lab at `/lab` for starting from catalog themes, importing JSON, editing tokens, validating contrast, generating constrained random themes, rerolling token groups, and exporting clean JSON.
 - Preview surfaces for workspace/file tree, editor, terminal, diff, command palette, settings/forms, selections, focus states, and warnings.
@@ -49,9 +49,18 @@ pnpm storybook
 pnpm check
 pnpm test:e2e
 pnpm test:stories
+pnpm build
 ```
 
 `pnpm check` runs Biome, TypeScript, Vitest, and the production build. See [COMMANDS.md](COMMANDS.md) for the full command reference.
+
+## GitHub Pages
+
+```bash
+pnpm build:pages
+```
+
+`pnpm build:pages` builds the app for the `/superset-themes/` project-page base path and emits a `404.html` SPA fallback plus `.nojekyll`. The Pages deploy workflow lives at `.github/workflows/pages.yml`.
 
 ## Theme Utilities
 

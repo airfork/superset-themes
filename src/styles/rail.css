@@ -1,0 +1,276 @@
+/* Rail — row primitive */
+.rail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: start;
+  cursor: pointer;
+  border-radius: 6px;
+  touch-action: manipulation;
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
+}
+
+.rail-row[data-variant="featured"] {
+  padding: 10px 12px;
+}
+
+.rail-row:hover {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
+}
+
+/* Selected rows are neutral chrome state. Theme color belongs in the swatches, not
+   in row fills, otherwise the rail's readability swings wildly between themes. */
+.rail-row[data-selected] {
+  background: color-mix(in srgb, var(--preview-ui-foreground) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--preview-ui-foreground) 10%, transparent);
+}
+
+.rail-row:focus-visible {
+  /* Focus rings use --preview-focus-ring (a 3:1-verified focus token on every theme)
+     rather than row-specific theme color. Focus is a pointer cue and needs guaranteed
+     3:1 against the background regardless of the row theme's accent saturation. */
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: -2px;
+}
+
+.rail-row__body {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rail-row__eyebrow {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chrome-muted-foreground);
+}
+
+.rail-row__name {
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.rail-row[data-selected] .rail-row__name {
+  font-weight: 600;
+}
+
+.rail-row__glimpse {
+  display: inline-flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.rail-row__swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 26%, var(--chrome-surface));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--chrome-surface) 78%, transparent);
+}
+
+.rail-row__trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rail-row__pin {
+  color: var(--preview-ui-muted-foreground);
+  flex-shrink: 0;
+}
+
+.rail-row__mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chrome-surface) 80%, var(--preview-ui-foreground) 4%);
+  color: var(--preview-ui-foreground);
+  font-size: 0.58rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Rail — composition */
+.rail {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 8px 16px;
+  gap: 6px;
+}
+
+.rail__search {
+  padding: 4px 4px 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--chrome-surface);
+  border-bottom: 1px solid var(--preview-ui-border);
+}
+
+.rail-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  background: var(--chrome-surface);
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  color: var(--chrome-muted-foreground);
+  font: inherit;
+  font-size: 0.82rem;
+  text-align: start;
+  touch-action: manipulation;
+}
+
+/* The lab rail keeps a button trigger; the catalog rail is a text-input container. */
+button.rail-search {
+  cursor: pointer;
+}
+
+.rail-search:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+}
+
+.rail-search:focus-visible,
+.rail-search:focus-within {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.rail-search > svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.rail-search__label {
+  flex: 1;
+}
+
+.rail-search__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  outline: none;
+}
+
+.rail-search__input::placeholder {
+  color: var(--chrome-muted-foreground);
+}
+
+.rail-search__kbd {
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 4px;
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
+}
+
+.rail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rail-section__label {
+  margin: 12px 12px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--chrome-muted-foreground);
+}
+
+.rail-section__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Lab rail sections hold form controls, which need more breathing room than the
+   1px-gapped catalog rail rows. */
+.lab-rail .rail-section__rows {
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.lab-rail input[type="file"] {
+  padding: 6px 10px;
+  font-size: 0.76rem;
+}
+
+.lab-hue-field input[type="range"] {
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  accent-color: var(--preview-ui-primary);
+}
+
+.lab-paste {
+  display: grid;
+  gap: 8px;
+}
+
+.lab-paste > summary {
+  cursor: pointer;
+  color: var(--preview-ui-foreground);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.lab-paste__textarea {
+  min-height: 110px;
+  resize: vertical;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  padding: 8px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.76rem;
+}
+
+.lab-source__error {
+  margin: 0;
+  border: 1px solid var(--preview-ui-destructive);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--preview-ui-destructive) 14%, var(--preview-ui-card));
+  color: var(--preview-ui-foreground);
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  font-weight: 650;
+}

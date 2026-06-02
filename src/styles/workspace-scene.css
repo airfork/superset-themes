@@ -1,0 +1,962 @@
+/* Pane — Workspace scene (Superset-shape three-column thread) */
+.scene-workspace {
+  /* Selected and hovered rail rows are solid --muted in Superset (bg-muted /
+     hover:bg-muted), verified live via CDP on Superset 1.12.1. */
+  --scene-workspace-active-row: var(--preview-ui-muted);
+  --scene-workspace-hover-row: var(--preview-ui-muted);
+  --scene-workspace-muted-icon: color-mix(
+    in srgb,
+    var(--preview-ui-sidebar-foreground) 72%,
+    transparent
+  );
+  /* Superset paints the team/workspace rail as `bg-muted/35` (dark) /
+     `bg-muted/45` (light): a translucent --muted fill over the canvas, not the
+     solid --sidebar token. Mirror it so the preview rail matches the app. */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 35%, transparent);
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 480px;
+  height: 100%;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  font-family: var(--app-font-chrome);
+  font-size: 0.78rem;
+}
+
+:root[data-theme-type="light"] .scene-workspace {
+  /* Superset uses bg-muted/45 in light mode (vs /35 in dark). */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 45%, transparent);
+}
+
+.scene-workspace__rail {
+  --scene-workspace-added: oklch(0.66 0.13 150);
+  --scene-workspace-removed: oklch(0.66 0.16 28);
+  --scene-workspace-row-pad: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 0;
+  border-right: 1px solid var(--preview-ui-sidebar-border);
+  background: var(--scene-workspace-sidebar);
+  color: var(--preview-ui-sidebar-foreground);
+  min-width: 0;
+  font-size: 14px;
+}
+
+.scene-workspace__rail-divider {
+  height: 1px;
+  margin: 6px 0;
+  background: var(--preview-ui-sidebar-border);
+}
+
+.scene-workspace__team,
+.scene-workspace__nav,
+.scene-workspace__projects {
+  margin: 0 var(--scene-workspace-row-pad);
+}
+
+.scene-workspace__team {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--preview-ui-sidebar-foreground);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.scene-workspace__team:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__team-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--preview-ui-sidebar-primary);
+  color: var(--preview-ui-sidebar-primary-foreground);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.scene-workspace__team-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.scene-workspace__team-chevron {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  color: var(--scene-workspace-muted-icon);
+}
+
+.scene-workspace__nav {
+  display: grid;
+  gap: 1px;
+}
+
+.scene-workspace__nav a {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--preview-ui-sidebar-foreground);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.scene-workspace__nav :where(a svg),
+.scene-workspace__footer svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scene-workspace__nav a:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__new-workspace-trailing {
+  color: var(--scene-workspace-muted-icon);
+}
+
+.scene-workspace__divider {
+  height: 1px;
+  background: var(--preview-ui-sidebar-border);
+}
+
+.scene-workspace__divider--gutter {
+  margin: 8px 0;
+}
+
+.scene-workspace__projects {
+  display: grid;
+  gap: 4px;
+}
+
+.scene-workspace__project {
+  display: grid;
+  gap: 2px;
+}
+
+.scene-workspace__project-header {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--preview-ui-sidebar-foreground);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.scene-workspace__project-header:hover {
+  background: var(--scene-workspace-hover-row);
+}
+
+.scene-workspace__project-avatar {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: oklch(0.94 0.005 250);
+  flex-shrink: 0;
+}
+
+.scene-workspace__project-avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.scene-workspace__project-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.scene-workspace__project-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--preview-ui-sidebar-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.scene-workspace__branches {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.scene-workspace__branches li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 24px;
+  border-radius: 6px;
+  color: var(--preview-ui-sidebar-foreground);
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.scene-workspace__branches li:hover {
+  background: var(--scene-workspace-hover-row);
+}
+
+.scene-workspace__branches li[data-active] {
+  background: var(--scene-workspace-active-row);
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__branches li[data-active]:hover {
+  background: var(--preview-ui-sidebar-accent);
+}
+
+.scene-workspace__branch-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--scene-workspace-muted-icon);
+}
+
+.scene-workspace__branch-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.scene-workspace__branch-icon[data-kind="worktree"] svg {
+  width: 8px;
+  height: 8px;
+}
+
+.scene-workspace__branches li[data-active] .scene-workspace__branch-icon {
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__branch-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scene-workspace__branch-diff {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.scene-workspace__branch-added,
+.scene-workspace__branch-removed {
+  color: var(--preview-ui-muted-foreground);
+}
+
+.scene-workspace__branches li[data-active] .scene-workspace__branch-added {
+  color: var(--scene-workspace-added);
+}
+
+.scene-workspace__branches li[data-active] .scene-workspace__branch-removed {
+  color: var(--scene-workspace-removed);
+}
+
+.scene-workspace__footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ports row: CDP-extracted from the real running Superset v1.12.1. The source
+ * sets `uppercase` on the wrapper, but Tailwind v4 preflight resets buttons
+ * to text-transform: none, so the visible text is title-case. Match the
+ * observed render (font-size 11px, weight 500, 0.55px tracking, muted/70).
+ * Total row height locked to 38px (CDP-measured) so left rail aligns with
+ * the terminal prompt row on the right. */
+.scene-workspace__footer-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-top: 1px solid var(--preview-ui-sidebar-border);
+  color: var(--preview-ui-sidebar-foreground);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.55px;
+}
+
+.scene-workspace__footer-row svg {
+  width: 12px;
+  height: 12px;
+}
+
+a.scene-workspace__footer-row:hover {
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__footer-row--settings {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 41px;
+  padding: 4px 8px;
+  border-top: 1px solid var(--preview-ui-sidebar-border);
+}
+
+.scene-workspace__settings-link {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--preview-ui-sidebar-foreground);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.scene-workspace__settings-link:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__settings-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scene-workspace__help-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--scene-workspace-muted-icon);
+  cursor: pointer;
+}
+
+.scene-workspace__help-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scene-workspace__help-button:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-sidebar-accent-foreground);
+}
+
+.scene-workspace__footer-meta {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--preview-ui-sidebar-foreground);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: normal;
+}
+
+/* Main panel: session tabs (40px) + agent bar (32px) + subheader (32px) +
+ * terminal (1fr). Tokens taken from CDP-extracted Superset v1.12.1 (dark). */
+.scene-workspace__main {
+  display: grid;
+  grid-template-rows: 40px 32px 32px minmax(0, 1fr);
+  min-width: 0;
+  background: var(--preview-ui-background);
+}
+
+/* Session tab strip — h-10 (40px), bg-muted/45, border-b. Each tab 160px wide,
+ * border-r between tabs, active tab tinted bg-border/30. */
+.scene-workspace__sessions {
+  display: flex;
+  align-items: stretch;
+  background: var(--preview-ui-background);
+  border-bottom: 1px solid var(--preview-ui-border);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.scene-workspace__sessions::-webkit-scrollbar {
+  display: none;
+}
+
+.scene-workspace__session {
+  display: flex;
+  align-items: center;
+  width: 160px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--preview-ui-border);
+  color: var(--preview-ui-muted-foreground);
+}
+
+.scene-workspace__session[data-active] {
+  background: color-mix(in srgb, var(--preview-ui-border) 30%, transparent);
+  color: var(--preview-ui-foreground);
+}
+
+.scene-workspace__session-title {
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0 4px 0 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+
+.scene-workspace__session-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.scene-workspace__session-close {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-right: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--scene-workspace-muted-icon);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.scene-workspace__session-close svg {
+  width: 12px;
+  height: 12px;
+}
+
+.scene-workspace__session:hover .scene-workspace__session-close,
+.scene-workspace__session[data-active] .scene-workspace__session-close {
+  opacity: 1;
+}
+
+.scene-workspace__session-close:hover {
+  background: var(--preview-ui-accent);
+  color: var(--preview-ui-foreground);
+}
+
+.scene-workspace__session-new {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: var(--preview-ui-muted-foreground);
+  cursor: pointer;
+}
+
+.scene-workspace__session-new svg {
+  width: 14px;
+  height: 14px;
+}
+
+.scene-workspace__session-new:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-foreground);
+}
+
+/* Tab bar — Claude/Codex tabs left, Run group right (ml-auto). */
+.scene-workspace__tabbar {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  background: var(--preview-ui-background);
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
+}
+
+.scene-workspace__tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.scene-workspace__tabs-gear {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--scene-workspace-muted-icon);
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.scene-workspace__tabs-gear svg {
+  width: 14px;
+  height: 14px;
+}
+
+.scene-workspace__tabs-gear:hover {
+  color: var(--preview-ui-foreground);
+}
+
+.scene-workspace__tabs-separator {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  margin: 0 4px;
+  background: color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
+  flex-shrink: 0;
+}
+
+.scene-workspace__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--preview-ui-muted-foreground);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.scene-workspace__tab:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-foreground);
+}
+
+.scene-workspace__tab[data-active] {
+  background: transparent;
+  color: var(--preview-ui-muted-foreground);
+  font-weight: 500;
+}
+
+.scene-workspace__tab-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--preview-ui-muted-foreground);
+  opacity: 0.9;
+}
+
+.scene-workspace__tab-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.scene-workspace__runrow {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.scene-workspace__run-group {
+  display: inline-flex;
+  height: 24px;
+}
+
+.scene-workspace__run {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 24px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-border) 50%, transparent);
+  border-right: 0;
+  border-radius: 6px 0 0 6px;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.scene-workspace__run:hover {
+  background: var(--scene-workspace-hover-row);
+}
+
+.scene-workspace__run-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* Plain muted glyphs, not chips: the real Superset run button shows a bare "⌘G"
+   hint beside the label, so mirror that instead of boxing each key. */
+.scene-workspace__kbd {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, "Cascadia Mono", "Roboto Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.scene-workspace__run-chevron {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid color-mix(in srgb, var(--preview-ui-border) 50%, transparent);
+  border-radius: 0 6px 6px 0;
+  background: var(--preview-ui-muted);
+  color: var(--scene-workspace-muted-icon);
+  cursor: pointer;
+}
+
+.scene-workspace__run-chevron svg {
+  width: 12px;
+  height: 12px;
+}
+
+.scene-workspace__run-chevron:hover {
+  color: var(--preview-ui-foreground);
+}
+
+/* Sub-header — active session name with split/close actions */
+.scene-workspace__subheader {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px 0 14px;
+  background: color-mix(in srgb, var(--preview-ui-muted) 30%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
+}
+
+.scene-workspace__subheader-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+.scene-workspace__subheader-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.scene-workspace__subheader-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--preview-ui-foreground);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.scene-workspace__subheader-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scene-workspace__subheader-title svg {
+  width: 12px;
+  height: 12px;
+  color: var(--scene-workspace-muted-icon);
+}
+
+.scene-workspace__subheader-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.scene-workspace__icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--scene-workspace-muted-icon);
+  cursor: pointer;
+}
+
+.scene-workspace__icon-button svg {
+  width: 13px;
+  height: 13px;
+}
+
+.scene-workspace__icon-button:hover {
+  background: var(--scene-workspace-hover-row);
+  color: var(--preview-ui-foreground);
+}
+
+/* Terminal — output (1fr) | activity spinner pinned above prompt | prompt | status.
+ * Mimics how Claude Code paints inside Superset's xterm canvas. */
+.scene-workspace__terminal {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  background: var(--preview-terminal-background);
+  color: var(--preview-terminal-foreground);
+  overflow: hidden;
+  font-family: var(--app-font-terminal);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.scene-workspace__activity {
+  padding: 6px 18px 10px;
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 72%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__activity-status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.scene-workspace__activity-icon {
+  display: inline-block;
+  color: #d97757;
+  font-weight: 600;
+}
+
+.scene-workspace__activity-verb {
+  color: #d97757;
+}
+
+.scene-workspace__activity-meta {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__activity-tip {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-left: 16px;
+  margin-top: 2px;
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__activity-tip-glyph {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 44%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__terminal-output {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 14px 18px 0;
+  border: 0;
+  background: transparent;
+  color: var(--preview-terminal-foreground);
+  font: inherit;
+  resize: none;
+  white-space: pre;
+  overflow: auto;
+}
+
+.scene-workspace__terminal-output::selection {
+  background: var(--preview-terminal-selection-background);
+  color: var(--preview-terminal-selection-foreground);
+}
+
+/* Each output line is as wide as its content so long lines scroll horizontally
+   (terminal behavior) instead of wrapping. */
+.scene-workspace__term-line {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Claude-output ANSI roles — see renderTerminalLine in WorkspaceScene.tsx.
+   Mirrors how Superset paints Claude Code: green bullets/checks, dimmed results. */
+.scene-workspace__term-ok {
+  color: var(--preview-terminal-green);
+}
+
+.scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 74%,
+    var(--preview-terminal-background)
+  );
+}
+
+/* Mixing a dark foreground toward a light background loses contrast, so light
+   themes need a stronger blend to keep dimmed terminal text legible. Claude's own
+   light mode washes this text out; the catalog stays readable on purpose. */
+:root[data-theme-type="light"] .scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 80%,
+    var(--preview-terminal-background)
+  );
+}
+
+/* Tool name in a tool-call line ("Bash", "Update", …) reads bold like Superset. */
+.scene-workspace__term-tool {
+  font-weight: 600;
+}
+
+/* Echoed user prompt: a subtle highlighted band, mirroring Superset's prompt echo. */
+.scene-workspace__term-prompt-line {
+  box-sizing: border-box;
+  margin: 2px 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--preview-terminal-foreground) 10%, transparent);
+}
+
+.scene-workspace__prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 18px;
+  border-top: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--preview-ui-border) 60%, transparent);
+  color: var(--preview-terminal-foreground);
+}
+
+.scene-workspace__prompt-glyph {
+  font-size: 18px;
+  line-height: 1;
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 55%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: var(--preview-terminal-cursor);
+  opacity: 0.85;
+  animation: scene-workspace-cursor-blink 1.1s steps(2) infinite;
+}
+
+.scene-workspace__statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 41px;
+  padding: 0 18px;
+  font-size: 11.5px;
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 64%,
+    var(--preview-terminal-background)
+  );
+}
+
+.scene-workspace__statusbar-perm {
+  color: oklch(0.65 0.18 25);
+  font-weight: 500;
+}
+
+.scene-workspace__statusbar-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
+  font-weight: 400;
+}
+
+.scene-workspace__statusbar-meta {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 70%,
+    var(--preview-terminal-background)
+  );
+}
+
+@keyframes scene-workspace-cursor-blink {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .scene-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .scene-workspace__rail {
+    border-right: 0;
+    border-bottom: 1px solid var(--preview-ui-border);
+  }
+}

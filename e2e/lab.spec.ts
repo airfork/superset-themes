@@ -39,6 +39,9 @@ test("contrast summary flags a low-contrast edit and jumps to the token", async 
 
 test("⌘K in the lab reseeds the draft from another theme", async ({ page }) => {
   await page.goto("/lab?from=aurora-light");
+  await expect(
+    page.getByRole("complementary", { name: /themes/i }).getByLabel("Start from catalog theme"),
+  ).toHaveValue("aurora-light");
 
   await page.keyboard.press("Meta+k");
   const palette = page.getByRole("dialog", { name: /command palette/i });
