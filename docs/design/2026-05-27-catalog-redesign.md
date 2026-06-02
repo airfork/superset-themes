@@ -1,7 +1,8 @@
 # Catalog Redesign
 
 Date: 2026-05-27
-Status: Design locked. Implementation plan to follow.
+Status: Implemented. This document is kept as the design-of-record for the shipped master/detail
+shell. The implementation plan it drove is complete and has been removed (see git history).
 
 ## Overview
 
@@ -322,8 +323,7 @@ These are not design questions; they need answers when writing the implementatio
 - Keyboard navigation for rail (arrow keys, Home/End)
 - Compare-mode rail-row hover state to signal "this slot will fill"
 
-## Next steps
+## Outcome
 
-1. Replace `DESIGN.md` with a pointer to this document, or remove it.
-2. Write the implementation plan in `docs/superpowers/plans/`.
-3. Execute against the plan in a worktree.
+This design shipped in full. `DESIGN.md` was regenerated as the living design system reference for
+the implemented app, and the phase-by-phase execution record lives in `docs/STATUS.md`.

@@ -2,15 +2,19 @@
 
 ## Current State
 
-The repo contains a completed Task 10 Vite/React/TypeScript static app checkpoint on branch
-`feature/theme-catalog-app`. Catalog browsing, URL-backed theme detail routes,
-light/dark pair comparison, and the first theme lab import/edit/export workflow
-are implemented. The lab also has deterministic constrained random generation.
-Browser, Storybook, accessibility, and design QA coverage has been expanded.
-README, command reference, and agent handoff docs are synced with the current app. Post-Task 10
-theme expansion now brings the catalog to 10 themes total: Aurora Light/Dark, Graphite Dark,
-Solarized Light/Dark, Nord, Catppuccin Mocha, Dracula, Gruvbox Dark, and Tokyo Night. Storybook
-a11y is enforced globally for the current story suite.
+The catalog redesign is fully shipped: a Superset-adjacent master/detail shell where the whole
+site morphs into the focused theme. All ten redesign phases (data prep → research script + legacy
+cleanup) plus the Superset Light/Dark calibration and the workspace/palette/rail fidelity
+follow-ups are complete; blockers: none. The catalog now ships **14 themes**: Superset Light/Dark,
+Aurora Light/Dark, Graphite Dark, Solarized Light/Dark, Nord, Catppuccin Mocha, Dracula, Gruvbox
+Dark, Tokyo Night, Rosé Pine Dawn, and One Dark. The Lab supports import, edit, constrained random
+generation, contrast validation, and export-clean JSON. Storybook a11y is enforced globally for the
+current story suite; full app, e2e, and story suites pass (see Verification).
+
+The implementation plans and the original design spec were execution artifacts and have been
+removed now that the work is complete (recoverable from git history). Durable context lives in
+`PRODUCT.md`, `DESIGN.md`, `docs/design/2026-05-27-catalog-redesign.md`, `README.md`, and
+`COMMANDS.md`. The detailed phase-by-phase log below is preserved as the historical record.
 
 Latest completed checkpoint:
 
@@ -66,8 +70,9 @@ Latest completed checkpoint:
 
 ## Active Plan
 
-- [docs/superpowers/plans/2026-05-27-catalog-redesign-implementation.md](superpowers/plans/2026-05-27-catalog-redesign-implementation.md)
-  (replaces the prior superset-theme-catalog plan now that Phase 1 of the redesign is in flight).
+None. The catalog redesign plan and the original implementation plan are complete and have been
+removed (recoverable from git history). A future multi-step effort should add a fresh plan under
+`docs/superpowers/plans/` per `AGENTS.md`.
 
 ## Phase 1 — Catalog Redesign (2026-05-27)
 

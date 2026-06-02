@@ -29,6 +29,12 @@ pnpm archive:clean
 Remove dependency folders, build/test outputs, logs, local env files, and agent scratch files
 before archiving a workspace.
 
+```bash
+pnpm archive:clean:test
+```
+
+Run the archive cleanup script's Node test suite.
+
 ## Development
 
 ```bash
