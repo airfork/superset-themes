@@ -1,12 +1,9 @@
 import {
   ChevronDown,
-  ChevronsUpDown,
   Circle,
-  CircleHelp,
   Clock,
   Columns2,
   FolderPlus,
-  Laptop,
   Layers,
   Play,
   Plus,
@@ -304,6 +301,65 @@ function SettingsGearIcon() {
   );
 }
 
+// Superset uses a Heroicons solid chevron-up-down for the team switcher.
+function OrgChevronIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.47 4.72a.75.75 0 0 1 1.06 0l3.75 3.75a.75.75 0 0 1-1.06 1.06L12 6.31 8.78 9.53a.75.75 0 0 1-1.06-1.06l3.75-3.75Zm-3.75 9.75a.75.75 0 0 1 1.06 0L12 17.69l3.22-3.22a.75.75 0 1 1 1.06 1.06l-3.75 3.75a.75.75 0 0 1-1.06 0l-3.75-3.75a.75.75 0 0 1 0-1.06Z"
+      />
+    </svg>
+  );
+}
+
+// Superset's Help button uses the Heroicons outline question-mark-circle.
+function HelpIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+    </svg>
+  );
+}
+
+// Superset marks the primary ("main") thread with a solid desktop-monitor glyph.
+function MonitorIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3 6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V14C21 15.1046 20.1046 16 19 16H5C3.89543 16 3 15.1046 3 14V6ZM5 6H19V14H5V6Z"
+      />
+      <path d="M2 18C1.44772 18 1 18.4477 1 19C1 19.5523 1.44772 20 2 20H22C22.5523 20 23 19.5523 23 19C23 18.4477 22.5523 18 22 18H2Z" />
+    </svg>
+  );
+}
+
 export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
   const { theme } = entry;
   const threadId = useId();
@@ -315,7 +371,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         <button type="button" className="scene-workspace__team" aria-label="Switch team">
           <span className="scene-workspace__team-mark">JT</span>
           <span className="scene-workspace__team-name">John's Team</span>
-          <ChevronsUpDown aria-hidden="true" className="scene-workspace__team-chevron" />
+          <OrgChevronIcon className="scene-workspace__team-chevron" />
         </button>
         <nav aria-label="Workspaces" className="scene-workspace__nav">
           <a href="#workspaces">
@@ -356,7 +412,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
                         data-kind={branch.kind}
                         aria-hidden="true"
                       >
-                        {branch.kind === "main" ? <Laptop /> : <Circle />}
+                        {branch.kind === "main" ? <MonitorIcon /> : <Circle />}
                       </span>
                       <span className="scene-workspace__branch-name">{branch.name}</span>
                     </li>
@@ -378,7 +434,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
               <span>Settings</span>
             </a>
             <button type="button" className="scene-workspace__help-button" aria-label="Help">
-              <CircleHelp aria-hidden="true" />
+              <HelpIcon />
             </button>
           </div>
         </div>
