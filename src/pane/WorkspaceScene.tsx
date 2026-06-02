@@ -154,6 +154,51 @@ const terminalOutput = `> refactor the task scheduler queue so retries flow thro
   All 14 tests green; the old tight-loop in worker.ts is gone.
 `;
 
+// Color the scripted Claude session the way Superset actually paints it (verified
+// against a live run via CDP): completed-step bullets and ✓ marks use the terminal
+// green, tool results and "expand" hints are dimmed, and prose plus the final
+// summary stay on the terminal foreground. Background, foreground, and font all
+// come from the theme's terminal tokens.
+function renderTerminalLine(line: string, key: string) {
+  if (line === "") {
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        {" "}
+      </div>
+    );
+  }
+  if (line.startsWith("● ")) {
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        <span className="scene-workspace__term-ok">● </span>
+        {line.slice(2)}
+      </div>
+    );
+  }
+  if (line.startsWith("   ⎿") || line.startsWith("     ")) {
+    const checkIndex = line.indexOf("✓");
+    if (checkIndex === -1) {
+      return (
+        <div className="scene-workspace__term-line" key={key}>
+          <span className="scene-workspace__term-dim">{line}</span>
+        </div>
+      );
+    }
+    return (
+      <div className="scene-workspace__term-line" key={key}>
+        <span className="scene-workspace__term-dim">{line.slice(0, checkIndex)}</span>
+        <span className="scene-workspace__term-ok">✓</span>
+        <span className="scene-workspace__term-dim">{line.slice(checkIndex + 1)}</span>
+      </div>
+    );
+  }
+  return (
+    <div className="scene-workspace__term-line" key={key}>
+      {line}
+    </div>
+  );
+}
+
 function Avatar({ spec }: { spec: AvatarSpec }) {
   if (spec.kind === "project") {
     return (
@@ -377,15 +422,11 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
 
         {/* Terminal content area — fake Claude Code session output */}
         <div className="scene-workspace__terminal" role="log" aria-live="polite" id={threadId}>
-          <textarea
-            aria-label="Terminal output"
-            autoComplete="off"
-            className="scene-workspace__terminal-output"
-            name="workspace-terminal-output"
-            readOnly
-            spellCheck={false}
-            value={terminalOutput}
-          />
+          <div className="scene-workspace__terminal-output">
+            {terminalOutput
+              .split("\n")
+              .map((line, index) => renderTerminalLine(line, `${index}:${line}`))}
+          </div>
           <div className="scene-workspace__activity">
             <div className="scene-workspace__activity-status">
               <span aria-hidden="true" className="scene-workspace__activity-icon">

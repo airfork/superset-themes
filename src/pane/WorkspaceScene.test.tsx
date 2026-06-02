@@ -61,9 +61,10 @@ describe("WorkspaceScene", () => {
     expect(within(main).getByRole("button", { name: /^workspace setup$/i })).toBeInTheDocument();
     expect(within(main).getByRole("button", { name: /^claude$/i })).toBeInTheDocument();
     expect(within(main).getAllByRole("button", { name: /run/i }).length).toBeGreaterThan(0);
-    expect(within(main).getByRole("textbox", { name: /terminal output/i })).toHaveAttribute(
-      "readonly",
-    );
+    const terminal = within(main).getByRole("log");
+    expect(terminal).toHaveTextContent(/dispatcher\.backoff\(\)/);
+    // Claude output is colored with terminal ANSI tokens, not a flat textarea.
+    expect(terminal.querySelector(".scene-workspace__term-ok")).toBeInTheDocument();
   });
 
   it("does not render a file tree", () => {

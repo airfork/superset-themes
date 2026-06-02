@@ -2130,6 +2130,27 @@ a.scene-workspace__footer-row:hover {
   color: var(--preview-terminal-selection-foreground);
 }
 
+/* Each output line is as wide as its content so long lines scroll horizontally
+   (terminal behavior) instead of wrapping. */
+.scene-workspace__term-line {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* Claude-output ANSI roles — see renderTerminalLine in WorkspaceScene.tsx.
+   Mirrors how Superset paints Claude Code: green bullets/checks, dimmed results. */
+.scene-workspace__term-ok {
+  color: var(--preview-terminal-green);
+}
+
+.scene-workspace__term-dim {
+  color: color-mix(
+    in srgb,
+    var(--preview-terminal-foreground) 60%,
+    var(--preview-terminal-background)
+  );
+}
+
 .scene-workspace__prompt {
   display: flex;
   align-items: center;
