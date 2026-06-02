@@ -65,6 +65,9 @@ describe("WorkspaceScene", () => {
     expect(terminal).toHaveTextContent(/dispatcher\.backoff\(\)/);
     // Claude output is colored with terminal ANSI tokens, not a flat textarea.
     expect(terminal.querySelector(".scene-workspace__term-ok")).toBeInTheDocument();
+    const output = terminal.querySelector(".scene-workspace__terminal-output");
+    expect(output).toHaveAttribute("tabindex", "0");
+    expect(output).toHaveAccessibleName("Terminal output");
   });
 
   it("does not render a file tree", () => {

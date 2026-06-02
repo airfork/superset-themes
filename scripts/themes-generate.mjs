@@ -1,6 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { generateRandomTheme } from "../src/lab/randomTheme.ts";
-import { exportThemeJson } from "../src/theme-core/exportTheme.ts";
+import { exportCatalogThemeJson } from "../src/theme-core/exportTheme.ts";
 
 function readOption(name) {
   const index = process.argv.indexOf(name);
@@ -47,7 +47,7 @@ const theme = generateRandomTheme({
   mode: readMode(),
   seed,
 });
-const json = exportThemeJson(theme);
+const json = exportCatalogThemeJson(theme);
 const outPath = readOption("--out");
 
 if (outPath) {

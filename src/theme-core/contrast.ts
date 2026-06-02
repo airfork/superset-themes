@@ -13,6 +13,8 @@ type ColorTokenPath =
   | "ui.destructiveForeground"
   | "ui.selection"
   | "ui.selectionForeground"
+  | "ui.highlightActive"
+  | "ui.highlightForeground"
   | "terminal.background"
   | "terminal.foreground"
   | "terminal.selection"
@@ -128,9 +130,9 @@ const CONTRAST_PAIRS = [
     threshold: WCAG_NORMAL_TEXT_THRESHOLD,
   },
   {
-    backgroundPath: "ui.selection",
-    foregroundPath: "ui.selectionForeground",
-    label: "UI selection foreground on selection",
+    backgroundPath: "ui.highlightActive",
+    foregroundPath: "ui.highlightForeground",
+    label: "UI highlight foreground on active highlight",
     required: false,
     threshold: WCAG_NORMAL_TEXT_THRESHOLD,
   },
@@ -179,7 +181,7 @@ export function checkThemeContrast(theme: SupersetTheme): ThemeContrastResult {
       warnings.push({
         ...pair,
         ratio: contrast.ratio,
-        severity: pair.required && !isSupersetFidelityException(theme) ? "error" : "warning",
+        severity: pair.required && !isSupersetFidelityException(theme, pair) ? "error" : "warning",
       });
     }
   }
@@ -192,8 +194,14 @@ export function checkThemeContrast(theme: SupersetTheme): ThemeContrastResult {
   };
 }
 
-function isSupersetFidelityException(theme: SupersetTheme): boolean {
-  return theme.id === "superset-light" || theme.id === "superset-dark";
+function isSupersetFidelityException(theme: SupersetTheme, pair: ContrastPair): boolean {
+  return (
+    theme.id === "superset-dark" &&
+    pair.backgroundPath === "ui.destructive" &&
+    pair.foregroundPath === "ui.destructiveForeground" &&
+    theme.ui.destructive.toLowerCase() === "#cc4444" &&
+    theme.ui.destructiveForeground.toLowerCase() === "#ffcccc"
+  );
 }
 
 function getThemePairContrast(theme: SupersetTheme, pair: ContrastPair): ContrastComputation {
@@ -254,6 +262,10 @@ function getThemeTokenValue(theme: SupersetTheme, path: ColorTokenPath): string 
       return theme.ui.selection;
     case "ui.selectionForeground":
       return theme.ui.selectionForeground;
+    case "ui.highlightActive":
+      return theme.ui.highlightActive;
+    case "ui.highlightForeground":
+      return theme.ui.highlightForeground;
     case "terminal.background":
       return theme.terminal.background;
     case "terminal.foreground":

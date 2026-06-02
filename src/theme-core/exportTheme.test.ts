@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
+import { parseImportedThemeJson } from "../lab/importTheme";
 import { exportThemeJson } from "./exportTheme";
 
 function requireValue<T>(value: T | undefined): T {
@@ -37,6 +38,7 @@ describe("exportThemeJson", () => {
         ...entry.theme.terminal,
         cursorAccent: "#101010",
         selectionBackground: "#202020",
+        selectionForeground: "#303030",
       },
       ui: {
         ...entry.theme.ui,
@@ -89,10 +91,34 @@ describe("exportThemeJson", () => {
     });
 
     expect(exportedTheme.terminal).not.toHaveProperty("selection");
-    expect(exportedTheme.terminal).not.toHaveProperty("selectionForeground");
     expect(exportedTheme.terminal).toMatchObject({
       cursorAccent: "#101010",
       selectionBackground: "#202020",
+      selectionForeground: "#303030",
+    });
+  });
+
+  it("round-trips the editable terminal selection foreground through download JSON", () => {
+    const entry = requireValue(
+      catalogThemes.find((candidate) => candidate.theme.id === "tokyo-night"),
+    );
+    const theme = {
+      ...entry.theme,
+      terminal: {
+        ...entry.theme.terminal,
+        selectionForeground: "#abcdef",
+      },
+    };
+
+    const imported = parseImportedThemeJson(exportThemeJson(theme));
+
+    expect(imported).toMatchObject({
+      ok: true,
+      theme: {
+        terminal: {
+          selectionForeground: "#abcdef",
+        },
+      },
     });
   });
 });

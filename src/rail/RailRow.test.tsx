@@ -25,6 +25,7 @@ describe("RailRow", () => {
     expect(badge).toHaveAttribute("data-mode", "dark");
     expect(badge).toHaveTextContent("Dark");
     expect(screen.queryByTestId("rail-accent-dot")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Tokyo Night, Dark theme" })).toBeInTheDocument();
   });
 
   it("labels featured light themes with an explicit mode badge instead of a low-contrast ring", () => {

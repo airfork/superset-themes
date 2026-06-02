@@ -32,6 +32,7 @@ export function toSupersetDownloadTheme(
       cursor: terminal.cursor,
       cursorAccent: terminal.cursorAccent,
       selectionBackground: terminal.selectionBackground,
+      selectionForeground: terminal.selectionForeground,
       black: terminal.black,
       red: terminal.red,
       green: terminal.green,
@@ -95,6 +96,10 @@ export function toSupersetDownloadTheme(
 
 export function getThemeDownloadFileName(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
   return `${themeFrom(themeOrEntry).id}.json`;
+}
+
+export function exportCatalogThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {
+  return `${JSON.stringify(supersetThemeSchema.parse(themeFrom(themeOrEntry)), null, 2)}\n`;
 }
 
 export function exportThemeJson(themeOrEntry: SupersetTheme | CatalogThemeEntry): string {

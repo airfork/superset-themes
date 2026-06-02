@@ -34,10 +34,15 @@ export function RailRow({
 }: RailRowProps) {
   const themeVariant = entry.theme.type;
   const themeModeLabel = themeVariant === "light" ? "Light" : "Dark";
+  const showModeBadge = variant === "featured";
+  const showTrailing = pinned || showModeBadge;
 
   // Build the accessible name from the bare theme name plus any qualifiers, in
   // reading order: pinned status first, then the pinned-section back-reference.
   const labelParts = [entry.theme.name];
+  if (showModeBadge) {
+    labelParts.push(`${themeModeLabel} theme`);
+  }
   if (pinned) {
     labelParts.push("pinned for compare");
   }
@@ -49,8 +54,6 @@ export function RailRow({
   // "Tokyo Night" family over the "Tokyo Night" theme). It still earns its place
   // where the family groups distinct themes ("Rosé Pine" over "Rosé Pine Dawn").
   const showEyebrow = variant === "featured" && entry.meta.family !== entry.theme.name;
-  const showModeBadge = variant === "featured";
-  const showTrailing = pinned || showModeBadge;
 
   return (
     <button

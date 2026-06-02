@@ -18,6 +18,15 @@ removed now that the work is complete (recoverable from git history). Durable co
 
 Latest completed checkpoint:
 
+- Review-remediation checkpoint addressed the Conductor review findings from June 2, 2026:
+  generator output now keeps the full catalog schema while UI downloads keep the Superset download
+  shape, terminal selection foreground survives download/import round trips, selection contrast
+  validation checks the highlight tokens that the preview actually renders, the Superset fidelity
+  warning is limited to the exact known destructive-token miss, the uninstall script backs up state
+  after Superset quits with an exclusive timestamped copy, and the rail/palette/workspace terminal
+  accessibility regressions have focused tests. Verification passed with `rtk pnpm check`,
+  `rtk pnpm test:e2e`, `rtk pnpm test:stories`, and `rtk pnpm build`; remaining contrast output is
+  limited to the documented optional Superset fidelity warnings.
 - Solarized Light refinement replaced the prior washed-out catalog port with the updated custom
   palette. Translucent highlight/terminal-selection inputs were normalized to hex for the catalog
   schema, and required AA gates were preserved with the existing dark primary/terminal foreground

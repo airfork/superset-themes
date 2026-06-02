@@ -60,7 +60,11 @@ test("typing in the rail filter narrows to the pinned Superset baselines", async
   await search.fill("superset");
 
   await expect(railRegion.getByRole("region", { name: /^superset$/i })).toBeVisible();
-  await expect(railRegion.getByRole("button", { name: /^superset light$/i })).toBeVisible();
-  await expect(railRegion.getByRole("button", { name: /^superset dark$/i })).toBeVisible();
+  await expect(
+    railRegion.getByRole("button", { name: /^superset light, light theme$/i }),
+  ).toBeVisible();
+  await expect(
+    railRegion.getByRole("button", { name: /^superset dark, dark theme$/i }),
+  ).toBeVisible();
   await expect(railRegion.getByRole("region", { name: /^featured$/i })).toHaveCount(0);
 });

@@ -9,10 +9,10 @@
 //
 // Usage:  node scripts/superset-theme.mjs   (or chmod +x and run directly)
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { constants, copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { spawn, spawnSync } from "node:child_process";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -40,6 +40,13 @@ function fail(msg) {
   process.exit(1);
 }
 
+function createBackup() {
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const backup = `${STATE_PATH}.${stamp}.bak`;
+  copyFileSync(STATE_PATH, backup, constants.COPYFILE_EXCL);
+  return backup;
+}
+
 // --- load state --------------------------------------------------------------
 if (!existsSync(STATE_PATH)) {
   fail(`Could not find Superset state at ${STATE_PATH}.\nIs Superset installed?`);
@@ -53,9 +60,7 @@ try {
 }
 
 const themeState = state.themeState ?? {};
-const customThemes = Array.isArray(themeState.customThemes)
-  ? themeState.customThemes
-  : [];
+const customThemes = Array.isArray(themeState.customThemes) ? themeState.customThemes : [];
 
 if (customThemes.length === 0) {
   console.log(`\n${c.dim}No custom themes are installed in Superset.${c.reset}\n`);
@@ -82,9 +87,7 @@ async function multiSelect(items) {
     const lines = [...header];
     items.forEach((item, i) => {
       const pointer = i === cursor ? `${c.cyan}❯${c.reset}` : " ";
-      const box = checked[i]
-        ? `${c.green}◉${c.reset}`
-        : `${c.dim}◯${c.reset}`;
+      const box = checked[i] ? `${c.green}◉${c.reset}` : `${c.dim}◯${c.reset}`;
       const active = item.id === themeState.activeThemeId ? `${c.dim} (active)${c.reset}` : "";
       const label = i === cursor ? `${c.cyan}${item.name}${c.reset}` : item.name;
       lines.push(`${pointer} ${box} ${label} ${c.dim}[${item.id}]${c.reset}${active}`);
@@ -95,7 +98,7 @@ async function multiSelect(items) {
 
     if (rendered > 0) out(`\x1b[${rendered}A`); // move cursor up to overwrite
     out("\x1b[0J"); // clear from cursor to end of screen
-    out(lines.join("\n") + "\n");
+    out(`${lines.join("\n")}\n`);
     rendered = lines.length;
   }
 
@@ -157,7 +160,7 @@ function confirm(question) {
       stdin.setRawMode(false);
       stdin.pause();
       const yes = key.toLowerCase() === "y";
-      out((yes ? "y" : "n") + "\n");
+      out(`${yes ? "y" : "n"}\n`);
       resolve(yes);
     });
   });
@@ -170,11 +173,9 @@ function confirm(question) {
 // poll waits forever. AppleScript's `is running` tracks the actual GUI app and
 // reports false once the window app has quit (and does not launch the app).
 function isRunning() {
-  const r = spawnSync(
-    "osascript",
-    ["-e", `application "${APP_NAME}" is running`],
-    { encoding: "utf8" },
-  );
+  const r = spawnSync("osascript", ["-e", `application "${APP_NAME}" is running`], {
+    encoding: "utf8",
+  });
   return r.stdout.trim() === "true";
 }
 
@@ -231,24 +232,25 @@ if (!ok) {
   process.exit(0);
 }
 
-// 1. backup
-const backup = `${STATE_PATH}.bak`;
-copyFileSync(STATE_PATH, backup);
-console.log(`${c.dim}Backed up state -> ${backup}${c.reset}`);
-
-// 2. quit if running (state must be edited while the app is closed, or it
+// 1. quit if running (state must be edited while the app is closed, or it
 //    rewrites the file from memory on the next change)
 if (running) {
   process.stdout.write("Quitting Superset…");
   requestQuit();
   const quit = await waitForQuit();
   if (!quit) {
-    fail("\nSuperset is still running, so nothing was changed.\nQuit Superset manually, then re-run.");
+    fail(
+      "\nSuperset is still running, so nothing was changed.\nQuit Superset manually, then re-run.",
+    );
   }
   console.log(" done");
 }
 
-// 3. re-read (in case the app flushed state on quit) and edit
+// 2. backup and re-read after quit, in case the app flushed state while closing
+const backup = createBackup();
+console.log(`${c.dim}Backed up state -> ${backup}${c.reset}`);
+
+// 3. edit
 state = JSON.parse(readFileSync(STATE_PATH, "utf8"));
 state.themeState ??= {};
 const ts = state.themeState;

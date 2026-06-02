@@ -557,7 +557,15 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
 
         {/* Terminal content area — fake Claude Code session output */}
         <div className="scene-workspace__terminal" role="log" aria-live="polite" id={threadId}>
-          <div className="scene-workspace__terminal-output">
+          {/* biome-ignore lint/a11y/useSemanticElements: this read-only transcript keeps ANSI-marked spans that a native textarea cannot render. */}
+          <div
+            className="scene-workspace__terminal-output"
+            role="textbox"
+            aria-multiline="true"
+            aria-readonly="true"
+            tabIndex={0}
+            aria-label="Terminal output"
+          >
             {terminalOutput
               .split("\n")
               .map((line, index) => renderTerminalLine(line, `${index}:${line}`))}
