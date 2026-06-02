@@ -2,7 +2,6 @@ import {
   ChevronDown,
   Circle,
   Clock,
-  Columns2,
   FolderPlus,
   Layers,
   Play,
@@ -360,6 +359,27 @@ function MonitorIcon() {
   );
 }
 
+// Superset's split-view control is a rounded two-column layout glyph, not lucide's
+// square Columns2.
+function SplitIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+      <path d="M12 4l0 16" />
+    </svg>
+  );
+}
+
 export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
   const { theme } = entry;
   const threadId = useId();
@@ -387,7 +407,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
             <span>Tasks & PRs</span>
           </a>
           <a href="#new-workspace" className="scene-workspace__new-workspace">
-            <Plus aria-hidden="true" />
+            <Plus aria-hidden="true" strokeWidth={1.5} />
             <span>New Workspace</span>
             <FolderPlus aria-hidden="true" className="scene-workspace__new-workspace-trailing" />
           </a>
@@ -424,7 +444,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
         </div>
         <div className="scene-workspace__footer">
           <a href="#ports" className="scene-workspace__footer-row">
-            <RadioTower aria-hidden="true" />
+            <RadioTower aria-hidden="true" strokeWidth={1.5} />
             <span>Ports</span>
             <span className="scene-workspace__footer-meta">1</span>
           </a>
@@ -466,7 +486,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
             </div>
           ))}
           <button type="button" aria-label="New session" className="scene-workspace__session-new">
-            <Plus aria-hidden="true" />
+            <Plus aria-hidden="true" strokeWidth={1.5} />
           </button>
         </div>
 
@@ -523,7 +543,7 @@ export function WorkspaceScene({ entry }: WorkspaceSceneProps) {
           </button>
           <div className="scene-workspace__subheader-actions">
             <button type="button" aria-label="Split view" className="scene-workspace__icon-button">
-              <Columns2 aria-hidden="true" />
+              <SplitIcon />
             </button>
             <button
               type="button"
