@@ -28,13 +28,19 @@ describe("workspace scene style contracts", () => {
     );
   });
 
-  it("uses Superset's explicit sidebar tokens instead of hand-tinted sidebars", () => {
-    expect(globalCss).toContain("--scene-workspace-sidebar: var(--preview-ui-sidebar)");
-    expect(ruleBody(".scene-workspace__rail")).toContain(
-      "border-right: 1px solid var(--preview-ui-sidebar-border)",
+  it("paints the workspace rail as a translucent muted fill, matching Superset's bg-muted/35", () => {
+    // Superset 1.12.1 renders the team/workspace rail as `bg-muted/45 dark:bg-muted/35`
+    // (a translucent --muted fill over the canvas), verified live via CDP, not the solid
+    // --sidebar token. The preview mirrors that formula so the catalog matches the app.
+    expect(globalCss).toContain(
+      "--scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 35%, transparent)",
     );
+    expect(globalCss).toContain(':root[data-theme-type="light"] .scene-workspace');
     expect(ruleBody(".scene-workspace__rail")).toContain(
       "background: var(--scene-workspace-sidebar)",
+    );
+    expect(ruleBody(".scene-workspace__rail")).toContain(
+      "border-right: 1px solid var(--preview-ui-sidebar-border)",
     );
   });
 

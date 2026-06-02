@@ -1299,18 +1299,19 @@ kbd {
 
 /* Pane — Workspace scene (Superset-shape three-column thread) */
 .scene-workspace {
-  --scene-workspace-active-row: var(--preview-ui-sidebar-accent);
-  --scene-workspace-hover-row: color-mix(
-    in srgb,
-    var(--preview-ui-sidebar-accent) 70%,
-    transparent
-  );
+  /* Selected and hovered rail rows are solid --muted in Superset (bg-muted /
+     hover:bg-muted), verified live via CDP on Superset 1.12.1. */
+  --scene-workspace-active-row: var(--preview-ui-muted);
+  --scene-workspace-hover-row: var(--preview-ui-muted);
   --scene-workspace-muted-icon: color-mix(
     in srgb,
     var(--preview-ui-sidebar-foreground) 72%,
     transparent
   );
-  --scene-workspace-sidebar: var(--preview-ui-sidebar);
+  /* Superset paints the team/workspace rail as `bg-muted/35` (dark) /
+     `bg-muted/45` (light): a translucent --muted fill over the canvas, not the
+     solid --sidebar token. Mirror it so the preview rail matches the app. */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 35%, transparent);
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
@@ -1320,6 +1321,11 @@ kbd {
   color: var(--preview-ui-foreground);
   font-family: var(--app-font-chrome);
   font-size: 0.78rem;
+}
+
+:root[data-theme-type="light"] .scene-workspace {
+  /* Superset uses bg-muted/45 in light mode (vs /35 in dark). */
+  --scene-workspace-sidebar: color-mix(in oklab, var(--preview-ui-muted) 45%, transparent);
 }
 
 .scene-workspace__rail {
@@ -2213,7 +2219,10 @@ a.scene-workspace__footer-row:hover {
   display: grid;
   gap: 18px;
   padding: 18px 22px 22px;
-  background: var(--preview-ui-background);
+  /* Superset's settings page sits on a solid --tertiary surface (`bg-tertiary`),
+     a step lighter than the workspace canvas. Verified live via CDP; the form
+     controls below stay on --background so they read as recessed wells. */
+  background: var(--preview-ui-tertiary);
   color: var(--preview-ui-foreground);
   font-family: var(--app-font-chrome);
   font-size: 0.84rem;
