@@ -5,6 +5,8 @@ export interface FuzzyMatch {
   tier: number;
   // Higher is better within a tier; consecutive matches score more than scattered ones.
   score: number;
+  // Lower means the match came from a more canonical key for the item.
+  keyIndex?: number;
 }
 
 export interface RankableItem {
@@ -42,16 +44,31 @@ export function scoreMatch(query: string, target: string): FuzzyMatch | null {
 
 export function bestMatch(query: string, keys: readonly string[]): FuzzyMatch | null {
   let best: FuzzyMatch | null = null;
-  for (const key of keys) {
-    const match = scoreMatch(query, key);
+  for (const [keyIndex, key] of keys.entries()) {
+    const scored = scoreMatch(query, key);
+    const match = scored ? { ...scored, keyIndex } : null;
     if (!match) {
       continue;
     }
-    if (!best || match.tier < best.tier || (match.tier === best.tier && match.score > best.score)) {
+    if (!best || isBetterMatch(match, best)) {
       best = match;
     }
   }
   return best;
+}
+
+function isBetterMatch(candidate: FuzzyMatch, incumbent: FuzzyMatch): boolean {
+  if (candidate.tier !== incumbent.tier) {
+    return candidate.tier < incumbent.tier;
+  }
+  if (candidate.score !== incumbent.score) {
+    return candidate.score > incumbent.score;
+  }
+  return keyIndexFor(candidate) < keyIndexFor(incumbent);
+}
+
+function keyIndexFor(match: FuzzyMatch): number {
+  return match.keyIndex ?? Number.MAX_SAFE_INTEGER;
 }
 
 export function rankFuzzy<T extends RankableItem>(query: string, items: readonly T[]): T[] {
@@ -69,6 +86,9 @@ export function rankFuzzy<T extends RankableItem>(query: string, items: readonly
     }
     if (a.match.score !== b.match.score) {
       return b.match.score - a.match.score;
+    }
+    if (keyIndexFor(a.match) !== keyIndexFor(b.match)) {
+      return keyIndexFor(a.match) - keyIndexFor(b.match);
     }
     if (a.item.id.length !== b.item.id.length) {
       return a.item.id.length - b.item.id.length;

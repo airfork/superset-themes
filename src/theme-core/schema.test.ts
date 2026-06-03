@@ -117,6 +117,7 @@ describe("theme schema", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
     expect(upstreamPorts.map((entry) => entry.theme.id).sort()).toEqual([
+      "alucard",
       "catppuccin-latte",
       "catppuccin-mocha",
       "dracula",
@@ -124,6 +125,7 @@ describe("theme schema", () => {
       "github-dark-dimmed",
       "github-light",
       "gruvbox-dark",
+      "gruvbox-light",
       "nord",
       "one-dark",
       "rose-pine",
@@ -134,6 +136,7 @@ describe("theme schema", () => {
       "superset-dark",
       "superset-light",
       "tokyo-night",
+      "tokyo-night-light",
     ]);
     expect(
       upstreamPorts
@@ -144,6 +147,7 @@ describe("theme schema", () => {
     expect(
       Object.fromEntries(upstreamPorts.map((entry) => [entry.theme.id, entry.meta.license]).sort()),
     ).toMatchObject({
+      alucard: "MIT",
       "catppuccin-latte": "MIT",
       "catppuccin-mocha": "MIT",
       dracula: "MIT",
@@ -151,6 +155,7 @@ describe("theme schema", () => {
       "github-dark-dimmed": "MIT",
       "github-light": "MIT",
       "gruvbox-dark": "MIT/X11",
+      "gruvbox-light": "MIT/X11",
       nord: "MIT",
       "one-dark": "MIT",
       "rose-pine": "MIT",
@@ -161,6 +166,7 @@ describe("theme schema", () => {
       "superset-dark": "Elastic License 2.0",
       "superset-light": "Elastic License 2.0",
       "tokyo-night": "MIT",
+      "tokyo-night-light": "MIT",
     });
     expect(new Set(upstreamPorts.map((entry) => entry.meta.portStatus))).toEqual(
       new Set(["ported", "adapted"]),
