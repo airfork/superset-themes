@@ -1,0 +1,18 @@
+{
+  "name": "Superset Theme Catalog",
+  "short_name": "Superset Themes",
+  "description": "Browse, compare, edit, and export Superset-compatible application themes.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#151110",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

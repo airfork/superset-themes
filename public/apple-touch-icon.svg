@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-labelledby="title desc">
+  <title id="title">Superset Theme Catalog app icon</title>
+  <desc id="desc">Layered theme cards with Superset accent colors.</desc>
+  <rect width="180" height="180" rx="42" fill="#151110" />
+  <circle cx="42" cy="44" r="52" fill="#e07850" opacity=".28" />
+  <circle cx="143" cy="138" r="54" fill="#50a878" opacity=".22" />
+  <rect x="42" y="35" width="96" height="110" rx="18" fill="#201e1c" stroke="#3a3837" stroke-width="3" />
+  <rect x="57" y="55" width="66" height="16" rx="4" fill="#e07850" />
+  <rect x="57" y="84" width="42" height="16" rx="4" fill="#50a878" />
+  <rect x="108" y="84" width="15" height="16" rx="4" fill="#d4a84b" />
+  <rect x="57" y="114" width="66" height="7" rx="3.5" fill="#eae8e6" opacity=".72" />
+  <rect x="57" y="130" width="45" height="7" rx="3.5" fill="#a8a5a3" opacity=".7" />
+</svg>

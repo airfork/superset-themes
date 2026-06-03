@@ -10,6 +10,8 @@ Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mappi
 
 Latest completed checkpoint:
 
+- Public launch polish added favicon/app/social-card SVG assets, web app manifest, robots/sitemap
+  hints, and Open Graph/Twitter/canonical metadata in the static shell.
 - Catalog assembly now joins theme metadata to theme JSON by `themeId` instead of array position.
 - Featured and baseline theme IDs derive from catalog `featuredRank` / `baselineRank` metadata.
 - Critical first-paint theme CSS reads the same runtime default focused theme as the app.
@@ -25,18 +27,20 @@ Latest completed checkpoint:
 Current slice verification passed:
 
 - `rtk git diff --check`
-- `rtk pnpm check` passed: Biome checked 179 files with no warnings, Vitest passed 48 files /
-  311 tests, script tests passed, and the production build inside `check` succeeded.
-- `rtk pnpm test:e2e` passed: 29 passed, 1 skipped.
+- `rtk pnpm check` passed: Biome checked 194 files with no warnings, Vitest passed 52 files /
+  348 tests, script tests passed, metadata tests passed, and the production build inside `check`
+  succeeded.
+- `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
-- `rtk pnpm build` passed; initial JS `368.60 kB` minified / `113.73 kB` gzip.
-- `rtk pnpm build:pages` passed; Pages initial JS `368.63 kB` minified / `113.74 kB` gzip.
+- `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
+- `rtk pnpm build:pages` passed; Pages initial JS `368.69 kB` minified / `113.77 kB` gzip.
 
 ## GitHub Pages And Bundle Baseline
 
 - `pnpm build:pages` builds with the `/superset-themes/` base path.
 - Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
+- Public metadata now targets `https://airfork.github.io/superset-themes/`.
 - Current initial JS baseline:
   - normal build: `368.60 kB` minified / `113.73 kB` gzip
   - Pages build: `368.63 kB` minified / `113.74 kB` gzip

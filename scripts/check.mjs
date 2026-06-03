@@ -6,6 +6,7 @@ const commands = [
   ["pnpm", ["test"]],
   ["pnpm", ["themes:research:test"]],
   ["pnpm", ["themes:generate:test"]],
+  ["pnpm", ["site:metadata:test"]],
   ["pnpm", ["exec", "tsx", "--test", "scripts/vite-plugin-critical-theme.test.mjs"]],
   ["pnpm", ["archive:clean:test"]],
   ["pnpm", ["build"]],

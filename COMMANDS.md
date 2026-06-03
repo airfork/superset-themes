@@ -107,6 +107,12 @@ pnpm test:stories
 
 Run Storybook interaction/component tests.
 
+```bash
+pnpm site:metadata:test
+```
+
+Check the static shell, favicon/app metadata assets, manifest, robots file, and sitemap.
+
 ## Build
 
 ```bash

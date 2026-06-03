@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Superset Theme Catalog</title>
+  <desc id="desc">Social preview card for the Superset Theme Catalog.</desc>
+  <rect width="1200" height="630" fill="#151110" />
+  <circle cx="188" cy="116" r="180" fill="#e07850" opacity=".22" />
+  <circle cx="1035" cy="540" r="220" fill="#50a878" opacity=".16" />
+  <rect x="92" y="74" width="1016" height="482" rx="32" fill="#201e1c" stroke="#3a3837" stroke-width="2" />
+  <rect x="140" y="126" width="290" height="344" rx="24" fill="#151110" stroke="#3a3837" stroke-width="2" />
+  <rect x="172" y="164" width="184" height="22" rx="6" fill="#e07850" />
+  <rect x="172" y="216" width="136" height="22" rx="6" fill="#50a878" />
+  <rect x="324" y="216" width="32" height="22" rx="6" fill="#d4a84b" />
+  <rect x="172" y="268" width="184" height="10" rx="5" fill="#eae8e6" opacity=".72" />
+  <rect x="172" y="306" width="132" height="10" rx="5" fill="#a8a5a3" opacity=".72" />
+  <rect x="172" y="344" width="164" height="10" rx="5" fill="#a8a5a3" opacity=".5" />
+  <text x="500" y="210" fill="#eae8e6" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="76" font-weight="760">Superset Theme</text>
+  <text x="500" y="296" fill="#eae8e6" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="76" font-weight="760">Catalog</text>
+  <text x="504" y="348" fill="#a8a5a3" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="30" font-weight="500">Browse, compare, edit, and export</text>
+  <text x="504" y="388" fill="#a8a5a3" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="30" font-weight="500">install-safe Superset themes.</text>
+  <g font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="700">
+    <rect x="504" y="438" width="118" height="44" rx="22" fill="#e07850" />
+    <text x="536" y="468" fill="#151110">Light</text>
+    <rect x="640" y="438" width="113" height="44" rx="22" fill="#50a878" />
+    <text x="671" y="468" fill="#151110">Dark</text>
+    <rect x="771" y="438" width="146" height="44" rx="22" fill="#d4a84b" />
+    <text x="802" y="468" fill="#151110">Export</text>
+  </g>
+</svg>
