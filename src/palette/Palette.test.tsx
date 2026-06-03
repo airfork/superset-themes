@@ -36,7 +36,7 @@ describe("Palette", () => {
 
     openPalette();
     expect(screen.getByRole("dialog", { name: /command palette/i })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: /tokyo night/i })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Tokyo Night" })).toBeInTheDocument();
   });
 
   it("closes on Escape", async () => {
@@ -121,13 +121,26 @@ describe("Palette", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
+  it("runs an exact theme-name match before a matching family", async () => {
+    const user = userEvent.setup();
+    const onSelectTheme = vi.fn();
+    render(<Host commands={makeCommands(onSelectTheme, vi.fn())} />);
+    openPalette();
+
+    await user.keyboard("dracula");
+    await user.keyboard("{Enter}");
+
+    expect(onSelectTheme).toHaveBeenCalledWith("dracula");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("shows action commands directly before themes at rest like Superset's palette", () => {
     render(<Host commands={makeCommands(vi.fn(), vi.fn())} />);
     openPalette();
 
     expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /more actions/i })).not.toBeInTheDocument();
-    expect(screen.getByRole("option", { name: /tokyo night/i })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Tokyo Night" })).toBeInTheDocument();
 
     expect(within(screen.getByRole("group", { name: "Themes" })).getByText("Family")).toBeVisible();
 

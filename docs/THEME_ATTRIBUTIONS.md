@@ -64,6 +64,19 @@ Adaptations made for this app:
 - Adaptation notes: Kept the OSS palette values; used conservative foreground tokens where this
   app's preview surfaces need explicit action and destructive contrast.
 
+## Alucard
+
+- Theme: `alucard`
+- Original theme: Alucard (Dracula's official light theme) by Zeno Rocha / Dracula Theme
+- Source: <https://github.com/dracula/dracula-theme>
+- Palette source: <https://draculatheme.com/spec>
+- License: MIT
+- Adaptation notes: Used the published Alucard Classic palette (background `#fffbeb`, foreground
+  `#1f1f1f`, selection `#cfcfde`, comment, and the red/orange/yellow/green/cyan/purple/pink accents).
+  Violet carries the primary and red the destructive over the ivory paper, both with a cream
+  foreground so they clear the local AA gate; red is reserved for `destructive` and kept out of the
+  five-hue chart palette.
+
 ## Gruvbox Dark
 
 - Theme: `gruvbox-dark`
@@ -74,6 +87,19 @@ Adaptations made for this app:
 - Adaptation notes: Used the dark medium palette and terminal colors from the original Vim theme;
   adjusted only schema mapping and required foreground relationships.
 
+## Gruvbox Light
+
+- Theme: `gruvbox-light`
+- Original theme: Gruvbox by Pavel Pertsev
+- Source: <https://github.com/morhetz/gruvbox>
+- License: MIT/X11
+- Catalog license field: MIT/X11
+- Adaptation notes: Used the light medium palette and the original light-mode terminal mapping
+  (background `#fbf1c7`, neutral ANSI colors with the darker faded accents in the bright slots). The
+  primary action uses faded orange (`#af3a03`) and the destructive faded red (`#9d0006`) with a cream
+  foreground so both clear the local AA gate against the cream surface; `mutedForeground` steps to
+  `#665c54` to hold AA on the background.
+
 ## Tokyo Night
 
 - Theme: `tokyo-night`
@@ -82,6 +108,17 @@ Adaptations made for this app:
 - License: MIT
 - Adaptation notes: Used the Tokyo Night dark palette and terminal colors; brightened terminal
   foreground/exported preview text where needed for this app's contrast gate.
+
+## Tokyo Night Light
+
+- Theme: `tokyo-night-light`
+- Original theme: Tokyo Night Light by Enkia
+- Source: <https://github.com/tokyo-night/tokyo-night-vscode-theme>
+- License: MIT
+- Adaptation notes: Used the Tokyo Night Light palette and terminal ANSI colors (background
+  `#e6e7ed`, foreground `#343b59`). White button foregrounds sit on the deep blue primary and the
+  maroon destructive; `mutedForeground` is darkened to `#565d7e` to hold AA on the background, and
+  the source's translucent selection token is flattened to a six-digit hex.
 
 ## Rosé Pine Dawn
 

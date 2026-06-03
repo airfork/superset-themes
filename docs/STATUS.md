@@ -3,12 +3,36 @@
 ## Current State
 
 The Superset Theme Catalog is a complete static React/Vite app for browsing, comparing, editing,
-generating, validating, and exporting Superset-compatible themes. It currently ships 20 catalog
+generating, validating, and exporting Superset-compatible themes. It currently ships 23 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
 Previous committed checkpoint: `b437ae8 Record public Pages launch`.
 
-Latest completed checkpoint — time-of-day default theme:
+Latest completed checkpoint — light-theme balance batch:
+
+- Added three upstream-port light themes to fix the catalog's dark/light imbalance, bringing it from
+  14 dark / 6 light to 14 dark / 9 light: `gruvbox-light` (Gruvbox Light, MIT/X11), `tokyo-night-light`
+  (Tokyo Night Light, Enkia, MIT), and `alucard` (Alucard, Dracula's official light theme, MIT). All
+  are faithful ports built to the solarized-light quality bar (5-hue chart palette with red reserved
+  for `destructive`, a rising highlight ramp, real muted/tertiary steps) and pass the contrast gate
+  with no errors.
+- Each completes a `pairGroup` for an existing dark family: `gruvbox` (gruvbox-light/dark),
+  `tokyo-night` (tokyo-night-light/tokyo-night), and `dracula` (alucard/dracula). The `pairGroup`
+  field was added to the three existing dark entries so each group validates with one light + one dark.
+- Light variants follow the catalog's light convention (pale-tint accent + dark accentForeground,
+  white/cream button foregrounds on the primary/destructive accents) so the required pairs clear 4.5;
+  faded/darker accent variants are used where the upstream's brighter hue would fail on the light
+  surface (e.g. Gruvbox's faded orange/red).
+- Tokyo Night's light sibling is Enkia's own "Tokyo Night Light" (same upstream as the dark) rather
+  than folke's nvim "Day", keeping the pair on one source.
+- Test fixups: `schema.test.ts` upstream-port id list + license map extended for the three ids; the
+  command palette's two `/tokyo night/i` assertions were pinned to the exact `"Tokyo Night"` name so
+  the new "Tokyo Night Light" option no longer makes them ambiguous.
+- Review remediation: command-palette fuzzy ranking now uses key order as the final match tie-breaker,
+  so canonical theme id/name keys beat later metadata aliases. The regression test covers `dracula`
+  selecting Dracula instead of Alucard.
+
+Prior checkpoint — time-of-day default theme:
 
 - A bare `/` visit now seeds a random *featured* theme matching the OS `prefers-color-scheme`
   (dark->dark, light->light), pins the pick into `?theme=` (replace) so refresh/back/share stay
@@ -78,7 +102,17 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 ## Verification
 
-Current slice verification passed (time-of-day default theme):
+Current slice verification passed (light-theme balance batch):
+
+- `rtk pnpm themes:validate` passed: validated 23 catalog themes from 23 JSON files.
+- `rtk pnpm themes:check-contrast` passed: 23 themes, 3 optional warnings (only the frozen
+  `superset-light`/`superset-dark` fidelity exceptions); the three new themes clear all 7 pairs.
+- `rtk pnpm check` passed: Biome clean, typecheck clean, Vitest 53 files / 365 tests, script
+  test-suites passed, and the production build succeeded.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped.
+
+Prior slice verification passed (time-of-day default theme):
 
 - Merge refresh note: `origin/main` brought a dependency refresh whose TanStack 1.170.11 lockfile
   entries were still inside pnpm's active minimum-release-age policy. The merged branch keeps the
@@ -136,9 +170,9 @@ Launch deploy verification (still current):
 
 ## Remaining Opportunities
 
-- Light/dark balance: the catalog is still dark-heavy (14 dark / 6 light). A light-only theme batch
-  (e.g. One Light, Gruvbox Light, Tokyo Night Day, Ayu Light, Everforest Light) would both fix the
-  balance and deepen the daytime pool for the time-of-day default.
+- Light/dark balance: improved from 14 dark / 6 light to 14 dark / 9 light via the light-theme batch
+  (Gruvbox Light, Tokyo Night Light, Alucard). Further light additions (e.g. One Light, Ayu Light,
+  Everforest Light) remain optional if a tighter balance or a deeper daytime pool is wanted.
 - The successful Pages workflow run emitted a GitHub Actions warning that several current
   JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
   override once GitHub's Node 24 transition becomes actionable.

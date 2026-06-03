@@ -1,4 +1,5 @@
 import type { CatalogThemeEntry, CatalogThemeMeta, SupersetTheme } from "../theme-core/themeTypes";
+import alucardTheme from "./themes/alucard.json" with { type: "json" };
 import auroraDarkTheme from "./themes/aurora-dark.json" with { type: "json" };
 import auroraLightTheme from "./themes/aurora-light.json" with { type: "json" };
 import catppuccinLatteTheme from "./themes/catppuccin-latte.json" with { type: "json" };
@@ -9,6 +10,7 @@ import githubDarkDimmedTheme from "./themes/github-dark-dimmed.json" with { type
 import githubLightTheme from "./themes/github-light.json" with { type: "json" };
 import graphiteDarkTheme from "./themes/graphite-dark.json" with { type: "json" };
 import gruvboxDarkTheme from "./themes/gruvbox-dark.json" with { type: "json" };
+import gruvboxLightTheme from "./themes/gruvbox-light.json" with { type: "json" };
 import nordTheme from "./themes/nord.json" with { type: "json" };
 import oneDarkTheme from "./themes/one-dark.json" with { type: "json" };
 import rosePineTheme from "./themes/rose-pine.json" with { type: "json" };
@@ -19,6 +21,7 @@ import solarizedLightTheme from "./themes/solarized-light.json" with { type: "js
 import supersetDarkTheme from "./themes/superset-dark.json" with { type: "json" };
 import supersetLightTheme from "./themes/superset-light.json" with { type: "json" };
 import tokyoNightTheme from "./themes/tokyo-night.json" with { type: "json" };
+import tokyoNightLightTheme from "./themes/tokyo-night-light.json" with { type: "json" };
 
 type CatalogRankKey = "baselineRank" | "featuredRank";
 
@@ -164,10 +167,29 @@ export const catalogThemeMetadata = [
     baselineRank: null,
   },
   {
+    themeId: "alucard",
+    source: "upstream-port",
+    family: "Dracula",
+    variant: "light",
+    pairGroup: "dracula",
+    styleTags: ["vibrant", "warm", "terminal-rich"],
+    accentHue: 256,
+    warmth: "warm",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/dracula/dracula-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of Alucard, Dracula's official light theme.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
     themeId: "dracula",
     source: "upstream-port",
     family: "Dracula",
     variant: "dark",
+    pairGroup: "dracula",
     styleTags: ["neon", "classic", "terminal-rich"],
     accentHue: 265,
     warmth: "neutral",
@@ -181,10 +203,30 @@ export const catalogThemeMetadata = [
     baselineRank: null,
   },
   {
+    themeId: "gruvbox-light",
+    source: "upstream-port",
+    family: "Gruvbox",
+    variant: "light",
+    pairGroup: "gruvbox",
+    styleTags: ["warm", "retro", "terminal-rich"],
+    accentHue: 19,
+    warmth: "warm",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT/X11",
+    upstreamUrl: "https://github.com/morhetz/gruvbox",
+    portStatus: "ported",
+    notes:
+      "Schema-clean catalog adaptation of Gruvbox Light with faded accents tuned for AA on the cream surface.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
     themeId: "gruvbox-dark",
     source: "upstream-port",
     family: "Gruvbox",
     variant: "dark",
+    pairGroup: "gruvbox",
     styleTags: ["warm", "retro", "terminal-rich"],
     accentHue: 43,
     warmth: "warm",
@@ -198,10 +240,29 @@ export const catalogThemeMetadata = [
     baselineRank: null,
   },
   {
+    themeId: "tokyo-night-light",
+    source: "upstream-port",
+    family: "Tokyo Night",
+    variant: "light",
+    pairGroup: "tokyo-night",
+    styleTags: ["cool", "clear", "terminal-rich"],
+    accentHue: 216,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/tokyo-night/tokyo-night-vscode-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Tokyo Night Light (VS Code) palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
     themeId: "tokyo-night",
     source: "upstream-port",
     family: "Tokyo Night",
     variant: "dark",
+    pairGroup: "tokyo-night",
     styleTags: ["neon", "focused", "terminal-rich"],
     accentHue: 223,
     warmth: "cool",
@@ -384,8 +445,11 @@ const catalogThemesById = {
   nord: nordTheme as SupersetTheme,
   "catppuccin-mocha": catppuccinMochaTheme as SupersetTheme,
   "catppuccin-latte": catppuccinLatteTheme as SupersetTheme,
+  alucard: alucardTheme as SupersetTheme,
   dracula: draculaTheme as SupersetTheme,
+  "gruvbox-light": gruvboxLightTheme as SupersetTheme,
   "gruvbox-dark": gruvboxDarkTheme as SupersetTheme,
+  "tokyo-night-light": tokyoNightLightTheme as SupersetTheme,
   "tokyo-night": tokyoNightTheme as SupersetTheme,
   "rose-pine-dawn": rosePineDawnTheme as SupersetTheme,
   "rose-pine": rosePineTheme as SupersetTheme,
