@@ -14,6 +14,9 @@ Latest completed checkpoint:
   live-app/current-control copy.
 - GitHub settings now have Issues, Dependabot vulnerability alerts/security updates, private
   vulnerability reporting, secret scanning, and push protection enabled.
+- GitHub also deletes merged PR branches automatically, lets maintainers update PR branches, and
+  protects `main` with required `verify` CI, linear history, conversation resolution, and force
+  push/deletion blocks.
 - GitHub Pages builds now emit direct app-shell artifacts for `/compare` and `/lab` in addition
   to the SPA `404.html` fallback.
 - The tracked `.superset/config.json` hidden tool config was removed and `.superset/` is ignored,
@@ -79,8 +82,6 @@ Current slice verification passed:
 
 ## Remaining Opportunities
 
-- Optionally add a branch protection rule after the new PR CI workflow is pushed and visible to
-  GitHub.
 - The successful Pages workflow run emitted a GitHub Actions warning that several current
   JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
   override once GitHub's Node 24 transition becomes actionable.
