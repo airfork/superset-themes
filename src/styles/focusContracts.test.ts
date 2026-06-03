@@ -41,4 +41,23 @@ describe("focus contracts", () => {
     expect(body).toContain("color: var(--preview-ui-foreground)");
     expect(body).toContain("opacity: 0.5");
   });
+
+  it("fills the palette active/hover rows from the derived popover bands, not raw accent", () => {
+    // Raw accent makes the focused and hover rows invisible on themes that set
+    // accent == popover (Gruvbox Light, Solarized); the derived tokens guarantee a band.
+    expect(ruleBody(".palette__option:hover")).toContain(
+      "background: var(--preview-popover-hover)",
+    );
+
+    // The active rule lists two selectors; match the one that directly precedes the body.
+    const activeBody = ruleBody(".palette__option[data-active]:hover");
+    expect(activeBody).toContain("background: var(--preview-popover-active)");
+    expect(activeBody).toContain("color: var(--preview-popover-active-foreground)");
+  });
+
+  it("propagates the active palette foreground to secondary row affordances", () => {
+    const activeChildBody = ruleBody(".palette__option[data-active] .palette__option-key");
+
+    expect(activeChildBody).toContain("color: var(--preview-popover-active-foreground)");
+  });
 });

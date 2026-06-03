@@ -3,11 +3,19 @@ import {
   getChromeSurface,
   getFocusRingColor,
 } from "../theme-core/chromeTokens";
+import { getPaletteActiveSurface, getWorkspaceControlSurface } from "../theme-core/paletteTokens";
 import type { SupersetTheme } from "../theme-core/themeTypes";
 
 export type ThemeCssVars = Record<`--preview-${string}` | `--chrome-${string}`, string>;
 
 export function getThemeCssVars(theme: SupersetTheme): ThemeCssVars {
+  // Active/hover bands for the command palette (over the popover) and the workspace tab
+  // close button (over the background) are derived (not raw accent) so the focused and
+  // hovered states stay visible on themes whose accent collapses onto the surface. See
+  // paletteTokens.
+  const paletteActive = getPaletteActiveSurface(theme);
+  const workspaceControl = getWorkspaceControlSurface(theme);
+
   return {
     // Chrome neutrals are derived (not raw tokens) so persistent chrome keeps its
     // own AA legibility and primary/secondary split on every theme. See chromeTokens.
@@ -37,6 +45,11 @@ export function getThemeCssVars(theme: SupersetTheme): ThemeCssVars {
     "--preview-ui-muted-foreground": theme.ui.mutedForeground,
     "--preview-ui-popover": theme.ui.popover,
     "--preview-ui-popover-foreground": theme.ui.popoverForeground,
+    "--preview-popover-active": paletteActive.active,
+    "--preview-popover-active-foreground": paletteActive.activeForeground,
+    "--preview-popover-hover": paletteActive.hover,
+    "--preview-background-active": workspaceControl.active,
+    "--preview-background-active-foreground": workspaceControl.activeForeground,
     "--preview-ui-primary": theme.ui.primary,
     "--preview-ui-primary-foreground": theme.ui.primaryForeground,
     "--preview-ui-ring": theme.ui.ring,
