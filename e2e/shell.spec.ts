@@ -18,7 +18,7 @@ test("shell top bar exposes a search trigger and repo link", async ({ page }) =>
 });
 
 test("shell bottom bar shows the focused theme summary", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?theme=tokyo-night");
 
   const footer = page.getByRole("contentinfo");
   await expect(footer).toContainText("Tokyo Night");

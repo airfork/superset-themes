@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test("catalog route renders the master/detail shell", async ({ page }) => {
-  await page.goto("/");
+  // Pin a theme so the focused default is deterministic (a bare visit now seeds a
+  // random mode-appropriate featured theme).
+  await page.goto("/?theme=tokyo-night");
 
   await expect(page.getByRole("banner")).toBeVisible();
   await expect(page.getByRole("complementary", { name: /themes/i })).toBeVisible();

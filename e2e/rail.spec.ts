@@ -15,7 +15,9 @@ test("clicking a rail row updates the focused theme and ?theme= param", async ({
 });
 
 test("arrow keys morph the chrome to the next theme", async ({ page }) => {
-  await page.goto("/");
+  // Pin the default so roving focus starts from a known theme (a bare visit now
+  // seeds a random mode-appropriate featured theme).
+  await page.goto("/?theme=tokyo-night");
 
   const railRegion = page.getByRole("complementary", { name: /themes/i });
   const tokyoButton = railRegion.getByRole("button", { name: /tokyo night/i }).first();
@@ -39,7 +41,7 @@ test("arrow keys morph the chrome to the next theme", async ({ page }) => {
 });
 
 test("/ key focuses the catalog rail filter from rail rows", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/?theme=tokyo-night");
 
   const railRegion = page.getByRole("complementary", { name: /themes/i });
   await railRegion
@@ -49,7 +51,8 @@ test("/ key focuses the catalog rail filter from rail rows", async ({ page }) =>
   await page.keyboard.press("/");
 
   await expect(railRegion.getByRole("textbox", { name: /filter by name/i })).toBeFocused();
-  await expect(page).not.toHaveURL(/theme=/);
+  // Focusing the filter must not switch the focused theme; the pinned theme stays put.
+  await expect(page).toHaveURL(/theme=tokyo-night/);
 });
 
 test("typing in the rail filter narrows to the pinned Superset baselines", async ({ page }) => {

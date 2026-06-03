@@ -9,7 +9,7 @@ test.describe("command palette", () => {
     const palette = page.getByRole("dialog", { name: /command palette/i });
     await expect(palette).toBeVisible();
 
-    await page.getByRole("combobox", { name: /command palette search/i }).fill("rose");
+    await page.getByRole("combobox", { name: /command palette search/i }).fill("dawn");
     await expect(palette.getByRole("option", { name: /rosé pine dawn/i })).toBeVisible();
 
     await page.keyboard.press("Enter");

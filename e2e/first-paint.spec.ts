@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-test("first paint renders default theme background", async ({ page }) => {
-  await page.goto("/");
+test("first paint renders the themed background with no white flash", async ({ page }) => {
+  // Pin a theme so first paint is deterministic regardless of the OS color scheme;
+  // an explicit ?theme= paints via the critical-CSS no-attribute fallback.
+  await page.goto("/?theme=tokyo-night");
   const bg = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
   // Tokyo Night ui.background is #1a1b26 → rgb(26, 27, 38)
   expect(bg).toBe("rgb(26, 27, 38)");

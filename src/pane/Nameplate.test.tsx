@@ -16,17 +16,23 @@ function entryFor(id: string) {
 }
 
 describe("Nameplate", () => {
-  it("renders theme name, family chip, tag chips, and a light/dark indicator", () => {
+  it("renders theme name, family chip, and a light/dark indicator", () => {
     // Pick an entry where theme.name and meta.family differ so we can assert each independently.
     const entry = entryFor("rose-pine-dawn");
     render(<Nameplate entry={entry} onPin={() => {}} />);
 
     expect(screen.getByRole("heading", { name: entry.theme.name })).toBeInTheDocument();
     expect(screen.getByText(entry.meta.family)).toBeInTheDocument();
-    for (const tag of entry.meta.styleTags) {
-      expect(screen.getByText(tag)).toBeInTheDocument();
-    }
     expect(screen.getByLabelText(/light theme/i)).toBeInTheDocument();
+  });
+
+  it("does not render style-tag chips", () => {
+    const entry = entryFor("aurora-dark");
+    render(<Nameplate entry={entry} onPin={() => {}} />);
+
+    for (const tag of entry.meta.styleTags) {
+      expect(screen.queryByText(tag)).not.toBeInTheDocument();
+    }
   });
 
   it("renders a dark indicator for dark themes", () => {
@@ -113,16 +119,12 @@ describe("Nameplate", () => {
     );
   });
 
-  it("omits style tags in compact mode to keep the identity strip single-line", () => {
-    // aurora-dark's wider tag set is what wraps the title in a narrow compare slot;
-    // compact drops the tags (redundant beside the visible preview) but keeps the
-    // core identity (name + family + mode).
+  it("keeps the core identity strip in compact mode", () => {
+    // Compare slots are narrow; compact keeps the core identity (name + family +
+    // mode) while collapsing action labels to icon tooltips.
     const entry = entryFor("aurora-dark");
     render(<Nameplate entry={entry} compact />);
 
-    for (const tag of entry.meta.styleTags) {
-      expect(screen.queryByText(tag)).not.toBeInTheDocument();
-    }
     expect(screen.getByRole("heading", { name: entry.theme.name })).toBeInTheDocument();
     expect(screen.getByText(entry.meta.family)).toBeInTheDocument();
     expect(screen.getByLabelText(/dark theme/i)).toBeInTheDocument();

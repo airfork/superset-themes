@@ -12,7 +12,9 @@ async function expectNoHorizontalOverflow(page: Page) {
 
 test.describe("catalog master/detail shell", () => {
   test("clicking a rail row updates the URL and morphs the chrome", async ({ page }) => {
-    await page.goto("/");
+    // Pin the default so the starting theme is deterministic (a bare visit now seeds
+    // a random mode-appropriate featured theme).
+    await page.goto("/?theme=tokyo-night");
 
     // Tokyo Night is the default focused theme; pane nameplate shows its name.
     await expect(page.getByRole("heading", { name: /tokyo night/i }).first()).toBeVisible();
@@ -38,7 +40,7 @@ test.describe("catalog master/detail shell", () => {
   });
 
   test("catalog renders the focused workspace scene", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/?theme=tokyo-night");
 
     await expect(page.getByRole("region", { name: /tokyo night workspace/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /^run ⌘g$/i })).toBeVisible();

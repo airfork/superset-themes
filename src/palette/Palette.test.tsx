@@ -112,7 +112,9 @@ describe("Palette", () => {
     render(<Host commands={makeCommands(onSelectTheme, vi.fn())} />);
     openPalette();
 
-    await user.keyboard("rose");
+    // "dawn" uniquely matches Rosé Pine Dawn; "rose" now ties across the three
+    // Rosé Pine variants, so the deterministic top match needs a sharper query.
+    await user.keyboard("dawn");
     await user.keyboard("{Enter}");
 
     expect(onSelectTheme).toHaveBeenCalledWith("rose-pine-dawn");

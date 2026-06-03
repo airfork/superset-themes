@@ -1,13 +1,19 @@
 import type { CatalogThemeEntry, CatalogThemeMeta, SupersetTheme } from "../theme-core/themeTypes";
 import auroraDarkTheme from "./themes/aurora-dark.json" with { type: "json" };
 import auroraLightTheme from "./themes/aurora-light.json" with { type: "json" };
+import catppuccinLatteTheme from "./themes/catppuccin-latte.json" with { type: "json" };
 import catppuccinMochaTheme from "./themes/catppuccin-mocha.json" with { type: "json" };
 import draculaTheme from "./themes/dracula.json" with { type: "json" };
+import githubDarkTheme from "./themes/github-dark.json" with { type: "json" };
+import githubDarkDimmedTheme from "./themes/github-dark-dimmed.json" with { type: "json" };
+import githubLightTheme from "./themes/github-light.json" with { type: "json" };
 import graphiteDarkTheme from "./themes/graphite-dark.json" with { type: "json" };
 import gruvboxDarkTheme from "./themes/gruvbox-dark.json" with { type: "json" };
 import nordTheme from "./themes/nord.json" with { type: "json" };
 import oneDarkTheme from "./themes/one-dark.json" with { type: "json" };
+import rosePineTheme from "./themes/rose-pine.json" with { type: "json" };
 import rosePineDawnTheme from "./themes/rose-pine-dawn.json" with { type: "json" };
+import rosePineMoonTheme from "./themes/rose-pine-moon.json" with { type: "json" };
 import solarizedDarkTheme from "./themes/solarized-dark.json" with { type: "json" };
 import solarizedLightTheme from "./themes/solarized-light.json" with { type: "json" };
 import supersetDarkTheme from "./themes/superset-dark.json" with { type: "json" };
@@ -141,6 +147,23 @@ export const catalogThemeMetadata = [
     baselineRank: null,
   },
   {
+    themeId: "catppuccin-latte",
+    source: "upstream-port",
+    family: "Catppuccin",
+    variant: "light",
+    styleTags: ["pastel", "clear", "terminal-rich"],
+    accentHue: 224,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/catppuccin/catppuccin",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the official Catppuccin Latte palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
     themeId: "dracula",
     source: "upstream-port",
     family: "Dracula",
@@ -209,6 +232,40 @@ export const catalogThemeMetadata = [
     baselineRank: null,
   },
   {
+    themeId: "rose-pine",
+    source: "upstream-port",
+    family: "Rosé Pine",
+    variant: "dark",
+    styleTags: ["soft", "muted", "designer-darling"],
+    accentHue: 343,
+    warmth: "neutral",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/rose-pine/rose-pine-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Rosé Pine (main) palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
+    themeId: "rose-pine-moon",
+    source: "upstream-port",
+    family: "Rosé Pine",
+    variant: "dark",
+    styleTags: ["soft", "muted", "designer-darling"],
+    accentHue: 343,
+    warmth: "neutral",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/rose-pine/rose-pine-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of the Rosé Pine Moon palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
     themeId: "one-dark",
     source: "upstream-port",
     family: "One Dark",
@@ -222,7 +279,60 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/atom/atom",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Atom One Dark palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
+    themeId: "github-light",
+    source: "upstream-port",
+    family: "GitHub",
+    variant: "light",
+    pairGroup: "github",
+    styleTags: ["clean", "professional", "high-contrast"],
+    accentHue: 212,
+    warmth: "cool",
+    contrastTier: "high",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/primer/github-vscode-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of GitHub's Primer Light Default palette.",
     featuredRank: 5,
+    baselineRank: null,
+  },
+  {
+    themeId: "github-dark",
+    source: "upstream-port",
+    family: "GitHub",
+    variant: "dark",
+    pairGroup: "github",
+    styleTags: ["classic", "balanced", "terminal-rich"],
+    accentHue: 212,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/primer/github-vscode-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of GitHub's Primer Dark Default palette.",
+    featuredRank: null,
+    baselineRank: null,
+  },
+  {
+    themeId: "github-dark-dimmed",
+    source: "upstream-port",
+    family: "GitHub",
+    variant: "dark",
+    styleTags: ["dimmed", "low-glare", "terminal-rich"],
+    accentHue: 212,
+    warmth: "cool",
+    contrastTier: "standard",
+    terminalPaletteQuality: "rich",
+    license: "MIT",
+    upstreamUrl: "https://github.com/primer/github-vscode-theme",
+    portStatus: "ported",
+    notes: "Schema-clean catalog adaptation of GitHub's Primer Dark Dimmed palette.",
+    featuredRank: null,
     baselineRank: null,
   },
   {
@@ -273,11 +383,17 @@ const catalogThemesById = {
   "solarized-dark": solarizedDarkTheme as SupersetTheme,
   nord: nordTheme as SupersetTheme,
   "catppuccin-mocha": catppuccinMochaTheme as SupersetTheme,
+  "catppuccin-latte": catppuccinLatteTheme as SupersetTheme,
   dracula: draculaTheme as SupersetTheme,
   "gruvbox-dark": gruvboxDarkTheme as SupersetTheme,
   "tokyo-night": tokyoNightTheme as SupersetTheme,
   "rose-pine-dawn": rosePineDawnTheme as SupersetTheme,
+  "rose-pine": rosePineTheme as SupersetTheme,
+  "rose-pine-moon": rosePineMoonTheme as SupersetTheme,
   "one-dark": oneDarkTheme as SupersetTheme,
+  "github-light": githubLightTheme as SupersetTheme,
+  "github-dark": githubDarkTheme as SupersetTheme,
+  "github-dark-dimmed": githubDarkDimmedTheme as SupersetTheme,
   "superset-light": supersetLightTheme as SupersetTheme,
   "superset-dark": supersetDarkTheme as SupersetTheme,
 } as const satisfies Record<string, SupersetTheme>;

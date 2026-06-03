@@ -54,15 +54,6 @@ export function Nameplate({
         <span className="pane-nameplate__mode" role="img" aria-label={modeLabel}>
           {isDark ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
         </span>
-        {compact ? null : (
-          <ul className="pane-nameplate__tags" aria-label="Theme style tags">
-            {meta.styleTags.map((tag) => (
-              <li key={tag} className="pane-nameplate__tag">
-                {tag}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
 
       <div className="pane-nameplate__actions" role="toolbar" aria-label={`${theme.name} actions`}>

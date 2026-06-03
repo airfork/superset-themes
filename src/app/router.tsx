@@ -62,6 +62,14 @@ const catalogRoute = createRoute({
       }
     }, [search.theme, focused.theme.id, setFocusedId]);
 
+    // On a bare visit the first-paint script chose the focused theme; pin it into the
+    // URL (replace) so refresh, back, and shares are stable rather than re-rolling.
+    useEffect(() => {
+      if (!search.theme) {
+        void navigate({ replace: true, search: { ...search, theme: focused.theme.id } });
+      }
+    }, [search, focused.theme.id, navigate]);
+
     // `.` enters compare mode with the focused theme as slot a and entry-state.
     // A ref keeps the listener mounted once while always reading the latest focus.
     const enterCompare = () => {

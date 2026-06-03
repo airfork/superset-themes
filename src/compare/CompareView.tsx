@@ -138,7 +138,7 @@ export function CompareView({
   // the user tabs in from outside the header. A clear auto-focuses Undo (handled by
   // the header-focus hold), so we leave its blur-to-dismiss behavior untouched.
   useEffect(() => {
-    if (!notice || notice.kind !== "replaced") {
+    if (notice?.kind !== "replaced") {
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {

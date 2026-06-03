@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
 beforeAll(() => {
@@ -10,6 +10,13 @@ beforeAll(() => {
 
 beforeEach(() => {
   window.history.replaceState(null, "", "/");
+});
+
+afterEach(() => {
+  // applyTheme writes data-theme-id/type on documentElement; clear it so the
+  // first-paint seed in one test never leaks into the next.
+  document.documentElement.removeAttribute("data-theme-id");
+  document.documentElement.removeAttribute("data-theme-type");
 });
 
 describe("App", () => {

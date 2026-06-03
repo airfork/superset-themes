@@ -43,6 +43,17 @@ Adaptations made for this app:
 - Adaptation notes: Kept Mocha palette names and ANSI colors; mapped app chrome to this repo's
   Superset theme schema.
 
+## Catppuccin Latte
+
+- Theme: `catppuccin-latte`
+- Original theme: Catppuccin Latte by the Catppuccin organization
+- Source: <https://github.com/catppuccin/catppuccin>
+- Palette source: <https://github.com/catppuccin/palette>
+- License: MIT
+- Adaptation notes: Kept Latte palette names and ANSI colors; mapped app chrome to this repo's
+  Superset theme schema. Used white button foregrounds on the blue/red accents and lightened the
+  highlight and terminal selection one surface step to satisfy the local contrast gate.
+
 ## Dracula
 
 - Theme: `dracula`
@@ -84,6 +95,17 @@ Adaptations made for this app:
   `ui.ring` token shifted from `#d7827e` (rose) to `#286983` (pine) so focus rings clear the
   WCAG 3:1 non-text contrast bar; the rose stays the row identity accent via `ui.accent`.
 
+## Rosé Pine and Rosé Pine Moon
+
+- Themes: `rose-pine`, `rose-pine-moon`
+- Original themes: Rosé Pine (main) and Rosé Pine Moon by the Rosé Pine organization
+- Source: <https://github.com/rose-pine/rose-pine-theme>
+- License: MIT
+- Adaptation notes: Used the published main and moon palettes (base, surface, overlay, text, love,
+  gold, rose, pine, foam, iris, subtle, highlight). For these dark variants the primary action uses
+  foam (the light teal, kin to Dawn's pine primary) over a base-dark foreground, and love carries
+  the destructive token over a base-dark foreground, so both clear the local AA contrast gate.
+
 ## One Dark
 
 - Theme: `one-dark`
@@ -93,6 +115,20 @@ Adaptations made for this app:
 - Adaptation notes: Used the One Dark UI palette (#282c34 surfaces, #abb2bf foreground) and the
   Atom-lineage ANSI mapping. Used a near-black foreground on the cool blue primary and warm red
   destructive tokens for AA contrast against light accent surfaces.
+
+## GitHub
+
+- Themes: `github-light`, `github-dark`, `github-dark-dimmed`
+- Original theme: GitHub VS Code theme (Primer) by GitHub
+- Source: <https://github.com/primer/github-vscode-theme>
+- Palette source: <https://primer.style> (Primer Primitives)
+- License: MIT
+- Adaptation notes: Used Primer's Light Default, Dark Default, and Dark Dimmed canvas/foreground/
+  accent/danger primitives plus the published terminal ANSI palettes. Light Default uses white
+  button foregrounds on the accent blue and danger red. The dark variants use a light accent
+  (the link blue) over a canvas-dark foreground for the primary and destructive tokens so they
+  clear the local AA contrast gate; Dark Dimmed's terminal selection foreground was brightened a
+  step for selection legibility.
 
 ## Superset Defaults
 
