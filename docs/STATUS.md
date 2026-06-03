@@ -6,10 +6,20 @@ The Superset Theme Catalog is a complete static React/Vite app for browsing, com
 generating, validating, and exporting Superset-compatible themes. It currently ships 14 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
-Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mapping`.
+Previous committed checkpoint: `b437ae8 Record public Pages launch`.
 
 Latest completed checkpoint:
 
+- Public repo maintenance added PR CI, Dependabot update config, a code of conduct, and README
+  live-app/current-control copy.
+- GitHub settings now have Issues, Dependabot vulnerability alerts/security updates, private
+  vulnerability reporting, secret scanning, and push protection enabled.
+- GitHub Pages builds now emit direct app-shell artifacts for `/compare` and `/lab` in addition
+  to the SPA `404.html` fallback.
+- The tracked `.superset/config.json` hidden tool config was removed and `.superset/` is ignored,
+  avoiding confusion with user-level Superset app state.
+- Stale local branches `airfork/critique-lab-page`, `airfork/gh-pages-bundle-audit`, and
+  `airfork/superset-dark-mode` were deleted after confirming no matching remote branches remain.
 - Pre-public readiness now uses Vite's `%BASE_URL%` placeholder for static shell install assets,
   so GitHub Pages builds resolve favicon, apple-touch icon, and manifest links under
   `/superset-themes/`.
@@ -34,13 +44,16 @@ Latest completed checkpoint:
 Current slice verification passed:
 
 - `rtk git diff --check`
-- `rtk pnpm check` passed: Biome checked 194 files with no warnings, Vitest passed 52 files /
-  348 tests, script tests passed, 4 metadata/community tests passed, and the production build
+- `rtk pnpm check` passed: Biome checked 193 files with no warnings, Vitest passed 52 files /
+  348 tests, script tests passed, 5 metadata/community tests passed, 3 critical-theme/Pages
+  plugin tests passed, and the production build
   inside `check` succeeded.
 - `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
 - `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
 - `rtk pnpm build:pages` passed; Pages initial JS `368.69 kB` minified / `113.77 kB` gzip.
+- `test -f dist/compare.html`, `test -f dist/compare/index.html`, `test -f dist/lab.html`,
+  and `test -f dist/lab/index.html` passed after the Pages build.
 - `rtk gh workflow enable pages.yml --repo airfork/superset-themes` enabled the deploy workflow
   after the public visibility flip.
 - `rtk gh workflow run pages.yml --repo airfork/superset-themes --ref main` created run
@@ -51,7 +64,8 @@ Current slice verification passed:
 ## GitHub Pages And Bundle Baseline
 
 - `pnpm build:pages` builds with the `/superset-themes/` base path.
-- Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
+- Vite emits `404.html` as a GitHub Pages SPA fallback, `.nojekyll`, and direct route copies for
+  `compare` and `lab`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
 - Public metadata now targets `https://airfork.github.io/superset-themes/`.
 - Pages API reports `build_type: workflow`, `public: true`, and
@@ -65,10 +79,14 @@ Current slice verification passed:
 
 ## Remaining Opportunities
 
-- Optionally add a `CODE_OF_CONDUCT.md` once the project owner chooses the governance policy.
+- Optionally add a branch protection rule after the new PR CI workflow is pushed and visible to
+  GitHub.
 - The successful Pages workflow run emitted a GitHub Actions warning that several current
   JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
   override once GitHub's Node 24 transition becomes actionable.
+- `airfork/remove-theme-pills` remains checked out in
+  `/Users/tunji/conductor/workspaces/superset-themes/lyon` with uncommitted changes, so it was not
+  removed during stale branch cleanup.
 
 ## Blockers
 

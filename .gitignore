@@ -2,6 +2,7 @@
 .superpowers/
 .worktrees/
 .impeccable/
+.superset/
 research-output.json
 scripts/superset-inspect*.mjs
 docs/review/*.png

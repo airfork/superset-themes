@@ -1,4 +1,4 @@
-import { copyFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
@@ -19,8 +19,9 @@ function normalizeAssetBase(basePath: string | undefined): string {
   return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
 }
 
-function githubPagesSpaFallbackPlugin(): Plugin {
+export function githubPagesSpaFallbackPlugin(): Plugin {
   let outDir = "dist";
+  const directRoutes = ["compare", "lab"] as const;
 
   return {
     name: "github-pages-spa-fallback",
@@ -29,8 +30,16 @@ function githubPagesSpaFallbackPlugin(): Plugin {
       outDir = config.build.outDir;
     },
     closeBundle() {
-      copyFileSync(join(outDir, "index.html"), join(outDir, "404.html"));
+      const appShell = join(outDir, "index.html");
+      copyFileSync(appShell, join(outDir, "404.html"));
       writeFileSync(join(outDir, ".nojekyll"), "");
+
+      for (const route of directRoutes) {
+        copyFileSync(appShell, join(outDir, `${route}.html`));
+        const routeDir = join(outDir, route);
+        mkdirSync(routeDir, { recursive: true });
+        copyFileSync(appShell, join(routeDir, "index.html"));
+      }
     },
   };
 }

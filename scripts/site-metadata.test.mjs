@@ -92,14 +92,25 @@ test("public repository docs omit private remote references", () => {
   assert.doesNotMatch(readme, /git@github\.com:airfork\/superset-themes\.git/);
 });
 
+test("public README points to the live app and current catalog controls", () => {
+  const readme = readText("README.md");
+
+  assertIncludes(readme, siteUrl);
+  assertIncludes(readme, "Superset, Featured, Light, and Dark sections");
+  assert.doesNotMatch(readme, /metadata filters|sort controls/);
+});
+
 test("public repository community files are present", () => {
   for (const path of [
     "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
     "SECURITY.md",
+    ".github/dependabot.yml",
     ".github/ISSUE_TEMPLATE/bug_report.md",
     ".github/ISSUE_TEMPLATE/config.yml",
     ".github/ISSUE_TEMPLATE/feature_request.md",
     ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
   ]) {
     const text = readText(path);
     assert.ok(text.trim().length > 0, `${path} should not be empty`);
