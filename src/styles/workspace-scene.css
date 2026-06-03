@@ -482,9 +482,11 @@ a.scene-workspace__footer-row:hover {
   opacity: 1;
 }
 
+/* Derived band (see paletteTokens), not raw accent: on themes that set accent == the app
+   background the close-button hover would otherwise vanish, especially on the active tab. */
 .scene-workspace__session-close:hover {
-  background: var(--preview-ui-accent);
-  color: var(--preview-ui-foreground);
+  background: var(--preview-background-active);
+  color: var(--preview-background-active-foreground);
 }
 
 .scene-workspace__session-new {

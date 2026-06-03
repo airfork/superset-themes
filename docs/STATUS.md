@@ -8,7 +8,34 @@ themes and is configured for GitHub Pages project hosting at `/superset-themes/`
 
 Previous committed checkpoint: `b26706c chore(deps): bump react and @types/react (#13)`.
 
-Latest completed checkpoint — light-theme balance batch:
+Latest completed checkpoint — visible command-palette focus/hover on every theme:
+
+- Fixed the command palette's active (keyboard-focused) and hover row bands vanishing on themes that
+  ship `ui.accent == ui.popover` (or near it). The bands used raw `--preview-ui-accent`, so on
+  `gruvbox-light`, both `solarized` variants, and `github-dark-dimmed` (ΔE 0 accent-vs-popover) the
+  focused/hovered row was indistinguishable from the surface; `github-dark` was borderline.
+- New `src/theme-core/paletteTokens.ts` `getPaletteActiveSurface(theme)` derives the band via CIEDE2000
+  ΔE (culori): it keeps the theme's own accent when it already reads as a distinct band (GitHub Light's
+  `#ddf4ff` is untouched), and otherwise synthesizes a neutral tonal step by fading the popover toward
+  its foreground until it clears a guaranteed-visible delta — the same "state is a neutral tint"
+  approach the rail already uses. WCAG contrast is deliberately not the gate (GitHub Light's blue band
+  is ~1.1:1 yet clearly visible by hue); the gap that matters is perceptual.
+- Superset Light/Dark stay on their real app accent (Fidelity Exception Rule). Only 5 themes change
+  (`gruvbox-light`, `solarized-light`, `solarized-dark`, `github-dark-dimmed`, `github-dark`); the
+  other 18 are byte-identical. `themeCssVars` now emits `--preview-popover-active`,
+  `--preview-popover-active-foreground`, `--preview-popover-hover`, consumed by `.palette__option`.
+- Same treatment extended to the workspace session tab's close-button hover (`workspace-scene.css`),
+  which had the same raw-accent collapse over the app background (worst on the active tab, ΔE ~1). The
+  derivation was generalized to be surface-parametric (`deriveActiveSurface`); `getWorkspaceControlSurface`
+  derives against `ui.background` and emits `--preview-background-active(-foreground)`. The close glyph is
+  a non-text control, so its synthesized band is gated at the 3:1 icon threshold (Solarized's low-contrast
+  foreground lands ~3.9–4.2 there, fine for an icon and already the shipped color).
+- Tests: `paletteTokens.test.ts` (accent-kept vs synthesized, Superset exempt, every non-Superset theme
+  ≥ min-visible ΔE, synthesized text stays AA), plus additions to `themeCssVars.test.ts` and the
+  `focusContracts` palette contract. Verified live in-app (gruvbox-light band visible, github-light
+  unchanged). `pnpm check` green (lint, typecheck, unit, build). Not yet committed.
+
+Prior checkpoint — light-theme balance batch:
 
 - Added three upstream-port light themes to fix the catalog's dark/light imbalance, bringing it from
   14 dark / 6 light to 14 dark / 9 light: `gruvbox-light` (Gruvbox Light, MIT/X11), `tokyo-night-light`

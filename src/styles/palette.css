@@ -152,14 +152,17 @@
   margin-top: 0;
 }
 
+/* Active and hover bands are derived (see paletteTokens) rather than raw accent: several
+   themes set accent == popover, which would make the focused row and hover invisible. The
+   derived tokens keep distinct accents verbatim and synthesize a neutral band otherwise. */
 .palette__option:hover {
-  background: color-mix(in srgb, var(--preview-ui-accent) 64%, transparent);
+  background: var(--preview-popover-hover);
 }
 
 .palette__option[data-active],
 .palette__option[data-active]:hover {
-  background: var(--preview-ui-accent);
-  color: var(--preview-ui-accent-foreground);
+  background: var(--preview-popover-active);
+  color: var(--preview-popover-active-foreground);
 }
 
 .palette__option-icon {

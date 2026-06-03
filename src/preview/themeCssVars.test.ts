@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
 import { getFocusRingColor } from "../theme-core/chromeTokens";
+import { getPaletteActiveSurface, getWorkspaceControlSurface } from "../theme-core/paletteTokens";
 import { getThemeCssVars } from "./themeCssVars";
 
 function requireValue<T>(value: T | undefined): T {
@@ -42,6 +43,26 @@ describe("getThemeCssVars", () => {
       "--preview-ui-highlight-match": theme.ui.highlightMatch,
       "--preview-ui-chart-1": theme.ui.chart1,
     });
+  });
+
+  it("derives the command palette active/hover bands so focus stays visible", () => {
+    const theme = requireValue(
+      catalogThemes.find((entry) => entry.theme.id === "gruvbox-light"),
+    ).theme;
+    const surface = getPaletteActiveSurface(theme);
+
+    const control = getWorkspaceControlSurface(theme);
+
+    expect(getThemeCssVars(theme)).toMatchObject({
+      "--preview-popover-active": surface.active,
+      "--preview-popover-active-foreground": surface.activeForeground,
+      "--preview-popover-hover": surface.hover,
+      "--preview-background-active": control.active,
+      "--preview-background-active-foreground": control.activeForeground,
+    });
+    // Gruvbox Light ships accent === popover; the derived band must not equal the surface.
+    expect(surface.active).not.toBe(theme.ui.popover);
+    expect(control.active).not.toBe(theme.ui.background);
   });
 
   it("maps terminal tokens to stable preview CSS variables", () => {
