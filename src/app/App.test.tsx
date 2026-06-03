@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 
 beforeAll(() => {
@@ -12,6 +12,13 @@ beforeEach(() => {
   window.history.replaceState(null, "", "/");
 });
 
+afterEach(() => {
+  // applyTheme writes data-theme-id/type on documentElement; clear it so the
+  // first-paint seed in one test never leaks into the next.
+  document.documentElement.removeAttribute("data-theme-id");
+  document.documentElement.removeAttribute("data-theme-type");
+});
+
 describe("App", () => {
   it("renders the master/detail shell on the catalog route", async () => {
     render(<App />);
@@ -20,6 +27,18 @@ describe("App", () => {
     expect(screen.getByRole("complementary", { name: /themes/i })).toBeInTheDocument();
     expect(screen.getByRole("main")).toBeInTheDocument();
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/Tokyo Night/);
+  });
+
+  it("seeds the focused theme from the data-theme-id the first-paint script set", async () => {
+    // The inline first-paint script picks a mode-appropriate featured theme and
+    // writes data-theme-id before React mounts; the app must adopt it, not the
+    // hard-coded default.
+    document.documentElement.setAttribute("data-theme-id", "github-light");
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: /github light/i })).toBeInTheDocument();
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(/github light/i);
   });
 
   it("hydrates the focused theme from the ?theme= search param", async () => {
