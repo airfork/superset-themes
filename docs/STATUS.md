@@ -6,9 +6,27 @@ The Superset Theme Catalog is a complete static React/Vite app for browsing, com
 generating, validating, and exporting Superset-compatible themes. It currently ships 20 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
-Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mapping`.
+Previous committed checkpoint: `e031cae Fix chart and highlight tokens in GitHub catalog themes`.
 
-Latest completed checkpoint:
+Latest completed checkpoint — time-of-day default theme:
+
+- A bare `/` visit now seeds a random *featured* theme matching the OS `prefers-color-scheme`
+  (dark→dark, light→light), pins the pick into `?theme=` (replace) so refresh/back/share stay
+  stable, and an explicit `?theme=` deep link always wins. Design: `docs/design/2026-06-03-time-of-day-default-theme.md`;
+  plan: `docs/superpowers/plans/2026-06-03-time-of-day-default-theme.md`.
+- First paint is flash-free: `vite-plugin-critical-theme` now bakes one critical block per featured
+  theme keyed by `data-theme-id` plus a no-attribute fallback, and injects an inline `<head>` script
+  that resolves the theme before paint. React seeds `FocusedThemeProvider` from the painted
+  `data-theme-id` (`App.tsx`); the catalog route pins the chosen theme. The picker is a pure,
+  unit-tested `pickThemeIdForScheme` in `src/theme/defaultThemeSelection.ts`.
+- Featured set rebalanced: GitHub Light promoted to rank 5, One Dark retired to `featuredRank: null`,
+  giving a 3-light / 2-dark featured pool. `getDefaultFocusedTheme()` stays rank-1 Tokyo Night as the
+  deterministic fallback. (Note: catalog overall is still dark-heavy at 14 dark / 6 light — a
+  light-only theme batch is the open follow-up to fix balance.)
+- The baked critical CSS grew `index.html` to ~18.9 kB (gzip ~3.0 kB); acceptable, trimmable to
+  essential vars later if needed.
+
+Prior checkpoint — nameplate pills + six catalog themes:
 
 - Removed the style-tag pills from the pane nameplate (`Nameplate.tsx` plus its CSS and tests);
   `styleTags` metadata is retained in the catalog/schema (still stripped from exported JSON).
@@ -29,7 +47,8 @@ Latest completed checkpoint:
   hints, and Open Graph/Twitter/canonical metadata in the static shell.
 - Catalog assembly now joins theme metadata to theme JSON by `themeId` instead of array position.
 - Featured and baseline theme IDs derive from catalog `featuredRank` / `baselineRank` metadata.
-- Critical first-paint theme CSS reads the same runtime default focused theme as the app.
+- Critical first-paint theme CSS now bakes a block per featured theme plus a no-attribute fallback
+  (see the time-of-day checkpoint above) rather than a single default block.
 - `global.css` now acts as an ordered import manifest for split surface CSS files; style contract
   tests read the full CSS import graph.
 
@@ -39,17 +58,17 @@ Latest completed checkpoint:
 
 ## Verification
 
-Current slice verification passed (six-theme addition + nameplate pill removal):
+Current slice verification passed (time-of-day default theme):
 
-- `rtk pnpm themes:validate` passed: 20 catalog themes from 20 JSON files.
-- `rtk pnpm themes:check-contrast` passed for 20 themes; the only optional warnings are on the
-  frozen `superset-*` baselines (the six new themes report zero warnings).
-- `rtk pnpm check` passed: Biome clean, Vitest passed 52 files / 355 tests, script/metadata tests
-  passed, and the production build inside `check` succeeded.
-- `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
-- `rtk pnpm test:stories` passed: 9 files / 31 stories.
-- Visual spot-check via the dev server confirmed GitHub Light/Dark Dimmed, Catppuccin Latte, and
-  Rosé Pine render correctly and that the nameplate no longer shows style-tag pills.
+- `rtk pnpm check` passed: Biome clean, Vitest passed 53 files / 362 tests, script/metadata tests
+  (including the reworked critical-theme plugin test) passed, and the production build succeeded.
+- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped — including `e2e/default-theme.spec.ts`
+  (dark→dark, light→light via `emulateMedia({ colorScheme })`, and `?theme=` override) plus the
+  pinning assertions, with existing catalog/rail/shell specs re-pinned to `?theme=tokyo-night` for
+  determinism.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories (the App scaffold story now clears
+  `data-theme-id` so its a11y check runs against the deterministic default theme).
+- TDD throughout: each task wrote a failing test first, then the minimal implementation.
 
 Launch deploy verification (still current):
 
@@ -77,6 +96,9 @@ Launch deploy verification (still current):
 
 ## Remaining Opportunities
 
+- Light/dark balance: the catalog is still dark-heavy (14 dark / 6 light). A light-only theme batch
+  (e.g. One Light, Gruvbox Light, Tokyo Night Day, Ayu Light, Everforest Light) would both fix the
+  balance and deepen the daytime pool for the time-of-day default.
 - Optionally add a `CODE_OF_CONDUCT.md` once the project owner chooses the governance policy.
 - The successful Pages workflow run emitted a GitHub Actions warning that several current
   JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
