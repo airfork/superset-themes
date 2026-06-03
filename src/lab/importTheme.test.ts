@@ -130,23 +130,23 @@ describe("parseImportedThemeJson", () => {
     });
   });
 
-  it("returns a readable invalid JSON error", () => {
+  it("returns a readable, jargon-free invalid JSON error", () => {
     const result = parseImportedThemeJson("{ nope");
 
     expect(result).toEqual({
-      error: "Invalid JSON: expected property name or '}' at line 1 column 3",
+      error: "That doesn't look like valid JSON. Paste a theme exported from Superset.",
       ok: false,
     });
   });
 
-  it("returns schema errors for non-theme JSON", () => {
+  it("returns schema errors naming the offending fields for non-theme JSON", () => {
     const result = parseImportedThemeJson(JSON.stringify({ id: "not-enough" }));
 
     if (result.ok) {
       throw new Error("Expected schema import to fail.");
     }
 
-    expect(result.error).toContain("Theme schema error:");
+    expect(result.error).toContain("isn't a Superset theme");
     expect(result.error).toContain("author");
   });
 });

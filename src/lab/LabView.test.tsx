@@ -62,7 +62,7 @@ describe("LabView", () => {
 
     await user.click(screen.getByRole("button", { name: /^generate$/i }));
 
-    expect(screen.getByText(/draft — generated, seed: preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
     // The catalog select drops back to the placeholder once the draft is no
     // longer catalog-sourced.
     expect(screen.getByRole("combobox", { name: /start from catalog theme/i })).toHaveValue("");
@@ -84,7 +84,33 @@ describe("LabView", () => {
     await user.paste(exportThemeJson(graphite.theme));
     await user.click(screen.getByRole("button", { name: /import pasted json/i }));
 
-    expect(screen.getByText(/draft — imported/i)).toBeInTheDocument();
+    expect(screen.getByText(/draft, imported/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: graphite.theme.name })).toBeInTheDocument();
+  });
+
+  it("undoes and redoes a generate through the history stack", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    // Undo/Redo are present but disabled before any change.
+    expect(screen.getByRole("button", { name: /undo/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /redo/i })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /undo/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /undo/i }));
+
+    // Restored to the catalog-sourced draft; redo now available.
+    expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: /start from catalog theme/i })).toHaveValue(
+      "aurora-light",
+    );
+    expect(screen.getByRole("button", { name: /undo/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /redo/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /redo/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
   });
 });

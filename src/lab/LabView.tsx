@@ -13,12 +13,23 @@ import type {
   UiTokens,
 } from "../theme-core/themeTypes";
 import {
+  currentDraft,
+  type DraftHistory,
+  canRedo as historyCanRedo,
+  canUndo as historyCanUndo,
+  commit as historyCommit,
+  redo as historyRedo,
+  undo as historyUndo,
+  initHistory,
+} from "./draftHistory";
+import {
   createDraftFromGeneratedTheme,
   createDraftFromImportedTheme,
   type ThemeDraft,
   updateDraftTerminalToken,
   updateDraftUiToken,
 } from "./draftTheme";
+import { LabMobileNotice } from "./LabMobileNotice";
 import { LabNameplate } from "./LabNameplate";
 import { LabRail } from "./LabRail";
 import {
@@ -75,12 +86,27 @@ function draftToEntry(draft: ThemeDraft): CatalogThemeEntry {
 }
 
 export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: LabViewProps) {
-  const [draft, setDraft] = useState(initialDraft);
   const [seed, setSeed] = useState(DEFAULT_SEED);
   const [mode, setMode] = useState<ThemeType>(initialDraft.theme.type);
   const [hue, setHue] = useState(DEFAULT_HUE);
   const [rerollNonce, setRerollNonce] = useState(0);
+
+  // Full edit history with a cursor so Undo/Redo step through every change,
+  // including manual token edits. See draftHistory.ts for the coalescing rule
+  // that keeps a color-picker drag as one undo step.
+  const [history, setHistory] = useState<DraftHistory<ThemeDraft>>(() => initHistory(initialDraft));
+
+  const draft = currentDraft(history);
+  const canUndo = historyCanUndo(history);
+  const canRedo = historyCanRedo(history);
   const entry = useMemo(() => draftToEntry(draft), [draft]);
+
+  const commitDraft = (next: ThemeDraft, coalesceKey: string | null = null) => {
+    setHistory((current) => historyCommit(current, next, coalesceKey));
+  };
+
+  const handleUndo = () => setHistory(historyUndo);
+  const handleRedo = () => setHistory(historyRedo);
 
   // Token edits (and continuous native color-picker drags) call setDraft many
   // times a second. The Pane subtree reads from a deferred draft so it re-renders
@@ -100,7 +126,7 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   useLayoutEffect(() => () => setTransientEntry(null), [setTransientEntry]);
 
   const generate = (generationSeed: string) => {
-    setDraft(
+    commitDraft(
       createDraftFromGeneratedTheme(
         generateRandomTheme({
           hueRange: { max: hue + HUE_BAND, min: hue },
@@ -120,26 +146,26 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   };
 
   const handleImportTheme = (theme: SupersetTheme) => {
-    setDraft(createDraftFromImportedTheme(theme));
+    commitDraft(createDraftFromImportedTheme(theme));
   };
 
   const handleUiTokenChange = (token: keyof UiTokens, value: string) => {
-    setDraft((current) => updateDraftUiToken(current, token, value));
+    commitDraft(updateDraftUiToken(draft, token, value), `ui:${token}`);
   };
 
   const handleTerminalTokenChange = (token: keyof TerminalTokens, value: string) => {
-    setDraft((current) => updateDraftTerminalToken(current, token, value));
+    commitDraft(updateDraftTerminalToken(draft, token, value), `term:${token}`);
   };
 
   const handleRerollGroup = (group: RandomThemeTokenGroup) => {
     const nextNonce = rerollNonce + 1;
     setRerollNonce(nextNonce);
-    setDraft((current) =>
+    commitDraft(
       createDraftFromGeneratedTheme(
         rerollRandomThemeGroup({
           group,
           seed: `${seed}:${group}:${nextNonce}`,
-          theme: current.theme,
+          theme: draft.theme,
         }),
       ),
     );
@@ -165,6 +191,8 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
       palette={palette.paletteProps}
       rail={
         <LabRail
+          canRedo={canRedo}
+          canUndo={canUndo}
           draft={draft}
           hue={hue}
           mode={mode}
@@ -174,16 +202,23 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
           onImportTheme={handleImportTheme}
           onModeChange={setMode}
           onOpenPalette={palette.open}
+          onRedo={handleRedo}
           onRerollAll={handleRerollAll}
           onRerollGroup={handleRerollGroup}
           onSeedChange={setSeed}
           onStartFromCatalog={onStartFromCatalog}
           onTerminalTokenChange={handleTerminalTokenChange}
           onUiTokenChange={handleUiTokenChange}
+          onUndo={handleUndo}
           seed={seed}
         />
       }
-      pane={<Pane entry={deferredEntry} nameplate={nameplate} />}
+      pane={
+        <>
+          <LabMobileNotice />
+          <Pane entry={deferredEntry} nameplate={nameplate} />
+        </>
+      }
     />
   );
 }

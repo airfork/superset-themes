@@ -228,8 +228,30 @@ button.rail-search {
 }
 
 .lab-rail input[type="file"] {
-  padding: 6px 10px;
+  width: 100%;
   font-size: 0.76rem;
+  color: var(--preview-ui-muted-foreground);
+}
+
+/* Replace the OS-native file button with the lab's bordered control vocabulary;
+   the "No file chosen" text stays as the muted field color set above. */
+.lab-rail input[type="file"]::file-selector-button {
+  height: 30px;
+  margin-right: 10px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-card);
+  color: var(--preview-ui-foreground);
+  padding: 0 12px;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lab-rail input[type="file"]::file-selector-button:hover {
+  border-color: var(--preview-ui-accent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--preview-ui-card));
 }
 
 .lab-hue-field input[type="range"] {
@@ -269,7 +291,7 @@ button.rail-search {
   border: 1px solid var(--preview-ui-destructive);
   border-radius: 6px;
   background: color-mix(in srgb, var(--preview-ui-destructive) 14%, var(--preview-ui-card));
-  color: var(--preview-ui-foreground);
+  color: color-mix(in srgb, var(--preview-ui-destructive) 65%, var(--preview-ui-foreground));
   padding: 8px 10px;
   font-size: 0.76rem;
   font-weight: 650;

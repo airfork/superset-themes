@@ -10,6 +10,8 @@ import { SourceSection } from "./SourceSection";
 import { TokensSection } from "./TokensSection";
 
 interface LabRailProps {
+  canRedo: boolean;
+  canUndo: boolean;
   draft: ThemeDraft;
   hue: number;
   mode: ThemeType;
@@ -19,12 +21,14 @@ interface LabRailProps {
   onImportTheme: (theme: SupersetTheme) => void;
   onModeChange: (mode: ThemeType) => void;
   onOpenPalette: () => void;
+  onRedo: () => void;
   onRerollAll: () => void;
   onRerollGroup: (group: RandomThemeTokenGroup) => void;
   onSeedChange: (seed: string) => void;
   onStartFromCatalog: (themeId: string) => void;
   onTerminalTokenChange: (token: keyof TerminalTokens, value: string) => void;
   onUiTokenChange: (token: keyof UiTokens, value: string) => void;
+  onUndo: () => void;
   seed: string;
 }
 
@@ -40,6 +44,8 @@ function focusUiToken(token: keyof UiTokens) {
 }
 
 export function LabRail({
+  canRedo,
+  canUndo,
   draft,
   hue,
   mode,
@@ -49,12 +55,14 @@ export function LabRail({
   onImportTheme,
   onModeChange,
   onOpenPalette,
+  onRedo,
   onRerollAll,
   onRerollGroup,
   onSeedChange,
   onStartFromCatalog,
   onTerminalTokenChange,
   onUiTokenChange,
+  onUndo,
   seed,
 }: LabRailProps) {
   // The lab rail keeps a visible palette trigger (the catalog rail repurposed its
@@ -109,7 +117,14 @@ export function LabRail({
         onUiTokenChange={onUiTokenChange}
       />
 
-      <LabFooter onBackToCatalog={onBackToCatalog} theme={draft.theme} />
+      <LabFooter
+        canRedo={canRedo}
+        canUndo={canUndo}
+        onBackToCatalog={onBackToCatalog}
+        onRedo={onRedo}
+        onUndo={onUndo}
+        theme={draft.theme}
+      />
     </div>
   );
 }

@@ -1,100 +1,3 @@
-.lab-page {
-  display: grid;
-  gap: 20px;
-}
-
-.lab-page__header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 18px;
-}
-
-.lab-page__header h2,
-.lab-panel h3 {
-  margin: 0;
-  letter-spacing: 0;
-}
-
-.lab-page__header h2 {
-  font-size: 1.45rem;
-  line-height: 1.15;
-}
-
-.lab-page__header p:not(.eyebrow) {
-  margin: 8px 0 0;
-  max-width: 72ch;
-  color: var(--preview-ui-muted-foreground);
-}
-
-.lab-page__status {
-  border: 1px solid var(--preview-ui-border);
-  border-radius: 999px;
-  background: var(--preview-ui-card);
-  padding: 6px 10px;
-  color: var(--preview-ui-muted-foreground);
-  font-size: 0.78rem;
-  font-weight: 750;
-}
-
-.lab-page__workspace {
-  display: grid;
-  grid-template-columns: 330px minmax(0, 1fr);
-  align-items: start;
-  gap: 18px;
-}
-
-.lab-panel {
-  position: sticky;
-  top: 14px;
-  display: grid;
-  max-height: calc(100vh - 28px);
-  gap: 14px;
-  overflow: auto;
-  border: 1px solid var(--preview-ui-border);
-  border-radius: 8px;
-  background: var(--preview-ui-card);
-  padding: 14px;
-  box-shadow: 0 18px 50px color-mix(in srgb, var(--preview-ui-foreground) 12%, transparent);
-}
-
-.lab-panel__section,
-.lab-token-group {
-  display: grid;
-  gap: 10px;
-  min-width: 0;
-  margin: 0;
-  border: 0;
-  padding: 0;
-}
-
-.lab-panel h3 {
-  font-size: 1rem;
-}
-
-.lab-draft-facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-}
-
-.lab-draft-facts dt,
-.lab-token-group legend,
-.lab-import-field span {
-  color: var(--preview-ui-muted-foreground);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.lab-draft-facts dd {
-  margin: 0;
-  color: var(--preview-ui-foreground);
-  font-size: 0.84rem;
-  font-weight: 750;
-}
-
 .lab-actions {
   display: flex;
   flex-wrap: wrap;
@@ -119,9 +22,18 @@
   cursor: pointer;
 }
 
+/* Flat-by-default convention: hover raises the border to the accent and adds a
+   subtle foreground tint. The text stays --preview-ui-foreground so the label
+   never collides with the surface (an earlier accent-foreground flip went
+   invisible on light cards). */
 .catalog-action-button:hover {
   border-color: var(--preview-ui-accent);
-  color: var(--preview-ui-accent-foreground);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--preview-ui-card));
+}
+
+.catalog-action-button:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
 }
 
 .catalog-action-button:disabled {
@@ -134,83 +46,84 @@
   height: 14px;
 }
 
-.lab-reroll-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-  border: 0;
-  padding: 0;
-}
-
-.lab-reroll-grid .catalog-action-button {
-  justify-content: center;
-}
-
-.lab-import-field {
+/* Lab rail form fields: a stacked label + control sharing one control
+   vocabulary, so the native select / file / text inputs stop rendering as raw
+   browser chrome (default bevels, OS arrows, labels jammed against controls). */
+.lab-field {
   display: grid;
   gap: 5px;
 }
 
-.lab-import-field textarea {
-  min-height: 150px;
-  resize: vertical;
+.lab-field > span:first-child {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--preview-ui-muted-foreground);
+}
+
+/* Quiet teaching line under a group of controls (e.g. what Seed/Hue do). */
+.lab-field-hint {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--preview-ui-muted-foreground);
+}
+
+.lab-field select,
+.lab-field input[type="text"] {
+  width: 100%;
+  height: 32px;
   border: 1px solid var(--preview-ui-border);
   border-radius: 6px;
   background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
-  padding: 10px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 0.78rem;
+  padding: 0 10px;
+  font: inherit;
+  font-size: 0.8rem;
 }
 
-.lab-error {
-  margin: 0;
-  border: 1px solid #fecdd3;
-  border-radius: 6px;
-  background: #fff1f2;
-  color: #9f1239;
-  padding: 8px;
-  font-size: 0.78rem;
-  font-weight: 650;
+.lab-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+  cursor: pointer;
 }
 
-.lab-validation {
-  margin: 0;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 0.78rem;
-  font-weight: 650;
+.lab-field input[type="text"]:hover,
+.lab-field select:hover {
+  border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
 }
 
-.lab-validation h4 {
-  margin: 0 0 6px;
-  font-size: 0.78rem;
-  letter-spacing: 0;
+.lab-field input[type="text"]:focus-visible,
+.lab-field select:focus-visible,
+.lab-field input[type="file"]:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
 }
 
-.lab-validation ul {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  padding-left: 18px;
+/* Wrap the select so a themed chevron can replace the OS-native arrow; the
+   mask tracks the previewed muted foreground instead of a fixed gray. */
+.lab-field__select {
+  position: relative;
+  display: block;
 }
 
-.lab-validation--ok {
-  border: 1px solid #bbf7d0;
-  background: #f0fdf4;
-  color: #166534;
-}
-
-.lab-validation--warning {
-  border: 1px solid #fed7aa;
-  background: #fff7ed;
-  color: #9a3412;
-}
-
-.lab-token-group {
-  border-top: 1px solid var(--preview-ui-border);
-  padding-top: 12px;
+.lab-field__select::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  width: 11px;
+  height: 11px;
+  transform: translateY(-50%);
+  background: var(--preview-ui-muted-foreground);
+  -webkit-mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 15.5 4.5 8l1.4-1.4 6.1 6.1 6.1-6.1L19.5 8z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 15.5 4.5 8l1.4-1.4 6.1 6.1 6.1-6.1L19.5 8z'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  pointer-events: none;
 }
 
 .lab-color-field {
@@ -492,6 +405,12 @@
   border-top: 1px solid var(--preview-ui-border);
 }
 
+.lab-footer__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .lab-footer__back,
 .lab-footer__action {
   display: inline-flex;
@@ -509,8 +428,13 @@
 }
 
 .lab-footer__back:hover,
-.lab-footer__action:hover {
+.lab-footer__action:not(:disabled):hover {
   border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
+}
+
+.lab-footer__action:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
 }
 
 .lab-footer__back:focus-visible,
@@ -519,7 +443,8 @@
   outline-offset: 2px;
 }
 
-.lab-footer__back svg {
+.lab-footer__back svg,
+.lab-footer__action svg {
   width: 13px;
   height: 13px;
 }
@@ -528,6 +453,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+.lab-footer__status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--preview-ui-muted-foreground);
 }
 
 .lab-footer__export-label {
@@ -539,6 +471,49 @@
   color: var(--preview-ui-muted-foreground);
 }
 
-.lab-preview {
-  min-width: 0;
+/* Desktop-only by design: the Theme Bench is a dense multi-column editor that
+   doesn't fold to a phone. The notice shows only at the layout's touch
+   breakpoint, in the pane above the live preview. */
+.lab-mobile-notice {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .lab-mobile-notice {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 0;
+    padding: 14px 16px;
+    background: var(--preview-ui-card);
+    border-bottom: 1px solid var(--preview-ui-border);
+    color: var(--preview-ui-foreground);
+  }
+
+  .lab-mobile-notice__icon {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--preview-ui-muted-foreground);
+  }
+
+  .lab-mobile-notice__title {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .lab-mobile-notice__body {
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--preview-ui-muted-foreground);
+  }
+
+  /* The narrow rail is a short accordion, not a tall scroll container, so a
+     sticky footer would float over the fields above it. Let it flow at the end. */
+  .lab-footer {
+    position: static;
+  }
 }

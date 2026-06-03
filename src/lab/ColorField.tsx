@@ -77,7 +77,7 @@ export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
         value={hexDraft}
       />
       {invalid ? (
-        <p className="lab-color-field__error" id={errorId} role="alert">
+        <p className="lab-color-field__error" id={errorId} role="status">
           Enter a 6-digit hex color, like #1a2b3c.
         </p>
       ) : null}

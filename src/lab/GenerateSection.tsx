@@ -31,7 +31,7 @@ export function GenerateSection({
 
   return (
     <RailSection label="Generate">
-      <label className="catalog-field" htmlFor="lab-generate-seed">
+      <label className="lab-field" htmlFor="lab-generate-seed">
         <span>Seed</span>
         <input
           autoComplete="off"
@@ -44,22 +44,24 @@ export function GenerateSection({
         />
       </label>
 
-      <label className="catalog-field" htmlFor="lab-generate-mode">
+      <label className="lab-field" htmlFor="lab-generate-mode">
         <span>Mode</span>
-        <select
-          id="lab-generate-mode"
-          name="lab-generate-mode"
-          onChange={(event) =>
-            onModeChange(event.currentTarget.value === "dark" ? "dark" : "light")
-          }
-          value={mode}
-        >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+        <span className="lab-field__select">
+          <select
+            id="lab-generate-mode"
+            name="lab-generate-mode"
+            onChange={(event) =>
+              onModeChange(event.currentTarget.value === "dark" ? "dark" : "light")
+            }
+            value={mode}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </span>
       </label>
 
-      <label className="catalog-field lab-hue-field" htmlFor="lab-generate-hue">
+      <label className="lab-field lab-hue-field" htmlFor="lab-generate-hue">
         <span>Hue {Math.round(hue)}°</span>
         <input
           id="lab-generate-hue"
@@ -85,6 +87,10 @@ export function GenerateSection({
           </button>
         ) : null}
       </div>
+
+      <p className="lab-field-hint">
+        The same seed and hue reproduce the same palette. Every pair is checked against WCAG AA.
+      </p>
     </RailSection>
   );
 }

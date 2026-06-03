@@ -40,28 +40,30 @@ export function SourceSection({ draft, onImportTheme, onStartFromCatalog }: Sour
 
   return (
     <RailSection label="Source">
-      <label className="catalog-field" htmlFor="lab-start-from">
+      <label className="lab-field" htmlFor="lab-start-from">
         <span>Start from catalog theme</span>
-        <select
-          id="lab-start-from"
-          name="lab-start-from"
-          onChange={(event) => onStartFromCatalog(event.currentTarget.value)}
-          value={selectedCatalogThemeId}
-        >
-          {selectedCatalogThemeId ? null : (
-            <option value="" disabled>
-              Imported or generated draft
-            </option>
-          )}
-          {catalogOptions.map((entry) => (
-            <option key={entry.theme.id} value={entry.theme.id}>
-              {entry.theme.name}
-            </option>
-          ))}
-        </select>
+        <span className="lab-field__select">
+          <select
+            id="lab-start-from"
+            name="lab-start-from"
+            onChange={(event) => onStartFromCatalog(event.currentTarget.value)}
+            value={selectedCatalogThemeId}
+          >
+            {selectedCatalogThemeId ? null : (
+              <option value="" disabled>
+                Imported or generated draft
+              </option>
+            )}
+            {catalogOptions.map((entry) => (
+              <option key={entry.theme.id} value={entry.theme.id}>
+                {entry.theme.name}
+              </option>
+            ))}
+          </select>
+        </span>
       </label>
 
-      <label className="catalog-field" htmlFor="lab-import-file">
+      <label className="lab-field" htmlFor="lab-import-file">
         <span>Import JSON</span>
         <input
           accept="application/json,.json"
