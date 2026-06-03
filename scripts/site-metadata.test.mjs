@@ -24,9 +24,9 @@ test("index.html exposes install, browser, and social metadata", () => {
     '<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />',
     '<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#151110" />',
     '<link rel="canonical" href="https://airfork.github.io/superset-themes/" />',
-    '<link rel="icon" type="image/svg+xml" href="/favicon.svg" />',
-    '<link rel="apple-touch-icon" href="/apple-touch-icon.svg" />',
-    '<link rel="manifest" href="/site.webmanifest" />',
+    '<link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />',
+    '<link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.svg" />',
+    '<link rel="manifest" href="%BASE_URL%site.webmanifest" />',
     '<meta property="og:type" content="website" />',
     '<meta property="og:site_name" content="Superset Theme Catalog" />',
     '<meta property="og:title" content="Superset Theme Catalog" />',
@@ -83,4 +83,25 @@ test("public metadata assets are present and internally consistent", () => {
   ]);
 
   assert.ok(readFileSync(join(new URL("public", projectRoot).pathname, "favicon.svg")));
+});
+
+test("public repository docs omit private remote references", () => {
+  const readme = readText("README.md");
+
+  assert.doesNotMatch(readme, /Private GitHub remote/);
+  assert.doesNotMatch(readme, /git@github\.com:airfork\/superset-themes\.git/);
+});
+
+test("public repository community files are present", () => {
+  for (const path of [
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/ISSUE_TEMPLATE/config.yml",
+    ".github/ISSUE_TEMPLATE/feature_request.md",
+    ".github/pull_request_template.md",
+  ]) {
+    const text = readText(path);
+    assert.ok(text.trim().length > 0, `${path} should not be empty`);
+  }
 });

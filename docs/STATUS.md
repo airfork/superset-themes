@@ -10,6 +10,11 @@ Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mappi
 
 Latest completed checkpoint:
 
+- Pre-public readiness now uses Vite's `%BASE_URL%` placeholder for static shell install assets,
+  so GitHub Pages builds resolve favicon, apple-touch icon, and manifest links under
+  `/superset-themes/`.
+- Public-facing repository docs no longer include the private SSH remote, and the repo now has
+  contribution guidance, a security policy, issue templates, and a pull request template.
 - Public launch polish added favicon/app/social-card SVG assets, web app manifest, robots/sitemap
   hints, and Open Graph/Twitter/canonical metadata in the static shell.
 - Catalog assembly now joins theme metadata to theme JSON by `themeId` instead of array position.
@@ -28,8 +33,8 @@ Current slice verification passed:
 
 - `rtk git diff --check`
 - `rtk pnpm check` passed: Biome checked 194 files with no warnings, Vitest passed 52 files /
-  348 tests, script tests passed, metadata tests passed, and the production build inside `check`
-  succeeded.
+  348 tests, script tests passed, 4 metadata/community tests passed, and the production build
+  inside `check` succeeded.
 - `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
 - `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
@@ -41,13 +46,17 @@ Current slice verification passed:
 - Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
 - Public metadata now targets `https://airfork.github.io/superset-themes/`.
+- Pages build output now resolves shell install assets under `/superset-themes/`:
+  `/superset-themes/favicon.svg`, `/superset-themes/apple-touch-icon.svg`, and
+  `/superset-themes/site.webmanifest`.
 - Current initial JS baseline:
-  - normal build: `368.60 kB` minified / `113.73 kB` gzip
-  - Pages build: `368.63 kB` minified / `113.74 kB` gzip
+  - normal build: `368.66 kB` minified / `113.76 kB` gzip
+  - Pages build: `368.69 kB` minified / `113.77 kB` gzip
 
 ## Remaining Opportunities
 
-None currently tracked from the bundle/repo-structure audit.
+- Choose and add a root `LICENSE` file before presenting this as open source.
+- Optionally add a `CODE_OF_CONDUCT.md` once the project owner chooses the governance policy.
 
 ## Blockers
 

@@ -80,10 +80,6 @@ Generated themes are draft JSON for inspection or lab import. Catalog metadata s
 - [Theme attributions](docs/THEME_ATTRIBUTIONS.md)
 - [Status and handoff](docs/STATUS.md)
 
-Private GitHub remote:
-
-- `git@github.com:airfork/superset-themes.git`
-
 ## Resumability
 
 This repo treats resumability as a first-class concern. Agents should update [docs/STATUS.md](docs/STATUS.md) and the active implementation plan after meaningful checkpoints.
