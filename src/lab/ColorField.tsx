@@ -5,12 +5,17 @@ const HEX_PATTERN = /^#[0-9a-fA-F]{6}$/;
 interface ColorFieldProps {
   id?: string;
   label: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, options?: ColorFieldChangeOptions) => void;
   value: string;
+}
+
+export interface ColorFieldChangeOptions {
+  coalesceKey?: string | null;
 }
 
 export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
   const colorInputRef = useRef<HTMLInputElement>(null);
+  const pickerSession = useRef(0);
   const hexId = useId();
   const errorId = useId();
   const [hexDraft, setHexDraft] = useState(value);
@@ -40,6 +45,7 @@ export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
           aria-label={`Pick ${label} color`}
           className="lab-color-field__swatch"
           onClick={() => {
+            pickerSession.current += 1;
             colorInputRef.current?.focus();
             colorInputRef.current?.click();
           }}
@@ -49,7 +55,11 @@ export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
         <input
           aria-label={`${label} color picker`}
           className="lab-color-field__picker"
-          onChange={(event) => onChange(event.currentTarget.value)}
+          onChange={(event) =>
+            onChange(event.currentTarget.value, {
+              coalesceKey: `${id ?? label}:picker:${pickerSession.current}`,
+            })
+          }
           ref={colorInputRef}
           tabIndex={-1}
           type="color"

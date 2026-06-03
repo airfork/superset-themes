@@ -116,6 +116,19 @@
   }
 }
 
+@media (max-width: 900px) {
+  /* Lab opts out of the docked rail before the shared mobile breakpoint because
+     the preview pane needs more width than a 300px rail leaves on tablet widths. */
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__body {
+    grid-template-columns: 1fr;
+  }
+
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail,
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail-toggle {
+    display: none;
+  }
+}
+
 .layout-shell__rail-placeholder,
 .layout-shell__pane-placeholder {
   padding: 16px;

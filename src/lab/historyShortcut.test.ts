@@ -26,6 +26,12 @@ describe("historyShortcut", () => {
     );
   });
 
+  it("does not map Cmd+Y to redo", () => {
+    expect(
+      historyShortcut({ ctrlKey: false, key: "y", metaKey: true, shiftKey: false }),
+    ).toBeNull();
+  });
+
   it("is case-insensitive on the key", () => {
     expect(historyShortcut({ ctrlKey: false, key: "Z", metaKey: true, shiftKey: false })).toBe(
       "undo",

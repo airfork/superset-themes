@@ -140,6 +140,33 @@ describe("LabView", () => {
     expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
   });
 
+  it("undoes same-token hex edits one committed value at a time", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    const backgroundHex = () => {
+      const input = screen.getAllByRole("textbox", { name: /^background hex$/i })[0];
+      expect(input).toBeInTheDocument();
+      return input as HTMLInputElement;
+    };
+
+    await user.clear(backgroundHex());
+    await user.type(backgroundHex(), "#111111");
+    await user.tab();
+
+    expect(backgroundHex()).toHaveValue("#111111");
+
+    await user.clear(backgroundHex());
+    await user.type(backgroundHex(), "#222222");
+    await user.tab();
+
+    expect(backgroundHex()).toHaveValue("#222222");
+
+    await user.click(screen.getByRole("button", { name: /undo/i }));
+
+    expect(backgroundHex()).toHaveValue("#111111");
+  });
+
   it("undoes and redoes with the keyboard", async () => {
     const user = userEvent.setup();
     renderLab();

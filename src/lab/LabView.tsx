@@ -12,6 +12,7 @@ import type {
   ThemeType,
   UiTokens,
 } from "../theme-core/themeTypes";
+import type { ColorFieldChangeOptions } from "./ColorField";
 import {
   currentDraft,
   type DraftHistory,
@@ -171,12 +172,20 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
     commitDraft(createDraftFromImportedTheme(theme));
   };
 
-  const handleUiTokenChange = (token: keyof UiTokens, value: string) => {
-    commitDraft(updateDraftUiToken(draft, token, value), `ui:${token}`);
+  const handleUiTokenChange = (
+    token: keyof UiTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => {
+    commitDraft(updateDraftUiToken(draft, token, value), options?.coalesceKey ?? null);
   };
 
-  const handleTerminalTokenChange = (token: keyof TerminalTokens, value: string) => {
-    commitDraft(updateDraftTerminalToken(draft, token, value), `term:${token}`);
+  const handleTerminalTokenChange = (
+    token: keyof TerminalTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => {
+    commitDraft(updateDraftTerminalToken(draft, token, value), options?.coalesceKey ?? null);
   };
 
   const handleRerollGroup = (group: RandomThemeTokenGroup) => {
@@ -237,11 +246,11 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
         />
       }
       pane={
-        <>
+        <div className="lab-pane">
           <h1 className="sr-only">Theme Bench</h1>
           <LabMobileNotice />
           <Pane entry={deferredEntry} nameplate={nameplate} />
-        </>
+        </div>
       }
     />
   );

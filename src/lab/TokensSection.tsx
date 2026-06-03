@@ -1,7 +1,7 @@
 import { RotateCw } from "lucide-react";
 import { useState } from "react";
 import type { TerminalTokens, UiTokens } from "../theme-core/themeTypes";
-import { ColorField } from "./ColorField";
+import { ColorField, type ColorFieldChangeOptions } from "./ColorField";
 import type { ThemeDraft } from "./draftTheme";
 import type { RandomThemeTokenGroup } from "./randomTheme";
 import { filterTokenGroups } from "./tokenFilter";
@@ -97,8 +97,16 @@ const TOKEN_GROUPS: TokenGroup[] = [
 interface TokensSectionProps {
   draft: ThemeDraft;
   onRerollGroup: (group: RandomThemeTokenGroup) => void;
-  onTerminalTokenChange: (token: keyof TerminalTokens, value: string) => void;
-  onUiTokenChange: (token: keyof UiTokens, value: string) => void;
+  onTerminalTokenChange: (
+    token: keyof TerminalTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
+  onUiTokenChange: (
+    token: keyof UiTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
 }
 
 export function TokensSection({
@@ -144,7 +152,7 @@ export function TokensSection({
                   id={`lab-token-ui-${row.token}`}
                   key={`ui-${row.token}`}
                   label={row.label}
-                  onChange={(value) => onUiTokenChange(row.token, value)}
+                  onChange={(value, options) => onUiTokenChange(row.token, value, options)}
                   value={draft.theme.ui[row.token]}
                 />
               ) : (
@@ -152,7 +160,7 @@ export function TokensSection({
                   id={`lab-token-terminal-${row.token}`}
                   key={`terminal-${row.token}`}
                   label={row.label}
-                  onChange={(value) => onTerminalTokenChange(row.token, value)}
+                  onChange={(value, options) => onTerminalTokenChange(row.token, value, options)}
                   value={draft.theme.terminal[row.token]}
                 />
               ),

@@ -36,9 +36,16 @@ export function LabFooter({
     timer.current = setTimeout(() => setStatus(null), STATUS_TIMEOUT_MS);
   };
 
-  const copyJson = () => {
-    void navigator.clipboard?.writeText(exportThemeJson(theme));
-    flashStatus("Copied");
+  const copyJson = async () => {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error("Clipboard API unavailable");
+      }
+      await navigator.clipboard.writeText(exportThemeJson(theme));
+      flashStatus("Copied");
+    } catch {
+      flashStatus("Copy failed");
+    }
   };
 
   const downloadJson = () => {
@@ -83,7 +90,7 @@ export function LabFooter({
         <span aria-live="polite" className="lab-footer__status" role="status">
           {status ? (
             <>
-              <Check aria-hidden="true" />
+              {status === "Copied" || status === "Downloaded" ? <Check aria-hidden="true" /> : null}
               {status}
             </>
           ) : null}

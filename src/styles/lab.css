@@ -46,6 +46,18 @@
   height: 14px;
 }
 
+.lab-pane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+}
+
+.lab-pane > .pane {
+  grid-row: 2;
+  min-height: 0;
+}
+
 /* The editor's own structural labels must stay legible on any draft, even one
    the user is editing toward low contrast. The rail/footer/notice chrome morph
    with the previewed theme, so we pull their muted label text toward the
@@ -532,7 +544,7 @@
   display: none;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .lab-mobile-notice {
     display: flex;
     gap: 12px;

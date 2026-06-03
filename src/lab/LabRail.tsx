@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { SupersetTheme, TerminalTokens, ThemeType, UiTokens } from "../theme-core/themeTypes";
+import type { ColorFieldChangeOptions } from "./ColorField";
 import { ContrastSummary } from "./ContrastSummary";
 import type { ThemeDraft } from "./draftTheme";
 import { GenerateSection } from "./GenerateSection";
@@ -26,8 +27,16 @@ interface LabRailProps {
   onRerollGroup: (group: RandomThemeTokenGroup) => void;
   onSeedChange: (seed: string) => void;
   onStartFromCatalog: (themeId: string) => void;
-  onTerminalTokenChange: (token: keyof TerminalTokens, value: string) => void;
-  onUiTokenChange: (token: keyof UiTokens, value: string) => void;
+  onTerminalTokenChange: (
+    token: keyof TerminalTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
+  onUiTokenChange: (
+    token: keyof UiTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
   onUndo: () => void;
   seed: string;
 }

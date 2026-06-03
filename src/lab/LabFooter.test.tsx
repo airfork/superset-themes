@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -47,6 +47,18 @@ describe("LabFooter", () => {
 
     expect(writeText).toHaveBeenCalledWith(exportThemeJson(base.theme));
     expect(screen.getByRole("status")).toHaveTextContent(/copied/i);
+  });
+
+  it("does not report a successful copy when clipboard write fails", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    renderFooter();
+
+    await user.click(screen.getByRole("button", { name: /copy/i }));
+
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(/copy failed/i));
+    expect(screen.getByRole("status")).not.toHaveTextContent(/copied/i);
   });
 
   it("downloads the exported theme JSON as a file and confirms", async () => {

@@ -21,7 +21,7 @@ export function historyShortcut(event: ShortcutEvent): HistoryShortcut | null {
     return event.shiftKey ? "redo" : "undo";
   }
 
-  if (key === "y" && !event.shiftKey) {
+  if (key === "y" && event.ctrlKey && !event.metaKey && !event.shiftKey) {
     return "redo";
   }
 
