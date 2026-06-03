@@ -54,4 +54,10 @@ describe("focus contracts", () => {
     expect(activeBody).toContain("background: var(--preview-popover-active)");
     expect(activeBody).toContain("color: var(--preview-popover-active-foreground)");
   });
+
+  it("propagates the active palette foreground to secondary row affordances", () => {
+    const activeChildBody = ruleBody(".palette__option[data-active] .palette__option-key");
+
+    expect(activeChildBody).toContain("color: var(--preview-popover-active-foreground)");
+  });
 });

@@ -1,4 +1,4 @@
-import { differenceCiede2000 } from "culori";
+import { differenceCiede2000, formatHex, interpolate } from "culori";
 import { describe, expect, it } from "vitest";
 import { catalogThemes } from "../data/catalog";
 import { getContrastRatio } from "./contrast";
@@ -15,6 +15,16 @@ function theme(id: string): SupersetTheme {
     throw new Error(`Missing catalog theme "${id}"`);
   }
   return found;
+}
+
+function mix(from: string, to: string, weight: number): string {
+  return formatHex(interpolate([from, to], "rgb")(weight)) ?? from;
+}
+
+function workspaceActiveTabSurface(t: SupersetTheme): string {
+  // Mirrors `.scene-workspace__session[data-active]`: a 30% border fill rendered over
+  // the workspace background.
+  return mix(t.ui.background, t.ui.border, 0.3);
 }
 
 // Themes that ship accent === popover (or a hair away): the palette's focused/hover rows
@@ -114,6 +124,18 @@ describe("getWorkspaceControlSurface", () => {
       expect(
         deltaE(getWorkspaceControlSurface(t).active, t.ui.background),
         `${t.id} close-button hover should be visible on its background`,
+      ).toBeGreaterThanOrEqual(4.4);
+    }
+  });
+
+  it("keeps close-button hover visible over active session tabs", () => {
+    for (const { theme: t } of catalogThemes) {
+      if (t.id === "superset-light" || t.id === "superset-dark") {
+        continue;
+      }
+      expect(
+        deltaE(getWorkspaceControlSurface(t).active, workspaceActiveTabSurface(t)),
+        `${t.id} close-button hover should be visible on the active session tab`,
       ).toBeGreaterThanOrEqual(4.4);
     }
   });

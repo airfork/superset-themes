@@ -33,7 +33,7 @@ Latest completed checkpoint — visible command-palette focus/hover on every the
 - Tests: `paletteTokens.test.ts` (accent-kept vs synthesized, Superset exempt, every non-Superset theme
   ≥ min-visible ΔE, synthesized text stays AA), plus additions to `themeCssVars.test.ts` and the
   `focusContracts` palette contract. Verified live in-app (gruvbox-light band visible, github-light
-  unchanged). `pnpm check` green (lint, typecheck, unit, build). Not yet committed.
+  unchanged). `pnpm check` green (lint, typecheck, unit, build). Committed as `a5ddbab`.
 
 Prior checkpoint — light-theme balance batch:
 
@@ -136,10 +136,20 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 ## Active Work
 
-- None. Command Palette family display and search-focus fixes are implemented and committed
-  (`25d55ee`).
+- Review remediation for `a5ddbab` is implemented in the working tree and ready for final review or
+  commit. It addresses active palette secondary affordance contrast, workspace active-session
+  close-button hover visibility, and the stale checkpoint note above.
 
 ## Verification
+
+Current review-remediation verification passed:
+
+- `rtk pnpm check` passed: Biome clean, typecheck clean, Vitest 54 files / 389 tests, script
+  test-suites passed, and the production build inside `check` succeeded.
+- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm build` passed; initial JS `436.28 kB` minified / `133.82 kB` gzip.
+- `rtk git diff --check` passed.
 
 Current slice verification passed (light-theme balance batch):
 

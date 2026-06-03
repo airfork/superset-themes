@@ -216,6 +216,12 @@
   color: var(--chrome-muted-foreground);
 }
 
+.palette__option[data-active] .palette__option-icon,
+.palette__option[data-active] .palette__option-hint,
+.palette__option[data-active] .palette__option-key {
+  color: var(--preview-popover-active-foreground);
+}
+
 .palette__empty {
   display: grid;
   gap: 6px;

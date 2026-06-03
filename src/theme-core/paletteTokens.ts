@@ -61,6 +61,38 @@ function bandToward(surface: string, target: string, delta: number): string {
   return mix(surface, target, high);
 }
 
+function clearsDelta(color: string, surfaces: readonly string[], delta: number): boolean {
+  return surfaces.every((surface) => deltaE(color, surface) >= delta);
+}
+
+// Fade `surface` toward `target` until the result clears `delta` ΔE from every surface
+// it can appear on.
+function bandTowardAll(
+  surface: string,
+  target: string,
+  delta: number,
+  comparisonSurfaces: readonly string[],
+): string {
+  if (comparisonSurfaces.length === 1) {
+    return bandToward(surface, target, delta);
+  }
+  if (!clearsDelta(target, comparisonSurfaces, delta)) {
+    return target;
+  }
+
+  let low = 0;
+  let high = 1;
+  for (let i = 0; i < 24; i += 1) {
+    const mid = (low + high) / 2;
+    if (clearsDelta(mix(surface, target, mid), comparisonSurfaces, delta)) {
+      high = mid;
+    } else {
+      low = mid;
+    }
+  }
+  return mix(surface, target, high);
+}
+
 export type ActiveSurface = {
   active: string;
   activeForeground: string;
@@ -77,8 +109,9 @@ function deriveActiveSurface(
   accent: string,
   accentForeground: string,
   keepAccent: boolean,
+  comparisonSurfaces: readonly string[] = [surface],
 ): ActiveSurface {
-  if (keepAccent || deltaE(accent, surface) >= MIN_VISIBLE_DELTA) {
+  if (keepAccent || clearsDelta(accent, comparisonSurfaces, MIN_VISIBLE_DELTA)) {
     return {
       active: accent,
       activeForeground: accentForeground,
@@ -90,9 +123,9 @@ function deriveActiveSurface(
   // Accent collapses onto the surface: synthesize a neutral band from the surface itself,
   // keeping the surface foreground (already legible on the surface) for the text/icon.
   return {
-    active: bandToward(surface, surfaceForeground, SYNTH_ACTIVE_DELTA),
+    active: bandTowardAll(surface, surfaceForeground, SYNTH_ACTIVE_DELTA, comparisonSurfaces),
     activeForeground: surfaceForeground,
-    hover: bandToward(surface, surfaceForeground, SYNTH_HOVER_DELTA),
+    hover: bandTowardAll(surface, surfaceForeground, SYNTH_HOVER_DELTA, comparisonSurfaces),
   };
 }
 
@@ -113,12 +146,16 @@ export function getPaletteActiveSurface(theme: SupersetTheme): ActiveSurface {
 // almost completely (ΔE ~1 on the collapsed themes); deriving against the background keeps
 // the band visible on both.
 export function getWorkspaceControlSurface(theme: SupersetTheme): ActiveSurface {
-  const { accent, accentForeground, background, foreground } = theme.ui;
+  const { accent, accentForeground, background, border, foreground } = theme.ui;
+  // Active session tabs render `border` at 30% over the workspace background; the close
+  // button hover must clear both that tab fill and the resting background.
+  const activeTabSurface = mix(background, border, 0.3);
   return deriveActiveSurface(
     background,
     foreground,
     accent,
     accentForeground,
     isSupersetBaseline(theme),
+    [background, activeTabSurface],
   );
 }
