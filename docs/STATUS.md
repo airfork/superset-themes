@@ -6,7 +6,7 @@ The Superset Theme Catalog is a complete static React/Vite app for browsing, com
 generating, validating, and exporting Superset-compatible themes. It currently ships 23 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
-Previous committed checkpoint: `b437ae8 Record public Pages launch`.
+Previous committed checkpoint: `b26706c chore(deps): bump react and @types/react (#13)`.
 
 Latest completed checkpoint — light-theme balance batch:
 
@@ -54,6 +54,17 @@ Prior checkpoint — time-of-day default theme:
 - The baked critical CSS grew `index.html` to about 19.1 kB (gzip about 3.1 kB); acceptable,
   trimmable to essential vars later if needed.
 
+Prior checkpoint — command palette family + focus styling:
+
+- Command Palette theme rows now always populate the Family column from catalog metadata. This
+  fixes canonical variants such as Tokyo Night and Dracula rendering with a blank family cell when
+  the theme name matches the family name.
+- Command Palette search input focus now matches Superset's live palette: the input remains
+  visually borderless with no inner focus rectangle while the search row divider stays unchanged.
+- `src/palette/commands.test.ts` now covers Tokyo Night, Dracula, and Rosé Pine Dawn family hints.
+- `src/styles/focusContracts.test.ts` now covers the Superset-style borderless focused palette
+  input.
+
 Prior checkpoint — public repo maintenance:
 
 - Public repo maintenance added PR CI, Dependabot update config, a code of conduct, and README
@@ -98,7 +109,8 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 ## Active Work
 
-- None. The bundle/repo-structure cleanup opportunities tracked from the audit have been handled.
+- None. Command Palette family display and search-focus fixes are implemented and committed
+  (`25d55ee`).
 
 ## Verification
 
@@ -132,6 +144,51 @@ Prior slice verification passed (time-of-day default theme):
   `dist/lab.html`, and `dist/lab/index.html`.
 - `rtk git diff --check origin/main...HEAD` passed.
 - TDD throughout: each task wrote a failing test first, then the minimal implementation.
+
+Prior slice verification passed (command palette family + focus styling):
+
+- RED: focused palette command coverage failed before the family fix with `tokyo-night` hint
+  `undefined` instead of `Tokyo Night`.
+- GREEN: `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm test:unit
+  src/palette/commands.test.ts` passed: 1 file / 5 tests.
+- `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm test:unit
+  src/palette/Palette.test.tsx src/palette/commands.test.ts src/palette/paletteEntries.test.ts`
+  passed: 3 files / 25 tests.
+- `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm check` passed: Biome checked 193 files,
+  Vitest passed 52 files / 348 tests, script tests passed, and the production build inside
+  `check` succeeded.
+- `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm test:e2e` passed: 31 passed, 1 skipped.
+- `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm test:stories` passed: 9 files / 31
+  stories.
+- `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm build` passed; initial JS `368.55 kB`
+  minified / `113.70 kB` gzip.
+- Local preview smoke via `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm exec tsx --eval
+  ...` returned `{"tokyo":"Tokyo Night","dracula":"Dracula","rosePine":"Rosé Pine"}` for rendered
+  palette family cells.
+- Superset reference check through `http://127.0.0.1:9222/json/list` found the active live command
+  input uses `outlineStyle: none`, `outlineWidth: 0px`, `boxShadow: none`, and `border: 0px`.
+- RED: focused style contract coverage failed before the focus fix because
+  `.palette__input:focus-visible` was still present, then failed again when the contract was
+  tightened from `outline: none` to `outline: 0`.
+- GREEN: `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm test:unit
+  src/styles/focusContracts.test.ts` passed: 1 file / 4 tests.
+- Local preview smoke via `rtk env PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm exec tsx --eval
+  ...` returned
+  `{"active":true,"outlineStyle":"none","outlineWidth":"0px","boxShadow":"none","border":"0px none rgb(192, 202, 245)"}`.
+- Dependency-policy note added to `COMMANDS.md`: keep pnpm v11's release-age gate enabled by
+  default, and use `PNPM_CONFIG_MINIMUM_RELEASE_AGE=0` only as a one-command local verification
+  override when a known expected dependency update is too fresh.
+- Current verification uses `PNPM_CONFIG_MINIMUM_RELEASE_AGE=0`, so pnpm still runs its pre-run
+  dependency check while only relaxing the release-age cutoff for these commands.
+
+Verification caveat:
+
+- Plain `rtk pnpm test:unit src/palette/commands.test.ts` did not reach Vitest because pnpm's
+  supply-chain policy rejected two recent lockfile entries:
+  `@tanstack/react-router@1.170.11` and `@tanstack/router-core@1.171.9`.
+- Plain `rtk pnpm check` failed the same policy pre-run while those entries were still inside the
+  24-hour cutoff. This is expected for unusually fresh Dependabot lockfile entries, not a test
+  failure.
 
 Launch deploy verification (still current):
 

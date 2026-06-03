@@ -64,13 +64,7 @@
 /* The input itself stays visually borderless; Superset keeps the divider unchanged
    while the command input is focused. */
 .palette__input:focus {
-  outline: none;
-}
-
-.palette__input:focus-visible {
-  outline: 2px solid var(--preview-focus-ring);
-  outline-offset: -4px;
-  border-radius: 4px;
+  outline: 0;
 }
 
 .palette__input::placeholder {

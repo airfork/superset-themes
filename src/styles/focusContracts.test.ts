@@ -30,11 +30,9 @@ describe("focus contracts", () => {
     expect(globalCss).not.toContain("border-bottom-color: var(--preview-ui-ring)");
   });
 
-  it("keeps a visible focus indicator on the borderless command palette input", () => {
-    const body = ruleBody(".palette__input:focus-visible");
-
-    expect(body).toContain("outline:");
-    expect(body).not.toContain("outline: none");
+  it("keeps the focused command palette input visually borderless like Superset", () => {
+    expect(ruleBody(".palette__input:focus")).toContain("outline: 0");
+    expect(globalCss).not.toContain(".palette__input:focus-visible");
   });
 
   it("keeps the palette search icon muted like the live command input", () => {

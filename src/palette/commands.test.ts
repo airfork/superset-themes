@@ -31,7 +31,7 @@ describe("buildThemeCommands", () => {
     expect(new Set(commands.map((command) => command.id)).size).toBe(catalogThemes.length);
   });
 
-  it("drops the family hint when it only echoes the theme name", () => {
+  it("keeps family hints populated for every theme command", () => {
     const commands = buildThemeCommands(() => {});
     const byId = (id: string) => {
       const found = commands.find((command) => command.id === id);
@@ -40,10 +40,11 @@ describe("buildThemeCommands", () => {
       }
       return found;
     };
-    // "Tokyo Night" sits in the "Tokyo Night" family, so the hint would only
-    // repeat the name; the palette omits it the way the rail eyebrow and bottom
-    // bar already do. A family that groups distinct themes still earns its hint.
-    expect(byId("tokyo-night").hint).toBeUndefined();
+    // The palette owns a dedicated Family column. Even canonical variants whose
+    // theme name matches the family need the cell filled so siblings do not look
+    // detached from their family in search results.
+    expect(byId("tokyo-night").hint).toBe("Tokyo Night");
+    expect(byId("dracula").hint).toBe("Dracula");
     expect(byId("rose-pine-dawn").hint).toBe("Rosé Pine");
   });
 });

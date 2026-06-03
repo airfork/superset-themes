@@ -29,9 +29,9 @@ export function buildThemeCommands(onSelectTheme: (themeId: string) => void): Pa
     id: theme.id,
     label: theme.name,
     section: "Themes",
-    // Drop the hint when the family only echoes the name (e.g. "Tokyo Night" in
-    // the Tokyo Night family), matching the rail eyebrow and bottom-bar fact.
-    hint: meta.family === theme.name ? undefined : meta.family,
+    // The palette has a dedicated Family column, so keep the cell populated even
+    // when a canonical variant shares the family name.
+    hint: meta.family,
     keys: [theme.id, theme.name, meta.family],
     accent: theme.ui.accent,
     themeType: theme.type,

@@ -63,6 +63,19 @@ pnpm check
 
 Run the full local verification suite.
 
+### Pnpm Release-Age Gate
+
+pnpm v11 may reject very recent lockfile entries before running scripts. Keep the age gate enabled
+by default. If a known, expected dependency update is too fresh and immediate local verification is
+needed, relax the gate for that one command:
+
+```bash
+PNPM_CONFIG_MINIMUM_RELEASE_AGE=0 pnpm check
+```
+
+Prefer this one-command override over disabling pre-run dependency verification, because it keeps
+pnpm's dependency check active while only relaxing the release-age cutoff.
+
 ```bash
 pnpm format
 ```
