@@ -78,6 +78,27 @@ describe("LayoutShell", () => {
     expect(screen.queryByText("Tokyo Night")).not.toBeInTheDocument();
   });
 
+  it("marks the shell to hide the rail on narrow screens when requested", () => {
+    const { container } = render(
+      <FocusedThemeProvider initialThemeId="tokyo-night">
+        <LayoutShell
+          onOpenPalette={() => {}}
+          railHiddenOnNarrow
+          rail={<div data-testid="shell-rail">rail placeholder</div>}
+          pane={<div data-testid="shell-pane">pane placeholder</div>}
+        />
+      </FocusedThemeProvider>,
+    );
+
+    expect(container.querySelector(".layout-shell")).toHaveAttribute("data-rail-narrow-hidden");
+  });
+
+  it("does not mark the shell for narrow rail hiding by default", () => {
+    const { container } = renderShell();
+
+    expect(container.querySelector(".layout-shell")).not.toHaveAttribute("data-rail-narrow-hidden");
+  });
+
   it("renders a collapsed rail disclosure that controls the rail region", () => {
     renderShell();
 

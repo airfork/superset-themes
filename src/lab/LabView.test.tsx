@@ -36,6 +36,21 @@ describe("LabView", () => {
     expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
   });
 
+  it("exposes a top-level page heading for the editor", () => {
+    renderLab();
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/theme bench/i);
+  });
+
+  it("announces the hue slider value with units for screen readers", () => {
+    renderLab();
+
+    expect(screen.getByRole("slider", { name: /hue/i })).toHaveAttribute(
+      "aria-valuetext",
+      "220 degrees",
+    );
+  });
+
   it("drives the focused theme from the draft", () => {
     renderLab();
 
@@ -112,5 +127,38 @@ describe("LabView", () => {
 
     await user.click(screen.getByRole("button", { name: /redo/i }));
     expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+  });
+
+  it("undoes and redoes with the keyboard", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+
+    // Cmd+Z steps back to the catalog draft.
+    await user.keyboard("{Meta>}z{/Meta}");
+    expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
+
+    // Cmd+Shift+Z steps forward again.
+    await user.keyboard("{Meta>}{Shift>}z{/Shift}{/Meta}");
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+  });
+
+  it("leaves Cmd+Z to native text undo while a field is focused", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+
+    // With the Seed input focused, Cmd+Z must not trigger the Lab's history
+    // undo (the field keeps its own native undo). The draft must stay generated,
+    // not revert to the catalog source.
+    await user.click(screen.getByRole("textbox", { name: /seed/i }));
+    await user.keyboard("{Meta>}z{/Meta}");
+
+    expect(screen.getByText(/draft, generated/i)).toBeInTheDocument();
+    expect(screen.queryByText(/based on aurora-light/i)).not.toBeInTheDocument();
   });
 });

@@ -456,10 +456,19 @@
 }
 
 .lab-footer__status {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--preview-ui-muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 17px;
+  font-size: 0.74rem;
+  font-weight: 750;
+  color: var(--preview-ui-foreground);
+}
+
+.lab-footer__status svg {
+  width: 13px;
+  height: 13px;
+  color: var(--preview-ui-primary);
 }
 
 .lab-footer__export-label {

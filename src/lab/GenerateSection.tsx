@@ -64,6 +64,7 @@ export function GenerateSection({
       <label className="lab-field lab-hue-field" htmlFor="lab-generate-hue">
         <span>Hue {Math.round(hue)}°</span>
         <input
+          aria-valuetext={`${Math.round(hue)} degrees`}
           id="lab-generate-hue"
           max={300}
           min={0}

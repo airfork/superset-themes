@@ -1,4 +1,4 @@
-import { ArrowLeft, Redo2, Undo2 } from "lucide-react";
+import { ArrowLeft, Check, Redo2, Undo2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { downloadThemeJson, exportThemeJson } from "../theme-core/exportTheme";
 import type { SupersetTheme } from "../theme-core/themeTypes";
@@ -13,7 +13,7 @@ interface LabFooterProps {
 }
 
 // How long the "Copied" / "Downloaded" confirmation lingers before clearing.
-const STATUS_TIMEOUT_MS = 2000;
+const STATUS_TIMEOUT_MS = 3000;
 
 export function LabFooter({
   canRedo,
@@ -81,7 +81,12 @@ export function LabFooter({
           Download
         </button>
         <span aria-live="polite" className="lab-footer__status" role="status">
-          {status}
+          {status ? (
+            <>
+              <Check aria-hidden="true" />
+              {status}
+            </>
+          ) : null}
         </span>
       </div>
     </div>

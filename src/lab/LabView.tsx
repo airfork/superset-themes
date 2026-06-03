@@ -1,4 +1,4 @@
-import { useDeferredValue, useLayoutEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { getCatalogThemeById } from "../data/fixtures";
 import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
@@ -29,6 +29,7 @@ import {
   updateDraftTerminalToken,
   updateDraftUiToken,
 } from "./draftTheme";
+import { historyShortcut } from "./historyShortcut";
 import { LabMobileNotice } from "./LabMobileNotice";
 import { LabNameplate } from "./LabNameplate";
 import { LabRail } from "./LabRail";
@@ -107,6 +108,27 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
 
   const handleUndo = () => setHistory(historyUndo);
   const handleRedo = () => setHistory(historyRedo);
+
+  // Cmd/Ctrl+Z and Cmd/Ctrl+Shift+Z drive the same history. We skip the shortcut
+  // while focus is in an editable field so the browser's own text-undo keeps
+  // working inside the hex/seed inputs. setHistory is stable, so the listener is
+  // installed once.
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) {
+        return;
+      }
+      const shortcut = historyShortcut(event);
+      if (!shortcut) {
+        return;
+      }
+      event.preventDefault();
+      setHistory(shortcut === "undo" ? historyUndo : historyRedo);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   // Token edits (and continuous native color-picker drags) call setDraft many
   // times a second. The Pane subtree reads from a deferred draft so it re-renders
@@ -189,6 +211,7 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
     <LayoutShell
       onOpenPalette={palette.open}
       palette={palette.paletteProps}
+      railHiddenOnNarrow
       rail={
         <LabRail
           canRedo={canRedo}
@@ -215,6 +238,7 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
       }
       pane={
         <>
+          <h1 className="sr-only">Theme Bench</h1>
           <LabMobileNotice />
           <Pane entry={deferredEntry} nameplate={nameplate} />
         </>
