@@ -36,7 +36,10 @@ describe("Palette", () => {
 
     openPalette();
     expect(screen.getByRole("dialog", { name: /command palette/i })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Tokyo Night" })).toBeInTheDocument();
+    // Canonical variants now keep the Family column populated, so the accessible name
+    // is the label plus the family hint ("Tokyo Night" + "Tokyo Night"). The exact name
+    // also disambiguates this row from "Tokyo Night Light".
+    expect(screen.getByRole("option", { name: "Tokyo NightTokyo Night" })).toBeInTheDocument();
   });
 
   it("closes on Escape", async () => {
@@ -140,7 +143,10 @@ describe("Palette", () => {
 
     expect(screen.getByRole("option", { name: /open in lab/i })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /more actions/i })).not.toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Tokyo Night" })).toBeInTheDocument();
+    // Canonical variants now keep the Family column populated, so the accessible name
+    // is the label plus the family hint ("Tokyo Night" + "Tokyo Night"). The exact name
+    // also disambiguates this row from "Tokyo Night Light".
+    expect(screen.getByRole("option", { name: "Tokyo NightTokyo Night" })).toBeInTheDocument();
 
     expect(within(screen.getByRole("group", { name: "Themes" })).getByText("Family")).toBeVisible();
 
