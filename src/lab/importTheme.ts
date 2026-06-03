@@ -12,18 +12,6 @@ export type ImportThemeResult =
       ok: false;
     };
 
-function formatJsonError(error: unknown): string {
-  if (!(error instanceof SyntaxError)) {
-    return "unable to parse theme JSON";
-  }
-
-  if (error.message.includes("Expected property name or '}'")) {
-    return "expected property name or '}' at line 1 column 3";
-  }
-
-  return error.message.charAt(0).toLocaleLowerCase() + error.message.slice(1);
-}
-
 type JsonRecord = Record<string, unknown>;
 type TerminalTokenDraft = Partial<Record<keyof TerminalTokens, string>>;
 type UiTokenDraft = Partial<Record<keyof UiTokens, string>>;
@@ -293,9 +281,9 @@ export function parseImportedThemeJson(json: string): ImportThemeResult {
 
   try {
     parsedJson = JSON.parse(json);
-  } catch (error) {
+  } catch {
     return {
-      error: `Invalid JSON: ${formatJsonError(error)}`,
+      error: "That doesn't look like valid JSON. Paste a theme exported from Superset.",
       ok: false,
     };
   }
@@ -317,7 +305,7 @@ export function parseImportedThemeJson(json: string): ImportThemeResult {
       .join(", ");
 
     return {
-      error: `Theme schema error: ${paths}`,
+      error: `This isn't a Superset theme. Check these fields: ${paths}.`,
       ok: false,
     };
   }

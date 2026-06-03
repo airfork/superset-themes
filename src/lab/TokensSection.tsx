@@ -1,8 +1,10 @@
 import { RotateCw } from "lucide-react";
+import { useState } from "react";
 import type { TerminalTokens, UiTokens } from "../theme-core/themeTypes";
-import { ColorField } from "./ColorField";
+import { ColorField, type ColorFieldChangeOptions } from "./ColorField";
 import type { ThemeDraft } from "./draftTheme";
 import type { RandomThemeTokenGroup } from "./randomTheme";
+import { filterTokenGroups } from "./tokenFilter";
 
 type TokenRow =
   | { label: string; namespace: "ui"; token: keyof UiTokens }
@@ -95,8 +97,16 @@ const TOKEN_GROUPS: TokenGroup[] = [
 interface TokensSectionProps {
   draft: ThemeDraft;
   onRerollGroup: (group: RandomThemeTokenGroup) => void;
-  onTerminalTokenChange: (token: keyof TerminalTokens, value: string) => void;
-  onUiTokenChange: (token: keyof UiTokens, value: string) => void;
+  onTerminalTokenChange: (
+    token: keyof TerminalTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
+  onUiTokenChange: (
+    token: keyof UiTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => void;
 }
 
 export function TokensSection({
@@ -105,9 +115,24 @@ export function TokensSection({
   onTerminalTokenChange,
   onUiTokenChange,
 }: TokensSectionProps) {
+  const [filter, setFilter] = useState("");
+  const visibleGroups = filterTokenGroups(TOKEN_GROUPS, filter);
+
   return (
     <div className="lab-tokens">
-      {TOKEN_GROUPS.map(({ group, label, rows }) => (
+      <input
+        aria-label="Filter tokens"
+        className="lab-tokens__filter"
+        onChange={(event) => setFilter(event.currentTarget.value)}
+        placeholder="Filter tokens"
+        spellCheck={false}
+        type="search"
+        value={filter}
+      />
+      {visibleGroups.length === 0 ? (
+        <p className="lab-tokens__empty">No tokens match "{filter}".</p>
+      ) : null}
+      {visibleGroups.map(({ group, label, rows }) => (
         <div className="lab-tokens__group" key={group}>
           <header className="lab-tokens__header">
             <h2 className="lab-tokens__title">{label}</h2>
@@ -127,7 +152,7 @@ export function TokensSection({
                   id={`lab-token-ui-${row.token}`}
                   key={`ui-${row.token}`}
                   label={row.label}
-                  onChange={(value) => onUiTokenChange(row.token, value)}
+                  onChange={(value, options) => onUiTokenChange(row.token, value, options)}
                   value={draft.theme.ui[row.token]}
                 />
               ) : (
@@ -135,7 +160,7 @@ export function TokensSection({
                   id={`lab-token-terminal-${row.token}`}
                   key={`terminal-${row.token}`}
                   label={row.label}
-                  onChange={(value) => onTerminalTokenChange(row.token, value)}
+                  onChange={(value, options) => onTerminalTokenChange(row.token, value, options)}
                   value={draft.theme.terminal[row.token]}
                 />
               ),

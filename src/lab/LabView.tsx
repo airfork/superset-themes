@@ -1,4 +1,4 @@
-import { useDeferredValue, useLayoutEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { LayoutShell } from "../chrome/LayoutShell";
 import { getCatalogThemeById } from "../data/fixtures";
 import { buildThemeCommands, type PaletteCommand } from "../palette/commands";
@@ -12,6 +12,17 @@ import type {
   ThemeType,
   UiTokens,
 } from "../theme-core/themeTypes";
+import type { ColorFieldChangeOptions } from "./ColorField";
+import {
+  currentDraft,
+  type DraftHistory,
+  canRedo as historyCanRedo,
+  canUndo as historyCanUndo,
+  commit as historyCommit,
+  redo as historyRedo,
+  undo as historyUndo,
+  initHistory,
+} from "./draftHistory";
 import {
   createDraftFromGeneratedTheme,
   createDraftFromImportedTheme,
@@ -19,6 +30,8 @@ import {
   updateDraftTerminalToken,
   updateDraftUiToken,
 } from "./draftTheme";
+import { historyShortcut } from "./historyShortcut";
+import { LabMobileNotice } from "./LabMobileNotice";
 import { LabNameplate } from "./LabNameplate";
 import { LabRail } from "./LabRail";
 import {
@@ -75,12 +88,48 @@ function draftToEntry(draft: ThemeDraft): CatalogThemeEntry {
 }
 
 export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: LabViewProps) {
-  const [draft, setDraft] = useState(initialDraft);
   const [seed, setSeed] = useState(DEFAULT_SEED);
   const [mode, setMode] = useState<ThemeType>(initialDraft.theme.type);
   const [hue, setHue] = useState(DEFAULT_HUE);
   const [rerollNonce, setRerollNonce] = useState(0);
+
+  // Full edit history with a cursor so Undo/Redo step through every change,
+  // including manual token edits. See draftHistory.ts for the coalescing rule
+  // that keeps a color-picker drag as one undo step.
+  const [history, setHistory] = useState<DraftHistory<ThemeDraft>>(() => initHistory(initialDraft));
+
+  const draft = currentDraft(history);
+  const canUndo = historyCanUndo(history);
+  const canRedo = historyCanRedo(history);
   const entry = useMemo(() => draftToEntry(draft), [draft]);
+
+  const commitDraft = (next: ThemeDraft, coalesceKey: string | null = null) => {
+    setHistory((current) => historyCommit(current, next, coalesceKey));
+  };
+
+  const handleUndo = () => setHistory(historyUndo);
+  const handleRedo = () => setHistory(historyRedo);
+
+  // Cmd/Ctrl+Z and Cmd/Ctrl+Shift+Z drive the same history. We skip the shortcut
+  // while focus is in an editable field so the browser's own text-undo keeps
+  // working inside the hex/seed inputs. setHistory is stable, so the listener is
+  // installed once.
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) {
+        return;
+      }
+      const shortcut = historyShortcut(event);
+      if (!shortcut) {
+        return;
+      }
+      event.preventDefault();
+      setHistory(shortcut === "undo" ? historyUndo : historyRedo);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   // Token edits (and continuous native color-picker drags) call setDraft many
   // times a second. The Pane subtree reads from a deferred draft so it re-renders
@@ -100,7 +149,7 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   useLayoutEffect(() => () => setTransientEntry(null), [setTransientEntry]);
 
   const generate = (generationSeed: string) => {
-    setDraft(
+    commitDraft(
       createDraftFromGeneratedTheme(
         generateRandomTheme({
           hueRange: { max: hue + HUE_BAND, min: hue },
@@ -120,26 +169,34 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
   };
 
   const handleImportTheme = (theme: SupersetTheme) => {
-    setDraft(createDraftFromImportedTheme(theme));
+    commitDraft(createDraftFromImportedTheme(theme));
   };
 
-  const handleUiTokenChange = (token: keyof UiTokens, value: string) => {
-    setDraft((current) => updateDraftUiToken(current, token, value));
+  const handleUiTokenChange = (
+    token: keyof UiTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => {
+    commitDraft(updateDraftUiToken(draft, token, value), options?.coalesceKey ?? null);
   };
 
-  const handleTerminalTokenChange = (token: keyof TerminalTokens, value: string) => {
-    setDraft((current) => updateDraftTerminalToken(current, token, value));
+  const handleTerminalTokenChange = (
+    token: keyof TerminalTokens,
+    value: string,
+    options?: ColorFieldChangeOptions,
+  ) => {
+    commitDraft(updateDraftTerminalToken(draft, token, value), options?.coalesceKey ?? null);
   };
 
   const handleRerollGroup = (group: RandomThemeTokenGroup) => {
     const nextNonce = rerollNonce + 1;
     setRerollNonce(nextNonce);
-    setDraft((current) =>
+    commitDraft(
       createDraftFromGeneratedTheme(
         rerollRandomThemeGroup({
           group,
           seed: `${seed}:${group}:${nextNonce}`,
-          theme: current.theme,
+          theme: draft.theme,
         }),
       ),
     );
@@ -163,8 +220,11 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
     <LayoutShell
       onOpenPalette={palette.open}
       palette={palette.paletteProps}
+      railHiddenOnNarrow
       rail={
         <LabRail
+          canRedo={canRedo}
+          canUndo={canUndo}
           draft={draft}
           hue={hue}
           mode={mode}
@@ -174,16 +234,24 @@ export function LabView({ initialDraft, onBackToCatalog, onStartFromCatalog }: L
           onImportTheme={handleImportTheme}
           onModeChange={setMode}
           onOpenPalette={palette.open}
+          onRedo={handleRedo}
           onRerollAll={handleRerollAll}
           onRerollGroup={handleRerollGroup}
           onSeedChange={setSeed}
           onStartFromCatalog={onStartFromCatalog}
           onTerminalTokenChange={handleTerminalTokenChange}
           onUiTokenChange={handleUiTokenChange}
+          onUndo={handleUndo}
           seed={seed}
         />
       }
-      pane={<Pane entry={deferredEntry} nameplate={nameplate} />}
+      pane={
+        <div className="lab-pane">
+          <h1 className="sr-only">Theme Bench</h1>
+          <LabMobileNotice />
+          <Pane entry={deferredEntry} nameplate={nameplate} />
+        </div>
+      }
     />
   );
 }

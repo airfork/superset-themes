@@ -9,11 +9,11 @@ interface LabNameplateProps {
 function draftSourceLabel(draft: ThemeDraft, seed?: string): string {
   switch (draft.source.type) {
     case "catalog":
-      return `Draft — based on ${draft.source.themeId}`;
+      return `Draft, based on ${draft.source.themeId}`;
     case "generated":
-      return seed ? `Draft — generated, seed: ${seed}` : "Draft — generated";
+      return seed ? `Draft, generated (seed: ${seed})` : "Draft, generated";
     case "import":
-      return "Draft — imported";
+      return "Draft, imported";
   }
 }
 

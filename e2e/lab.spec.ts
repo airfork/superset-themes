@@ -59,3 +59,26 @@ test("⌘K in the lab reseeds the draft from another theme", async ({ page }) =>
     page.getByRole("complementary", { name: /themes/i }).getByLabel("Start from catalog theme"),
   ).toHaveValue("solarized-light");
 });
+
+test("lab hides the editor rail until the preview has enough width", async ({ page }) => {
+  await page.setViewportSize({ width: 721, height: 900 });
+  await page.goto("/lab?from=aurora-dark");
+
+  const paneBody = page.locator(".pane__body");
+  const overflow = await paneBody.evaluate((element) => element.scrollWidth - element.clientWidth);
+
+  expect(overflow).toBeLessThanOrEqual(1);
+  await expect(page.getByText(/open the theme bench on a wider screen/i)).toBeVisible();
+});
+
+test("lab mobile notice does not make the shell taller than the viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/lab?from=aurora-dark");
+
+  const metrics = await page.locator(".layout-shell").evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }));
+
+  expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.clientHeight + 1);
+});

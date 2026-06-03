@@ -103,6 +103,30 @@
   .chrome-bottombar__hints {
     display: none;
   }
+
+  /* Surfaces that opt out of a narrow rail (the Lab editor) hide it and its
+     disclosure outright, so the pane's own notice is the whole story. */
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail,
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail-toggle {
+    display: none;
+  }
+
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Lab opts out of the docked rail before the shared mobile breakpoint because
+     the preview pane needs more width than a 300px rail leaves on tablet widths. */
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__body {
+    grid-template-columns: 1fr;
+  }
+
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail,
+  .layout-shell[data-rail-narrow-hidden] .layout-shell__rail-toggle {
+    display: none;
+  }
 }
 
 .layout-shell__rail-placeholder,

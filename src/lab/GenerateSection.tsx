@@ -31,7 +31,7 @@ export function GenerateSection({
 
   return (
     <RailSection label="Generate">
-      <label className="catalog-field" htmlFor="lab-generate-seed">
+      <label className="lab-field" htmlFor="lab-generate-seed">
         <span>Seed</span>
         <input
           autoComplete="off"
@@ -44,24 +44,27 @@ export function GenerateSection({
         />
       </label>
 
-      <label className="catalog-field" htmlFor="lab-generate-mode">
+      <label className="lab-field" htmlFor="lab-generate-mode">
         <span>Mode</span>
-        <select
-          id="lab-generate-mode"
-          name="lab-generate-mode"
-          onChange={(event) =>
-            onModeChange(event.currentTarget.value === "dark" ? "dark" : "light")
-          }
-          value={mode}
-        >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
+        <span className="lab-field__select">
+          <select
+            id="lab-generate-mode"
+            name="lab-generate-mode"
+            onChange={(event) =>
+              onModeChange(event.currentTarget.value === "dark" ? "dark" : "light")
+            }
+            value={mode}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </span>
       </label>
 
-      <label className="catalog-field lab-hue-field" htmlFor="lab-generate-hue">
+      <label className="lab-field lab-hue-field" htmlFor="lab-generate-hue">
         <span>Hue {Math.round(hue)}°</span>
         <input
+          aria-valuetext={`${Math.round(hue)} degrees`}
           id="lab-generate-hue"
           max={300}
           min={0}
@@ -78,13 +81,24 @@ export function GenerateSection({
           <Sparkles aria-hidden="true" />
           <span>Generate</span>
         </button>
-        {generated ? (
-          <button className="catalog-action-button" onClick={onRerollAll} type="button">
-            <Shuffle aria-hidden="true" />
-            <span>Reroll all</span>
-          </button>
-        ) : null}
+        {/* Always shown so the control doesn't appear/vanish; rerolling only makes
+            sense once a seed-based draft exists, so it's disabled until then. */}
+        <button
+          className="catalog-action-button"
+          disabled={!generated}
+          onClick={onRerollAll}
+          title={generated ? undefined : "Generate a theme first to reroll it"}
+          type="button"
+        >
+          <Shuffle aria-hidden="true" />
+          <span>Reroll all</span>
+        </button>
       </div>
+
+      <p className="lab-field-hint">
+        Type any word as a seed. The same seed and hue reproduce the same palette, every pair
+        checked against WCAG AA.
+      </p>
     </RailSection>
   );
 }

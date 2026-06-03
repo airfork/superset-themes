@@ -49,7 +49,10 @@ describe("ColorField", () => {
       target: { value: "#00ff00" },
     });
 
-    expect(onChange).toHaveBeenCalledWith("#00ff00");
+    expect(onChange).toHaveBeenCalledWith(
+      "#00ff00",
+      expect.objectContaining({ coalesceKey: expect.stringContaining("picker") }),
+    );
   });
 
   it("forwards an id to the field root so it can be a scroll anchor", () => {

@@ -36,6 +36,21 @@ describe("LabView", () => {
     expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
   });
 
+  it("exposes a top-level page heading for the editor", () => {
+    renderLab();
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/theme bench/i);
+  });
+
+  it("announces the hue slider value with units for screen readers", () => {
+    renderLab();
+
+    expect(screen.getByRole("slider", { name: /hue/i })).toHaveAttribute(
+      "aria-valuetext",
+      "220 degrees",
+    );
+  });
+
   it("drives the focused theme from the draft", () => {
     renderLab();
 
@@ -62,12 +77,23 @@ describe("LabView", () => {
 
     await user.click(screen.getByRole("button", { name: /^generate$/i }));
 
-    expect(screen.getByText(/draft — generated, seed: preview/i)).toBeInTheDocument();
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
     // The catalog select drops back to the placeholder once the draft is no
     // longer catalog-sourced.
     expect(screen.getByRole("combobox", { name: /start from catalog theme/i })).toHaveValue("");
     // Reroll-all only appears once a seed-based draft exists.
     expect(screen.getByRole("button", { name: /reroll all/i })).toBeInTheDocument();
+  });
+
+  it("keeps Reroll all visible but disabled until a generated draft exists", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    expect(screen.getByRole("button", { name: /reroll all/i })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+
+    expect(screen.getByRole("button", { name: /reroll all/i })).toBeEnabled();
   });
 
   it("imports a draft from pasted JSON", async () => {
@@ -84,7 +110,93 @@ describe("LabView", () => {
     await user.paste(exportThemeJson(graphite.theme));
     await user.click(screen.getByRole("button", { name: /import pasted json/i }));
 
-    expect(screen.getByText(/draft — imported/i)).toBeInTheDocument();
+    expect(screen.getByText(/draft, imported/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: graphite.theme.name })).toBeInTheDocument();
+  });
+
+  it("undoes and redoes a generate through the history stack", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    // Undo/Redo are present but disabled before any change.
+    expect(screen.getByRole("button", { name: /undo/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /redo/i })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /undo/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /undo/i }));
+
+    // Restored to the catalog-sourced draft; redo now available.
+    expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: /start from catalog theme/i })).toHaveValue(
+      "aurora-light",
+    );
+    expect(screen.getByRole("button", { name: /undo/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /redo/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /redo/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+  });
+
+  it("undoes same-token hex edits one committed value at a time", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    const backgroundHex = () => {
+      const input = screen.getAllByRole("textbox", { name: /^background hex$/i })[0];
+      expect(input).toBeInTheDocument();
+      return input as HTMLInputElement;
+    };
+
+    await user.clear(backgroundHex());
+    await user.type(backgroundHex(), "#111111");
+    await user.tab();
+
+    expect(backgroundHex()).toHaveValue("#111111");
+
+    await user.clear(backgroundHex());
+    await user.type(backgroundHex(), "#222222");
+    await user.tab();
+
+    expect(backgroundHex()).toHaveValue("#222222");
+
+    await user.click(screen.getByRole("button", { name: /undo/i }));
+
+    expect(backgroundHex()).toHaveValue("#111111");
+  });
+
+  it("undoes and redoes with the keyboard", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+
+    // Cmd+Z steps back to the catalog draft.
+    await user.keyboard("{Meta>}z{/Meta}");
+    expect(screen.getByText(/based on aurora-light/i)).toBeInTheDocument();
+
+    // Cmd+Shift+Z steps forward again.
+    await user.keyboard("{Meta>}{Shift>}z{/Shift}{/Meta}");
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+  });
+
+  it("leaves Cmd+Z to native text undo while a field is focused", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+    expect(screen.getByText(/draft, generated \(seed: preview\)/i)).toBeInTheDocument();
+
+    // With the Seed input focused, Cmd+Z must not trigger the Lab's history
+    // undo (the field keeps its own native undo). The draft must stay generated,
+    // not revert to the catalog source.
+    await user.click(screen.getByRole("textbox", { name: /seed/i }));
+    await user.keyboard("{Meta>}z{/Meta}");
+
+    expect(screen.getByText(/draft, generated/i)).toBeInTheDocument();
+    expect(screen.queryByText(/based on aurora-light/i)).not.toBeInTheDocument();
   });
 });

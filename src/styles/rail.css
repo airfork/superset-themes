@@ -227,17 +227,100 @@ button.rail-search {
   padding: 0 12px;
 }
 
-.lab-rail input[type="file"] {
-  padding: 6px 10px;
-  font-size: 0.76rem;
+/* The shared rail labels morph with the previewed theme; in the editor pull them
+   to the AA-strengthened --lab-muted (set on .lab-rail) so the chrome stays
+   legible on any draft. */
+.lab-rail .rail-search,
+.lab-rail .rail-search__kbd,
+.lab-rail .rail-section__label {
+  color: var(--lab-muted);
 }
 
+.lab-rail input[type="file"] {
+  width: 100%;
+  font-size: 0.76rem;
+  color: var(--lab-muted);
+}
+
+/* Replace the OS-native file button with the lab's bordered control vocabulary;
+   the "No file chosen" text stays as the muted field color set above. */
+.lab-rail input[type="file"]::file-selector-button {
+  height: 30px;
+  margin-right: 10px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-card);
+  color: var(--preview-ui-foreground);
+  padding: 0 12px;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lab-rail input[type="file"]::file-selector-button:hover {
+  border-color: var(--preview-ui-accent);
+  background: color-mix(in srgb, var(--preview-ui-foreground) 6%, var(--preview-ui-card));
+}
+
+/* Style the hue slider to the lab's control vocabulary (thin track, bordered
+   thumb) instead of leaving the OS-native range chrome. */
 .lab-hue-field input[type="range"] {
   width: 100%;
+  height: 18px;
   min-height: auto;
   padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
   background: transparent;
-  accent-color: var(--preview-ui-primary);
+  cursor: pointer;
+}
+
+.lab-hue-field input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--preview-ui-border);
+}
+
+.lab-hue-field input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--preview-ui-border);
+}
+
+.lab-hue-field input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 2px solid var(--preview-ui-card);
+  border-radius: 50%;
+  background: var(--preview-ui-primary);
+  box-shadow: 0 0 0 1px var(--preview-ui-border);
+}
+
+.lab-hue-field input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--preview-ui-card);
+  border-radius: 50%;
+  background: var(--preview-ui-primary);
+  box-shadow: 0 0 0 1px var(--preview-ui-border);
+}
+
+.lab-hue-field input[type="range"]:focus-visible {
+  outline: none;
+}
+
+.lab-hue-field input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-hue-field input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
 }
 
 .lab-paste {
@@ -269,7 +352,7 @@ button.rail-search {
   border: 1px solid var(--preview-ui-destructive);
   border-radius: 6px;
   background: color-mix(in srgb, var(--preview-ui-destructive) 14%, var(--preview-ui-card));
-  color: var(--preview-ui-foreground);
+  color: color-mix(in srgb, var(--preview-ui-destructive) 65%, var(--preview-ui-foreground));
   padding: 8px 10px;
   font-size: 0.76rem;
   font-weight: 650;

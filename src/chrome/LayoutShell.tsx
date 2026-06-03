@@ -16,6 +16,10 @@ interface LayoutShellProps {
   palette?: PaletteProps;
   expanded?: boolean;
   bottomBar?: ReactNode;
+  // Below the touch breakpoint, hide the rail and its disclosure entirely rather
+  // than expose a cramped panel. Surfaces that can't fold down (the Lab editor)
+  // set this and show their own "use a wider screen" notice in the pane.
+  railHiddenOnNarrow?: boolean;
 }
 
 export function LayoutShell({
@@ -26,6 +30,7 @@ export function LayoutShell({
   palette,
   expanded = false,
   bottomBar,
+  railHiddenOnNarrow = false,
 }: LayoutShellProps) {
   const { focused } = useFocusedTheme();
   // Below the touch breakpoint the rail is a disclosure so the preview + actions own
@@ -33,7 +38,11 @@ export function LayoutShell({
   const [railOpen, setRailOpen] = useState(false);
 
   return (
-    <div className="layout-shell" data-expanded={expanded || undefined}>
+    <div
+      className="layout-shell"
+      data-expanded={expanded || undefined}
+      data-rail-narrow-hidden={railHiddenOnNarrow || undefined}
+    >
       <TopBar onOpenPalette={onOpenPalette} />
       <div className="layout-shell__body">
         <button
