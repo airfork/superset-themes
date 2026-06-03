@@ -227,10 +227,19 @@ button.rail-search {
   padding: 0 12px;
 }
 
+/* The shared rail labels morph with the previewed theme; in the editor pull them
+   to the AA-strengthened --lab-muted (set on .lab-rail) so the chrome stays
+   legible on any draft. */
+.lab-rail .rail-search,
+.lab-rail .rail-search__kbd,
+.lab-rail .rail-section__label {
+  color: var(--lab-muted);
+}
+
 .lab-rail input[type="file"] {
   width: 100%;
   font-size: 0.76rem;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--lab-muted);
 }
 
 /* Replace the OS-native file button with the lab's bordered control vocabulary;

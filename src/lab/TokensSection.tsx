@@ -1,8 +1,10 @@
 import { RotateCw } from "lucide-react";
+import { useState } from "react";
 import type { TerminalTokens, UiTokens } from "../theme-core/themeTypes";
 import { ColorField } from "./ColorField";
 import type { ThemeDraft } from "./draftTheme";
 import type { RandomThemeTokenGroup } from "./randomTheme";
+import { filterTokenGroups } from "./tokenFilter";
 
 type TokenRow =
   | { label: string; namespace: "ui"; token: keyof UiTokens }
@@ -105,9 +107,24 @@ export function TokensSection({
   onTerminalTokenChange,
   onUiTokenChange,
 }: TokensSectionProps) {
+  const [filter, setFilter] = useState("");
+  const visibleGroups = filterTokenGroups(TOKEN_GROUPS, filter);
+
   return (
     <div className="lab-tokens">
-      {TOKEN_GROUPS.map(({ group, label, rows }) => (
+      <input
+        aria-label="Filter tokens"
+        className="lab-tokens__filter"
+        onChange={(event) => setFilter(event.currentTarget.value)}
+        placeholder="Filter tokens"
+        spellCheck={false}
+        type="search"
+        value={filter}
+      />
+      {visibleGroups.length === 0 ? (
+        <p className="lab-tokens__empty">No tokens match "{filter}".</p>
+      ) : null}
+      {visibleGroups.map(({ group, label, rows }) => (
         <div className="lab-tokens__group" key={group}>
           <header className="lab-tokens__header">
             <h2 className="lab-tokens__title">{label}</h2>

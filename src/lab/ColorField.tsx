@@ -77,6 +77,9 @@ export function ColorField({ id, label, onChange, value }: ColorFieldProps) {
         value={hexDraft}
       />
       {invalid ? (
+        // Polite (status), not assertive (alert): this fires on every blur of an
+        // invalid field during fast token editing, so an assertive interrupt each
+        // time would be noisy. The one-shot import error (SourceSection) is alert.
         <p className="lab-color-field__error" id={errorId} role="status">
           Enter a 6-digit hex color, like #1a2b3c.
         </p>

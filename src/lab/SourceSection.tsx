@@ -96,6 +96,9 @@ export function SourceSection({ draft, onImportTheme, onStartFromCatalog }: Sour
       </details>
 
       {importError ? (
+        // Assertive (alert): a one-shot failure in response to an explicit import
+        // action, so interrupting is appropriate. The per-blur hex error
+        // (ColorField) is polite (status) because it repeats during editing.
         <p className="lab-source__error" role="alert">
           {importError}
         </p>

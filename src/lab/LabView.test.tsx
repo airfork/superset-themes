@@ -85,6 +85,17 @@ describe("LabView", () => {
     expect(screen.getByRole("button", { name: /reroll all/i })).toBeInTheDocument();
   });
 
+  it("keeps Reroll all visible but disabled until a generated draft exists", async () => {
+    const user = userEvent.setup();
+    renderLab();
+
+    expect(screen.getByRole("button", { name: /reroll all/i })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: /^generate$/i }));
+
+    expect(screen.getByRole("button", { name: /reroll all/i })).toBeEnabled();
+  });
+
   it("imports a draft from pasted JSON", async () => {
     const user = userEvent.setup();
     renderLab();

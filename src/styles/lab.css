@@ -46,6 +46,21 @@
   height: 14px;
 }
 
+/* The editor's own structural labels must stay legible on any draft, even one
+   the user is editing toward low contrast. The rail/footer/notice chrome morph
+   with the previewed theme, so we pull their muted label text toward the
+   foreground (keeping it clearly a quiet label, but clearing AA) instead of
+   inheriting the draft's raw muted token. Swatches and surfaces still reflect
+   the theme verbatim. */
+.lab-rail,
+.lab-mobile-notice {
+  --lab-muted: color-mix(
+    in srgb,
+    var(--preview-ui-muted-foreground) 60%,
+    var(--preview-ui-foreground)
+  );
+}
+
 /* Lab rail form fields: a stacked label + control sharing one control
    vocabulary, so the native select / file / text inputs stop rendering as raw
    browser chrome (default bevels, OS arrows, labels jammed against controls). */
@@ -58,7 +73,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--lab-muted);
 }
 
 /* Quiet teaching line under a group of controls (e.g. what Seed/Hue do). */
@@ -66,7 +81,7 @@
   margin: 0;
   font-size: 0.72rem;
   line-height: 1.4;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--lab-muted);
 }
 
 .lab-field select,
@@ -204,6 +219,36 @@
   padding: 0 12px;
 }
 
+/* Filter the 40+ token rows by label so a specific token is reachable without a
+   long scroll. */
+.lab-tokens__filter {
+  width: 100%;
+  height: 30px;
+  margin-bottom: 4px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 6px;
+  background: var(--preview-ui-background);
+  color: var(--preview-ui-foreground);
+  padding: 0 10px;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.lab-tokens__filter::placeholder {
+  color: var(--lab-muted);
+}
+
+.lab-tokens__filter:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.lab-tokens__empty {
+  margin: 4px 0;
+  font-size: 0.78rem;
+  color: var(--lab-muted);
+}
+
 .lab-tokens__group {
   display: flex;
   flex-direction: column;
@@ -231,7 +276,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--lab-muted);
 }
 
 .lab-tokens__reroll {
@@ -477,7 +522,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--preview-ui-muted-foreground);
+  color: var(--lab-muted);
 }
 
 /* Desktop-only by design: the Theme Bench is a dense multi-column editor that
@@ -517,7 +562,7 @@
     margin: 4px 0 0;
     font-size: 0.78rem;
     line-height: 1.45;
-    color: var(--preview-ui-muted-foreground);
+    color: var(--lab-muted);
   }
 
   /* The narrow rail is a short accordion, not a tall scroll container, so a

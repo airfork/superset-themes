@@ -81,16 +81,23 @@ export function GenerateSection({
           <Sparkles aria-hidden="true" />
           <span>Generate</span>
         </button>
-        {generated ? (
-          <button className="catalog-action-button" onClick={onRerollAll} type="button">
-            <Shuffle aria-hidden="true" />
-            <span>Reroll all</span>
-          </button>
-        ) : null}
+        {/* Always shown so the control doesn't appear/vanish; rerolling only makes
+            sense once a seed-based draft exists, so it's disabled until then. */}
+        <button
+          className="catalog-action-button"
+          disabled={!generated}
+          onClick={onRerollAll}
+          title={generated ? undefined : "Generate a theme first to reroll it"}
+          type="button"
+        >
+          <Shuffle aria-hidden="true" />
+          <span>Reroll all</span>
+        </button>
       </div>
 
       <p className="lab-field-hint">
-        The same seed and hue reproduce the same palette. Every pair is checked against WCAG AA.
+        Type any word as a seed. The same seed and hue reproduce the same palette, every pair
+        checked against WCAG AA.
       </p>
     </RailSection>
   );
