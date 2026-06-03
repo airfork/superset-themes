@@ -3,13 +3,21 @@
 ## Current State
 
 The Superset Theme Catalog is a complete static React/Vite app for browsing, comparing, editing,
-generating, validating, and exporting Superset-compatible themes. It currently ships 14 catalog
+generating, validating, and exporting Superset-compatible themes. It currently ships 20 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
 Previous committed checkpoint: `2a68fa2 refactor: align critical theme css mapping`.
 
 Latest completed checkpoint:
 
+- Removed the style-tag pills from the pane nameplate (`Nameplate.tsx` plus its CSS and tests);
+  `styleTags` metadata is retained in the catalog/schema (still stripped from exported JSON).
+- Added six post-launch catalog themes: GitHub Light/Dark/Dark Dimmed, Catppuccin Latte, and
+  Rosé Pine (main) + Rosé Pine Moon. All MIT, ported from upstream palettes, passing the contrast
+  gate with no warnings. Dark variants follow the catalog's light-accent/dark-foreground pattern
+  so the required primary/destructive pairs clear 4.5; GitHub Light/Dark form a `github` pair group.
+- The command palette's `rose` query now ties across the three Rosé Pine variants and resolves to
+  the shortest id (`rose-pine`); Enter-applies tests switched to the unique `dawn` query.
 - Pre-public readiness now uses Vite's `%BASE_URL%` placeholder for static shell install assets,
   so GitHub Pages builds resolve favicon, apple-touch icon, and manifest links under
   `/superset-themes/`.
@@ -31,16 +39,20 @@ Latest completed checkpoint:
 
 ## Verification
 
-Current slice verification passed:
+Current slice verification passed (six-theme addition + nameplate pill removal):
 
-- `rtk git diff --check`
-- `rtk pnpm check` passed: Biome checked 194 files with no warnings, Vitest passed 52 files /
-  348 tests, script tests passed, 4 metadata/community tests passed, and the production build
-  inside `check` succeeded.
+- `rtk pnpm themes:validate` passed: 20 catalog themes from 20 JSON files.
+- `rtk pnpm themes:check-contrast` passed for 20 themes; the only optional warnings are on the
+  frozen `superset-*` baselines (the six new themes report zero warnings).
+- `rtk pnpm check` passed: Biome clean, Vitest passed 52 files / 355 tests, script/metadata tests
+  passed, and the production build inside `check` succeeded.
 - `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
-- `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
-- `rtk pnpm build:pages` passed; Pages initial JS `368.69 kB` minified / `113.77 kB` gzip.
+- Visual spot-check via the dev server confirmed GitHub Light/Dark Dimmed, Catppuccin Latte, and
+  Rosé Pine render correctly and that the nameplate no longer shows style-tag pills.
+
+Launch deploy verification (still current):
+
 - `rtk gh workflow enable pages.yml --repo airfork/superset-themes` enabled the deploy workflow
   after the public visibility flip.
 - `rtk gh workflow run pages.yml --repo airfork/superset-themes --ref main` created run

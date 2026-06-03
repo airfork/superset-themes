@@ -117,12 +117,18 @@ describe("theme schema", () => {
     const upstreamPorts = catalogThemes.filter((entry) => entry.meta.source === "upstream-port");
 
     expect(upstreamPorts.map((entry) => entry.theme.id).sort()).toEqual([
+      "catppuccin-latte",
       "catppuccin-mocha",
       "dracula",
+      "github-dark",
+      "github-dark-dimmed",
+      "github-light",
       "gruvbox-dark",
       "nord",
       "one-dark",
+      "rose-pine",
       "rose-pine-dawn",
+      "rose-pine-moon",
       "solarized-dark",
       "solarized-light",
       "superset-dark",
@@ -138,12 +144,18 @@ describe("theme schema", () => {
     expect(
       Object.fromEntries(upstreamPorts.map((entry) => [entry.theme.id, entry.meta.license]).sort()),
     ).toMatchObject({
+      "catppuccin-latte": "MIT",
       "catppuccin-mocha": "MIT",
       dracula: "MIT",
+      "github-dark": "MIT",
+      "github-dark-dimmed": "MIT",
+      "github-light": "MIT",
       "gruvbox-dark": "MIT/X11",
       nord: "MIT",
       "one-dark": "MIT",
+      "rose-pine": "MIT",
       "rose-pine-dawn": "MIT",
+      "rose-pine-moon": "MIT",
       "solarized-dark": "MIT",
       "solarized-light": "MIT",
       "superset-dark": "Elastic License 2.0",
