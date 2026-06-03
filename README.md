@@ -2,11 +2,13 @@
 
 A clean-slate, catalog-first static app for browsing, filtering, comparing, pairing, editing, importing, generating, validating, and exporting Superset-compatible themes.
 
+Live app: <https://airfork.github.io/superset-themes/>
+
 The existing `itsbariscan/superset-themes` repo and GitHub Pages site are reference material only. This repo is its own React/Vite implementation with a richer catalog interface and a client-side theme lab.
 
 ## Current App
 
-- Catalog browsing with search, light/dark filters, metadata filters, sort controls, and shareable URL state.
+- Catalog browsing with name search, Superset, Featured, Light, and Dark sections, and shareable URL state.
 - URL-addressable focused themes with export-clean copy/download actions and full preview tabs.
 - Side-by-side light/dark comparison at `/compare` with synchronized preview tabs.
 - Theme lab at `/lab` for starting from catalog themes, importing JSON, editing tokens, validating contrast, generating constrained random themes, rerolling token groups, and exporting clean JSON.

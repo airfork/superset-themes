@@ -6,14 +6,15 @@ The Superset Theme Catalog is a complete static React/Vite app for browsing, com
 generating, validating, and exporting Superset-compatible themes. It currently ships 20 catalog
 themes and is configured for GitHub Pages project hosting at `/superset-themes/`.
 
-Previous committed checkpoint: `e031cae Fix chart and highlight tokens in GitHub catalog themes`.
+Previous committed checkpoint: `b437ae8 Record public Pages launch`.
 
 Latest completed checkpoint — time-of-day default theme:
 
 - A bare `/` visit now seeds a random *featured* theme matching the OS `prefers-color-scheme`
-  (dark→dark, light→light), pins the pick into `?theme=` (replace) so refresh/back/share stay
-  stable, and an explicit `?theme=` deep link always wins. Design: `docs/design/2026-06-03-time-of-day-default-theme.md`;
-  plan: `docs/superpowers/plans/2026-06-03-time-of-day-default-theme.md`.
+  (dark->dark, light->light), pins the pick into `?theme=` (replace) so refresh/back/share stay
+  stable, and an explicit `?theme=` deep link always wins. Design:
+  `docs/design/2026-06-03-time-of-day-default-theme.md`; plan:
+  `docs/superpowers/plans/2026-06-03-time-of-day-default-theme.md`.
 - First paint is flash-free: `vite-plugin-critical-theme` now bakes one critical block per featured
   theme keyed by `data-theme-id` plus a no-attribute fallback, and injects an inline `<head>` script
   that resolves the theme before paint. React seeds `FocusedThemeProvider` from the painted
@@ -24,10 +25,26 @@ Latest completed checkpoint — time-of-day default theme:
   before React applies the route seed.
 - Featured set rebalanced: GitHub Light promoted to rank 5, One Dark retired to `featuredRank: null`,
   giving a 3-light / 2-dark featured pool. `getDefaultFocusedTheme()` stays rank-1 Tokyo Night as the
-  deterministic fallback. (Note: catalog overall is still dark-heavy at 14 dark / 6 light — a
+  deterministic fallback. (Note: catalog overall is still dark-heavy at 14 dark / 6 light; a
   light-only theme batch is the open follow-up to fix balance.)
-- The baked critical CSS grew `index.html` to ~19.1 kB (gzip ~3.1 kB); acceptable, trimmable to
-  essential vars later if needed.
+- The baked critical CSS grew `index.html` to about 19.1 kB (gzip about 3.1 kB); acceptable,
+  trimmable to essential vars later if needed.
+
+Prior checkpoint — public repo maintenance:
+
+- Public repo maintenance added PR CI, Dependabot update config, a code of conduct, and README
+  live-app/current-control copy.
+- GitHub settings now have Issues, Dependabot vulnerability alerts/security updates, private
+  vulnerability reporting, secret scanning, and push protection enabled.
+- GitHub also deletes merged PR branches automatically, lets maintainers update PR branches, and
+  protects `main` with required `verify` CI, linear history, conversation resolution, and force
+  push/deletion blocks.
+- GitHub Pages builds now emit direct app-shell artifacts for `/compare` and `/lab` in addition to
+  the SPA `404.html` fallback.
+- The tracked `.superset/config.json` hidden tool config was removed and `.superset/` is ignored,
+  avoiding confusion with user-level Superset app state.
+- Stale local branches `airfork/critique-lab-page`, `airfork/gh-pages-bundle-audit`, and
+  `airfork/superset-dark-mode` were deleted after confirming no matching remote branches remain.
 
 Prior checkpoint — nameplate pills + six catalog themes:
 
@@ -63,20 +80,37 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 Current slice verification passed (time-of-day default theme):
 
-- `rtk pnpm exec tsx --test scripts/vite-plugin-critical-theme.test.mjs` passed: 6 tests, including
-  VM execution of the generated inline script for bare catalog visits and compare/lab deep links.
-- `rtk pnpm check` passed: Biome clean, Vitest passed 53 files / 361 tests, script/metadata tests
-  (including the reworked critical-theme plugin test) passed, and the production build succeeded.
-- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped — including `e2e/default-theme.spec.ts`
-  (dark→dark, light→light via `emulateMedia({ colorScheme })`, and `?theme=` override) plus the
+- Merge refresh note: `origin/main` brought a dependency refresh whose TanStack 1.170.11 lockfile
+  entries were still inside pnpm's active minimum-release-age policy. The merged branch keeps the
+  direct `@tanstack/react-router` range at `^1.170.8`; after `rtk pnpm clean --lockfile` and
+  `rtk pnpm install`, pnpm resolved policy-compliant `@tanstack/react-router@1.170.10`.
+- `rtk pnpm check` passed: Biome clean, Vitest passed 53 files / 361 tests, metadata/community
+  tests passed 5 tests, critical-theme/Pages plugin tests passed 7 tests, archive-clean tests
+  passed 3 tests, and the production build succeeded.
+- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped, including `e2e/default-theme.spec.ts`
+  (dark->dark, light->light via `emulateMedia({ colorScheme })`, and `?theme=` override) plus the
   pinning assertions, with existing catalog/rail/shell specs re-pinned to `?theme=tokyo-night` for
   determinism.
-- `rtk pnpm test:stories` passed: 9 files / 31 stories (the App scaffold story now clears
-  `data-theme-id` so its a11y check runs against the deterministic default theme).
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm build` passed; initial JS `382.34 kB` minified / `116.06 kB` gzip.
+- `rtk pnpm build:pages` passed; Pages initial JS `382.37 kB` minified / `116.07 kB` gzip.
+- `rtk sh -c 'test -f ...'` passed for `dist/compare.html`, `dist/compare/index.html`,
+  `dist/lab.html`, and `dist/lab/index.html`.
+- `rtk git diff --check origin/main...HEAD` passed.
 - TDD throughout: each task wrote a failing test first, then the minimal implementation.
 
 Launch deploy verification (still current):
 
+- `rtk git diff --check`
+- `rtk pnpm check` passed: Biome checked 193 files with no warnings, Vitest passed 52 files /
+  348 tests, script tests passed, 5 metadata/community tests passed, 3 critical-theme/Pages plugin
+  tests passed, and the production build inside `check` succeeded.
+- `rtk pnpm test:e2e` passed: 31 passed, 1 skipped.
+- `rtk pnpm test:stories` passed: 9 files / 31 stories.
+- `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
+- `rtk pnpm build:pages` passed; Pages initial JS `368.69 kB` minified / `113.77 kB` gzip.
+- `test -f dist/compare.html`, `test -f dist/compare/index.html`, `test -f dist/lab.html`, and
+  `test -f dist/lab/index.html` passed after the Pages build.
 - `rtk gh workflow enable pages.yml --repo airfork/superset-themes` enabled the deploy workflow
   after the public visibility flip.
 - `rtk gh workflow run pages.yml --repo airfork/superset-themes --ref main` created run
@@ -87,7 +121,8 @@ Launch deploy verification (still current):
 ## GitHub Pages And Bundle Baseline
 
 - `pnpm build:pages` builds with the `/superset-themes/` base path.
-- Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
+- Vite emits `404.html` as a GitHub Pages SPA fallback, `.nojekyll`, and direct route copies for
+  `compare` and `lab`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
 - Public metadata now targets `https://airfork.github.io/superset-themes/`.
 - Pages API reports `build_type: workflow`, `public: true`, and
@@ -96,15 +131,14 @@ Launch deploy verification (still current):
   `/superset-themes/favicon.svg`, `/superset-themes/apple-touch-icon.svg`, and
   `/superset-themes/site.webmanifest`.
 - Current initial JS baseline:
-  - normal build: `368.66 kB` minified / `113.76 kB` gzip
-  - Pages build: `368.69 kB` minified / `113.77 kB` gzip
+  - normal build: `382.34 kB` minified / `116.06 kB` gzip
+  - Pages build: `382.37 kB` minified / `116.07 kB` gzip
 
 ## Remaining Opportunities
 
 - Light/dark balance: the catalog is still dark-heavy (14 dark / 6 light). A light-only theme batch
   (e.g. One Light, Gruvbox Light, Tokyo Night Day, Ayu Light, Everforest Light) would both fix the
   balance and deepen the daytime pool for the time-of-day default.
-- Optionally add a `CODE_OF_CONDUCT.md` once the project owner chooses the governance policy.
 - The successful Pages workflow run emitted a GitHub Actions warning that several current
   JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
   override once GitHub's Node 24 transition becomes actionable.

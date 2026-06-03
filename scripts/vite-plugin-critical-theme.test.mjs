@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import vm from "node:vm";
 import { getDefaultFocusedTheme, getFeaturedThemes } from "../src/data/featured.ts";
 import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
+import { githubPagesSpaFallbackPlugin } from "../vite.config.ts";
 import { criticalThemePlugin } from "./vite-plugin-critical-theme.mjs";
 
 const defaultFocusedTheme = getDefaultFocusedTheme().theme;
@@ -111,4 +115,33 @@ test("inline first-paint script leaves non-catalog deep links untouched", () => 
     }),
     [],
   );
+});
+
+test("GitHub Pages fallback plugin emits direct route artifacts for sitemap routes", async () => {
+  const outDir = await mkdtemp(join(tmpdir(), "superset-pages-"));
+
+  try {
+    await writeFile(
+      join(outDir, "index.html"),
+      "<!doctype html><title>Superset Theme Catalog</title>",
+    );
+
+    const plugin = githubPagesSpaFallbackPlugin();
+    plugin.configResolved?.({ build: { outDir } });
+    await plugin.closeBundle?.();
+
+    const expectedHtml = readFileSync(join(outDir, "index.html"), "utf8");
+    for (const path of [
+      "404.html",
+      "compare.html",
+      "compare/index.html",
+      "lab.html",
+      "lab/index.html",
+    ]) {
+      assert.equal(readFileSync(join(outDir, path), "utf8"), expectedHtml);
+    }
+    assert.equal(readFileSync(join(outDir, ".nojekyll"), "utf8"), "");
+  } finally {
+    await rm(outDir, { force: true, recursive: true });
+  }
 });
