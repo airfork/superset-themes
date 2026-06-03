@@ -14,7 +14,7 @@ describe("featured themes", () => {
       "catppuccin-mocha",
       "solarized-light",
       "rose-pine-dawn",
-      "one-dark",
+      "github-light",
     ]);
   });
 
@@ -26,7 +26,7 @@ describe("featured themes", () => {
       "catppuccin-mocha",
       "solarized-light",
       "rose-pine-dawn",
-      "one-dark",
+      "github-light",
     ]);
     expect(featured.map((entry) => entry.meta.featuredRank)).toEqual([1, 2, 3, 4, 5]);
   });

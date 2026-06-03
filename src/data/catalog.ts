@@ -279,7 +279,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/atom/atom",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of the Atom One Dark palette.",
-    featuredRank: 5,
+    featuredRank: null,
     baselineRank: null,
   },
   {
@@ -297,7 +297,7 @@ export const catalogThemeMetadata = [
     upstreamUrl: "https://github.com/primer/github-vscode-theme",
     portStatus: "ported",
     notes: "Schema-clean catalog adaptation of GitHub's Primer Light Default palette.",
-    featuredRank: null,
+    featuredRank: 5,
     baselineRank: null,
   },
   {
