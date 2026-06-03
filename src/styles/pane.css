@@ -143,26 +143,6 @@
   height: 14px;
 }
 
-.pane-nameplate__tags {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  min-width: 0;
-}
-
-.pane-nameplate__tag {
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--preview-ui-accent) 14%, transparent);
-  color: var(--preview-ui-foreground);
-  padding: 1px 7px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
 .pane-nameplate__status {
   display: inline-flex;
   align-items: center;

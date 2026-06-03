@@ -37,8 +37,8 @@ export const RosePineDawn: Story = {
   parameters: { a11y: { test: "error" } },
 };
 
-// Compare-slot variant: tags drop and actions go icon-only so the identity strip
-// stays single-line in a narrow column. No onPin (the slot owns Unpin).
+// Compare-slot variant: actions go icon-only so the identity strip stays
+// single-line in a narrow column. No onPin (the slot owns Unpin).
 export const Compact: Story = {
   args: { entry: entryFor("aurora-dark"), onPin: undefined, compact: true },
   parameters: { a11y: { test: "error" } },
