@@ -1,6 +1,6 @@
 {
   "author": "GitHub",
-  "description": "A GitHub Dark Default port built on Primer primitives: deep blue-black surfaces, soft off-white ink, and the iconic GitHub link blue for primary actions. A five-hue chart palette (blue, green, purple, red, cyan) separates data series, with red reserved for destructive actions, search and selection ramp across the slate surfaces, and selected text stays legible on the active highlight.",
+  "description": "A GitHub Dark Default port built on Primer primitives: deep blue-black surfaces, soft off-white ink, and the iconic GitHub link blue for primary actions. A five-hue chart palette (blue, green, purple, orange, cyan) separates data series, with red reserved for destructive actions, search and selection ramp across the slate surfaces, and selected text stays legible on the active highlight.",
   "id": "github-dark",
   "name": "GitHub Dark",
   "terminal": {
@@ -64,7 +64,7 @@
     "chart1": "#58a6ff",
     "chart2": "#3fb950",
     "chart3": "#bc8cff",
-    "chart4": "#ff7b72",
+    "chart4": "#f0883e",
     "chart5": "#39c5cf",
     "highlightMatch": "#21262d",
     "highlightActive": "#265073",

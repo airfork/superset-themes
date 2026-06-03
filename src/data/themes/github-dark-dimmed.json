@@ -1,6 +1,6 @@
 {
   "author": "GitHub",
-  "description": "A GitHub Dark Dimmed port built on Primer primitives: muted slate surfaces and gentle ink for low-glare night work, with a softened GitHub blue for primary actions. A five-hue chart palette (blue, green, purple, red, cyan) separates data series, with red reserved for destructive actions, search and selection ramp across the slate surfaces, and selected text stays legible on the active highlight.",
+  "description": "A GitHub Dark Dimmed port built on Primer primitives: muted slate surfaces and gentle ink for low-glare night work, with a softened GitHub blue for primary actions. A five-hue chart palette (blue, green, purple, orange, cyan) separates data series, with red reserved for destructive actions, search and selection ramp across the slate surfaces, and selected text stays legible on the active highlight.",
   "id": "github-dark-dimmed",
   "name": "GitHub Dark Dimmed",
   "terminal": {
@@ -64,7 +64,7 @@
     "chart1": "#539bf5",
     "chart2": "#57ab5a",
     "chart3": "#b083f0",
-    "chart4": "#f47067",
+    "chart4": "#e0823d",
     "chart5": "#39c5cf",
     "highlightMatch": "#2d333b",
     "highlightActive": "#2e4c6d",
