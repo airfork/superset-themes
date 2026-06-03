@@ -19,11 +19,14 @@ Latest completed checkpoint — time-of-day default theme:
   that resolves the theme before paint. React seeds `FocusedThemeProvider` from the painted
   `data-theme-id` (`App.tsx`); the catalog route pins the chosen theme. The picker is a pure,
   unit-tested `pickThemeIdForScheme` in `src/theme/defaultThemeSelection.ts`.
+- Review remediation: the inline first-paint script now gates random featured selection to the
+  configured Vite catalog root only, so compare/lab deep links keep their route state untouched
+  before React applies the route seed.
 - Featured set rebalanced: GitHub Light promoted to rank 5, One Dark retired to `featuredRank: null`,
   giving a 3-light / 2-dark featured pool. `getDefaultFocusedTheme()` stays rank-1 Tokyo Night as the
   deterministic fallback. (Note: catalog overall is still dark-heavy at 14 dark / 6 light — a
   light-only theme batch is the open follow-up to fix balance.)
-- The baked critical CSS grew `index.html` to ~18.9 kB (gzip ~3.0 kB); acceptable, trimmable to
+- The baked critical CSS grew `index.html` to ~19.1 kB (gzip ~3.1 kB); acceptable, trimmable to
   essential vars later if needed.
 
 Prior checkpoint — nameplate pills + six catalog themes:
@@ -60,7 +63,9 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 Current slice verification passed (time-of-day default theme):
 
-- `rtk pnpm check` passed: Biome clean, Vitest passed 53 files / 362 tests, script/metadata tests
+- `rtk pnpm exec tsx --test scripts/vite-plugin-critical-theme.test.mjs` passed: 6 tests, including
+  VM execution of the generated inline script for bare catalog visits and compare/lab deep links.
+- `rtk pnpm check` passed: Biome clean, Vitest passed 53 files / 361 tests, script/metadata tests
   (including the reworked critical-theme plugin test) passed, and the production build succeeded.
 - `rtk pnpm test:e2e` passed: 34 passed, 1 skipped — including `e2e/default-theme.spec.ts`
   (dark→dark, light→light via `emulateMedia({ colorScheme })`, and `?theme=` override) plus the

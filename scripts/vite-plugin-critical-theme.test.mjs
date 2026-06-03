@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import vm from "node:vm";
 import { getDefaultFocusedTheme, getFeaturedThemes } from "../src/data/featured.ts";
 import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
 import { criticalThemePlugin } from "./vite-plugin-critical-theme.mjs";
 
 const defaultFocusedTheme = getDefaultFocusedTheme().theme;
 const STUB_HTML = '<html><head><style id="critical-theme"></style></head><body></body></html>';
+const SCRIPT_REGEX = /<script>([\s\S]*?)<\/script>/;
 
 function renderHtml() {
   return criticalThemePlugin().transformIndexHtml(STUB_HTML);
@@ -14,6 +16,34 @@ function renderHtml() {
 
 function assertIncludes(actual, expected) {
   assert.ok(actual.includes(expected), `Expected output to include: ${expected}`);
+}
+
+function runInlineScript({ pathname = "/", search = "", prefersDark = true, random = 0 } = {}) {
+  const html = renderHtml();
+  const script = SCRIPT_REGEX.exec(html)?.[1];
+  assert.ok(script, "Expected critical theme HTML to include an inline script.");
+
+  const attributes = [];
+  const math = Object.create(Math);
+  math.random = () => random;
+
+  vm.runInNewContext(script, {
+    URLSearchParams,
+    document: {
+      documentElement: {
+        setAttribute: (name, value) => attributes.push([name, value]),
+      },
+    },
+    location: { pathname, search },
+    Math: math,
+    window: {
+      matchMedia: (query) => ({
+        matches: prefersDark && query === "(prefers-color-scheme: dark)",
+      }),
+    },
+  });
+
+  return attributes;
 }
 
 test("critical theme CSS uses the runtime theme CSS variable mapper", () => {
@@ -54,4 +84,31 @@ test("injects an inline first-paint script that reads the OS color scheme", () =
   assertIncludes(html, "data-theme-id");
   // Featured ids must be embedded so the script can pick within the OS mode.
   assertIncludes(html, `"${defaultFocusedTheme.id}"`);
+});
+
+test("inline first-paint script seeds bare catalog visits", () => {
+  assert.deepEqual(runInlineScript({ pathname: "/", search: "", prefersDark: true, random: 0 }), [
+    ["data-theme-id", "tokyo-night"],
+  ]);
+});
+
+test("inline first-paint script leaves non-catalog deep links untouched", () => {
+  assert.deepEqual(
+    runInlineScript({
+      pathname: "/compare",
+      search: "?a=aurora-light&from=graphite-dark",
+      prefersDark: true,
+      random: 0,
+    }),
+    [],
+  );
+  assert.deepEqual(
+    runInlineScript({
+      pathname: "/lab",
+      search: "?from=aurora-dark",
+      prefersDark: false,
+      random: 0,
+    }),
+    [],
+  );
 });
