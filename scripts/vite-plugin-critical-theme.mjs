@@ -1,6 +1,6 @@
 import { getDefaultFocusedTheme, getFeaturedThemes } from "../src/data/featured.ts";
-import { getFeaturedIdsByMode } from "../src/theme/defaultThemeSelection.ts";
 import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
+import { getFeaturedIdsByMode } from "../src/theme/defaultThemeSelection.ts";
 
 const MARKER_REGEX = /<style id="critical-theme">[\s\S]*?<\/style>/;
 

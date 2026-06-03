@@ -6,8 +6,7 @@ import { getThemeCssVars } from "../src/preview/themeCssVars.ts";
 import { criticalThemePlugin } from "./vite-plugin-critical-theme.mjs";
 
 const defaultFocusedTheme = getDefaultFocusedTheme().theme;
-const STUB_HTML =
-  '<html><head><style id="critical-theme"></style></head><body></body></html>';
+const STUB_HTML = '<html><head><style id="critical-theme"></style></head><body></body></html>';
 
 function renderHtml() {
   return criticalThemePlugin().transformIndexHtml(STUB_HTML);

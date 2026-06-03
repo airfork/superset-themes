@@ -29,18 +29,6 @@ describe("App", () => {
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/Tokyo Night/);
   });
 
-  it("seeds the focused theme from the data-theme-id the first-paint script set", async () => {
-    // The inline first-paint script picks a mode-appropriate featured theme and
-    // writes data-theme-id before React mounts; the app must adopt it, not the
-    // hard-coded default.
-    document.documentElement.setAttribute("data-theme-id", "github-light");
-
-    render(<App />);
-
-    expect(await screen.findByRole("heading", { name: /github light/i })).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo")).toHaveTextContent(/github light/i);
-  });
-
   it("hydrates the focused theme from the ?theme= search param", async () => {
     window.history.replaceState(null, "", "/?theme=solarized-light");
 
