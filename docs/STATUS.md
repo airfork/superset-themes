@@ -15,6 +15,8 @@ Latest completed checkpoint:
   `/superset-themes/`.
 - Public-facing repository docs no longer include the private SSH remote, and the repo now has
   contribution guidance, a security policy, issue templates, and a pull request template.
+- Repository visibility is public, the MIT license is attached on GitHub, and GitHub Pages is
+  configured for workflow deploys at `https://airfork.github.io/superset-themes/`.
 - Public launch polish added favicon/app/social-card SVG assets, web app manifest, robots/sitemap
   hints, and Open Graph/Twitter/canonical metadata in the static shell.
 - Catalog assembly now joins theme metadata to theme JSON by `themeId` instead of array position.
@@ -39,6 +41,12 @@ Current slice verification passed:
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
 - `rtk pnpm build` passed; initial JS `368.66 kB` minified / `113.76 kB` gzip.
 - `rtk pnpm build:pages` passed; Pages initial JS `368.69 kB` minified / `113.77 kB` gzip.
+- `rtk gh workflow enable pages.yml --repo airfork/superset-themes` enabled the deploy workflow
+  after the public visibility flip.
+- `rtk gh workflow run pages.yml --repo airfork/superset-themes --ref main` created run
+  `26861786877`; `rtk gh run watch 26861786877 --repo airfork/superset-themes --exit-status`
+  passed with successful `build` and `deploy` jobs.
+- `rtk curl -I https://airfork.github.io/superset-themes/` returned `HTTP/2 200`.
 
 ## GitHub Pages And Bundle Baseline
 
@@ -46,6 +54,8 @@ Current slice verification passed:
 - Vite emits `404.html` as a GitHub Pages SPA fallback and `.nojekyll`.
 - `.github/workflows/pages.yml` verifies and deploys the Pages artifact from `main`.
 - Public metadata now targets `https://airfork.github.io/superset-themes/`.
+- Pages API reports `build_type: workflow`, `public: true`, and
+  `html_url: https://airfork.github.io/superset-themes/`.
 - Pages build output now resolves shell install assets under `/superset-themes/`:
   `/superset-themes/favicon.svg`, `/superset-themes/apple-touch-icon.svg`, and
   `/superset-themes/site.webmanifest`.
@@ -55,8 +65,10 @@ Current slice verification passed:
 
 ## Remaining Opportunities
 
-- Choose and add a root `LICENSE` file before presenting this as open source.
 - Optionally add a `CODE_OF_CONDUCT.md` once the project owner chooses the governance policy.
+- The successful Pages workflow run emitted a GitHub Actions warning that several current
+  JavaScript actions are Node 20-based; watch for upstream action updates or set the runner env
+  override once GitHub's Node 24 transition becomes actionable.
 
 ## Blockers
 
