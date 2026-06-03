@@ -34,7 +34,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.170.8",
     "culori": "^4.0.2",
-    "lucide-react": "^1.16.0",
+    "lucide-react": "^1.17.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "zod": "^4.4.3"
