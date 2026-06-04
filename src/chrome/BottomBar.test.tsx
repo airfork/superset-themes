@@ -88,7 +88,7 @@ describe("BottomBar", () => {
 
   describe("compare variant", () => {
     it("renders both pinned slots' names and their own contrast ratios", () => {
-      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+      render(<BottomBar variant="compare" baseline={entry("tokyo-night")} candidate={entry("solarized-light")} />);
 
       const footer = screen.getByRole("contentinfo");
       expect(footer).toHaveTextContent("Tokyo Night");
@@ -98,7 +98,7 @@ describe("BottomBar", () => {
     });
 
     it("replaces catalog-only hints with compare hints", () => {
-      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+      render(<BottomBar variant="compare" baseline={entry("tokyo-night")} candidate={entry("solarized-light")} />);
 
       const footer = screen.getByRole("contentinfo");
       expect(footer).toHaveTextContent("⌘K");
@@ -108,7 +108,7 @@ describe("BottomBar", () => {
     });
 
     it("drops the redundant pointer hint so the footer cluster is pure key chips", () => {
-      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+      render(<BottomBar variant="compare" baseline={entry("tokyo-night")} candidate={entry("solarized-light")} />);
 
       const footer = screen.getByRole("contentinfo");
       // Clicking to pin is already taught by the rail hint and the live status
@@ -119,7 +119,7 @@ describe("BottomBar", () => {
     });
 
     it("trails the Esc chip with a terse verb matching the catalog grammar", () => {
-      render(<BottomBar variant="compare" a={entry("tokyo-night")} b={entry("solarized-light")} />);
+      render(<BottomBar variant="compare" baseline={entry("tokyo-night")} candidate={entry("solarized-light")} />);
 
       const footer = screen.getByRole("contentinfo");
       // Catalog hints read "↓ next" / ". pin"; compare should read "Esc exit",
@@ -129,7 +129,7 @@ describe("BottomBar", () => {
     });
 
     it("labels an empty slot instead of borrowing another theme's facts", () => {
-      render(<BottomBar variant="compare" a={entry("tokyo-night")} />);
+      render(<BottomBar variant="compare" baseline={entry("tokyo-night")} />);
 
       const footer = screen.getByRole("contentinfo");
       expect(footer).toHaveTextContent("Tokyo Night");
