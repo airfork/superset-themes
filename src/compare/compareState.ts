@@ -1,79 +1,42 @@
-export type CompareSlotId = "a" | "b";
-
 export interface CompareState {
-  a: string | null;
-  b: string | null;
-  lastPinned: CompareSlotId | null;
-  enteredFromThemeId: string;
+  // Left slot — also drives the chrome. There is always exactly one baseline.
+  baseline: string;
+  // Right slot — the "audition" slot. Every pick lands here.
+  candidate: string | null;
 }
 
 export type CompareAction =
   | { type: "enter"; themeId: string }
-  | { type: "pin"; themeId: string }
-  | { type: "unpin"; slot: CompareSlotId }
-  | { type: "restore"; slot: CompareSlotId; themeId: string }
+  | { type: "pick"; themeId: string }
+  | { type: "swap" }
+  | { type: "clear" }
   | { type: "exit" };
 
+// The empty baseline is a sentinel for "not yet resolved" — the route fills it
+// from the focused theme on mount, so a real baseline always reaches the view.
 export const INITIAL_COMPARE_STATE: CompareState = {
-  a: null,
-  b: null,
-  lastPinned: null,
-  enteredFromThemeId: "",
+  baseline: "",
+  candidate: null,
 };
-
-function pin(state: CompareState, themeId: string): CompareState {
-  // Re-pinning a theme that is already shown only refreshes its recency.
-  if (state.a === themeId) {
-    return { ...state, lastPinned: "a" };
-  }
-  if (state.b === themeId) {
-    return { ...state, lastPinned: "b" };
-  }
-
-  if (state.a === null) {
-    return { ...state, a: themeId, lastPinned: "a" };
-  }
-  if (state.b === null) {
-    return { ...state, b: themeId, lastPinned: "b" };
-  }
-
-  // Both slots full: replace the one that was NOT pinned most recently.
-  // lastPinned "a" means slot b is the least-recently-pinned, and vice versa.
-  // A null lastPinned (e.g. a deep link that filled both slots) defaults to
-  // replacing slot a so the behaviour stays deterministic.
-  const replace: CompareSlotId = state.lastPinned === "a" ? "b" : "a";
-  return { ...state, [replace]: themeId, lastPinned: replace };
-}
-
-// Slot-targeted restore: drop a theme straight back into a named slot, even when
-// both slots are full. Unlike `pin` (which picks the least-recent slot when full),
-// this is how an Undo returns a displaced theme to the exact slot it was bumped from.
-function restore(state: CompareState, slot: CompareSlotId, themeId: string): CompareState {
-  return { ...state, [slot]: themeId, lastPinned: slot };
-}
-
-function unpin(state: CompareState, slot: CompareSlotId): CompareState {
-  const other: CompareSlotId = slot === "a" ? "b" : "a";
-  const lastPinned =
-    state.lastPinned === slot ? (state[other] !== null ? other : null) : state.lastPinned;
-  return { ...state, [slot]: null, lastPinned };
-}
 
 export function compareReducer(state: CompareState, action: CompareAction): CompareState {
   switch (action.type) {
     case "enter":
-      return {
-        a: null,
-        b: null,
-        lastPinned: null,
-        enteredFromThemeId: action.themeId,
-      };
-    case "pin":
-      return pin(state, action.themeId);
-    case "unpin":
-      return unpin(state, action.slot);
-    case "restore":
-      return restore(state, action.slot, action.themeId);
+      return { baseline: action.themeId, candidate: null };
+    case "pick":
+      // Picking the theme that is already the baseline would compare it with
+      // itself — ignore it so the candidate stays meaningful.
+      if (action.themeId === state.baseline) {
+        return state;
+      }
+      return { ...state, candidate: action.themeId };
+    case "swap":
+      if (state.candidate === null) {
+        return state;
+      }
+      return { baseline: state.candidate, candidate: state.baseline };
+    case "clear":
+      return { ...state, candidate: null };
     case "exit":
       return INITIAL_COMPARE_STATE;
   }
