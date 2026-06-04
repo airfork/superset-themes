@@ -8,7 +8,7 @@ test.describe("compare mode", () => {
   }) => {
     await page.goto(ENTRY_URL);
 
-    const baseline = page.getByRole("region", { name: /baseline: tokyo night/i });
+    const baseline = page.getByRole("region", { name: /baseline: tokyo night$/i });
     const candidate = page.getByRole("region", { name: /comparing: solarized light/i });
     await expect(baseline).toBeVisible();
     await expect(candidate).toBeVisible();
@@ -42,7 +42,7 @@ test.describe("compare mode", () => {
     await page.getByRole("tab", { name: /^settings$/i }).click();
     await expect(page).toHaveURL(/scene=settings/);
 
-    const baseline = page.getByRole("region", { name: /baseline: tokyo night/i });
+    const baseline = page.getByRole("region", { name: /baseline: tokyo night$/i });
     const candidate = page.getByRole("region", { name: /comparing: solarized light/i });
     await expect(baseline.getByRole("textbox", { name: /display name/i })).toBeVisible();
     await expect(candidate.getByRole("textbox", { name: /display name/i })).toBeVisible();
@@ -61,8 +61,9 @@ test.describe("compare mode", () => {
     ).toBeVisible();
 
     // The baseline (tokyo night) is the current theme, not pinned: it carries
-    // aria-current="true" and never reads as "pinned for compare".
-    const baselineRow = rail.getByRole("button", { name: /^tokyo night/i }).first();
+    // aria-current="true" and never reads as "pinned for compare". Anchor the name
+    // so it can't bind to the distinct "Tokyo Night Light" row.
+    const baselineRow = rail.getByRole("button", { name: /^tokyo night(,|$)/i }).first();
     await expect(baselineRow).toHaveAttribute("aria-current", "true");
     await expect(
       rail.getByRole("button", { name: /tokyo night, pinned for compare/i }),
@@ -83,7 +84,7 @@ test.describe("compare mode", () => {
   }) => {
     await page.goto(ENTRY_URL);
 
-    const baseline = page.getByRole("region", { name: /baseline: tokyo night/i });
+    const baseline = page.getByRole("region", { name: /baseline: tokyo night$/i });
     const rail = page.getByRole("complementary", { name: /themes/i });
     await expect(baseline).toBeVisible();
 
@@ -107,7 +108,7 @@ test.describe("compare mode", () => {
     await page.getByRole("button", { name: /swap baseline and candidate/i }).click();
 
     await expect(page.getByRole("region", { name: /baseline: solarized light/i })).toBeVisible();
-    await expect(page.getByRole("region", { name: /comparing: tokyo night/i })).toBeVisible();
+    await expect(page.getByRole("region", { name: /comparing: tokyo night$/i })).toBeVisible();
 
     // The chrome now follows the new baseline (solarized light).
     const rootBackground = await page.evaluate(() =>
