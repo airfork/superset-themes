@@ -37,10 +37,48 @@ describe("compareRouteSearch", () => {
   });
 
   it("parse ignores a stale from param and an invalid scene", () => {
-    expect(parseCompareRouteSearch({ a: "x", b: "y", from: "z", scene: "nope" })).toEqual({
-      a: "x",
-      b: "y",
+    expect(
+      parseCompareRouteSearch({
+        a: "tokyo-night",
+        b: "solarized-light",
+        from: "z",
+        scene: "nope",
+      }),
+    ).toEqual({
+      a: "tokyo-night",
+      b: "solarized-light",
       scene: undefined,
+    });
+  });
+
+  it("drops unknown theme ids before seeding compare state", () => {
+    const parsed = parseCompareRouteSearch({
+      a: "tokyo-night",
+      b: "does-not-exist",
+      scene: "workspace",
+    });
+
+    expect(parsed).toEqual({
+      a: "tokyo-night",
+      b: undefined,
+      scene: "workspace",
+    });
+    expect(seedCompareState(parsed, "aurora-dark")).toEqual({
+      baseline: "tokyo-night",
+      candidate: null,
+    });
+  });
+
+  it("does not seed the same theme as both fallback baseline and candidate", () => {
+    const parsed = parseCompareRouteSearch({
+      a: "does-not-exist",
+      b: "tokyo-night",
+      scene: "workspace",
+    });
+
+    expect(seedCompareState(parsed, "tokyo-night")).toEqual({
+      baseline: "tokyo-night",
+      candidate: null,
     });
   });
 });

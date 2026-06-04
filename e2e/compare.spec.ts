@@ -117,6 +117,14 @@ test.describe("compare mode", () => {
     expect(rootBackground).toBe("#fdf6e3");
   });
 
+  test("stale candidate ids render as an empty candidate with swap disabled", async ({ page }) => {
+    await page.goto("/compare?a=tokyo-night&b=does-not-exist");
+
+    await expect(page.getByRole("region", { name: /baseline: tokyo night$/i })).toBeVisible();
+    await expect(page.getByRole("region", { name: /comparing slot, empty/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /swap baseline and candidate/i })).toBeDisabled();
+  });
+
   test("`.` enters compare mode with the focused theme as baseline, and Esc exits", async ({
     page,
   }) => {
