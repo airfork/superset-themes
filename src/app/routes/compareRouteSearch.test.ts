@@ -29,6 +29,13 @@ describe("compareRouteSearch", () => {
     expect(search).toEqual({ a: "tokyo-night", b: undefined, scene: "settings" });
   });
 
+  it("uses the fallback baseline and a null candidate on a bare visit", () => {
+    expect(seedCompareState({}, "aurora-dark")).toEqual({
+      baseline: "aurora-dark",
+      candidate: null,
+    });
+  });
+
   it("parse ignores a stale from param and an invalid scene", () => {
     expect(parseCompareRouteSearch({ a: "x", b: "y", from: "z", scene: "nope" })).toEqual({
       a: "x",

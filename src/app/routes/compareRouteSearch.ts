@@ -31,7 +31,7 @@ export function seedCompareState(
   fallbackBaseline: string,
 ): CompareState {
   return {
-    baseline: search.a ?? fallbackBaseline,
+    baseline: search.a || fallbackBaseline,
     candidate: search.b ?? null,
   };
 }
