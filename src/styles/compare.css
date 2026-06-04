@@ -1,6 +1,6 @@
 /* Compare mode — the pane splits into two theme-scoped slots above a shared
    scene-tab strip. Each .compare-slot carries its own --preview-* vars inline,
-   so the surrounding chrome keeps reading the entry theme from :root. */
+   so the surrounding chrome keeps reading the baseline theme from :root. */
 .compare-view {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;

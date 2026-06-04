@@ -51,6 +51,11 @@ export function CompareRouteView({
   }, [baselineId, focused.theme.id, setFocusedId]);
 
   const commit = (next: CompareState) => {
+    // A no-op action (e.g. picking the current baseline, swapping with no
+    // candidate) returns the same state object; skip the redundant URL write.
+    if (next === state) {
+      return;
+    }
     setState(next);
     onChangeSearch(compareStateToSearch(next, scene));
   };
