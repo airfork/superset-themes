@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BottomBar } from "../../chrome/BottomBar";
 import { LayoutShell } from "../../chrome/LayoutShell";
 import { CompareView } from "../../compare/CompareView";

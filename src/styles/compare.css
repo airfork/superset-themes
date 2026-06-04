@@ -130,14 +130,6 @@
   cursor: default;
 }
 
-@media (max-width: 640px) {
-  /* Stacked layout: move the control to the horizontal divider. */
-  .compare-view__swap {
-    top: 50%;
-    left: 50%;
-  }
-}
-
 .compare-slot {
   display: flex;
   flex-direction: column;
@@ -159,7 +151,7 @@
   }
 }
 
-.compare-slot + .compare-slot,
+.compare-slot ~ .compare-slot,
 .compare-slot--empty {
   /* Derive the seam from the slot's own foreground, not its (often pale) border
      token, so two like-on-like surfaces — e.g. Solarized Light beside Rosé Pine
@@ -179,7 +171,7 @@
     overflow: visible;
   }
 
-  .compare-slot + .compare-slot {
+  .compare-slot ~ .compare-slot {
     border-left: 0;
     border-top: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent);
   }
@@ -207,7 +199,7 @@
   color: var(--preview-ui-muted-foreground);
 }
 
-.compare-slot__unpin {
+.compare-slot__clear {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -224,18 +216,18 @@
   touch-action: manipulation;
 }
 
-.compare-slot__unpin svg {
+.compare-slot__clear svg {
   width: 14px;
   height: 14px;
 }
 
-.compare-slot__unpin:hover {
+.compare-slot__clear:hover {
   border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
   background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
   color: var(--preview-ui-foreground);
 }
 
-.compare-slot__unpin:focus-visible {
+.compare-slot__clear:focus-visible {
   outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }

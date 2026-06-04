@@ -51,7 +51,7 @@ export function CompareSlot({ role, entry, scene, onClear }: CompareSlotProps) {
         {role === "candidate" && onClear ? (
           <button
             type="button"
-            className="compare-slot__unpin"
+            className="compare-slot__clear"
             onClick={onClear}
             aria-label={`Remove ${entry.theme.name} from comparison`}
           >
