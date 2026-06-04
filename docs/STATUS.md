@@ -136,20 +136,24 @@ Prior checkpoint — nameplate pills + six catalog themes:
 
 ## Active Work
 
-- Review remediation for `a5ddbab` is implemented in the working tree and ready for final review or
-  commit. It addresses active palette secondary affordance contrast, workspace active-session
-  close-button hover visibility, and the stale checkpoint note above.
+- Compare baseline/candidate review remediation is implemented and verified. It validates compare
+  route theme IDs before state seeding, so stale candidate query values render as an empty
+  candidate and cannot be swapped into the required baseline. Regression coverage now exists in
+  route-search unit tests and compare e2e.
 
 ## Verification
 
-Current review-remediation verification passed:
+Current compare review-remediation verification passed:
 
-- `rtk pnpm check` passed: Biome clean, typecheck clean, Vitest 54 files / 389 tests, script
-  test-suites passed, and the production build inside `check` succeeded.
-- `rtk pnpm test:e2e` passed: 34 passed, 1 skipped.
+- `rtk pnpm test -- src/app/routes/compareRouteSearch.test.ts` passed after the expected red run:
+  Vitest 55 files / 384 tests.
+- `rtk pnpm exec playwright test e2e/compare.spec.ts` passed: 9 passed.
+- `rtk pnpm check` passed: Biome checked 203 files, typecheck clean, Vitest 55 files / 384 tests,
+  script test-suites passed, and the production build inside `check` succeeded.
+- `rtk pnpm test:e2e` passed: 38 passed, 1 skipped.
 - `rtk pnpm test:stories` passed: 9 files / 31 stories.
-- `rtk pnpm build` passed; initial JS `436.28 kB` minified / `133.82 kB` gzip.
-- `rtk git diff --check` passed.
+- `rtk pnpm build` passed; initial JS `436.33 kB` minified / `133.83 kB` gzip.
+- `rtk git diff --check origin/main...HEAD` passed.
 
 Current slice verification passed (light-theme balance batch):
 

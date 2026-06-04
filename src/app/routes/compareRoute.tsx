@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BottomBar } from "../../chrome/BottomBar";
 import { LayoutShell } from "../../chrome/LayoutShell";
 import { CompareView } from "../../compare/CompareView";
-import { type CompareSlotId, type CompareState, compareReducer } from "../../compare/compareState";
+import { type CompareState, compareReducer } from "../../compare/compareState";
 import { catalogThemes } from "../../data/catalog";
-import { buildThemeCommands, nextThemeId, type PaletteCommand } from "../../palette/commands";
+import { buildThemeCommands, type PaletteCommand } from "../../palette/commands";
 import { usePalette } from "../../palette/usePalette";
 import type { SceneId } from "../../pane/SceneTabs";
 import { Rail } from "../../rail/Rail";
@@ -33,22 +33,40 @@ export function CompareRouteView({
   onOpenLab,
 }: CompareRouteViewProps) {
   const { focused, setFocusedId } = useFocusedTheme();
-  const [state, setState] = useState<CompareState>(() => seedCompareState(search));
+  // Resolve the baseline once: a bare /compare visit has no `a`, so fall back to
+  // the first-paint focused theme.
+  const [state, setState] = useState<CompareState>(() =>
+    seedCompareState(search, focused.theme.id),
+  );
   const [scene, setScene] = useState<SceneId>(search.scene ?? "workspace");
   // Mirror of the rail's filter so ⌘K can seed itself with whatever's typed there.
   const [railFilter, setRailFilter] = useState("");
 
-  // Chrome stays at the entry-state theme: apply `from` to :root via the provider.
-  const fromId = state.enteredFromThemeId;
+  // The chrome reads :root, which the provider sets to the baseline theme.
+  const baselineId = state.baseline;
   useEffect(() => {
-    if (fromId && fromId !== focused.theme.id) {
-      setFocusedId(fromId);
+    if (baselineId && baselineId !== focused.theme.id) {
+      setFocusedId(baselineId);
     }
-  }, [fromId, focused.theme.id, setFocusedId]);
+  }, [baselineId, focused.theme.id, setFocusedId]);
 
-  // Esc exits compare mode back to the catalog at the entry-state theme.
-  const exitRef = useRef(() => onExit(fromId));
-  exitRef.current = () => onExit(fromId);
+  const commit = (next: CompareState) => {
+    // A no-op action (e.g. picking the current baseline, swapping with no
+    // candidate) returns the same state object; skip the redundant URL write.
+    if (next === state) {
+      return;
+    }
+    setState(next);
+    onChangeSearch(compareStateToSearch(next, scene));
+  };
+
+  const pick = (themeId: string) => commit(compareReducer(state, { type: "pick", themeId }));
+  const swap = () => commit(compareReducer(state, { type: "swap" }));
+  const clearCandidate = () => commit(compareReducer(state, { type: "clear" }));
+
+  // Esc exits compare mode back to the catalog at the current baseline.
+  const exitRef = useRef(() => onExit(baselineId));
+  exitRef.current = () => onExit(baselineId);
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -60,53 +78,42 @@ export function CompareRouteView({
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const commit = (next: CompareState) => {
-    setState(next);
-    onChangeSearch(compareStateToSearch(next, scene));
-  };
-
-  const pin = (themeId: string) => commit(compareReducer(state, { type: "pin", themeId }));
-  const unpin = (slot: CompareSlotId) => commit(compareReducer(state, { type: "unpin", slot }));
-  const restore = (slot: CompareSlotId, themeId: string) =>
-    commit(compareReducer(state, { type: "restore", slot, themeId }));
-
   const changeScene = (next: SceneId) => {
     setScene(next);
     onChangeSearch(compareStateToSearch(state, next));
   };
 
+  // The baseline reads as the current theme; the candidate carries the pin marker.
   const pinnedThemeIds = useMemo(
-    () => new Set([state.a, state.b].filter((id): id is string => id !== null)),
-    [state.a, state.b],
+    () => new Set([state.candidate].filter((id): id is string => id !== null)),
+    [state.candidate],
   );
 
   const hint =
-    state.b === null ? "Compare mode: click any theme to fill the second slot." : undefined;
+    state.candidate === null ? "Compare mode: click any theme to set the candidate." : undefined;
 
-  // Picking a theme fills the next compare slot; the entry-from theme drives the chrome.
-  const setEntryTheme = (themeId: string) => commit({ ...state, enteredFromThemeId: themeId });
   const commands: PaletteCommand[] = [
-    ...buildThemeCommands(pin),
+    ...buildThemeCommands(pick),
+    {
+      id: "action-swap-slots",
+      label: "Swap slots",
+      section: "Actions",
+      keys: ["swap slots", "swap", "exchange"],
+      run: swap,
+    },
     {
       id: "action-open-in-lab",
       label: "Open in Lab",
       section: "Actions",
       keys: ["open in lab", "lab", "editor"],
-      run: () => onOpenLab(fromId),
+      run: () => onOpenLab(baselineId),
     },
     {
       id: "action-exit-compare",
       label: "Exit compare",
       section: "Actions",
       keys: ["exit compare", "close", "back"],
-      run: () => onExit(fromId),
-    },
-    {
-      id: "action-toggle-next-theme",
-      label: "Toggle next theme",
-      section: "Actions",
-      keys: ["toggle next theme", "next", "cycle"],
-      run: () => setEntryTheme(nextThemeId(fromId)),
+      run: () => onExit(baselineId),
     },
   ];
   const palette = usePalette(commands, { seedQuery: railFilter });
@@ -115,13 +122,19 @@ export function CompareRouteView({
     <LayoutShell
       onOpenPalette={palette.open}
       palette={palette.paletteProps}
-      bottomBar={<BottomBar variant="compare" a={entryFor(state.a)} b={entryFor(state.b)} />}
+      bottomBar={
+        <BottomBar
+          variant="compare"
+          baseline={entryFor(state.baseline)}
+          candidate={entryFor(state.candidate)}
+        />
+      }
       rail={
         <Rail
-          focusedThemeId={fromId}
+          focusedThemeId={baselineId}
           pinnedThemeIds={pinnedThemeIds}
           hint={hint}
-          onSelect={pin}
+          onSelect={pick}
           onFilterChange={setRailFilter}
         />
       }
@@ -130,9 +143,9 @@ export function CompareRouteView({
           state={state}
           scene={scene}
           onSceneChange={changeScene}
-          onUnpin={unpin}
-          onRestore={restore}
-          onExit={() => onExit(fromId)}
+          onSwap={swap}
+          onClearCandidate={clearCandidate}
+          onExit={() => onExit(baselineId)}
         />
       }
     />

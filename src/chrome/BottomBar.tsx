@@ -11,8 +11,8 @@ interface CatalogBottomBarProps {
 
 interface CompareBottomBarProps {
   variant: "compare";
-  a?: CatalogThemeEntry;
-  b?: CatalogThemeEntry;
+  baseline?: CatalogThemeEntry;
+  candidate?: CatalogThemeEntry;
 }
 
 type BottomBarProps = CatalogBottomBarProps | CompareBottomBarProps;
@@ -43,7 +43,7 @@ function KeyHint({ keyLabel, action }: { keyLabel: string; action?: string }) {
 
 export function BottomBar(props: BottomBarProps) {
   if (props.variant === "compare") {
-    return <CompareBottomBar a={props.a} b={props.b} />;
+    return <CompareBottomBar baseline={props.baseline} candidate={props.candidate} />;
   }
   return <CatalogBottomBar entry={props.entry} onShowShortcuts={props.onShowShortcuts} />;
 }
@@ -95,11 +95,11 @@ function CatalogBottomBar({
   );
 }
 
-function CompareSlotFact({ slot, entry }: { slot: "A" | "B"; entry?: CatalogThemeEntry }) {
+function CompareSlotFact({ label, entry }: { label: string; entry?: CatalogThemeEntry }) {
   return (
     <span className="chrome-bottombar__slot">
       <span className="chrome-bottombar__slot-label" aria-hidden="true">
-        {slot}
+        {label}
       </span>
       {entry ? (
         <>
@@ -113,13 +113,19 @@ function CompareSlotFact({ slot, entry }: { slot: "A" | "B"; entry?: CatalogThem
   );
 }
 
-function CompareBottomBar({ a, b }: { a?: CatalogThemeEntry; b?: CatalogThemeEntry }) {
+function CompareBottomBar({
+  baseline,
+  candidate,
+}: {
+  baseline?: CatalogThemeEntry;
+  candidate?: CatalogThemeEntry;
+}) {
   return (
     <footer className="chrome-bottombar">
       <div className="chrome-bottombar__facts">
-        <CompareSlotFact slot="A" entry={a} />
+        <CompareSlotFact label="Baseline" entry={baseline} />
         <Sep />
-        <CompareSlotFact slot="B" entry={b} />
+        <CompareSlotFact label="Comparing" entry={candidate} />
       </div>
       <div className="chrome-bottombar__hints">
         <KeyHint keyLabel="⌘K" />

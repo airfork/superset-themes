@@ -59,8 +59,9 @@ describe("Nameplate", () => {
   });
 
   it("omits the Pin to compare action when no onPin handler is provided", () => {
-    // In compare slots the theme is already pinned, so the slot owns Unpin and the
-    // nameplate must not also offer Pin to compare (two opposite verbs on one object).
+    // In compare slots the candidate is already being compared, so the slot owns
+    // Clear and the nameplate must not also offer Pin to compare (two opposite
+    // verbs on one object).
     render(<Nameplate entry={entryFor("tokyo-night")} />);
 
     expect(screen.queryByRole("button", { name: /pin to compare/i })).not.toBeInTheDocument();

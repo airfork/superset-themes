@@ -1,6 +1,6 @@
 /* Compare mode — the pane splits into two theme-scoped slots above a shared
    scene-tab strip. Each .compare-slot carries its own --preview-* vars inline,
-   so the surrounding chrome keeps reading the entry theme from :root. */
+   so the surrounding chrome keeps reading the baseline theme from :root. */
 .compare-view {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -74,59 +74,62 @@
   color: var(--chrome-muted-foreground);
 }
 
-.compare-view__status-sep {
-  margin: 0 7px;
-  color: var(--chrome-muted-foreground);
-}
-
-/* The Undo recovery action reads as a link against the muted status prose. It
-   auto-focuses on mount, far from the slot the user just acted on, so a one-shot
-   ring ripple pulls the eye to where focus jumped. */
-.compare-view__undo {
-  border: 0;
-  background: transparent;
-  padding: 0;
-  font: inherit;
-  font-weight: 600;
-  color: var(--preview-ui-primary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  border-radius: 3px;
-  cursor: pointer;
-  touch-action: manipulation;
-  animation: compare-undo-attention 720ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes compare-undo-attention {
-  from {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
-  }
-  to {
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--preview-focus-ring) 0%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .compare-view__undo {
-    animation: none;
-  }
-}
-
-.compare-view__undo:hover {
-  text-decoration-thickness: 2px;
-}
-
-.compare-view__undo:focus-visible {
-  outline: 2px solid var(--preview-focus-ring);
-  outline-offset: 2px;
-  border-radius: 3px;
-}
-
 .compare-view__slots {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   min-height: 0;
   overflow: hidden;
+  position: relative;
+}
+
+/* Circular control on the seam between the two slots. Styled from chrome tokens
+   (it straddles two themed panels, so it must not read as belonging to either).
+   The chrome layer in this app pairs --chrome-surface / --chrome-muted-foreground
+   with --preview-ui-border and --preview-ui-foreground (there is no --chrome-border
+   or --chrome-foreground token), so the swap button follows that same pairing.
+   Absolutely centered on the divider; pointer-events stay on the button only so it
+   never blocks slot scrolling. */
+.compare-view__swap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--preview-ui-border);
+  border-radius: 999px;
+  background: var(--chrome-surface);
+  color: var(--chrome-muted-foreground);
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.compare-view__swap svg {
+  width: 16px;
+  height: 16px;
+}
+
+.compare-view__swap:hover:not(:disabled) {
+  color: var(--preview-ui-foreground);
+  border-color: color-mix(in srgb, currentColor 40%, transparent);
+}
+
+.compare-view__swap:focus-visible {
+  outline: 2px solid var(--preview-focus-ring);
+  outline-offset: 2px;
+}
+
+.compare-view__swap:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .compare-slot {
@@ -139,9 +142,20 @@
   padding: 14px;
   background: var(--preview-ui-background);
   color: var(--preview-ui-foreground);
+  /* The candidate swaps theme on a pick; ease the surface change so it reads as a
+     transition rather than a hard cut. */
+  transition:
+    background 160ms ease,
+    color 160ms ease;
 }
 
-.compare-slot + .compare-slot,
+@media (prefers-reduced-motion: reduce) {
+  .compare-slot {
+    transition: none;
+  }
+}
+
+.compare-slot ~ .compare-slot,
 .compare-slot--empty {
   /* Derive the seam from the slot's own foreground, not its (often pale) border
      token, so two like-on-like surfaces — e.g. Solarized Light beside Rosé Pine
@@ -161,7 +175,7 @@
     overflow: visible;
   }
 
-  .compare-slot + .compare-slot {
+  .compare-slot ~ .compare-slot {
     border-left: 0;
     border-top: 1px solid color-mix(in srgb, var(--preview-ui-foreground) 20%, transparent);
   }
@@ -172,34 +186,6 @@
   max-width: 28ch;
   color: var(--preview-ui-muted-foreground);
   font-size: 0.86rem;
-}
-
-/* An out-of-view pin (rail row / ⌘K) can swap a slot's theme without moving
-   focus here, so the swap is easy to miss before the Undo window closes. Frame
-   the changed panel until the notice clears. Inset (not an outer ring, which the
-   slots' overflow would clip; not a side border, which would read as a stripe)
-   so it never shifts layout. The static ring is the reduced-motion fallback. */
-.compare-slot[data-attention="true"] {
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
-  animation: compare-slot-attention 1100ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes compare-slot-attention {
-  0% {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 0%, transparent);
-  }
-  28% {
-    box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--preview-focus-ring) 90%, transparent);
-  }
-  100% {
-    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--preview-focus-ring) 70%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .compare-slot[data-attention="true"] {
-    animation: none;
-  }
 }
 
 .compare-slot__chrome {
@@ -217,7 +203,7 @@
   color: var(--preview-ui-muted-foreground);
 }
 
-.compare-slot__unpin {
+.compare-slot__clear {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -234,18 +220,18 @@
   touch-action: manipulation;
 }
 
-.compare-slot__unpin svg {
+.compare-slot__clear svg {
   width: 14px;
   height: 14px;
 }
 
-.compare-slot__unpin:hover {
+.compare-slot__clear:hover {
   border-color: color-mix(in srgb, var(--preview-ui-foreground) 30%, var(--preview-ui-border));
   background: color-mix(in srgb, var(--preview-ui-foreground) 6%, transparent);
   color: var(--preview-ui-foreground);
 }
 
-.compare-slot__unpin:focus-visible {
+.compare-slot__clear:focus-visible {
   outline: 2px solid var(--preview-focus-ring);
   outline-offset: 2px;
 }

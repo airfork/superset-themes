@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
@@ -38,26 +38,23 @@ describe("App", () => {
     expect(screen.getByRole("contentinfo")).toHaveTextContent(/Solarized Light/);
   });
 
-  it("renders compare mode with the two pinned slots in the bottom bar", async () => {
-    window.history.replaceState(
-      null,
-      "",
-      "/compare?a=aurora-light&b=aurora-dark&from=graphite-dark&scene=workspace",
-    );
+  it("renders compare mode from a deep link with the baseline and candidate slots", async () => {
+    window.history.replaceState(null, "", "/compare?a=aurora-light&b=aurora-dark&scene=workspace");
 
     render(<App />);
 
     expect(
-      await screen.findByRole("region", { name: /compare slot a: aurora light/i }),
+      await screen.findByRole("region", { name: /baseline: aurora light/i }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: /compare slot b: aurora dark/i }),
-    ).toBeInTheDocument();
-    // The bottom bar reflects the two compared slots, not the entry-state theme.
+    expect(screen.getByRole("region", { name: /comparing: aurora dark/i })).toBeInTheDocument();
+    // The chrome follows the baseline (slot A), so the document theme is aurora light.
+    await waitFor(() =>
+      expect(document.documentElement).toHaveAttribute("data-theme-id", "aurora-light"),
+    );
+    // The bottom bar reflects both compared slots.
     const footer = screen.getByRole("contentinfo");
     expect(footer).toHaveTextContent(/aurora light/i);
     expect(footer).toHaveTextContent(/aurora dark/i);
-    expect(footer).not.toHaveTextContent(/graphite dark/i);
   });
 
   it("opens the keyboard shortcuts dialog when ? is pressed on the catalog", async () => {

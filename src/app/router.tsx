@@ -70,11 +70,11 @@ const catalogRoute = createRoute({
       }
     }, [search, focused.theme.id, navigate]);
 
-    // `.` enters compare mode with the focused theme as slot a and entry-state.
+    // `.` enters compare mode with the focused theme as the baseline.
     // A ref keeps the listener mounted once while always reading the latest focus.
     const enterCompare = () => {
       const id = focused.theme.id;
-      void navigate({ to: "/compare", search: { a: id, from: id } });
+      void navigate({ to: "/compare", search: { a: id } });
     };
     const enterCompareRef = useRef(enterCompare);
     enterCompareRef.current = enterCompare;
@@ -150,7 +150,7 @@ const catalogRoute = createRoute({
         section: "Actions",
         icon: Columns2,
         keys: ["pin to compare", "compare", "split"],
-        run: () => void navigate({ to: "/compare", search: { a: focusedId, from: focusedId } }),
+        run: () => void navigate({ to: "/compare", search: { a: focusedId } }),
       },
       downloadThemeJsonCommand(focused),
       {
@@ -186,9 +186,9 @@ const catalogRoute = createRoute({
               expanded={expanded}
               onExpandToggle={() => setExpanded((value) => !value)}
               onPin={(themeId) => {
-                // Pin to compare enters compare mode with the focused theme as slot a
-                // and as the entry-state theme the chrome keeps showing.
-                void navigate({ to: "/compare", search: { a: themeId, from: themeId } });
+                // Pin to compare enters compare mode with the focused theme as the
+                // baseline (the chrome keeps showing it).
+                void navigate({ to: "/compare", search: { a: themeId } });
               }}
             />
           }
