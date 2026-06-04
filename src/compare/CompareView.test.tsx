@@ -8,13 +8,7 @@ import type { SceneId } from "../pane/SceneTabs";
 import { CompareView } from "./CompareView";
 import { type CompareState, compareReducer } from "./compareState";
 
-function Harness({
-  initial,
-  onExit,
-}: {
-  initial: CompareState;
-  onExit?: () => void;
-}) {
+function Harness({ initial, onExit }: { initial: CompareState; onExit?: () => void }) {
   const [state, setState] = useState(initial);
   const [scene, setScene] = useState<SceneId>("workspace");
   return (
@@ -34,9 +28,7 @@ describe("CompareView", () => {
     render(<Harness initial={{ baseline: "tokyo-night", candidate: "solarized-light" }} />);
 
     expect(screen.getByRole("region", { name: /baseline: tokyo night/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("region", { name: /comparing: solarized light/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /comparing: solarized light/i })).toBeInTheDocument();
   });
 
   it("shows an empty placeholder for the candidate before a theme is picked", () => {
@@ -115,9 +107,7 @@ describe("CompareView", () => {
 
     await user.click(screen.getByRole("button", { name: /swap baseline and candidate/i }));
 
-    expect(
-      screen.getByRole("region", { name: /baseline: solarized light/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: /baseline: solarized light/i })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: /comparing: tokyo night/i })).toBeInTheDocument();
   });
 

@@ -107,7 +107,9 @@
   cursor: pointer;
   touch-action: manipulation;
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.18);
-  transition: color 120ms ease, border-color 120ms ease;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
 }
 
 .compare-view__swap svg {
@@ -142,7 +144,9 @@
   color: var(--preview-ui-foreground);
   /* The candidate swaps theme on a pick; ease the surface change so it reads as a
      transition rather than a hard cut. */
-  transition: background 160ms ease, color 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

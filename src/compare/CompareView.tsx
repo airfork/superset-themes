@@ -52,7 +52,7 @@ export function CompareView({
         </p>
       </header>
       <div className="compare-view__slots">
-        <CompareSlot role="baseline" entry={baseline} scene={scene} />
+        <CompareSlot slotRole="baseline" entry={baseline} scene={scene} />
         <button
           type="button"
           className="compare-view__swap"
@@ -63,7 +63,7 @@ export function CompareView({
           <ArrowLeftRight aria-hidden="true" />
         </button>
         <CompareSlot
-          role="candidate"
+          slotRole="candidate"
           entry={candidate}
           scene={scene}
           onClear={onClearCandidate}

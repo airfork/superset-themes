@@ -10,7 +10,9 @@ import type { CatalogThemeEntry } from "../theme-core/themeTypes";
 export type CompareRole = "baseline" | "candidate";
 
 interface CompareSlotProps {
-  role: CompareRole;
+  // Named slotRole, not role: a bare `role` prop trips the JSX a11y linter, which
+  // can't tell a component prop from a DOM ARIA role attribute.
+  slotRole: CompareRole;
   entry?: CatalogThemeEntry;
   scene: SceneId;
   // Only the candidate can be cleared; the baseline is always present (it is also
@@ -18,12 +20,12 @@ interface CompareSlotProps {
   onClear?: () => void;
 }
 
-function roleLabel(role: CompareRole): string {
-  return role === "baseline" ? "Baseline" : "Comparing";
+function roleLabel(slotRole: CompareRole): string {
+  return slotRole === "baseline" ? "Baseline" : "Comparing";
 }
 
-export function CompareSlot({ role, entry, scene, onClear }: CompareSlotProps) {
-  const label = roleLabel(role);
+export function CompareSlot({ slotRole, entry, scene, onClear }: CompareSlotProps) {
+  const label = roleLabel(slotRole);
 
   if (!entry) {
     // Only the candidate is ever empty.
@@ -44,11 +46,11 @@ export function CompareSlot({ role, entry, scene, onClear }: CompareSlotProps) {
       aria-label={`${label}: ${entry.theme.name}`}
       style={scopedVars}
       data-theme-type={entry.theme.type}
-      data-role={role}
+      data-role={slotRole}
     >
       <div className="compare-slot__chrome">
         <span className="compare-slot__eyebrow">{label}</span>
-        {role === "candidate" && onClear ? (
+        {slotRole === "candidate" && onClear ? (
           <button
             type="button"
             className="compare-slot__clear"
