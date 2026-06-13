@@ -1,0 +1,7 @@
+"$schema" = "https://conductor.build/schemas/settings.repo.schema.json"
+
+[scripts]
+archive = "pnpm archive:clean"
+run = "pnpm dev -- --host 0.0.0.0 --port \"${CONDUCTOR_PORT:-5173}\""
+run_mode = "concurrent"
+setup = "pnpm install && pnpm browsers:install"
